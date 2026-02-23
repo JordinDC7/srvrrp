@@ -100,7 +100,7 @@ function playerMeta:CompleteUnboxingTrade( partnerSteamID64, partnerIsSender )
 		senderPly:RemoveUnboxingInventoryItem( BRICKS_SERVER.UNBOXING.Func.UnpackItemsTable( tradeTable.SenderItems ) )
 		receiverPly:AddUnboxingInventoryItem( BRICKS_SERVER.UNBOXING.Func.UnpackItemsTable( tradeTable.SenderItems ) )
 		for itemKey, amount in pairs( tradeTable.SenderItems ) do
-			BRICKS_SERVER.UNBOXING.Func.RecordStatTrakTransfer( senderPly, receiverPly, itemKey, amount )
+			BRICKS_SERVER.UNBOXING.Func.RecordStatTrakTransfer( senderPly, receiverPly, itemKey, amount, (tradeTable.SenderItemRolls or {})[itemKey] )
 		end
 	end
 
@@ -108,7 +108,7 @@ function playerMeta:CompleteUnboxingTrade( partnerSteamID64, partnerIsSender )
 		receiverPly:RemoveUnboxingInventoryItem( BRICKS_SERVER.UNBOXING.Func.UnpackItemsTable( tradeTable.ReceiverItems ) )
 		senderPly:AddUnboxingInventoryItem( BRICKS_SERVER.UNBOXING.Func.UnpackItemsTable( tradeTable.ReceiverItems ) )
 		for itemKey, amount in pairs( tradeTable.ReceiverItems ) do
-			BRICKS_SERVER.UNBOXING.Func.RecordStatTrakTransfer( receiverPly, senderPly, itemKey, amount )
+			BRICKS_SERVER.UNBOXING.Func.RecordStatTrakTransfer( receiverPly, senderPly, itemKey, amount, (tradeTable.ReceiverItemRolls or {})[itemKey] )
 		end
 	end
 
@@ -302,6 +302,8 @@ net.Receive( "BRS.Net.AcceptUnboxingTrade", function( len, ply )
         Active = true,
         ReceiverItems = {},
         SenderItems = {},
+        ReceiverItemRolls = {},
+        SenderItemRolls = {},
         ReceiverCurrencies = {},
         SenderCurrencies = {}
     }
@@ -370,6 +372,7 @@ net.Receive( "BRS.Net.UnboxingActiveTradeAddItem", function( len, ply )
     local partnerIsSender = net.ReadBool()
     local globalKey = net.ReadString()
     local itemAmount = net.ReadUInt( 16 )
+    local selectedRollIDs = net.ReadTable() or {}
 
     if( not partnerSteamID64 or not globalKey or not itemAmount ) then return end
     
@@ -386,14 +389,56 @@ net.Receive( "BRS.Net.UnboxingActiveTradeAddItem", function( len, ply )
         return
     end
 
+    tradeTable.SenderItemRolls = tradeTable.SenderItemRolls or {}
+    tradeTable.ReceiverItemRolls = tradeTable.ReceiverItemRolls or {}
+
     local plyInventory = ply:GetUnboxingInventory()
     if( not plyInventory[globalKey] ) then return end
 
     local newAmount = math.Clamp( itemAmount, 0, (plyInventory[globalKey] or 0) )
+
+    local function sanitizeSelectedRolls( requestedRollIDs, maxSelected )
+        if( not istable( requestedRollIDs ) ) then return {} end
+
+        local availableRollIDs = {}
+        for _, rollData in ipairs( BRICKS_SERVER.UNBOXING.Func.GetStatTrakRolls( ply, globalKey ) ) do
+            local boosterID = tostring( rollData.BoosterID or "" )
+            if( boosterID != "" ) then
+                availableRollIDs[boosterID] = true
+            end
+        end
+
+        local uniqueSelection = {}
+        for _, boosterID in ipairs( requestedRollIDs ) do
+            local normalizedID = tostring( boosterID or "" )
+            if( normalizedID == "" or not availableRollIDs[normalizedID] or uniqueSelection[normalizedID] ) then continue end
+
+            uniqueSelection[normalizedID] = true
+
+            if( table.Count( uniqueSelection ) >= maxSelected ) then
+                break
+            end
+        end
+
+        local selected = {}
+        for _, rollData in ipairs( BRICKS_SERVER.UNBOXING.Func.GetStatTrakRolls( ply, globalKey ) ) do
+            local boosterID = tostring( rollData.BoosterID or "" )
+            if( uniqueSelection[boosterID] ) then
+                table.insert( selected, boosterID )
+            end
+        end
+
+        return selected
+    end
+
+    local sanitizedRollIDs = sanitizeSelectedRolls( selectedRollIDs, newAmount )
+
     if( partnerIsSender ) then
         tradeTable.ReceiverItems[globalKey] = (newAmount > 0 and newAmount) or nil
+        tradeTable.ReceiverItemRolls[globalKey] = (#sanitizedRollIDs > 0 and sanitizedRollIDs) or nil
     else
         tradeTable.SenderItems[globalKey] = (newAmount > 0 and newAmount) or nil
+        tradeTable.SenderItemRolls[globalKey] = (#sanitizedRollIDs > 0 and sanitizedRollIDs) or nil
     end
 
     BRICKS_SERVER.Func.SendTopNotification( ply, BRICKS_SERVER.Func.L( "unboxingTradeItemAdded" ) )
@@ -404,6 +449,7 @@ net.Receive( "BRS.Net.UnboxingActiveTradeAddItem", function( len, ply )
         net.WriteBool( false )
         net.WriteString( globalKey )
         net.WriteUInt( newAmount, 16 )
+        net.WriteTable( sanitizedRollIDs )
     net.Send( ply )
 
     net.Start( "BRS.Net.UnboxingActiveTradeAddItemReturn" )
@@ -412,6 +458,7 @@ net.Receive( "BRS.Net.UnboxingActiveTradeAddItem", function( len, ply )
         net.WriteBool( true )
         net.WriteString( globalKey )
         net.WriteUInt( newAmount, 16 )
+        net.WriteTable( sanitizedRollIDs )
     net.Send( partnerPly )
 
     ply:ClearUnboxingTradeStatus( partnerSteamID64, partnerIsSender )

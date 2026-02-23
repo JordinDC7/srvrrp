@@ -1,5 +1,24 @@
 local PANEL = {}
 
+local function BRS_UNBOXING_GetTradeRollChoices( globalKey )
+    local choices = {}
+
+    for idx, rollData in ipairs( BRICKS_SERVER.UNBOXING.Func.GetStatTrakRolls( LocalPlayer(), globalKey ) or {} ) do
+        local boosterID = tostring( rollData.BoosterID or "" )
+        if( boosterID == "" ) then continue end
+
+        local stats = rollData.Stats or {}
+        local total = (tonumber( stats.DMG ) or 0)+(tonumber( stats.ACC ) or 0)+(tonumber( stats.CTRL ) or 0)+(tonumber( stats.HND ) or 0)+(tonumber( stats.MOV ) or 0)
+
+        table.insert( choices, {
+            BoosterID = boosterID,
+            Label = string.format( "#%d | %s | %.2f", idx, tostring( rollData.TierTag or "RAW" ), tonumber( rollData.Score ) or total )
+        } )
+    end
+
+    return choices
+end
+
 function PANEL:Init()
     
 end
@@ -344,6 +363,7 @@ function PANEL:OpenTrade( partnerSteamID64, partnerIsSender )
     self.partnerSteamID64 = partnerSteamID64
     self.partnerIsSender = partnerIsSender
     self.tradeTable = nil
+    self.tradeSelectedRolls = {}
     self.tradeSendItems, self.tradeReceiveItems, self.tradeSendCurrencies, self.tradeReceiveCurrencies = {}, {}, {}, {}
 
     local localPlayerSteamID64 = LocalPlayer():SteamID64()
@@ -847,6 +867,76 @@ function PANEL:OpenTrade( partnerSteamID64, partnerIsSender )
     end )
 end
 
+function PANEL:OpenTradeRollSelector( globalKey, maxSelect, onConfirm )
+    local choices = BRS_UNBOXING_GetTradeRollChoices( globalKey )
+    if( #choices <= 0 ) then
+        onConfirm( {} )
+        return
+    end
+
+    local frame = vgui.Create( "DFrame" )
+    frame:SetSize( math.min( 550, ScrW()*0.35 ), math.min( 500, ScrH()*0.65 ) )
+    frame:Center()
+    frame:MakePopup()
+    frame:SetTitle( BRICKS_SERVER.Func.L( "unboxingTrade" ) )
+
+    local info = vgui.Create( "DLabel", frame )
+    info:Dock( TOP )
+    info:DockMargin( 10, 10, 10, 5 )
+    info:SetWrap( true )
+    info:SetAutoStretchVertical( true )
+    info:SetText( string.format( "Select up to %d roll(s) to trade:", math.max( 1, tonumber( maxSelect ) or 1 ) ) )
+
+    local scroll = vgui.Create( "bricks_server_scrollpanel_bar", frame )
+    scroll:Dock( FILL )
+    scroll:DockMargin( 10, 5, 10, 10 )
+
+    local selected = {}
+
+    for i, choice in ipairs( choices ) do
+        local row = vgui.Create( "DCheckBoxLabel", scroll )
+        row:Dock( TOP )
+        row:DockMargin( 0, 0, 0, 6 )
+        row:SetText( choice.Label )
+        row:SetValue( i <= maxSelect and 1 or 0 )
+        row:SizeToContents()
+
+        if( i <= maxSelect ) then
+            selected[choice.BoosterID] = true
+        end
+
+        row.OnChange = function( _, val )
+            if( val ) then
+                selected[choice.BoosterID] = true
+            else
+                selected[choice.BoosterID] = nil
+            end
+        end
+    end
+
+    local confirm = vgui.Create( "DButton", frame )
+    confirm:Dock( BOTTOM )
+    confirm:DockMargin( 10, 0, 10, 10 )
+    confirm:SetTall( 32 )
+    confirm:SetText( BRICKS_SERVER.Func.L( "ok" ) )
+    confirm.DoClick = function()
+        local selectedIDs = {}
+        for _, choice in ipairs( choices ) do
+            if( selected[choice.BoosterID] ) then
+                table.insert( selectedIDs, choice.BoosterID )
+            end
+        end
+
+        if( #selectedIDs > maxSelect ) then
+            BRICKS_SERVER.Func.SendTopNotification( BRICKS_SERVER.Func.L( "unboxingInvalidAmount" ) )
+            return
+        end
+
+        frame:Close()
+        onConfirm( selectedIDs )
+    end
+end
+
 function PANEL:FillTradeInventory()
     self.grid:Clear()
 
@@ -884,13 +974,25 @@ function PANEL:FillTradeInventory()
         slotBack:FillPanel( globalKey, (itemAmount or 1), function()
             BRICKS_SERVER.Func.StringRequest( BRICKS_SERVER.Func.L( "unboxingTrade" ), BRICKS_SERVER.Func.L( "unboxingTradeAdd" ), 1, function( text ) 
                 local amount = math.Clamp( ((self.tradeSendItems or {})[globalKey] or 0)+tonumber( text ), 0, v[3] )
+                if( amount <= 0 ) then return end
 
-                net.Start( "BRS.Net.UnboxingActiveTradeAddItem" )
-                    net.WriteString( self.partnerSteamID64 )
-                    net.WriteBool( self.partnerIsSender )
-                    net.WriteString( globalKey )
-                    net.WriteUInt( amount, 16 )
-                net.SendToServer()
+                local function sendTradeAdd( selectedRollIDs )
+                    net.Start( "BRS.Net.UnboxingActiveTradeAddItem" )
+                        net.WriteString( self.partnerSteamID64 )
+                        net.WriteBool( self.partnerIsSender )
+                        net.WriteString( globalKey )
+                        net.WriteUInt( amount, 16 )
+                        net.WriteTable( selectedRollIDs or {} )
+                    net.SendToServer()
+                end
+
+                local availableRolls = BRS_UNBOXING_GetTradeRollChoices( globalKey )
+                if( #availableRolls > 1 ) then
+                    self:OpenTradeRollSelector( globalKey, amount, sendTradeAdd )
+                else
+                    local onlyRoll = (#availableRolls == 1 and { availableRolls[1].BoosterID }) or {}
+                    sendTradeAdd( onlyRoll )
+                end
             end, function() end, BRICKS_SERVER.Func.L( "ok" ), BRICKS_SERVER.Func.L( "cancel" ), true )
         end )
         slotBack.themeNum = 1
@@ -930,6 +1032,7 @@ function PANEL:FillTradeSendItems()
                     net.WriteBool( self.partnerIsSender )
                     net.WriteString( globalKey )
                     net.WriteUInt( amount, 16 )
+                    net.WriteTable( {} )
                 net.SendToServer()
             end, function() end, BRICKS_SERVER.Func.L( "ok" ), BRICKS_SERVER.Func.L( "cancel" ), true )
         end )
