@@ -199,20 +199,41 @@ net.Receive( "BRS.Net.GangPrinterWithdraw", function( len, ply )
 
 	if( not CheckCanUsePrinter( ply, printerEntity ) ) then return end
 
+	local gangID = printerEntity:GetGangID()
+	if( gangID == 0 or ply:GetGangID() != gangID ) then return end
+
+	if( not ply:GangHasPermission( "DepositMoney" ) ) then return end
+
 	local money = printerEntity:GetHolding()
 	if( money > 0 ) then
-		ply:addMoney( money )
+		local gangTable = BRICKS_SERVER_GANGS[gangID]
+		if( not gangTable ) then return end
 
-		if( ply:GetGangID() != 0 ) then
-			BRICKS_SERVER.Func.AddGangExperience( ply:GetGangID(), printerEntity:GetHoldingEXP(), ply )
+		local maxBalance = BRICKS_SERVER.Func.GangGetUpgradeInfo( gangID, "MaxBalance" )[1] or 0
+		local currentBalance = gangTable.Money or 0
+		local depositAmount = money
+
+		if( maxBalance > 0 ) then
+			depositAmount = math.Clamp( depositAmount, 0, math.max( maxBalance-currentBalance, 0 ) )
 		end
 
-		DarkRP.notify( ply, 1, 4, "You withdrew " .. DarkRP.formatMoney( money ) .. " from a printer!" )
+		if( depositAmount <= 0 ) then
+			DarkRP.notify( ply, 1, 4, BRICKS_SERVER.Func.L( "gangDepositMoneyMuch" ) )
+			return
+		end
 
-		printerEntity:SetHolding( 0 )
+		BRICKS_SERVER.Func.AddGangBalance( gangID, depositAmount )
+
+		if( gangID != 0 ) then
+			BRICKS_SERVER.Func.AddGangExperience( gangID, printerEntity:GetHoldingEXP(), ply )
+		end
+
+		DarkRP.notify( ply, 1, 4, BRICKS_SERVER.Func.L( "gangDepositedMoney", DarkRP.formatMoney( depositAmount ) ) )
+
+		printerEntity:SetHolding( math.max( money-depositAmount, 0 ) )
 		printerEntity:SetHoldingEXP( 0 )
 
-		hook.Run( "BRS.Hooks.GangPrinterWithdrew", ply, money )
+		hook.Run( "BRS.Hooks.GangPrinterWithdrew", ply, depositAmount )
 	end
 end )
 
