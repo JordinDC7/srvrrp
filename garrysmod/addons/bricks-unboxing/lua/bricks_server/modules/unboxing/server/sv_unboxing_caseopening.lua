@@ -1,3 +1,85 @@
+
+-- Builds one randomized StatTrak roll for eligible unboxed items.
+local function brsUnboxingBuildStatTrakRoll( configItemTable )
+	local statTrakConfig = BRICKS_SERVER.UNBOXING.Func.GetStatTrakConfig()
+	if( not BRICKS_SERVER.UNBOXING.Func.IsStatTrakEligibleItem( configItemTable ) ) then return nil end
+
+	local stats = statTrakConfig.Stats or {}
+	if( table.Count( stats ) <= 0 ) then return nil end
+
+	local rollData = {
+		Stats = {},
+		Score = 0,
+		TierName = "",
+		TierTag = "STD",
+		TierColor = Color( 164, 164, 164 ),
+		IsGodRoll = false,
+		Created = os.time()
+	}
+
+	local weightedScore, totalWeight = 0, 0
+	for _, statInfo in ipairs( stats ) do
+		local minValue = tonumber( statInfo.Min ) or 1
+		local maxValue = tonumber( statInfo.Max ) or 100
+		if( maxValue < minValue ) then
+			minValue, maxValue = maxValue, minValue
+		end
+
+		local statRoll = math.random( minValue, maxValue )
+		rollData.Stats[statInfo.Key or "STAT"] = statRoll
+
+		local weight = tonumber( statInfo.Weight ) or 1
+		weightedScore = weightedScore + (statRoll*weight)
+		totalWeight = totalWeight + weight
+	end
+
+	rollData.Score = math.Round( weightedScore/math.max( totalWeight, 1 ), 2 )
+
+	for _, tierInfo in ipairs( statTrakConfig.TierBreakpoints or {} ) do
+		if( rollData.Score >= (tonumber( tierInfo.MinScore ) or 0) ) then
+			rollData.TierName = tierInfo.Name or rollData.TierName
+			rollData.TierTag = tierInfo.Tag or rollData.TierTag
+			rollData.TierColor = tierInfo.Color or rollData.TierColor
+			break
+		end
+	end
+
+	rollData.IsGodRoll = rollData.Score >= (tonumber( statTrakConfig.GodRollScore ) or 94)
+
+	return rollData
+end
+
+-- Persists StatTrak roll metadata on the player's inventory data table.
+local function brsUnboxingStoreStatTrakRoll( ply, globalKey, rollData )
+	if( not IsValid( ply ) or not globalKey or not istable( rollData ) ) then return end
+
+	local inventoryDataTable = ply:GetUnboxingInventoryData()
+	inventoryDataTable[globalKey] = inventoryDataTable[globalKey] or {}
+	local currentStatTrak = inventoryDataTable[globalKey].StatTrak or {}
+
+	currentStatTrak.RollCount = (tonumber( currentStatTrak.RollCount ) or 0)+1
+	currentStatTrak.LastRoll = rollData
+
+	if( not currentStatTrak.BestRoll or (tonumber( rollData.Score ) or 0) > (tonumber( currentStatTrak.BestRoll.Score ) or 0) ) then
+		currentStatTrak.BestRoll = rollData
+	end
+
+	inventoryDataTable[globalKey].StatTrak = currentStatTrak
+	ply:SetUnboxingInventoryData( inventoryDataTable )
+end
+
+-- Public helper used by all case-open paths to apply StatTrak rolls.
+function BRICKS_SERVER.UNBOXING.Func.TryRollAndStoreStatTrak( ply, globalKey )
+	local configItemTable = BRICKS_SERVER.UNBOXING.Func.GetItemFromGlobalKey( globalKey )
+	if( not BRICKS_SERVER.UNBOXING.Func.IsStatTrakEligibleItem( configItemTable ) ) then return nil end
+
+	local rollData = brsUnboxingBuildStatTrakRoll( configItemTable )
+	if( not rollData ) then return nil end
+
+	brsUnboxingStoreStatTrakRoll( ply, globalKey, rollData )
+	return rollData
+end
+
 local function caseOpen( ply, caseKey )
 	local configItemTable = BRICKS_SERVER.CONFIG.UNBOXING.Cases[caseKey or 0]
 
@@ -83,6 +165,7 @@ net.Receive( "BRS.Net.UnboxCase", function( len, ply )
 		if( not IsValid( ply ) ) then return end
 		
 		ply:AddUnboxingInventoryItem( winningItemKey )
+		BRICKS_SERVER.UNBOXING.Func.TryRollAndStoreStatTrak( ply, winningItemKey )
 
 		local configItemTable = BRICKS_SERVER.UNBOXING.Func.GetItemFromGlobalKey( winningItemKey )
 		if( configItemTable and configItemTable.Rarity and (BRICKS_SERVER.CONFIG.UNBOXING.NotificationRarities or {})[configItemTable.Rarity] ) then
@@ -170,6 +253,12 @@ net.Receive( "BRS.Net.UnboxingOpenAll", function( len, ply )
 	end
 
 	ply:AddUnboxingInventoryItem( unpack( formattedItems ) )
+
+	for globalKey, amount in pairs( itemsToGive ) do
+		for i = 1, amount do
+			BRICKS_SERVER.UNBOXING.Func.TryRollAndStoreStatTrak( ply, globalKey )
+		end
+	end
 
 	BRICKS_SERVER.Func.SendNotification( ply, 1, 5, BRICKS_SERVER.Func.L( "unboxingCasesUnboxed", openAmount ) )
 	

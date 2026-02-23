@@ -108,6 +108,16 @@ function PANEL:AddSlot(globalKey, amount, actions)
     slotBack:SetSize(self.slotSize, self.slotSize * 1.22)
     slotBack:FillPanel(globalKey, amount, actions)
 
+    local statTrakSummary = BRICKS_SERVER.UNBOXING.Func.GetStatTrakSummary(LocalPlayer(), globalKey)
+    if (statTrakSummary and statTrakSummary.TierTag and statTrakSummary.Score) then
+        slotBack:AddTopInfo(
+            string.format("%s %.2f", tostring(statTrakSummary.TierTag), tonumber(statTrakSummary.Score) or 0),
+            statTrakSummary.TierColor,
+            BRICKS_SERVER.Func.GetTheme(5),
+            true
+        )
+    end
+
     if (LocalPlayer():UnboxingIsItemEquipped(globalKey)) then
         slotBack:AddTopInfo("Equipped", false, false, true)
     end
