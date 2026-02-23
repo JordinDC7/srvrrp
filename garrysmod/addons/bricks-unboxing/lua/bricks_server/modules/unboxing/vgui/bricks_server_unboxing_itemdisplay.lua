@@ -82,7 +82,7 @@ function PANEL:SetItemData( type, itemTable, iconAdjust )
 end
 
 function PANEL:SetIconSizeAdjust( iconSizeAdjust )
-    self.iconSizeAdjust = 0.75
+    self.iconSizeAdjust = tonumber( iconSizeAdjust ) or 1
 end
 
 function PANEL:Paint()
