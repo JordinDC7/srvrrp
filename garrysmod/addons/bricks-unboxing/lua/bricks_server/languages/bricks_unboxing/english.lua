@@ -211,5 +211,10 @@ BRICKS_SERVER.Func.AddLanguageStrings( "english", {
     ["unboxingTradeCooldown"] = "You need to wait %d seconds before sending another trade request.",
     ["unboxingOpenAll"] = "Open All",
     ["unboxingCasesUnboxed"] = "Unboxed %d case(s) successfully!",
-    ["unboxingUseAll"] = "Use All"
+    ["unboxingUseAll"] = "Use All",
+    ["ok"] = "OK",
+    ["cancel"] = "Cancel",
+    ["none"] = "None",
+    ["invalidType"] = "Invalid type.",
+    ["unboxingInvalidAmount"] = "Invalid amount."
 } )

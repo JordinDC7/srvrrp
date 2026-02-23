@@ -195,4 +195,10 @@ BRICKS_SERVER.Func.AddLanguageStrings( "german", {
     ["unboxingEnterSteamID"] = "Gebe eine SteamID64 ein",
     ["unboxingAdminFailedRequestOnline"] = "Du kannst nicht nach Spielern suchen, die online sind!",
     ["unboxingAdminEdited"] = "Das Inventar des Spielers wurde erfolgreich bearbeitet!",
+    ["unboxingTradeCooldown"] = "You need to wait %d seconds before sending another trade request.",
+    ["ok"] = "OK",
+    ["cancel"] = "Cancel",
+    ["none"] = "None",
+    ["invalidType"] = "Invalid type.",
+    ["unboxingInvalidAmount"] = "Invalid amount."
 } )
