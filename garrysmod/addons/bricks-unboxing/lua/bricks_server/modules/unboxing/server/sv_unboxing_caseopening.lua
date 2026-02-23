@@ -189,6 +189,15 @@ local function caseOpen( ply, caseKey )
 		return false
 	end
 
+	local liveOpsConfig = ((BRICKS_SERVER.UNBOXING.LUACFG.TopTier or {}).LiveOps or {})
+	if( liveOpsConfig.KillSwitchEnabled ) then
+		local caseFamily = BRICKS_SERVER.UNBOXING.Func.GetCaseFamily( caseKey, configItemTable )
+		if( (liveOpsConfig.DisabledCaseFamilies or {})[caseFamily] ) then
+			BRICKS_SERVER.Func.SendTopNotification( ply, "This case family is temporarily disabled.", 3, BRICKS_SERVER.DEVCONFIG.BaseThemes.Red )
+			return false
+		end
+	end
+
 	local keyUsed
 	if( configItemTable.Keys and table.Count( configItemTable.Keys ) > 0 ) then
 		local keyRemovedSuccess = false
@@ -217,23 +226,113 @@ local function caseOpen( ply, caseKey )
 		totalChance = totalChance+v[1]
 	end
 
+	local caseFamily = BRICKS_SERVER.UNBOXING.Func.GetCaseFamily( caseKey, configItemTable )
+	local pityConfig = (BRICKS_SERVER.UNBOXING.LUACFG.TopTier or {}).Pity or {}
+	local state = BRICKS_SERVER.UNBOXING.Func.GetTopTierState( ply )
+	state.Pity[caseFamily] = tonumber( state.Pity[caseFamily] ) or 0
+
 	local winningChance, currentChance = math.Rand( 0, 100 ), 0
 	local winningItemKey
-	for k, v in pairs( configItemTable.Items ) do
-		local actualChance = (v[1]/totalChance)*100
+	local pityBefore = state.Pity[caseFamily]
 
-		if( winningChance > currentChance and winningChance <= currentChance+actualChance ) then
-			winningItemKey = k
-			break
+	if( pityConfig.HardPityCap and pityConfig.HardPityCap > 0 and pityBefore >= pityConfig.HardPityCap ) then
+		local apexPool = {}
+		for itemGlobalKey, itemChance in pairs( configItemTable.Items ) do
+			local itemConfig = BRICKS_SERVER.UNBOXING.Func.GetItemFromGlobalKey( itemGlobalKey )
+			if( itemConfig and BRICKS_SERVER.UNBOXING.Func.IsApexRarity( itemConfig.Rarity ) ) then
+				table.insert( apexPool, itemGlobalKey )
+			end
 		end
 
-		currentChance = currentChance+actualChance
+		if( #apexPool > 0 ) then
+			winningItemKey = apexPool[math.random( 1, #apexPool )]
+		end
+	end
+
+	local softPityThreshold = tonumber( pityConfig.SoftPityStart ) or 0
+	local softPityBoost = tonumber( pityConfig.SoftPityBoostPerOpen ) or 0
+	local pityMultiplier = 1
+	if( softPityThreshold > 0 and pityBefore >= softPityThreshold ) then
+		pityMultiplier = 1+((pityBefore-softPityThreshold+1)*softPityBoost)
+	end
+
+	local totalChanceWeighted = 0
+	for itemGlobalKey, itemChanceTable in pairs( configItemTable.Items ) do
+		local itemChance = tonumber( (itemChanceTable or {})[1] ) or 0
+		local itemConfig = BRICKS_SERVER.UNBOXING.Func.GetItemFromGlobalKey( itemGlobalKey )
+		if( itemConfig and BRICKS_SERVER.UNBOXING.Func.IsApexRarity( itemConfig.Rarity ) ) then
+			itemChance = itemChance * pityMultiplier
+		end
+
+		totalChanceWeighted = totalChanceWeighted + itemChance
+	end
+
+	if( not winningItemKey ) then
+		winningChance = math.Rand( 0, 100 )
+		currentChance = 0
+
+		for k, v in pairs( configItemTable.Items ) do
+			local itemChance = tonumber( v[1] ) or 0
+			local itemConfig = BRICKS_SERVER.UNBOXING.Func.GetItemFromGlobalKey( k )
+			if( itemConfig and BRICKS_SERVER.UNBOXING.Func.IsApexRarity( itemConfig.Rarity ) ) then
+				itemChance = itemChance * pityMultiplier
+			end
+
+			local actualChance = (itemChance/math.max( totalChanceWeighted, 1))*100
+
+			if( winningChance > currentChance and winningChance <= currentChance+actualChance ) then
+				winningItemKey = k
+				break
+			end
+
+			currentChance = currentChance+actualChance
+		end
 	end
 
 	if( not winningItemKey or not configItemTable.Items[winningItemKey] ) then
 		BRICKS_SERVER.Func.SendNotification( ply, 1, 5, BRICKS_SERVER.Func.L( "unboxingNoItemFound" ) )
 		return false
 	end
+
+	local wonConfig = BRICKS_SERVER.UNBOXING.Func.GetItemFromGlobalKey( winningItemKey )
+	if( wonConfig and BRICKS_SERVER.UNBOXING.Func.IsApexRarity( wonConfig.Rarity ) ) then
+		state.Pity[caseFamily] = 0
+		BRICKS_SERVER.UNBOXING.Func.LogTelemetry( "unbox_pity_guaranteed", {
+			SteamID64 = ply:SteamID64(),
+			CaseFamily = caseFamily,
+			PityBefore = pityBefore,
+			Item = winningItemKey
+		} )
+	else
+		state.Pity[caseFamily] = pityBefore + 1
+		BRICKS_SERVER.UNBOXING.Func.LogTelemetry( "unbox_pity_incremented", {
+			SteamID64 = ply:SteamID64(),
+			CaseFamily = caseFamily,
+			PityBefore = pityBefore,
+			PityAfter = state.Pity[caseFamily],
+			Item = winningItemKey
+		} )
+	end
+
+	state.Daily.Date = state.Daily.Date or os.date( "%Y-%m-%d" )
+	if( state.Daily.Date != os.date( "%Y-%m-%d" ) ) then
+		state.Daily.Date = os.date( "%Y-%m-%d" )
+		state.Daily.Opened = 0
+	end
+	state.Daily.Opened = (tonumber( state.Daily.Opened ) or 0) + 1
+
+	BRICKS_SERVER.UNBOXING.Func.SetTopTierState( ply, state )
+	BRICKS_SERVER.UNBOXING.Func.SendProgressState( ply, { PityFamily = caseFamily, PityDepth = state.Pity[caseFamily] } )
+
+	BRICKS_SERVER.UNBOXING.Func.LogTelemetry( "unbox_open_resolved", {
+		SteamID64 = ply:SteamID64(),
+		CaseFamily = caseFamily,
+		Drop = winningItemKey,
+		PityBefore = pityBefore,
+		PityAfter = state.Pity[caseFamily],
+		SessionLengthBucket = "0-15m",
+		Gang = false
+	} )
 	
 	hook.Run( "BRS.Hooks.CaseUnboxed", ply )
     
@@ -257,11 +356,29 @@ net.Receive( "BRS.Net.UnboxCase", function( len, ply )
 	timer.Simple( BRICKS_SERVER.CONFIG.UNBOXING["Case UI Open Time"], function()
 		if( not IsValid( ply ) ) then return end
 		
+		local duplicate = (ply:GetUnboxingInventory()[winningItemKey] or 0) > 0
 		ply:AddUnboxingInventoryItem( winningItemKey )
 		BRICKS_SERVER.UNBOXING.Func.TryRollAndStoreStatTrak( ply, winningItemKey )
 
+		if( duplicate and string.StartWith( winningItemKey, "ITEM_" ) ) then
+			local fragmentGain = BRICKS_SERVER.UNBOXING.Func.GetDuplicateFragmentValue( winningItemKey )
+			BRICKS_SERVER.UNBOXING.Func.AddFragments( ply, fragmentGain, "duplicate_conversion", { Item = winningItemKey } )
+			BRICKS_SERVER.UNBOXING.Func.LogTelemetry( "unbox_duplicate_converted", {
+				SteamID64 = ply:SteamID64(),
+				Item = winningItemKey,
+				Fragments = fragmentGain
+			} )
+		end
+
+		BRICKS_SERVER.UNBOXING.Func.AddMasteryXP( ply, ((BRICKS_SERVER.UNBOXING.LUACFG.TopTier or {}).MasteryXPPerOpen or 10), { Item = winningItemKey } )
+
 		local configItemTable = BRICKS_SERVER.UNBOXING.Func.GetItemFromGlobalKey( winningItemKey )
-		if( configItemTable and configItemTable.Rarity and (BRICKS_SERVER.CONFIG.UNBOXING.NotificationRarities or {})[configItemTable.Rarity] ) then
+		if( configItemTable and configItemTable.Rarity and BRICKS_SERVER.UNBOXING.Func.IsApexRarity( configItemTable.Rarity ) ) then
+			net.Start( "BRS.Net.UnboxCaseAlert" )
+				net.WriteEntity( ply )
+				net.WriteString( winningItemKey )
+			net.Broadcast()
+		elseif( configItemTable and configItemTable.Rarity and (BRICKS_SERVER.CONFIG.UNBOXING.NotificationRarities or {})[configItemTable.Rarity] ) then
 			net.Start( "BRS.Net.UnboxCaseAlert" )
 				net.WriteEntity( ply )
 				net.WriteString( winningItemKey )

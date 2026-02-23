@@ -156,7 +156,8 @@ net.Receive( "BRS.Net.SendUnboxingTrade", function( len, ply )
         return 
     end
 
-	ply.BRS_TRADECOOLDOWN = CurTime()+5
+	local tradeCooldown = tonumber( ((BRICKS_SERVER.UNBOXING.LUACFG.TopTier or {}).TradeCooldownSeconds) ) or 5
+	ply.BRS_TRADECOOLDOWN = CurTime()+math.max( tradeCooldown, 5 )
 
     if( not IsValid( receiverPly ) ) then 
         BRICKS_SERVER.Func.SendNotification( ply, 1, 5, BRICKS_SERVER.Func.L( "unboxingPlyNotOnline" ) )

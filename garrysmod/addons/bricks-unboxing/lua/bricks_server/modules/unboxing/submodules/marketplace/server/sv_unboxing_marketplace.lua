@@ -1,4 +1,45 @@
 BRICKS_SERVER.TEMP.UnboxingMarketplace = BRICKS_SERVER.TEMP.UnboxingMarketplace or {}
+
+local function brsMarketplaceDiagnostics()
+    local prices = {}
+    local now = BRICKS_SERVER.Func.UTCTime()
+
+    for _, marketItem in pairs( BRICKS_SERVER.TEMP.UnboxingMarketplace ) do
+        if( now >= (marketItem.StartTime+marketItem.Duration) ) then continue end
+        table.insert( prices, tonumber( marketItem.CurrentBid ) or 0 )
+    end
+
+    table.sort( prices, function( a, b ) return a < b end )
+
+    local count = #prices
+    local median = 0
+    if( count > 0 ) then
+        if( count % 2 == 0 ) then
+            median = (prices[count/2]+prices[(count/2)+1])/2
+        else
+            median = prices[math.ceil( count/2 )]
+        end
+    end
+
+    return {
+        ActiveAuctions = count,
+        Median = math.floor( median ),
+        Floor = prices[1] or 0,
+        Ceiling = prices[count] or 0,
+        Velocity = count
+    }
+end
+
+util.AddNetworkString( "BRS.Net.RequestUnboxingMarketplaceHealth" )
+util.AddNetworkString( "BRS.Net.SendUnboxingMarketplaceHealth" )
+net.Receive( "BRS.Net.RequestUnboxingMarketplaceHealth", function( len, ply )
+    if( CurTime() < (ply.BRS_REQUEST_UNBOXING_MARKETHEALTH_COOLDOWN or 0) ) then return end
+    ply.BRS_REQUEST_UNBOXING_MARKETHEALTH_COOLDOWN = CurTime()+5
+
+    net.Start( "BRS.Net.SendUnboxingMarketplaceHealth" )
+        net.WriteTable( brsMarketplaceDiagnostics() )
+    net.Send( ply )
+end )
 hook.Add( "Initialize", "BricksServerHooks_Initialize_Marketplace", function()	
     BRICKS_SERVER.TEMP.UnboxingMarketplace = {}
 
@@ -153,6 +194,14 @@ net.Receive( "BRS.Net.SellUnboxingMarketplaceItem", function( len, ply )
     local marketKey = table.insert( BRICKS_SERVER.TEMP.UnboxingMarketplace, marketTable )
 
     BRICKS_SERVER.UNBOXING.Func.InsertMarketplaceDB( marketKey, marketTable.OwnerSteamID64, marketTable.ItemGlobalKey, marketTable.ItemAmount, marketTable.Duration, marketTable.StartTime, marketTable.CurrentBid )
+
+    BRICKS_SERVER.UNBOXING.Func.LogTelemetry( "unbox_market_listed", {
+        SteamID64 = ply:SteamID64(),
+        MarketKey = marketKey,
+        Item = globalKey,
+        Price = price,
+        Duration = duration
+    } )
 
     plySlotsTable[slotKey] = { marketKey }
     ply:SetUnboxingMarketplaceSlots( plySlotsTable )
@@ -322,6 +371,13 @@ net.Receive( "BRS.Net.CollectUnboxingAuction", function( len, ply )
         if( table.Count( marketItemTable.Bidders or {} ) > 0 ) then
             BRICKS_SERVER.UNBOXING.Func.AddCurrency( ply, marketItemTable.CurrentBid )
             BRICKS_SERVER.Func.SendTopNotification( ply, BRICKS_SERVER.Func.L( "unboxingAuctionCurrencyCollected", BRICKS_SERVER.UNBOXING.Func.FormatCurrency( marketItemTable.CurrentBid ) ) )
+
+            BRICKS_SERVER.UNBOXING.Func.LogTelemetry( "unbox_market_sold", {
+                SteamID64 = ply:SteamID64(),
+                MarketKey = marketKey,
+                Item = marketItemTable.ItemGlobalKey,
+                Price = marketItemTable.CurrentBid
+            } )
         else
             ply:AddUnboxingInventoryItem( marketItemTable.ItemGlobalKey, marketItemTable.ItemAmount )
             ply:SendUnboxingItemNotification( BRICKS_SERVER.Func.L( "unboxingAuctionCollected" ), marketItemTable.ItemGlobalKey, marketItemTable.ItemAmount )

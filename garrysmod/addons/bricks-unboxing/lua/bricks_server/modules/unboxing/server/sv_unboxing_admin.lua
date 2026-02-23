@@ -141,3 +141,29 @@ net.Receive( "BRS.Net.AdminUnboxingPlayerInventoryChange", function( len, ply )
         SendPlayerData( steamID64, ply )
     end
 end )
+
+concommand.Add( "unboxing_toptier_killswitch", function( ply, _, args )
+	if( IsValid( ply ) and not BRICKS_SERVER.Func.HasAdminAccess( ply ) ) then return end
+
+	local enabled = tobool( tonumber( args[1] or 0 ) )
+	BRICKS_SERVER.UNBOXING.LUACFG.TopTier = BRICKS_SERVER.UNBOXING.LUACFG.TopTier or {}
+	BRICKS_SERVER.UNBOXING.LUACFG.TopTier.LiveOps = BRICKS_SERVER.UNBOXING.LUACFG.TopTier.LiveOps or {}
+	BRICKS_SERVER.UNBOXING.LUACFG.TopTier.LiveOps.KillSwitchEnabled = enabled
+
+	BRICKS_SERVER.Func.BRS_MSGN( "unboxing", "Top-tier kill switch set to " .. tostring( enabled ) .. " by " .. (IsValid( ply ) and ply:SteamID64() or "console") )
+end )
+
+concommand.Add( "unboxing_toptier_disable_family", function( ply, _, args )
+	if( IsValid( ply ) and not BRICKS_SERVER.Func.HasAdminAccess( ply ) ) then return end
+
+	local caseFamily = tostring( args[1] or "" )
+	local disabled = tobool( tonumber( args[2] or 1 ) )
+	if( caseFamily == "" ) then return end
+
+	BRICKS_SERVER.UNBOXING.LUACFG.TopTier = BRICKS_SERVER.UNBOXING.LUACFG.TopTier or {}
+	BRICKS_SERVER.UNBOXING.LUACFG.TopTier.LiveOps = BRICKS_SERVER.UNBOXING.LUACFG.TopTier.LiveOps or {}
+	BRICKS_SERVER.UNBOXING.LUACFG.TopTier.LiveOps.DisabledCaseFamilies = BRICKS_SERVER.UNBOXING.LUACFG.TopTier.LiveOps.DisabledCaseFamilies or {}
+	BRICKS_SERVER.UNBOXING.LUACFG.TopTier.LiveOps.DisabledCaseFamilies[caseFamily] = disabled and true or nil
+
+	BRICKS_SERVER.Func.BRS_MSGN( "unboxing", "Case family '" .. caseFamily .. "' disabled=" .. tostring( disabled ) .. " by " .. (IsValid( ply ) and ply:SteamID64() or "console") )
+end )

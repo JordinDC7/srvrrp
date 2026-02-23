@@ -67,3 +67,67 @@ BRICKS_SERVER.UNBOXING.LUACFG.StatTrak = {
         MobilitySpreadScale = { MinScale = 1.28, MaxScale = 0.76 }
     }
 }
+
+-- Top-tier roadmap systems (pity, crafting, seasonal/liveops control surface).
+BRICKS_SERVER.UNBOXING.LUACFG.TopTier = {
+    MasteryXPPerOpen = 10,
+    ApexRarities = {
+        ["Legendary"] = true,
+        ["Glitched"] = true,
+        ["Mythical"] = true
+    },
+    Pity = {
+        SoftPityStart = 18,
+        SoftPityBoostPerOpen = 0.04,
+        HardPityCap = 40
+    },
+    DuplicateFragmentFallback = 1,
+    DuplicateFragmentValues = {
+        ["Common"] = 1,
+        ["Uncommon"] = 2,
+        ["Rare"] = 4,
+        ["Epic"] = 7,
+        ["Legendary"] = 12,
+        ["Glitched"] = 18,
+        ["Mythical"] = 25
+    },
+    CraftingRecipes = {
+        ["legendary_weapon"] = {
+            Name = "Legendary Weapon Cache",
+            FragmentCost = 175,
+            GlobalKey = "ITEM_5",
+            Amount = 1
+        },
+        ["mythical_cash"] = {
+            Name = "Mythical Currency Drop",
+            FragmentCost = 250,
+            GlobalKey = "ITEM_10",
+            Amount = 1
+        },
+        ["glitched_weapon"] = {
+            Name = "Glitched Weapon Cache",
+            FragmentCost = 225,
+            GlobalKey = "ITEM_8",
+            Amount = 1
+        }
+    },
+    TradeCooldownSeconds = 1800,
+    DynamicDropNudges = {
+        Enabled = true,
+        MaxNudgeMultiplier = 1.08,
+        MinNudgeMultiplier = 0.92
+    },
+    LiveOps = {
+        KillSwitchEnabled = false,
+        DisabledCaseFamilies = {},
+        ActiveSeason = {
+            Name = "Chapter 1: Blacksite Protocol",
+            StartUnix = 1730419200,
+            EndUnix = 1735689600
+        },
+        Experiments = {
+            PresentationVariantA = true,
+            PaceVariantB = false
+        }
+    }
+}
