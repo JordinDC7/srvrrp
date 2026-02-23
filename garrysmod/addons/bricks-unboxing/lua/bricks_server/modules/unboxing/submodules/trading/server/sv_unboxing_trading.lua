@@ -99,11 +99,17 @@ function playerMeta:CompleteUnboxingTrade( partnerSteamID64, partnerIsSender )
 	if( table.Count( tradeTable.SenderItems ) > 0 ) then
 		senderPly:RemoveUnboxingInventoryItem( BRICKS_SERVER.UNBOXING.Func.UnpackItemsTable( tradeTable.SenderItems ) )
 		receiverPly:AddUnboxingInventoryItem( BRICKS_SERVER.UNBOXING.Func.UnpackItemsTable( tradeTable.SenderItems ) )
+		for itemKey, amount in pairs( tradeTable.SenderItems ) do
+			BRICKS_SERVER.UNBOXING.Func.RecordStatTrakTransfer( senderPly, receiverPly, itemKey, amount )
+		end
 	end
 
 	if( table.Count( tradeTable.ReceiverItems ) > 0 ) then
 		receiverPly:RemoveUnboxingInventoryItem( BRICKS_SERVER.UNBOXING.Func.UnpackItemsTable( tradeTable.ReceiverItems ) )
 		senderPly:AddUnboxingInventoryItem( BRICKS_SERVER.UNBOXING.Func.UnpackItemsTable( tradeTable.ReceiverItems ) )
+		for itemKey, amount in pairs( tradeTable.ReceiverItems ) do
+			BRICKS_SERVER.UNBOXING.Func.RecordStatTrakTransfer( receiverPly, senderPly, itemKey, amount )
+		end
 	end
 
 	if( table.Count( tradeTable.SenderCurrencies ) > 0 ) then

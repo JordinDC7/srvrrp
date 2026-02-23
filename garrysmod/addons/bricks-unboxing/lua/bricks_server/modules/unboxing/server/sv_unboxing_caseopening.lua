@@ -179,6 +179,15 @@ local function brsUnboxingStoreStatTrakRoll( ply, globalKey, rollData )
 	currentStatTrak.RollCount = (tonumber( currentStatTrak.RollCount ) or 0)+1
 	currentStatTrak.LastRoll = rollData
 	table.insert( currentStatTrak.Rolls, 1, rollData )
+	currentStatTrak.UnboxedBySteamID64 = currentStatTrak.UnboxedBySteamID64 or ply:SteamID64()
+	currentStatTrak.UnboxedByName = currentStatTrak.UnboxedByName or ply:Nick()
+	currentStatTrak.Created = currentStatTrak.Created or os.time()
+	currentStatTrak.Provenance = currentStatTrak.Provenance or {
+		OriginalUnboxer = currentStatTrak.UnboxedBySteamID64,
+		Transfers = {},
+		Milestones = {},
+		CreatedAt = currentStatTrak.Created
+	}
 
 	local maxSavedRolls = tonumber( BRICKS_SERVER.UNBOXING.Func.GetStatTrakConfig().MaxSavedRolls ) or 250
 	if( maxSavedRolls < 1 ) then maxSavedRolls = 1 end

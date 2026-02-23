@@ -23,6 +23,58 @@ BRICKS_SERVER.UNBOXING.LUACFG.PremiumCreditRedirect = {
 BRICKS_SERVER.UNBOXING.LUACFG.StatTrak = {
     Enabled = true,
     MaxSavedRolls = 400,
+    ProfileStats = {
+        "kills",
+        "headshots",
+        "longest_streak",
+        "assists",
+        "objective_score"
+    },
+    PrestigeMilestones = { 10, 25, 50, 100, 250, 500, 1000 },
+    PrestigeCooldownSeconds = 90,
+    AssistWindowSeconds = 10,
+    AntiFraud = {
+        Enabled = true,
+        MinKillInterval = 0.2,
+        MaxDuplicateVictimsWindow = 90,
+        MaxDuplicateVictimsPerWindow = 4,
+        MaxKillDistance = 5000,
+        FlagThreshold = 3
+    },
+    SeasonalLadders = {
+        Enabled = true,
+        LadderPoints = {
+            Kill = 10,
+            Headshot = 5,
+            Assist = 4,
+            ObjectiveScore = 1
+        },
+        CosmeticRewards = {
+            { Points = 250, CosmeticID = "season_charm_bronze" },
+            { Points = 750, CosmeticID = "season_charm_silver" },
+            { Points = 1500, CosmeticID = "season_charm_gold" }
+        }
+    },
+    Crafting = {
+        RerollCostFragments = 35,
+        AllowTargetedReroll = true
+    },
+    SocketedModifiers = {
+        Enabled = true,
+        MaxSockets = 2,
+        EarnEveryKills = 40,
+        BonusRange = {
+            Min = 0.005,
+            Max = 0.025
+        },
+        Modifiers = {
+            "DamageScale",
+            "AccuracySpreadScale",
+            "ControlMoveSpreadScale",
+            "HandlingFireDelayScale",
+            "MobilitySpreadScale"
+        }
+    },
     EligibleItemTypes = {
         ["Weapon"] = true,
         ["PermWeapon"] = true
