@@ -120,6 +120,37 @@ BRICKS_SERVER.UNBOXING.LUACFG.TopTier = {
     LiveOps = {
         KillSwitchEnabled = false,
         DisabledCaseFamilies = {},
+        HotfixWeightLimits = {
+            Min = 0.10,
+            Max = 5.00
+        },
+        SeasonModelEnabled = true,
+        LegacyVaultFamilies = {
+            ["legacy"] = true,
+            ["anniversary"] = true
+        },
+        Seasons = {
+            ["chapter_blacksite"] = {
+                Name = "Chapter 1: Blacksite Protocol",
+                StartUnix = 1730419200,
+                EndUnix = 1735689600,
+                FeaturedFamilies = {
+                    ["blacksite"] = true,
+                    ["urban_ops"] = true,
+                    ["industrial"] = true
+                }
+            },
+            ["chapter_anomaly"] = {
+                Name = "Chapter 2: Anomaly Uprising",
+                StartUnix = 1735689601,
+                EndUnix = 1741046400,
+                FeaturedFamilies = {
+                    ["anomaly"] = true,
+                    ["reactor"] = true,
+                    ["biohazard"] = true
+                }
+            }
+        },
         ActiveSeason = {
             Name = "Chapter 1: Blacksite Protocol",
             StartUnix = 1730419200,

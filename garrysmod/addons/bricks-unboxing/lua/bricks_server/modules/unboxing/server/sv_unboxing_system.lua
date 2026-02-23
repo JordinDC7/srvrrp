@@ -212,6 +212,136 @@ local function brsGetTopTierConfig()
 	return BRICKS_SERVER.UNBOXING.LUACFG.TopTier or {}
 end
 
+local function brsGetLiveOpsRuntime()
+	BRICKS_SERVER.UNBOXING.RUNTIME = BRICKS_SERVER.UNBOXING.RUNTIME or {}
+	BRICKS_SERVER.UNBOXING.RUNTIME.LiveOps = BRICKS_SERVER.UNBOXING.RUNTIME.LiveOps or { DropWeightHotfixes = {} }
+	BRICKS_SERVER.UNBOXING.RUNTIME.LiveOps.DropWeightHotfixes = BRICKS_SERVER.UNBOXING.RUNTIME.LiveOps.DropWeightHotfixes or {}
+
+	return BRICKS_SERVER.UNBOXING.RUNTIME.LiveOps
+end
+
+function BRICKS_SERVER.UNBOXING.Func.LogLiveOpsAudit( actorPly, action, payload )
+	local actor = IsValid( actorPly ) and actorPly:SteamID64() or "console"
+	local entry = {
+		Time = os.time(),
+		Actor = actor,
+		Action = tostring( action or "unknown" ),
+		Payload = payload or {}
+	}
+
+	file.Append( "bricks_server/unboxing_liveops_audit.jsonl", util.TableToJSON( entry ) .. "\n" )
+end
+
+function BRICKS_SERVER.UNBOXING.Func.GetDropWeightMultiplier( caseKey, itemGlobalKey )
+	local runtime = brsGetLiveOpsRuntime()
+	local caseHotfixes = runtime.DropWeightHotfixes[tostring( caseKey or "" )] or {}
+	local multiplier = tonumber( caseHotfixes[itemGlobalKey] ) or 1
+
+	local limits = (brsGetTopTierConfig().LiveOps or {}).HotfixWeightLimits or {}
+	local minM = tonumber( limits.Min ) or 0.1
+	local maxM = tonumber( limits.Max ) or 5
+
+	return math.Clamp( multiplier, minM, maxM )
+end
+
+function BRICKS_SERVER.UNBOXING.Func.ResolveDropWeight( caseKey, itemGlobalKey, baseWeight )
+	local resolved = math.max( 0, tonumber( baseWeight ) or 0 )
+	return resolved * BRICKS_SERVER.UNBOXING.Func.GetDropWeightMultiplier( caseKey, itemGlobalKey )
+end
+
+function BRICKS_SERVER.UNBOXING.Func.SetDropWeightHotfix( actorPly, caseKey, itemGlobalKey, multiplier, reason )
+	local runtime = brsGetLiveOpsRuntime()
+	local caseKeyStr = tostring( tonumber( caseKey ) or "" )
+	if( caseKeyStr == "" or not itemGlobalKey or itemGlobalKey == "" ) then return false end
+
+	runtime.DropWeightHotfixes[caseKeyStr] = runtime.DropWeightHotfixes[caseKeyStr] or {}
+	local oldValue = runtime.DropWeightHotfixes[caseKeyStr][itemGlobalKey]
+
+	if( not multiplier ) then
+		runtime.DropWeightHotfixes[caseKeyStr][itemGlobalKey] = nil
+		if( table.Count( runtime.DropWeightHotfixes[caseKeyStr] ) <= 0 ) then
+			runtime.DropWeightHotfixes[caseKeyStr] = nil
+		end
+	else
+		runtime.DropWeightHotfixes[caseKeyStr][itemGlobalKey] = tonumber( multiplier ) or 1
+	end
+
+	BRICKS_SERVER.UNBOXING.Func.LogLiveOpsAudit( actorPly, "drop_weight_hotfix", {
+		CaseKey = caseKeyStr,
+		Item = itemGlobalKey,
+		Before = oldValue,
+		After = runtime.DropWeightHotfixes[caseKeyStr] and runtime.DropWeightHotfixes[caseKeyStr][itemGlobalKey] or nil,
+		Reason = reason or "manual"
+	} )
+
+	return true
+end
+
+function BRICKS_SERVER.UNBOXING.Func.GetDropWeightHotfixes()
+	return brsGetLiveOpsRuntime().DropWeightHotfixes
+end
+
+function BRICKS_SERVER.UNBOXING.Func.GetSeasonState()
+	local topTier = brsGetTopTierConfig()
+	local liveOps = topTier.LiveOps or {}
+	local now = os.time()
+	local activeKey, activeSeason
+
+	for key, season in pairs( liveOps.Seasons or {} ) do
+		local startUnix = tonumber( season.StartUnix ) or 0
+		local endUnix = tonumber( season.EndUnix ) or 0
+		if( now >= startUnix and (endUnix <= 0 or now <= endUnix) ) then
+			activeKey = tostring( key )
+			activeSeason = season
+			break
+		end
+	end
+
+	if( not activeSeason and istable( liveOps.ActiveSeason ) ) then
+		local startUnix = tonumber( liveOps.ActiveSeason.StartUnix ) or 0
+		local endUnix = tonumber( liveOps.ActiveSeason.EndUnix ) or 0
+		if( now >= startUnix and (endUnix <= 0 or now <= endUnix) ) then
+			activeKey = "legacy_active"
+			activeSeason = liveOps.ActiveSeason
+		end
+	end
+
+	return {
+		Now = now,
+		SeasonKey = activeKey,
+		ActiveSeason = activeSeason,
+		LegacyVaultFamilies = liveOps.LegacyVaultFamilies or {},
+		Seasons = liveOps.Seasons or {}
+	}
+end
+
+function BRICKS_SERVER.UNBOXING.Func.GetCaseSeasonAvailability( caseKey, caseConfig )
+	local liveOps = (brsGetTopTierConfig().LiveOps or {})
+	if( not liveOps.SeasonModelEnabled ) then
+		return true, "always_on", nil
+	end
+
+	local resolvedCase = caseConfig or BRICKS_SERVER.CONFIG.UNBOXING.Cases[caseKey or 0] or {}
+	local caseFamily = BRICKS_SERVER.UNBOXING.Func.GetCaseFamily( caseKey, resolvedCase )
+	local seasonState = BRICKS_SERVER.UNBOXING.Func.GetSeasonState()
+	local activeSeason = seasonState.ActiveSeason
+	if( not activeSeason ) then
+		return false, "no_active_season", nil
+	end
+
+	local featuredFamilies = activeSeason.FeaturedFamilies or {}
+	if( featuredFamilies[caseFamily] ) then
+		return true, "featured", activeSeason
+	end
+
+	local legacyVault = seasonState.LegacyVaultFamilies or {}
+	if( legacyVault[caseFamily] ) then
+		return true, "legacy_vault", activeSeason
+	end
+
+	return false, "out_of_rotation", activeSeason
+end
+
 function BRICKS_SERVER.UNBOXING.Func.GetCaseFamily( caseKey, caseConfig )
 	local resolvedConfig = caseConfig or BRICKS_SERVER.CONFIG.UNBOXING.Cases[caseKey or 0] or {}
 
@@ -260,6 +390,9 @@ function BRICKS_SERVER.UNBOXING.Func.SendProgressState( ply, progressionDelta )
 	if( not IsValid( ply ) ) then return end
 
 	local state = BRICKS_SERVER.UNBOXING.Func.GetTopTierState( ply )
+	local seasonState = BRICKS_SERVER.UNBOXING.Func.GetSeasonState()
+	local pityCfg = (brsGetTopTierConfig().Pity or {})
+
 	net.Start( "BRS.Net.UnboxingProgressState" )
 		net.WriteTable( {
 			Fragments = state.Fragments,
@@ -269,6 +402,18 @@ function BRICKS_SERVER.UNBOXING.Func.SendProgressState( ply, progressionDelta )
 			Daily = state.Daily,
 			GangObjectives = state.GangObjectives,
 			HypeFeedMuted = state.HypeFeedMuted,
+			PityConfig = {
+				SoftPityStart = pityCfg.SoftPityStart,
+				HardPityCap = pityCfg.HardPityCap
+			},
+			Season = {
+				Key = seasonState.SeasonKey,
+				Data = seasonState.ActiveSeason,
+				Now = seasonState.Now
+			},
+			LiveOps = {
+				HotfixCaseCount = table.Count( BRICKS_SERVER.UNBOXING.Func.GetDropWeightHotfixes() )
+			},
 			Delta = progressionDelta or {}
 		} )
 	net.Send( ply )

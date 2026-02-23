@@ -189,6 +189,16 @@ local function caseOpen( ply, caseKey )
 		return false
 	end
 
+	local seasonAllowed, seasonReason = BRICKS_SERVER.UNBOXING.Func.GetCaseSeasonAvailability( caseKey, configItemTable )
+	if( not seasonAllowed ) then
+		local denyMsg = "This case is currently vaulted for this season."
+		if( seasonReason == "no_active_season" ) then
+			denyMsg = "No active case season right now."
+		end
+		BRICKS_SERVER.Func.SendTopNotification( ply, denyMsg, 3, BRICKS_SERVER.DEVCONFIG.BaseThemes.Red )
+		return false
+	end
+
 	local liveOpsConfig = ((BRICKS_SERVER.UNBOXING.LUACFG.TopTier or {}).LiveOps or {})
 	if( liveOpsConfig.KillSwitchEnabled ) then
 		local caseFamily = BRICKS_SERVER.UNBOXING.Func.GetCaseFamily( caseKey, configItemTable )
@@ -220,11 +230,6 @@ local function caseOpen( ply, caseKey )
 	local removedItem = ply:RemoveUnboxingInventoryItem( globalKey, 1 )
 
 	if( not removedItem ) then return false end
-
-	local totalChance = 0
-	for k, v in pairs( configItemTable.Items ) do
-		totalChance = totalChance+v[1]
-	end
 
 	local caseFamily = BRICKS_SERVER.UNBOXING.Func.GetCaseFamily( caseKey, configItemTable )
 	local pityConfig = (BRICKS_SERVER.UNBOXING.LUACFG.TopTier or {}).Pity or {}
@@ -258,7 +263,7 @@ local function caseOpen( ply, caseKey )
 
 	local totalChanceWeighted = 0
 	for itemGlobalKey, itemChanceTable in pairs( configItemTable.Items ) do
-		local itemChance = tonumber( (itemChanceTable or {})[1] ) or 0
+		local itemChance = BRICKS_SERVER.UNBOXING.Func.ResolveDropWeight( caseKey, itemGlobalKey, tonumber( (itemChanceTable or {})[1] ) or 0 )
 		local itemConfig = BRICKS_SERVER.UNBOXING.Func.GetItemFromGlobalKey( itemGlobalKey )
 		if( itemConfig and BRICKS_SERVER.UNBOXING.Func.IsApexRarity( itemConfig.Rarity ) ) then
 			itemChance = itemChance * pityMultiplier
@@ -272,7 +277,7 @@ local function caseOpen( ply, caseKey )
 		currentChance = 0
 
 		for k, v in pairs( configItemTable.Items ) do
-			local itemChance = tonumber( v[1] ) or 0
+			local itemChance = BRICKS_SERVER.UNBOXING.Func.ResolveDropWeight( caseKey, k, tonumber( v[1] ) or 0 )
 			local itemConfig = BRICKS_SERVER.UNBOXING.Func.GetItemFromGlobalKey( k )
 			if( itemConfig and BRICKS_SERVER.UNBOXING.Func.IsApexRarity( itemConfig.Rarity ) ) then
 				itemChance = itemChance * pityMultiplier
@@ -330,6 +335,8 @@ local function caseOpen( ply, caseKey )
 		Drop = winningItemKey,
 		PityBefore = pityBefore,
 		PityAfter = state.Pity[caseFamily],
+		Season = (BRICKS_SERVER.UNBOXING.Func.GetSeasonState() or {}).SeasonKey,
+		DropWeightHotfix = BRICKS_SERVER.UNBOXING.Func.GetDropWeightMultiplier( caseKey, winningItemKey ),
 		SessionLengthBucket = "0-15m",
 		Gang = false
 	} )
@@ -403,6 +410,12 @@ net.Receive( "BRS.Net.UnboxingOpenAll", function( len, ply )
 
 	if( not inventoryTable or not inventoryTable[globalKey] ) then return end
 
+	local seasonAllowed = BRICKS_SERVER.UNBOXING.Func.GetCaseSeasonAvailability( caseKey, configItemTable )
+	if( not seasonAllowed ) then
+		BRICKS_SERVER.Func.SendTopNotification( ply, "This case is currently vaulted for this season.", 3, BRICKS_SERVER.DEVCONFIG.BaseThemes.Red )
+		return
+	end
+
 	local openAmount = inventoryTable[globalKey]
 
 	if( configItemTable.Keys and table.Count( configItemTable.Keys ) > 0 ) then
@@ -437,15 +450,16 @@ net.Receive( "BRS.Net.UnboxingOpenAll", function( len, ply )
 	ply:RemoveUnboxingInventoryItem( globalKey, openAmount )
 
 	local totalChance = 0
-	for k, v in pairs( configItemTable.Items ) do
-		totalChance = totalChance+v[1]
+	for itemGlobalKey, chanceInfo in pairs( configItemTable.Items ) do
+		totalChance = totalChance + BRICKS_SERVER.UNBOXING.Func.ResolveDropWeight( caseKey, itemGlobalKey, (chanceInfo or {})[1] )
 	end
 
 	local itemsToGive = {}
 	for i = 1, openAmount do
 		local winningChance, currentChance = math.Rand( 0, 100 ), 0
 		for k, v in pairs( configItemTable.Items ) do
-			local actualChance = (v[1]/totalChance)*100
+			local resolvedWeight = BRICKS_SERVER.UNBOXING.Func.ResolveDropWeight( caseKey, k, v[1] )
+			local actualChance = (resolvedWeight/math.max( totalChance, 1))*100
 	
 			if( winningChance > currentChance and winningChance <= currentChance+actualChance ) then
 				itemsToGive[k] = (itemsToGive[k] or 0)+1
