@@ -848,7 +848,9 @@ function PANEL:OpenTradeRollSelector( globalKey, maxSelect, onConfirm )
         end
 
         row.OnChange = function( _, val )
-            if( val ) then
+            local isSelected = tobool( val )
+
+            if( isSelected ) then
                 selected[choice.BoosterID] = true
             else
                 selected[choice.BoosterID] = nil
