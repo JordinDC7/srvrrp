@@ -197,7 +197,8 @@ function PANEL:FillPanel()
         surface.SetFont("BRICKS_SERVER_Font17")
         for i = #rarityOrder, 1, -1 do
             local rarityName = rarityOrder[i]
-            local rarityColor = BRICKS_SERVER.Func.GetRarityColor(rarityName) or BRICKS_SERVER.Func.GetTheme(5)
+            local rarityInfo = BRICKS_SERVER.Func.GetRarityInfo(rarityName)
+            local rarityColor = BRICKS_SERVER.Func.GetRarityColor(rarityInfo) or BRICKS_SERVER.Func.GetTheme(5)
             local tw = surface.GetTextSize(rarityName)
             local pillW = tw + 20
             startX = startX - pillW
