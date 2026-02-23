@@ -129,9 +129,9 @@ zbf.config.Controller = {
 	// This really just applys to looping jobs and doesent impact any other form of moving money to the controller (StealAttack)
 	// NOTE If you need something more dynamic, look at sh_zbf_hooks.lua > zbf_Controller_GetWalletSize
 	wallet_size = {
-		["default"]  = 50000,
-		["VIP"]  = 250000,
-		["superadmin"]  = 500000,
+		["default"]  = 30000,
+		["VIP"]  = 120000,
+		["superadmin"]  = 220000,
 	},
 
 	// How many bots can the player purchase?
@@ -179,8 +179,8 @@ zbf.config.Controller = {
 
 		// How much money / crypto can the player find
 		// NOTE The money will be giving to the player in form of random crypto currencies
-		max_money = 5000,
-		min_money = 1000,
+		max_money = 3500,
+		min_money = 600,
 	},
 
 	// Defines how often the player can be offered a new job to compute
@@ -194,7 +194,7 @@ zbf.config.Controller = {
 
 	// How much money does the player get back when selling his bots?
 	// NOTE Setting this to 0 will disable the Bot Sell function
-	sell_refund = 0.7, // 70%
+	sell_refund = 0.6, // 60%
 
 	// If set to true then the players wont be able to buy the bots from the controller bot shop
 	disable_shop = false,
@@ -268,7 +268,7 @@ zbf.config.Crypto = {
 
 	// This will be the default money mining amount a player will get, its directly connected to the mining jobs created at the bottom of sh_zbf_job_config_legal.lua
 	// In short, every 1000 ticks the player will get 100$ in the crypto currency he is mining. How fast he produces those ticks depends on his setup.
-	MoneyPerCycle = 1000,
+	MoneyPerCycle = 700,
                                                                                                                                                                                                                                                                                                                                                                                                                                                        -- 82f8890a7cf2ce669fa8ca3efd33c093292b7b1cbbcbb6ebcdbdfdd991817a2a
 
 	// This command will opens the players currency inventory which gets saved on the server

@@ -203,7 +203,7 @@ GM.Config.decaltimer                    = 120
 -- demotetime - Number of seconds before a player can rejoin a team after demotion from that team.
 GM.Config.demotetime                    = 120
 -- doorcost - Sets the cost of a door.
-GM.Config.doorcost                      = 30
+GM.Config.doorcost                      = 150
 -- entremovedelay - how long to wait before removing a bought entity after disconnect.
 GM.Config.entremovedelay                = 0
 -- gunlabweapon - The weapon that the gunlab spawns.
@@ -231,35 +231,35 @@ GM.Config.maxlawboards                  = 2
 -- maxletters - Sets max letters.
 GM.Config.maxletters                    = 10
 -- maxlotterycost - Maximum payment the mayor can set to join a lottery.
-GM.Config.maxlotterycost                = 250
+GM.Config.maxlotterycost                = 5000
 -- maxvehicles - Sets how many vehicles one can buy.
 GM.Config.maxvehicles                   = 5
 -- microwavefoodcost - Sets the sale price of Microwave Food.
-GM.Config.microwavefoodcost             = 30
+GM.Config.microwavefoodcost             = 75
 -- gunlabguncost - Sets the initial price of a gun from a gunlab. Note that the
 -- gunlab owner can change this price.
-GM.Config.gunlabguncost                 = 200
+GM.Config.gunlabguncost                 = 900
 -- druglabdrugcost - Sets the initial price of drugs from a drugs lab. Note that
 -- the drugs lab owner can change this price.
-GM.Config.druglabdrugcost               = 100
+GM.Config.druglabdrugcost               = 500
 -- minlotterycost - Minimum payment the mayor can set to join a lottery.
-GM.Config.minlotterycost                = 30
+GM.Config.minlotterycost                = 250
 -- Money packets will get removed if they don't get picked up after a while. Set to 0 to disable.
 GM.Config.moneyRemoveTime               = 600
 -- mprintamount - Value of the money printed by the money printer.
-GM.Config.mprintamount                  = 250
+GM.Config.mprintamount                  = 140
 -- normalsalary - Sets the starting salary for newly joined players.
-GM.Config.normalsalary                  = 45
+GM.Config.normalsalary                  = 65
 -- npckillpay - Sets the money given for each NPC kill.
-GM.Config.npckillpay                    = 10
+GM.Config.npckillpay                    = 25
 -- paydelay - Sets how long it takes before people get salary.
-GM.Config.paydelay                      = 160
+GM.Config.paydelay                      = 140
 -- pocketitems - Sets the amount of objects the pocket can carry.
 GM.Config.pocketitems                   = 10
 -- pricecap - The maximum price of items (using /price).
-GM.Config.pricecap                      = 500
+GM.Config.pricecap                      = 3500
 -- pricemin - The minimum price of items (using /price).
-GM.Config.pricemin                      = 50
+GM.Config.pricemin                      = 100
 -- propcost - How much prop spawning should cost (prop paying must be enabled for this to have an effect).
 GM.Config.propcost                      = 10
 -- quakechance - Chance of an earthquake happening.
@@ -281,13 +281,13 @@ GM.Config.shipmentspawntime             = 10
 -- startinghealth - the health when you spawn.
 GM.Config.startinghealth                = 100
 -- startingmoney - your wallet when you join for the first time.
-GM.Config.startingmoney                 = 2000000
+GM.Config.startingmoney                 = 15000
 -- stunstickdamage - amount of damage the stunstick will do to entities.
 -- When between 0 and 1, the damage is relative, where 1 takes the entire health of the entity.
 -- When above 1, the damage is absolute
 GM.Config.stunstickdamage               = 1000
 -- vehiclecost - Sets the cost of a vehicle (To own it).
-GM.Config.vehiclecost                   = 40
+GM.Config.vehiclecost                   = 250
 -- wallettaxmax - Maximum percentage of tax to be paid.
 GM.Config.wallettaxmax                  = 5
 -- wallettaxmin - Minimum percentage of tax to be paid.
@@ -305,7 +305,7 @@ GM.Config.falldamageamount              = 10
 -- printeroverheatchance - The likelyhood of a printer overheating. The higher this number, the less likely (minimum 3, default 22).
 GM.Config.printeroverheatchance         = 22
 -- printerreward - Reward for destroying a money printer.
-GM.Config.printerreward                 = 950
+GM.Config.printerreward                 = 450
 
 --[[---------------------------------------------------------------------------
 Chat distance settings

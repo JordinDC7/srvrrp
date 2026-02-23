@@ -33,7 +33,7 @@ sPrinter.config["max_printer_bag"] = { --- This is the max printers the printer 
     ["superadmin"] = 5
 }
 
-sPrinter.config["rack_repair_price"] = 12000
+sPrinter.config["rack_repair_price"] = 15000
 
 sPrinter.config["DarkRPFireSystem_Spawn_Flame_On_Explode"] = true --- This will spawn a flame if you have the darkrp fire system and this is enabled!
 
@@ -105,7 +105,7 @@ hook.Add("loadCustomDarkRPItems", "sP:LoadEnts", function()
         ["godmode"] = true, -- Should we godmode the printer rack?
         ["water_affect"] = 2, -- 0 = Ignore, 1 = Blow up & 2 = Eject
 
-        ["price"] = 20000, --- This is the price of the rack in the DarkRP Entities
+        ["price"] = 28000, --- This is the price of the rack in the DarkRP Entities
         ["max"] = 1,
         ["min_recharge"] = .8, --- If printers are below this percentage it will recharge them if done through the rack, 0.8 is default and is equal to 80%.
         // ["category"] = "Printers",
@@ -120,12 +120,12 @@ hook.Add("loadCustomDarkRPItems", "sP:LoadEnts", function()
     sPrinter.config.printers["Tier 1"] = {
         bodycolor = Color(174,174,174),
         clockspeed = 3.4,
-        baseincome = 40,
-        maxstorage = 200000,
+        baseincome = 32,
+        maxstorage = 140000,
         sortorder = 1,
         batteryconsumption = .3, --- This is how many percent it will take per 10 seconds
-        rechargeprice = 2000,
-        repairprice = 2000,
+        rechargeprice = 2400,
+        repairprice = 2300,
         // category = "Example",
         // cantwithdrawjobs = {["Citizen"] = true},
         // withdrawjobswhitelist = true,
@@ -133,7 +133,7 @@ hook.Add("loadCustomDarkRPItems", "sP:LoadEnts", function()
         reward = .4, --- This is how much of the cost that the person to destroy the printer will earn, based on the price of the printer!
         // countUpgradesToReward = true, --- This will make the upgrades count into the reward amount!
         dmgresistance = 1, --- This is the damage multiplier the printer receive
-        price = 4000, --- This is the cost of buying the printer in the entities list!
+        price = 7000, --- This is the cost of buying the printer in the entities list!
         max = 3,
         upgrades = {
             {upgrade = "overclocking", baseprice = 2000, max = 10, icon = Material("sprinter/overclock.png", "smooth")}, --- You can enforce pricing for each upgrade level like this ([upgrade_stage] = price) : , enforced_pricing = {[1] = 200, [2] = 400}
@@ -147,16 +147,16 @@ hook.Add("loadCustomDarkRPItems", "sP:LoadEnts", function()
     sPrinter.config.printers["Tier 2"] = {
         bodycolor = Color(0,188,178),
         clockspeed = 3.7,
-        baseincome = 50,
-        maxstorage = 400000,
+        baseincome = 39,
+        maxstorage = 250000,
         sortorder = 2,
         batteryconsumption = .28,
-        rechargeprice = 3000,
-        repairprice = 2000,
+        rechargeprice = 3200,
+        repairprice = 2300,
         water_affect = 1,
         reward = .4,
         dmgresistance = .9,
-        price = 5000,
+        price = 9500,
         max = 2,
         upgrades = {
             {upgrade = "overclocking", baseprice = 2000, max = 10, icon = Material("sprinter/overclock.png", "smooth")},
@@ -169,16 +169,16 @@ hook.Add("loadCustomDarkRPItems", "sP:LoadEnts", function()
     sPrinter.config.printers["Tier 3"] = {
         bodycolor = Color(94,188,0),
         clockspeed = 4.1,
-        baseincome = 60,
-        maxstorage = 600000,
+        baseincome = 48,
+        maxstorage = 350000,
         sortorder = 3,
         batteryconsumption = .26,
-        rechargeprice = 4000,
-        repairprice = 2000,
+        rechargeprice = 4200,
+        repairprice = 2300,
         water_affect = 1,
         reward = .4,
         dmgresistance = .8,
-        price = 7000,
+        price = 13500,
         max = 2,
         upgrades = {
             {upgrade = "overclocking", baseprice = 2000, max = 10, icon = Material("sprinter/overclock.png", "smooth")},
@@ -191,12 +191,12 @@ hook.Add("loadCustomDarkRPItems", "sP:LoadEnts", function()
     sPrinter.config.printers["Tier 4"] = {
         bodycolor = Color(188,188,0),
         clockspeed = 4.6,
-        baseincome = 70,
-        maxstorage = 800000,
+        baseincome = 55,
+        maxstorage = 480000,
         // sortorder = 4,
         batteryconsumption = .26,
-        rechargeprice = 5000,
-        repairprice = 2000,
+        rechargeprice = 5600,
+        repairprice = 2300,
         water_affect = 1,
         reward = .4,
         // basevolume = 0.5, -- This is the base volume the printer makes, do not make it above 1 - each upgrade remove .1 from the basevolume. Example: basevolume as 0.5 will make it completely quiet if you have max 5 noise reduction upgrades.
@@ -206,7 +206,7 @@ hook.Add("loadCustomDarkRPItems", "sP:LoadEnts", function()
         // xpmultiplier = .3, -- This is the amount of xp you will receive from withdrawing money - amount * multiplier
         // ignoretemperature = true,
         dmgresistance = .8,
-        price = 12000,
+        price = 20000,
         usergroup = {
     ["user"] = true,
     ["vip"] = true,
