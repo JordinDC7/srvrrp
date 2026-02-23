@@ -25,6 +25,10 @@ end
 local function BRS_UC_ResolveColor(col, fallback)
     if IsColor(col) then return col end
 
+    if istable(col) and isnumber(col.r) and isnumber(col.g) and isnumber(col.b) then
+        return Color(col.r, col.g, col.b, col.a or 255)
+    end
+
     if isnumber(col) then
         local themed = BRICKS_SERVER and BRICKS_SERVER.Func and BRICKS_SERVER.Func.GetTheme and BRICKS_SERVER.Func.GetTheme(col)
         if IsColor(themed) then
@@ -36,18 +40,38 @@ local function BRS_UC_ResolveColor(col, fallback)
     return Color(255, 255, 255)
 end
 
-local function BRS_UC_DrawTopPill(x, y, h, text, bgCol, txtCol, font, maxPillW)
-    text = tostring(text or "")
+local function BRS_UC_NormalizePillContent(content)
+    if isfunction(content) then
+        local ok, resolved = pcall(content)
+        if ok then
+            content = resolved
+        else
+            content = ""
+        end
+    end
+
+    return content
+end
+
+local function BRS_UC_DrawTopPill(x, y, h, content, bgCol, txtCol, font, maxPillW)
     font = font or "BRICKS_SERVER_Font15"
+    content = BRS_UC_NormalizePillContent(content)
 
     local innerPad = 8
     local minPillW = 28
     local textMaxW = math.max(1, (maxPillW or 120) - (innerPad * 2))
 
-    local fitted = BRS_UC_FitText(font, text, textMaxW)
+    local isIcon = ismaterial and ismaterial(content)
+    local fitted = ""
+    local tw = 0
 
-    surface.SetFont(font)
-    local tw = surface.GetTextSize(fitted)
+    if isIcon then
+        tw = math.max(1, h - 6)
+    else
+        fitted = BRS_UC_FitText(font, tostring(content or ""), textMaxW)
+        surface.SetFont(font)
+        tw = surface.GetTextSize(fitted)
+    end
 
     local pillW = math.Clamp(tw + (innerPad * 2), minPillW, maxPillW or 120)
 
@@ -55,7 +79,14 @@ local function BRS_UC_DrawTopPill(x, y, h, text, bgCol, txtCol, font, maxPillW)
     local pillTxtCol = BRS_UC_ResolveColor(txtCol, BRICKS_SERVER.Func.GetTheme(6))
 
     draw.RoundedBox(6, x, y, pillW, h, pillBgCol)
-    draw.SimpleText(fitted, font, x + pillW / 2, y + h / 2, pillTxtCol, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+    if isIcon then
+        surface.SetMaterial(content)
+        surface.SetDrawColor(pillTxtCol)
+        local size = math.max(1, h - 6)
+        surface.DrawTexturedRect(x + ((pillW - size) / 2), y + ((h - size) / 2), size, size)
+    else
+        draw.SimpleText(fitted, font, x + pillW / 2, y + h / 2, pillTxtCol, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+    end
 
     return pillW
 end
@@ -166,7 +197,7 @@ function PANEL:AddTopInfo(text, bgColor, textColor, prioritizeLeft)
     self.topInfo = self.topInfo or {}
 
     table.insert(self.topInfo, {
-        text = tostring(text or ""),
+        text = text,
         bg = bgColor or BRICKS_SERVER.Func.GetTheme(1),
         fg = textColor or BRICKS_SERVER.Func.GetTheme(6),
         left = prioritizeLeft and true or false
@@ -281,10 +312,18 @@ function PANEL:Paint(w, h)
 
             local thisMax = math.min(maxPillW, remaining)
 
-            surface.SetFont(pillFont)
+            local content = BRS_UC_NormalizePillContent(info.text)
+            local tw
+            if ismaterial and ismaterial(content) then
+                tw = math.max(1, pillH - 6)
+            else
+                surface.SetFont(pillFont)
+                local pad = 8
+                local fitted = BRS_UC_FitText(pillFont, tostring(content or ""), math.max(1, thisMax - (pad * 2)))
+                tw = surface.GetTextSize(fitted)
+            end
+
             local pad = 8
-            local fitted = BRS_UC_FitText(pillFont, tostring(info.text or ""), math.max(1, thisMax - (pad * 2)))
-            local tw = surface.GetTextSize(fitted)
             local pw = math.Clamp(tw + (pad * 2), 28, thisMax)
 
             rightX = rightX - pw
