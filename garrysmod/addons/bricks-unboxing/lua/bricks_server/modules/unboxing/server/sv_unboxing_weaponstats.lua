@@ -27,7 +27,6 @@ hook.Add( "EntityFireBullets", "BricksServerHooks_EntityFireBullets_UnboxingStat
     nextFireDelay = math.max( nextFireDelay, 0 )
     wep:SetNextPrimaryFire( CurTime()+(nextFireDelay*(tonumber( statScalars.HandlingFireDelayScale ) or 1)) )
 
-    return true
 end )
 
 hook.Add( "EntityTakeDamage", "BricksServerHooks_EntityTakeDamage_UnboxingStatTrak", function( target, dmgInfo )

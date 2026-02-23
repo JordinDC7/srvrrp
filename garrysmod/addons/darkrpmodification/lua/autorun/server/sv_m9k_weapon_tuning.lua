@@ -106,6 +106,4 @@ hook.Add("EntityFireBullets", "SrvRRP.M9K.MuzzleBulletSource", function(entity, 
 
     data.Src = attachment.Pos
     data.Dir = direction:GetNormalized()
-
-    return true
 end)
