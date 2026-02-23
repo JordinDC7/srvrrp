@@ -20,7 +20,7 @@ XeninInventory.Config.PickUpWithALT = true
 -- https://wiki.facepunch.com/gmod/Enums/KEY
 XeninInventory.Config.ModifierKey = KEY_LALT
 -- How should it be displayed?
-XeninInventory.Config.ModifierKeyStr = "ALT"
+XeninInventory.Config.ModifierKeyStr = "ALT" -- [MEGA UPDATE PATCH] Kept explicit for onboarding prompts.
 
 -- What key should be used in combination with alt?
 -- https://wiki.facepunch.com/gmod/Enums/KEY
@@ -74,10 +74,10 @@ XeninInventory.Config.BankSlots = {
 }
 
 -- Same as above but for the inventory itself, not the bank
-XeninInventory.Config.ItemsPerRow = 8
+XeninInventory.Config.ItemsPerRow = 7
 -- Same as above but for the inventory itself, not the bank
 XeninInventory.Config.Slots = {
-  Free = 24,
+  Free = 28,
   Paid = {
     ["admin"] = 30,
     ["superadmin"] = 36
@@ -154,7 +154,7 @@ XeninInventory.Config.HolsterTime = {
 XeninInventory.Config.ContextMenuDisabled = false
 
 -- How many items on each row in the C menu?
-XeninInventory.Config.ContextMenuColumns = 6
+XeninInventory.Config.ContextMenuColumns = 5
 
 -- If you want a specific entity class to be a rarity.
 -- Thanks to Rexxor for the default config

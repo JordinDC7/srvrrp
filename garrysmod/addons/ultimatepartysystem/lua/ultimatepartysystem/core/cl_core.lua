@@ -67,7 +67,8 @@ net.Receive("ultimatepartysystem.core.invited", function()
         timeout = CurTime() + UltimatePartySystem.Settings.GetValue("inviteTimeOut")
     }
 end)
-timer.Create("ultimatepartysystem.core.invitetimeout", 0.5, 0, function() -- think hook? fucking cringe.
+-- [MEGA UPDATE PATCH] Keep invite timeout loop cheap/safe and avoid nil name errors.
+timer.Create("ultimatepartysystem.core.invitetimeout", 1, 0, function()
     for k,v in pairs(UltimatePartySystem.Invites) do
         if(v.timeout > CurTime()) then continue end
 
@@ -76,8 +77,8 @@ timer.Create("ultimatepartysystem.core.invitetimeout", 0.5, 0, function() -- thi
         net.WriteString(k)
         net.SendToServer()
 
-        ownerName = player.GetBySteamID64(k):Name()
-        if(!ownerName) then continue end
+        local ownerPly = player.GetBySteamID64(k)
+        local ownerName = IsValid(ownerPly) and ownerPly:Name() or "Party Owner"
         UltimatePartySystem.Core.Message(UltimatePartySystem.Core.GetLanguage("partyInviteTimeout", ownerName))
     end
 end)

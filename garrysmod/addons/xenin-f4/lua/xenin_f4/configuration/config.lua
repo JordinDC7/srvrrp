@@ -33,7 +33,21 @@ cfg:SetLanguage("english")
 -- Or it can be a function
 -- e.g. function() return "Xenin F4 - " .. LocalPlayer():getDarkRPVar("money") end
 -- A function will refresh every 10 seconds, so you can have things that change
-cfg:SetTitle("Xenin F4")
+-- [MEGA UPDATE PATCH] Branding + live money context.
+cfg:SetTitle(function()
+	local money = 0
+	if IsValid(LocalPlayer()) then
+		money = LocalPlayer():getDarkRPVar("money") or 0
+	end
+
+	if DarkRP and DarkRP.formatMoney then
+		money = DarkRP.formatMoney(money)
+	else
+		money = "$" .. tostring(money)
+	end
+
+	return "SRVRRP • Control Panel • " .. money
+end)
 
 -- Lets set the amount of columns per row for jobs & items
 cfg:SetColumnsPerRow(1)
@@ -48,7 +62,7 @@ cfg:SetDefaultJobSequence("pose_standing_02")
 -- Should models be rendered in real time? 
 -- If you have a ton of things in your F4 I recommend you changing this to false, it helps with performance a lot
 -- It does look worse, and not every model might have an icon (it's the models fault)
-cfg:SetRealtimeModelsEnabled(true)
+cfg:SetRealtimeModelsEnabled(false)
 
 -- Should models be hidden? If true it'll hide no matter if realtime or not models.
 cfg:SetHideModels(false)
@@ -198,7 +212,9 @@ cfg:SetActiveTab("Dashboard")
 -- 	return 0.67, 0.7
 -- end)
 --
-cfg:SetResolution(1280, 750)
+cfg:SetResolution(function()
+	return 0.84, 0.82
+end)
 
 -- Add custom commands easily. 
 -- Advanced custom commands beyond just a simple chat command can be added in commands.lua with Lua knowledge
@@ -288,7 +304,7 @@ cfg:AddWebsite({
 -- If you have Xenin Inventory you can set enabled to true
 -- You don't need panel for these
 cfg:SetXeninInventory({
-	enabled = false,
+	enabled = true,
 	name = "Inventory",
 	desc = "Store your things",
 	icon = "iCAiL7W"
@@ -314,7 +330,7 @@ cfg:SetXeninCoinflips({
 
 -- If you have Xenin Deathscreen you can enable this
 cfg:SetXeninDeathscreen({
-	enabled = false,
+	enabled = true,
 	name = "Deathscreen",
 	desc = "Buy & equip cards",
 	icon = "eQg85qn"

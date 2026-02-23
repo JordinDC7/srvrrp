@@ -7,6 +7,7 @@ More info & source code can be found at: https://gitlab.com/sleeppyy/laux
 
 local PANEL = {}
 
+-- [MEGA UPDATE PATCH] Cache frequently used phrases and keep consistent typography.
 XeninUI:CreateFont("XeninInventory.XeninInventory.Filter", 18)
 XeninUI:CreateFont("XeninInventory.XeninInventory.Helper", 18)
 
@@ -14,6 +15,13 @@ function PANEL:Init()
   local ply = LocalPlayer()
 
   self.inventory = self:GetInventory()
+
+  self._phrases = {
+    unsorted = XeninInventory:GetPhrase("XeninInventory.XeninInventory.Unsorted"),
+    alpha = XeninInventory:GetPhrase("XeninInventory.XeninInventory.Alphabetically"),
+    worst = XeninInventory:GetPhrase("XeninInventory.XeninInventory.WorstToBest"),
+    best = XeninInventory:GetPhrase("XeninInventory.XeninInventory.BestToWorst")
+  }
 
   self.search = self:Add("XeninUI.TextEntry")
   self.search:SetPlaceholder(XeninInventory:GetPhrase("XeninInventory.XeninInventory.Search"))
@@ -24,7 +32,7 @@ function PANEL:Init()
   end
 
   self.sort = self:Add("DButton")
-  self.sort:SetText(XeninInventory:GetPhrase("XeninInventory.XeninInventory.Unsorted"))
+  self.sort:SetText(self._phrases.unsorted)
   self.sort:SetFont("XeninInventory.XeninInventory.Filter")
   self.sort:SetTextColor(Color(190, 190, 190))
   self.sort:SetContentAlignment(5)
@@ -44,11 +52,11 @@ function PANEL:Init()
     local panel = XeninUI:DropdownPopup(pnl:LocalToScreen(-12, -12 + pnl:GetTall()))
     panel:SetBackgroundColor(XeninUI.Theme.Navbar)
     panel:SetTextColor(Color(185, 185, 185))
-    panel:AddChoice(XeninInventory:GetPhrase("XeninInventory.XeninInventory.Unsorted"), func, nil, hoverColor)
-    panel:AddChoice(XeninInventory:GetPhrase("XeninInventory.XeninInventory.Alphabetically"), func, nil, hoverColor)
+    panel:AddChoice(self._phrases.unsorted, func, nil, hoverColor)
+    panel:AddChoice(self._phrases.alpha, func, nil, hoverColor)
     if XeninInventory.Config.EnableRaritySorting then
-      panel:AddChoice(XeninInventory:GetPhrase("XeninInventory.XeninInventory.WorstToBest"), func, nil, hoverColor)
-      panel:AddChoice(XeninInventory:GetPhrase("XeninInventory.XeninInventory.BestToWorst"), func, nil, hoverColor)
+      panel:AddChoice(self._phrases.worst, func, nil, hoverColor)
+      panel:AddChoice(self._phrases.best, func, nil, hoverColor)
     end
   end
 
@@ -110,7 +118,7 @@ function PANEL:Sort()
   sorted = self:SortByFilter(sorted)
   sorted = self:SortByName(sorted)
 
-  self.slots:CreateFields(sorted, self.sort:GetText() == XeninInventory:GetPhrase("XeninInventory.XeninInventory.Unsorted") and #self.search:GetText() == 0 and table.Count(cats) == #self.cats)
+  self.slots:CreateFields(sorted, self.sort:GetText() == self._phrases.unsorted and #self.search:GetText() == 0 and table.Count(cats) == #self.cats)
   self:InvalidateLayout()
 end
 
@@ -122,7 +130,7 @@ function PANEL:SortByCategories(tbl)
     if v.enabled then enabledCategories[v.realIndex] = true end
   end
 
-  if (self.sort:GetText() != XeninInventory:GetPhrase("XeninInventory.XeninInventory.Unsorted")) then
+  if (self.sort:GetText() != self._phrases.unsorted) then
     for i, v in pairs(tbl) do
       local rarity = XeninInventory:GetRarity(v)
       if (!enabledCategories[rarity]) then continue end
@@ -144,21 +152,21 @@ end
 function PANEL:SortByFilter(tbl)
   local filteredText = self.sort:GetText()
 
-  if (filteredText == XeninInventory:GetPhrase("XeninInventory.XeninInventory.Unsorted")) then
+  if (filteredText == self._phrases.unsorted) then
     return tbl
-  elseif (filteredText == XeninInventory:GetPhrase("XeninInventory.XeninInventory.WorstToBest")) then
+  elseif (filteredText == self._phrases.worst) then
     table.sort(tbl, function(a, b)
       return XeninInventory:GetRarity(a) < XeninInventory:GetRarity(b)
     end)
 
     return tbl
-  elseif (filteredText == XeninInventory:GetPhrase("XeninInventory.XeninInventory.BestToWorst")) then
+  elseif (filteredText == self._phrases.best) then
     table.sort(tbl, function(a, b)
       return XeninInventory:GetRarity(a) > XeninInventory:GetRarity(b)
     end)
 
     return tbl
-  elseif (filteredText == XeninInventory:GetPhrase("XeninInventory.XeninInventory.Alphabetically")) then
+  elseif (filteredText == self._phrases.alpha) then
     table.sort(tbl, function(a, b)
       local aName = XeninInventory:GetItem(a.dropEnt):GetName(a)
       local bName = XeninInventory:GetItem(b.dropEnt):GetName(b)
@@ -202,26 +210,37 @@ function PANEL:GetInventory()
 end
 
 function PANEL:PerformLayout(w, h)
-  self.search:SetSize(200, 32)
-  self.search:SetPos(16, 16)
+  -- [MEGA UPDATE PATCH] Responsive controls to reduce clipping on lower resolutions.
+  local horizontalPadding = 16
+  local topY = 16
+  local searchW = math.Clamp(w * 0.26, 170, 280)
 
-  self.sort:SizeToContentsX(32)
-  self.sort:SetTall(32)
-  self.sort:SetPos(16 + self.search:GetWide() + 8, 16)
+  self.search:SetSize(searchW, 34)
+  self.search:SetPos(horizontalPadding, topY)
 
-  self.slots:SetPos(16, 64)
-  self.slots:SetSize(w - 32, h - self.slots.y - 16)
+  self.sort:SizeToContentsX(30)
+  self.sort:SetTall(34)
+  self.sort:SetPos(horizontalPadding + self.search:GetWide() + 8, topY)
 
-  local x = w - 0
-  local y = 16
+  self.slots:SetPos(horizontalPadding, 64)
+  self.slots:SetSize(w - (horizontalPadding * 2), h - self.slots.y - 16)
+
+  local x = w
+  local y = topY
   surface.SetFont("XeninInventory.XeninInventory.Helper")
   for i, v in ipairs(self.cats) do
     local tw = surface.GetTextSize(v.name)
     v:SetTall(24)
     v:SetWide(v:GetTall() + 16 + tw)
-    v:SetPos(x - 16 - v:GetWide(), y + 4)
 
-    x = x - 12 - v:GetWide()
+    local nextX = x - 16 - v:GetWide()
+    if nextX <= self.sort.x + self.sort:GetWide() + 8 then
+      v:SetVisible(false)
+    else
+      v:SetVisible(true)
+      v:SetPos(nextX, y + 4)
+      x = x - 12 - v:GetWide()
+    end
   end
 end
 

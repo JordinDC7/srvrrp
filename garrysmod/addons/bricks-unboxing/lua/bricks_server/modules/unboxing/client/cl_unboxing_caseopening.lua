@@ -1,4 +1,8 @@
+-- [MEGA UPDATE PATCH] Minor UX + performance polish for case placement flow.
 local weaponsSwitch = { "keys", "weapon_physcannon", "weapon_physgun" }
+local canPlaceColor = Color(255, 255, 255, 175)
+local blockedPlaceColor = Color(255, 100, 100, 175)
+local lastTracePos = nil
 function BRICKS_SERVER.UNBOXING.Func.StartPlacingCase( caseKey )
     local caseTable = BRICKS_SERVER.CONFIG.UNBOXING.Cases[caseKey]
 
@@ -56,7 +60,11 @@ hook.Add( "Think", "BricksServerHooks_Think_CaseOpening", function()
         return
     end
 
-    BRICKS_SERVER.TEMP.CaseModel:SetPos( ply:GetEyeTrace().HitPos )
+    local tr = ply:GetEyeTrace()
+    if tr.HitPos and (not lastTracePos or lastTracePos:DistToSqr(tr.HitPos) > 1) then
+        BRICKS_SERVER.TEMP.CaseModel:SetPos( tr.HitPos )
+        lastTracePos = tr.HitPos
+    end
 
     local canPlace = true
     if( ply:GetPos():DistToSqr( BRICKS_SERVER.TEMP.CaseModel:GetPos() ) > 10000 ) then
@@ -64,9 +72,9 @@ hook.Add( "Think", "BricksServerHooks_Think_CaseOpening", function()
     end
 
     if( canPlace ) then
-        BRICKS_SERVER.TEMP.CaseModel:SetColor( Color( 255, 255, 255, 175 ) )
+        BRICKS_SERVER.TEMP.CaseModel:SetColor( canPlaceColor )
     else
-        BRICKS_SERVER.TEMP.CaseModel:SetColor( Color( 255, 100, 100, 175 ) )
+        BRICKS_SERVER.TEMP.CaseModel:SetColor( blockedPlaceColor )
     end
 end )
 
@@ -114,8 +122,8 @@ hook.Add( "HUDPaint", "BricksServerHooks_HUDPaint_CaseOpening", function()
     draw.RoundedBoxEx( 8, boxX, boxY, boxW, boxHeaderH, BRICKS_SERVER.Func.GetTheme( 2 ), true, true, false, false )
     draw.SimpleText( text, "BRICKS_SERVER_Font30", boxX+(boxW/2), boxY+(boxHeaderH/2), BRICKS_SERVER.Func.GetTheme( 6 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
 
-    draw.SimpleText( BRICKS_SERVER.Func.L( "unboxingPlaceCase" ), "BRICKS_SERVER_Font23", boxX+(boxW/2), boxY+boxHeaderH+5+(controlH/2)+2, BRICKS_SERVER.Func.GetTheme( 6 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
-    draw.SimpleText( BRICKS_SERVER.Func.L( "unboxingPlaceCaseCancel" ), "BRICKS_SERVER_Font23", boxX+(boxW/2), boxY+boxHeaderH+5+controlH+(controlH/2)-2, BRICKS_SERVER.Func.GetTheme( 6 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+    draw.SimpleText( BRICKS_SERVER.Func.L( "unboxingPlaceCase" ) .. " [LMB]", "BRICKS_SERVER_Font23", boxX+(boxW/2), boxY+boxHeaderH+5+(controlH/2)+2, BRICKS_SERVER.Func.GetTheme( 6 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+    draw.SimpleText( BRICKS_SERVER.Func.L( "unboxingPlaceCaseCancel" ) .. " [RMB]", "BRICKS_SERVER_Font23", boxX+(boxW/2), boxY+boxHeaderH+5+controlH+(controlH/2)-2, BRICKS_SERVER.Func.GetTheme( 6 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
 end )
 
 BRICKS_SERVER.TEMP.UnboxRewardEnts = BRICKS_SERVER.TEMP.UnboxRewardEnts or {}
