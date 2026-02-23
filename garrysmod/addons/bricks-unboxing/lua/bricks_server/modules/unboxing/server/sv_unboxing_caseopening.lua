@@ -68,6 +68,11 @@ end
 local function brsUnboxingStoreStatTrakRoll( ply, globalKey, rollData )
 	if( not IsValid( ply ) or not globalKey or not istable( rollData ) ) then return end
 
+	rollData.UUID = rollData.UUID or util.CRC( tostring( globalKey ) .. ":" .. tostring( rollData.Created or os.time() ) .. ":" .. tostring( math.random( 1, 999999 ) ) )
+	rollData.BoosterID = rollData.BoosterID or BRICKS_SERVER.UNBOXING.Func.BuildStatTrakBoosterID( globalKey, rollData )
+	rollData.UnboxedBy = rollData.UnboxedBy or ply:Nick()
+	rollData.UnboxedBySteamID64 = rollData.UnboxedBySteamID64 or ply:SteamID64()
+
 	local inventoryDataTable = ply:GetUnboxingInventoryData()
 	inventoryDataTable[globalKey] = inventoryDataTable[globalKey] or {}
 	local currentStatTrak = inventoryDataTable[globalKey].StatTrak or {}
