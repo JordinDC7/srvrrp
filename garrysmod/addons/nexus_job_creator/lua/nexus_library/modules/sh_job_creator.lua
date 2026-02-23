@@ -75,6 +75,7 @@ Nexus:AddLanguages("Nexus_JobCreator", "en", {
     ["$/MB"] = "%s / MB",
     ["Maximum Size MB"] = "max MB of %s",
     ["Your Balance"] = "Your Balance",
+    ["Options Multiplier"] = "Options Multiplier",
 
     [":MySQL Details"] = "MySQL Details",
     [":Cooldown"] = "Cooldown in seconds between job edits",
@@ -93,6 +94,8 @@ Nexus:AddLanguages("Nexus_JobCreator", "en", {
     [":Price Health"] = "Price per unit of health",
     [":Price Armor"] = "Price per unit of armor",
     [":Price Salary"] = "Price per unit of salary",
+    [":Price Option Step"] = "Multiplier increase per selected option (0.05 = +5%)",
+    [":Price Max Multiplier"] = "Maximum options multiplier",
     [":Price GunLicense"] = "Price for a gun license",
     [":Price MB"] = "Price per MB of an imported model",
     [":Extra Player"] = "Price to add an additional player",
@@ -332,6 +335,28 @@ Nexus.Builder:Start()
 
         label = {":Price Health", "Nexus_JobCreator"},
         placeholder = "10",
+        isNumeric = true,
+
+        onChange = function(value) end,
+    })
+
+    :AddTextEntry({
+        id = "nexus-jobcreator-price-optionStep",
+        defaultValue = 0.05,
+
+        label = {":Price Option Step", "Nexus_JobCreator"},
+        placeholder = "0.05",
+        isNumeric = true,
+
+        onChange = function(value) end,
+    })
+
+    :AddTextEntry({
+        id = "nexus-jobcreator-price-maxMultiplier",
+        defaultValue = 3,
+
+        label = {":Price Max Multiplier", "Nexus_JobCreator"},
+        placeholder = "3",
         isNumeric = true,
 
         onChange = function(value) end,

@@ -1,10 +1,30 @@
 function Nexus.JobCreator:CalculatePrice(data)
     local price = 0
+    local optionCount = 0
+
+    if data.Health > 0 then
+        optionCount = optionCount + 1
+    end
     price = price + data.Health * Nexus:GetValue("nexus-jobcreator-price-health")
+
+    if data.Armor > 0 then
+        optionCount = optionCount + 1
+    end
     price = price + data.Armor * Nexus:GetValue("nexus-jobcreator-price-armor")
+
+    if data.Salary > 0 then
+        optionCount = optionCount + 1
+    end
     price = price + data.Salary * Nexus:GetValue("nexus-jobcreator-price-Salary")
+
+    if data.GunLicense then
+        optionCount = optionCount + 1
+    end
     price = price + (data.GunLicense and Nexus:GetValue("nexus-jobcreator-price-GunLicense") or 0)
 
+    if data.ImportedModels.ModelID then
+        optionCount = optionCount + 1
+    end
     price = price + (data.ImportedModels.ModelID and data.ImportedModels.Size*Nexus:GetValue("nexus-jobcreator-price-perMB") or 0)
 
     local localModelsCache = {}
@@ -13,7 +33,10 @@ function Nexus.JobCreator:CalculatePrice(data)
     end
 
     for int, val in pairs(data.SteamModels) do
-        price = price + localModelsCache[int].Price
+        if localModelsCache[int] then
+            optionCount = optionCount + 1
+            price = price + localModelsCache[int].Price
+        end
     end
 
     local localGunsCache = {}
@@ -22,12 +45,27 @@ function Nexus.JobCreator:CalculatePrice(data)
     end
 
     for int, val in pairs(data.SelectedGuns) do
-        price = price + localGunsCache[int].Price
+        if localGunsCache[int] then
+            optionCount = optionCount + 1
+            price = price + localGunsCache[int].Price
+        end
     end
 
     price = price + Nexus:GetValue("nexus-jobcreator-price-baseCost")
 
-    price = price + table.Count(data.Players) * Nexus:GetValue("nexus-jobcreator-price-player")
+    local playerCount = table.Count(data.Players)
+    price = price + playerCount * Nexus:GetValue("nexus-jobcreator-price-player")
+    optionCount = optionCount + playerCount
+
+    local optionStep = math.max(tonumber(Nexus:GetValue("nexus-jobcreator-price-optionStep")) or 0, 0)
+    local maxMultiplier = math.max(tonumber(Nexus:GetValue("nexus-jobcreator-price-maxMultiplier")) or 1, 1)
+
+    local optionMultiplier = 1
+    if optionCount > 1 and optionStep > 0 then
+        optionMultiplier = math.min(1 + ((optionCount - 1) * optionStep), maxMultiplier)
+    end
+
+    price = price * optionMultiplier
 
 
     return math.Round(price)
