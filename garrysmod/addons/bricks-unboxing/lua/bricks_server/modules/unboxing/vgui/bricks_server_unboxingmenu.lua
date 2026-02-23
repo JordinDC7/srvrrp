@@ -142,47 +142,6 @@ function PANEL:UpdatePageWidths()
     end
 end
 
-function PANEL:FilterNavigation( searchText )
-    if( not IsValid( self.sheet ) ) then return end
-
-    self.currentSearchText = string.Trim( string.lower( tostring( searchText or "" ) ) )
-
-    local activeButton = self.sheet.GetActiveButton and self.sheet:GetActiveButton()
-    local activeIsVisible = true
-
-    for _, sheetData in pairs( self.sheet.Items or {} ) do
-        local label = string.lower( self:GetSheetLabel( sheetData ) )
-        local button = self:GetSheetButton( sheetData )
-        local isVisible = (self.currentSearchText == "" or string.find( label, self.currentSearchText, 1, true ) ~= nil)
-
-        if( IsValid( button ) ) then
-            button:SetVisible( isVisible )
-            button:SetTall( isVisible and 44 or 0 )
-            if( button.DockMargin ) then
-                button:DockMargin( 8, 0, 8, isVisible and 6 or 0 )
-            end
-        end
-
-        if( button == activeButton and not isVisible ) then
-            activeIsVisible = false
-        end
-    end
-
-    if( not activeIsVisible ) then
-        for _, sheetData in pairs( self.sheet.Items or {} ) do
-            local button = self:GetSheetButton( sheetData )
-            if( IsValid( button ) and button:IsVisible() ) then
-                self:SetActiveSheetByLabel( self:GetSheetLabel( sheetData ) )
-                break
-            end
-        end
-    end
-
-    if( IsValid( self.sheet.Navigation ) and self.sheet.Navigation.InvalidateLayout ) then
-        self.sheet.Navigation:InvalidateLayout( true )
-    end
-end
-
 function PANEL:AddQuickNavigation( parent, pages )
     local quickPanel = vgui.Create( "DPanel", parent )
     quickPanel:Dock( TOP )
@@ -311,25 +270,6 @@ function PANEL:Refresh()
     avatarIcon:SetSize( 50, 50 )
     avatarIcon:SetPlayer( LocalPlayer(), 64 )
 
-    local searchBar = vgui.Create( "DTextEntry", self.sheet.Navigation )
-    searchBar:Dock( TOP )
-    searchBar:SetTall( 34 )
-    searchBar:DockMargin( 10, 0, 10, 8 )
-    searchBar:SetPlaceholderText( "Search pages..." )
-    searchBar:SetUpdateOnType( true )
-    searchBar:SetFont( "BRICKS_SERVER_Font17" )
-    searchBar.Paint = function( self2, w, h )
-        draw.RoundedBox( 6, 0, 0, w, h, BRICKS_SERVER.Func.GetTheme( 2 ) )
-        self2:DrawTextEntryText( BRICKS_SERVER.Func.GetTheme( 6 ), BRICKS_SERVER.Func.GetTheme( 5 ), BRICKS_SERVER.Func.GetTheme( 6 ) )
-
-        if( self2:GetValue() == "" and not self2:HasFocus() ) then
-            draw.SimpleText( "Search pages...", "BRICKS_SERVER_Font17", 10, h/2, BRICKS_SERVER.Func.GetTheme( 6, 85 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
-        end
-    end
-    searchBar.OnValueChange = function( _, value )
-        self:FilterNavigation( value )
-    end
-
     local pages = {}
     table.insert( pages, { BRICKS_SERVER.Func.L( "unboxingHome" ), "bricks_server_unboxingmenu_home", "unboxing_home.png" } )
     table.insert( pages, { BRICKS_SERVER.Func.L( "unboxingStore" ), "bricks_server_unboxingmenu_store", "unboxing_store.png" } )
@@ -406,7 +346,7 @@ function PANEL:Refresh()
             x = x + 72
         end
 
-        draw.SimpleText( "Tip: use search to jump fast", "BRICKS_SERVER_Font17", 10, h-10, BRICKS_SERVER.Func.GetTheme( 6, 110 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM )
+        draw.SimpleText( "Tip: use top tabs to switch fast", "BRICKS_SERVER_Font17", 10, h-10, BRICKS_SERVER.Func.GetTheme( 6, 110 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM )
     end
 
     hook.Add( "BRS.Hooks.OpenUnboxingTradePage", self, function()
@@ -421,7 +361,6 @@ function PANEL:Refresh()
         if( IsValid( self ) ) then
             self:ApplyCurrentPageSize( false )
             self:UpdatePageWidths()
-            self:FilterNavigation( self.currentSearchText )
         end
     end )
 end
