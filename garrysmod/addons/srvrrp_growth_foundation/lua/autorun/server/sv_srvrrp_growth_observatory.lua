@@ -13,6 +13,102 @@ OBS.Samples = OBS.Samples or {
 }
 
 local PERSIST_FILE = "srvrrp_growth/observatory_state.json"
+local PERSIST_SCHEMA_VERSION = 1
+
+
+local function normalizeNumberArray(list, maxLen)
+    if not istable(list) then return {} end
+
+    local out = {}
+    local length = 0
+    maxLen = math.max(1, tonumber(maxLen) or 300)
+
+    for _, value in ipairs(list) do
+        if isnumber(value) and value >= 0 and value < 1000000 then
+            length = length + 1
+            out[length] = value
+            if length >= maxLen then
+                break
+            end
+        end
+    end
+
+    return out
+end
+
+local function normalizeNetStats(raw)
+    if not istable(raw) then return {} end
+
+    local out = {}
+    for msgName, stat in pairs(raw) do
+        if isstring(msgName) and istable(stat) then
+            out[msgName] = {
+                inboundCount = math.max(0, math.floor(tonumber(stat.inboundCount) or 0)),
+                outboundCount = math.max(0, math.floor(tonumber(stat.outboundCount) or 0)),
+                inboundBytes = math.max(0, math.floor(tonumber(stat.inboundBytes) or 0)),
+                outboundBytes = math.max(0, math.floor(tonumber(stat.outboundBytes) or 0)),
+                blocked = math.max(0, math.floor(tonumber(stat.blocked) or 0)),
+                lastSeen = math.max(0, math.floor(tonumber(stat.lastSeen) or 0))
+            }
+        end
+    end
+
+    return out
+end
+
+local function pushReportToPlayer(player)
+    if not IsValid(player) or not player:IsAdmin() then return end
+
+    local function getAverage(list)
+        if not istable(list) or #list == 0 then return 0 end
+
+        local sum = 0
+        for i = 1, #list do
+            sum = sum + (tonumber(list[i]) or 0)
+        end
+
+        return math.Round(sum / #list, 2)
+    end
+
+    local payload = {
+        generatedAt = os.time(),
+        samples = {
+            tickMs = OBS.Samples.tickMs,
+            entityCount = OBS.Samples.entityCount
+        },
+        summary = {
+            avgTickMs = getAverage(OBS.Samples.tickMs),
+            avgEntityCount = getAverage(OBS.Samples.entityCount),
+            threshold = SRVRRP_GROWTH.Config.SlowTickMsThreshold or 30
+        },
+        topNets = {}
+    }
+
+    local rows = {}
+    for name, stat in pairs(OBS.NetStats) do
+        rows[#rows + 1] = {
+            name = name,
+            score = (stat.inboundBytes or 0) + (stat.outboundBytes or 0),
+            inboundCount = stat.inboundCount or 0,
+            inboundBytes = stat.inboundBytes or 0,
+            outboundCount = stat.outboundCount or 0,
+            outboundBytes = stat.outboundBytes or 0,
+            blocked = stat.blocked or 0,
+            lastSeen = stat.lastSeen or 0
+        }
+    end
+
+    table.sort(rows, function(a, b) return a.score > b.score end)
+
+    local limit = math.min(#rows, 15)
+    for i = 1, limit do
+        payload.topNets[i] = rows[i]
+    end
+
+    net.Start("srvrrp_obs_admin_snapshot")
+    net.WriteString(util.TableToJSON(payload, false) or "{}")
+    net.Send(player)
+end
 
 local function shallowCopy(source)
     local out = {}
@@ -30,6 +126,7 @@ local function savePersistentState()
 
     local payload = {
         featureFlags = shallowCopy(SRVRRP_GROWTH.Config.FeatureFlags),
+        schemaVersion = PERSIST_SCHEMA_VERSION,
         observatory = {
             netStats = OBS.NetStats,
             samples = {
@@ -64,19 +161,18 @@ local function restorePersistentState()
         end
     end
 
+    local schemaVersion = tonumber(decoded.schemaVersion) or 0
+    if schemaVersion ~= PERSIST_SCHEMA_VERSION then
+        print(string.format("[SRVRRP][OBS] persistence schema mismatch file=%d code=%d, applying compatibility restore", schemaVersion, PERSIST_SCHEMA_VERSION))
+    end
+
     if istable(decoded.observatory) then
-        if istable(decoded.observatory.netStats) then
-            OBS.NetStats = decoded.observatory.netStats
-        end
+        OBS.NetStats = normalizeNetStats(decoded.observatory.netStats)
 
         if istable(decoded.observatory.samples) then
-            if istable(decoded.observatory.samples.tickMs) then
-                OBS.Samples.tickMs = decoded.observatory.samples.tickMs
-            end
-
-            if istable(decoded.observatory.samples.entityCount) then
-                OBS.Samples.entityCount = decoded.observatory.samples.entityCount
-            end
+            local maxFrames = SRVRRP_GROWTH.Config.MaxHistoryFrames or 300
+            OBS.Samples.tickMs = normalizeNumberArray(decoded.observatory.samples.tickMs, maxFrames)
+            OBS.Samples.entityCount = normalizeNumberArray(decoded.observatory.samples.entityCount, maxFrames)
         end
     end
 end
@@ -265,6 +361,10 @@ end
 concommand.Add("srvrrp_obs_snapshot", function(player)
     if IsValid(player) and not player:IsAdmin() then return end
     printSnapshot(player)
+
+    if IsValid(player) then
+        pushReportToPlayer(player)
+    end
 end)
 
 concommand.Add("srvrrp_obs_topnets", function(player)
@@ -353,4 +453,23 @@ end)
 
 hook.Add("ShutDown", "SRVRRP.Growth.PersistenceFlushOnShutdown", function()
     savePersistentState()
+end)
+
+
+util.AddNetworkString("srvrrp_obs_admin_snapshot")
+util.AddNetworkString("srvrrp_obs_admin_request")
+
+net.Receive("srvrrp_obs_admin_request", function(_, player)
+    if not IsValid(player) or not player:IsAdmin() then return end
+    pushReportToPlayer(player)
+end)
+
+concommand.Add("srvrrp_obs_panel", function(player)
+    if not IsValid(player) or not player:IsAdmin() then return end
+
+    player:SendLua([[if SRVRRP_GROWTH and SRVRRP_GROWTH.OpenObservatoryPanel then SRVRRP_GROWTH:OpenObservatoryPanel() end]])
+    timer.Simple(0.25, function()
+        if not IsValid(player) then return end
+        pushReportToPlayer(player)
+    end)
 end)
