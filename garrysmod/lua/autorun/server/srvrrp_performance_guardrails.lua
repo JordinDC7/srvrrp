@@ -10,6 +10,7 @@ local persistSnapshots = CreateConVar("srvrrp_perf_persist_snapshots", "1", FCVA
 local maxSnapshots = CreateConVar("srvrrp_perf_max_snapshots", "120", FCVAR_ARCHIVE, "Maximum persisted snapshots.", 20, 2000)
 local netMonitorEnabled = CreateConVar("srvrrp_perf_net_monitor_enabled", "1", FCVAR_ARCHIVE, "Track net.Receive handler runtime stats.")
 local timerMonitorEnabled = CreateConVar("srvrrp_perf_timer_monitor_enabled", "1", FCVAR_ARCHIVE, "Track timer callback runtime stats.")
+local hookMonitorEnabled = CreateConVar("srvrrp_perf_hook_monitor_enabled", "0", FCVAR_ARCHIVE, "Track hook runtime stats by wrapping hook.Add.")
 
 local propGuardEnabled = CreateConVar("srvrrp_prop_guard_enabled", "1", FCVAR_ARCHIVE, "Limit prop spawn bursts per player.")
 local propGuardWindow = CreateConVar("srvrrp_prop_guard_window", "2", FCVAR_ARCHIVE, "Seconds in rate-limit window.", 1, 30)
@@ -22,6 +23,11 @@ local ragdollCleanupInterval = CreateConVar("srvrrp_ragdoll_cleanup_interval", "
 local netBudgetEnabled = CreateConVar("srvrrp_net_budget_enabled", "1", FCVAR_ARCHIVE, "Enable net message budgeting diagnostics.")
 local netBudgetWarnRatio = CreateConVar("srvrrp_net_budget_warn_ratio", "0.85", FCVAR_ARCHIVE, "Warn when a message reaches this ratio of its budget.", 0.5, 1)
 local telemetryEnabled = CreateConVar("srvrrp_ui_telemetry_enabled", "1", FCVAR_ARCHIVE, "Enable SRVRRP UI telemetry aggregation.")
+
+local adaptiveLoadEnabled = CreateConVar("srvrrp_adaptive_load_enabled", "1", FCVAR_ARCHIVE, "Enable adaptive load state signaling.")
+local adaptiveLoadHighFrameTimeMs = CreateConVar("srvrrp_adaptive_load_high_frametime_ms", "42", FCVAR_ARCHIVE, "Enter high-load mode when average frame time crosses this threshold.", 10, 200)
+local adaptiveLoadRecoverFrameTimeMs = CreateConVar("srvrrp_adaptive_load_recover_frametime_ms", "30", FCVAR_ARCHIVE, "Exit high-load mode when average frame time drops below this threshold.", 5, 180)
+local adaptiveLoadMinHoldSeconds = CreateConVar("srvrrp_adaptive_load_min_hold_seconds", "45", FCVAR_ARCHIVE, "Minimum duration to keep high-load mode active before recovery.", 5, 600)
 
 local sample = {
     frameTime = {},
@@ -38,6 +44,11 @@ local netBudgets = {}
 local netUsage = {}
 local netWindow = {}
 local timerWindow = {}
+local hookWindow = {}
+local adaptiveLoadState = {
+    active = false,
+    changedAt = CurTime(),
+}
 local snapshotHistory = {}
 local snapshotPath = "srvrrp/perf_snapshots.json"
 local uiTelemetry = {
@@ -48,6 +59,7 @@ local uiTelemetry = {
 
 local originalNetReceive = net.Receive
 local originalTimerCreate = timer.Create
+local originalHookAdd = hook.Add
 
 local function loadSnapshotHistory()
     if not file.Exists(snapshotPath, "DATA") then
@@ -77,6 +89,7 @@ end
 local function resetMonitoringWindows()
     netWindow = {}
     timerWindow = {}
+    hookWindow = {}
 end
 
 local function topRuntimeSummary(window, keyLabel)
@@ -185,6 +198,42 @@ timer.Create = function(name, delay, repetitions, callback)
         if elapsedMs > state.maxRuntimeMs then
             state.maxRuntimeMs = elapsedMs
         end
+    end)
+end
+
+hook.Add = function(eventName, identifier, callback)
+    if type(callback) ~= "function" then
+        return originalHookAdd(eventName, identifier, callback)
+    end
+
+    local hookKey = string.format("%s:%s", tostring(eventName), tostring(identifier))
+    return originalHookAdd(eventName, identifier, function(...)
+        if not hookMonitorEnabled:GetBool() then
+            return callback(...)
+        end
+
+        local runtimeStart = SysTime()
+        local result = { callback(...) }
+        local elapsedMs = (SysTime() - runtimeStart) * 1000
+
+        local state = hookWindow[hookKey]
+        if not state then
+            state = {
+                calls = 0,
+                bits = 0,
+                totalRuntimeMs = 0,
+                maxRuntimeMs = 0,
+            }
+            hookWindow[hookKey] = state
+        end
+
+        state.calls = state.calls + 1
+        state.totalRuntimeMs = state.totalRuntimeMs + elapsedMs
+        if elapsedMs > state.maxRuntimeMs then
+            state.maxRuntimeMs = elapsedMs
+        end
+
+        return unpack(result)
     end)
 end
 
@@ -318,12 +367,42 @@ local function buildSnapshot()
         topClasses = table.concat(topSummary, ", "),
         topNet = topRuntimeSummary(netWindow, "channel"),
         topTimers = topRuntimeSummary(timerWindow, "timer"),
+        topHooks = topRuntimeSummary(hookWindow, "hook"),
+        adaptiveLoadActive = adaptiveLoadState.active and 1 or 0,
         snapshots = sample.snapshots,
     }
 end
 
+local function evaluateAdaptiveLoad(snapshot)
+    if not adaptiveLoadEnabled:GetBool() then
+        return
+    end
+
+    local now = CurTime()
+    local averageMs = snapshot.averageFrameMs or averageFrameMs()
+
+    if not adaptiveLoadState.active and averageMs >= adaptiveLoadHighFrameTimeMs:GetFloat() then
+        adaptiveLoadState.active = true
+        adaptiveLoadState.changedAt = now
+        SetGlobalBool("srvrrp_adaptive_high_load", true)
+        print(string.format("[%s][ADAPTIVE] Entering high-load mode at avg=%.2fms", addonTag, averageMs))
+        return
+    end
+
+    if adaptiveLoadState.active then
+        local heldFor = now - (adaptiveLoadState.changedAt or now)
+        if heldFor >= adaptiveLoadMinHoldSeconds:GetFloat() and averageMs <= adaptiveLoadRecoverFrameTimeMs:GetFloat() then
+            adaptiveLoadState.active = false
+            adaptiveLoadState.changedAt = now
+            SetGlobalBool("srvrrp_adaptive_high_load", false)
+            print(string.format("[%s][ADAPTIVE] Returning to normal mode at avg=%.2fms", addonTag, averageMs))
+        end
+    end
+end
+
 local function printSnapshot(prefix)
     local snapshot = buildSnapshot()
+    evaluateAdaptiveLoad(snapshot)
 
     print(string.format(
         "[%s] %s avg=%.2fms peak=%.2fms players=%d entities=%d top=[%s]",
@@ -338,6 +417,8 @@ local function printSnapshot(prefix)
 
     print(string.format("[%s] %s net=[%s]", addonTag, prefix, snapshot.topNet))
     print(string.format("[%s] %s timers=[%s]", addonTag, prefix, snapshot.topTimers))
+    print(string.format("[%s] %s hooks=[%s]", addonTag, prefix, snapshot.topHooks))
+    print(string.format("[%s] %s adaptive_load=%s", addonTag, prefix, snapshot.adaptiveLoadActive == 1 and "HIGH" or "NORMAL"))
 
     if snapshot.averageFrameMs >= warningFrameTimeMs:GetFloat() then
         print(string.format("[%s][WARN] Average frame time high: %.2fms", addonTag, snapshot.averageFrameMs))
@@ -577,6 +658,7 @@ timer.Create(addonTag .. "_ui_telemetry_heartbeat", 120, 0, function()
 end)
 
 loadSnapshotHistory()
+SetGlobalBool("srvrrp_adaptive_high_load", false)
 scheduleMonitorTimer()
 scheduleRagdollTimer()
 
