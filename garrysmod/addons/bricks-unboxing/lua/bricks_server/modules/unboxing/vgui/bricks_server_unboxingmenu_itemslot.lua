@@ -22,6 +22,20 @@ local function BRS_UC_FitText(font, text, maxW)
     return out .. ellipsis
 end
 
+local function BRS_UC_ResolveColor(col, fallback)
+    if IsColor(col) then return col end
+
+    if isnumber(col) then
+        local themed = BRICKS_SERVER and BRICKS_SERVER.Func and BRICKS_SERVER.Func.GetTheme and BRICKS_SERVER.Func.GetTheme(col)
+        if IsColor(themed) then
+            return themed
+        end
+    end
+
+    if IsColor(fallback) then return fallback end
+    return Color(255, 255, 255)
+end
+
 local function BRS_UC_DrawTopPill(x, y, h, text, bgCol, txtCol, font, maxPillW)
     text = tostring(text or "")
     font = font or "BRICKS_SERVER_Font15"
@@ -37,8 +51,11 @@ local function BRS_UC_DrawTopPill(x, y, h, text, bgCol, txtCol, font, maxPillW)
 
     local pillW = math.Clamp(tw + (innerPad * 2), minPillW, maxPillW or 120)
 
-    draw.RoundedBox(6, x, y, pillW, h, bgCol)
-    draw.SimpleText(fitted, font, x + pillW / 2, y + h / 2, txtCol, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+    local pillBgCol = BRS_UC_ResolveColor(bgCol, BRICKS_SERVER.Func.GetTheme(1))
+    local pillTxtCol = BRS_UC_ResolveColor(txtCol, BRICKS_SERVER.Func.GetTheme(6))
+
+    draw.RoundedBox(6, x, y, pillW, h, pillBgCol)
+    draw.SimpleText(fitted, font, x + pillW / 2, y + h / 2, pillTxtCol, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
 
     return pillW
 end
