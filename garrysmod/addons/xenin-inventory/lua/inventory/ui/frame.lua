@@ -37,10 +37,11 @@ concommand.Add("inventory", function()
   end
 
   local frame = vgui.Create("XeninInventory.Frame")
-  local width = math.min(ScrW(), 1100)
-  local height = math.min(ScrH(), 828)
+  -- [MEGA UPDATE PATCH] Better scaling on common 16:9/21:9 and low-res displays.
+  local width = math.Clamp(ScrW() * 0.9, 960, 1280)
+  local height = math.Clamp(ScrH() * 0.88, 620, 900)
   frame:SetSize(width, height)
   frame:Center()
   frame:MakePopup()
-  frame:SetTitle("Inventory")
+  frame:SetTitle("SRVRRP Inventory")
 end)

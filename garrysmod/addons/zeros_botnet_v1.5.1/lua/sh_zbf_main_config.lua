@@ -129,9 +129,9 @@ zbf.config.Controller = {
 	// This really just applys to looping jobs and doesent impact any other form of moving money to the controller (StealAttack)
 	// NOTE If you need something more dynamic, look at sh_zbf_hooks.lua > zbf_Controller_GetWalletSize
 	wallet_size = {
-		["default"]  = 30000,
-		["VIP"]  = 120000,
-		["superadmin"]  = 220000,
+		["default"]  = 25000,
+		["VIP"]  = 90000,
+		["superadmin"]  = 180000,
 	},
 
 	// How many bots can the player purchase?
@@ -185,10 +185,11 @@ zbf.config.Controller = {
 
 	// Defines how often the player can be offered a new job to compute
 	// NOTE This only applys to jobs which got the "expire" parameter set
-	job_offer_interval = 120,
+	-- [MEGA UPDATE PATCH] Lower burst throughput to reduce AFK-style income spikes.
+	job_offer_interval = 160,
 
 	// Defines how many job offers the player can have availble at the same time
-	job_offer_limit = 5,
+		job_offer_limit = 4,
 
                                                                                                                                                                                                                                                                                                                                                                                                                                                        -- 76561199109663690
 

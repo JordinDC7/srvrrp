@@ -3,6 +3,45 @@
 function F4Menu:CreateCommands()
   F4Menu.Commands = {}
 
+  -- [MEGA UPDATE PATCH] Add discoverable quick links for key server systems.
+  F4Menu:CreateCommandCategory("Quick Access")
+    :AddCommand({
+      name = "Open Inventory",
+      func = function(ply)
+        ply:ConCommand("inventory")
+      end
+    })
+    :AddCommand({
+      name = "Open Gangs",
+      func = function(ply)
+        ply:ConCommand("gang")
+      end
+    })
+    :AddCommand({
+      name = "Open Unboxing",
+      func = function(ply)
+        ply:ConCommand("unboxing")
+      end
+    })
+    :AddCommand({
+      name = "Open Party Menu",
+      func = function(ply)
+        ply:ConCommand("say /party")
+      end
+    })
+    :AddCommand({
+      name = "Open Server Hub",
+      func = function(ply)
+        ply:ConCommand("srvrrp_hub")
+      end
+    })
+    :AddCommand({
+      name = "Show Systems Guide",
+      func = function(ply)
+        ply:ConCommand("say /systems")
+      end
+    })
+
   F4Menu:CreateCommandCategory("options.general.name")
     :AddCommand({
       name = "options.general.dropMoney.name",

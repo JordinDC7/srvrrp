@@ -169,7 +169,8 @@ zgo2.config.RenderTargetSize = 512
 	0.5 = 0.5$ per gram
 	0.1 = 0.1$ per gram
 */
-zgo2.config.WeedPriceMultiplicator = 0.75
+-- [MEGA UPDATE PATCH] Slight rebalance: keeps grow op strong but less dominant vs active systems.
+zgo2.config.WeedPriceMultiplicator = 0.68
 
 /*
 	The player can access the shop using the multitool
@@ -178,7 +179,7 @@ zgo2.config.Shop = {
 	// How much money does the player get back when selling his Equipment again using the multitool
 	// NOTE Set it to 0 to disable this function
 	// Default: 50%
-	Refund = 40,
+	Refund = 35,
 
 	// Can we place entities on other entities?
 	PlaceOnEntity = false,

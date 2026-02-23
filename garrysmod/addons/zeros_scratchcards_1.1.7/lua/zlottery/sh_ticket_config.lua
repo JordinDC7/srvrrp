@@ -40,7 +40,7 @@ local dat = DefaultImageID_Switch[zclib.config.ActiveImageService]
 zlt.config.Tickets = {
 	[1] = {
 		["uniqueid"] = "a6bb3f1f82",
-		["price"] = 100,
+		["price"] = 150,
 		["title_val"] = "Golden shower",
 		["title_y"] = 1,
 		["title_x"] = 1,
@@ -61,21 +61,21 @@ zlt.config.Tickets = {
 			},
 			[2] = {
 				type = 2,
-				money = 50,
+				money = 60,
 				chance = 5,
 				final_chance = 31,
 			},
 			[3] = {
 				type = 2,
-				money = 100,
+				money = 120,
 				chance = 1,
-				final_chance = 6,
+				final_chance = 4,
 			}
 		}
 	},
 	[2] = {
 		["uniqueid"] = "e29ffaabc7",
-		["price"] = 100,
+		["price"] = 150,
 		["title_val"] = "Cash Factory",
 		["title_y"] = 1,
 		["title_x"] = 1,
@@ -96,21 +96,21 @@ zlt.config.Tickets = {
 			},
 			[2] = {
 				type = 2,
-				money = 50,
+				money = 60,
 				chance = 5,
 				final_chance = 31,
 			},
 			[3] = {
 				type = 2,
-				money = 100,
+				money = 120,
 				chance = 1,
-				final_chance = 6,
+				final_chance = 4,
 			}
 		}
 	},
 	[3] = {
 		["uniqueid"] = "360400a9cd",
-		["price"] = 100,
+		["price"] = 150,
 		["title_val"] = "Crazy Crystalls",
 		["title_y"] = 1,
 		["title_x"] = 1,
@@ -130,21 +130,21 @@ zlt.config.Tickets = {
 			},
 			[2] = {
 				type = 2,
-				money = 50,
+				money = 60,
 				chance = 5,
 				final_chance = 31,
 			},
 			[3] = {
 				type = 2,
-				money = 100,
+				money = 120,
 				chance = 1,
-				final_chance = 6,
+				final_chance = 4,
 			}
 		}
 	},
 	[4] = {
 		["uniqueid"] = "361400a9cd",
-		["price"] = 100,
+		["price"] = 150,
 		["title_val"] = "OG Cash",
 		["title_y"] = 1,
 		["title_x"] = 1,
@@ -165,15 +165,15 @@ zlt.config.Tickets = {
 			},
 			[2] = {
 				type = 2,
-				money = 50,
+				money = 60,
 				chance = 5,
 				final_chance = 31,
 			},
 			[3] = {
 				type = 2,
-				money = 100,
+				money = 120,
 				chance = 1,
-				final_chance = 6,
+				final_chance = 4,
 			}
 		}
 	}
