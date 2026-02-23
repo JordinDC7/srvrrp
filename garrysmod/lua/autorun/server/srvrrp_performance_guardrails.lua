@@ -15,6 +15,11 @@ local hookMonitorEnabled = CreateConVar("srvrrp_perf_hook_monitor_enabled", "0",
 local propGuardEnabled = CreateConVar("srvrrp_prop_guard_enabled", "1", FCVAR_ARCHIVE, "Limit prop spawn bursts per player.")
 local propGuardWindow = CreateConVar("srvrrp_prop_guard_window", "2", FCVAR_ARCHIVE, "Seconds in rate-limit window.", 1, 30)
 local propGuardLimit = CreateConVar("srvrrp_prop_guard_limit", "12", FCVAR_ARCHIVE, "Max props in the guard window.", 1, 100)
+local propGuardAdminExempt = CreateConVar("srvrrp_prop_guard_admin_exempt", "1", FCVAR_ARCHIVE, "Allow admins to bypass prop burst guard.")
+local propGuardDuplicateWindow = CreateConVar("srvrrp_prop_guard_duplicate_window", "3", FCVAR_ARCHIVE, "Seconds in duplicate-model burst window.", 1, 30)
+local propGuardDuplicateLimit = CreateConVar("srvrrp_prop_guard_duplicate_limit", "8", FCVAR_ARCHIVE, "Max same-model spawns in duplicate-model window.", 1, 100)
+local propGuardCooldown = CreateConVar("srvrrp_prop_guard_cooldown", "8", FCVAR_ARCHIVE, "Seconds to block prop spawning after a burst violation.", 1, 120)
+local propGuardEntityLimit = CreateConVar("srvrrp_prop_guard_entity_limit", "2600", FCVAR_ARCHIVE, "Stop non-admin prop spawns when live entity count exceeds this limit.", 500, 12000)
 
 local ragdollCleanupEnabled = CreateConVar("srvrrp_ragdoll_cleanup_enabled", "0", FCVAR_ARCHIVE, "Enable automatic cleanup of old ragdolls.")
 local ragdollCleanupAge = CreateConVar("srvrrp_ragdoll_cleanup_age", "180", FCVAR_ARCHIVE, "Ragdoll max age in seconds before cleanup.", 30, 3600)
@@ -518,33 +523,98 @@ concommand.Add("srvrrp_perf_dump_history", function(ply)
     end
 end, nil, "Prints recent persisted performance snapshot metadata.")
 
-hook.Add("PlayerSpawnProp", addonTag .. "_prop_guard", function(ply)
+hook.Add("PlayerSpawnProp", addonTag .. "_prop_guard", function(ply, model)
     if not propGuardEnabled:GetBool() then
         return
     end
 
-    if not IsValid(ply) or ply:IsAdmin() then
+    if not IsValid(ply) then
+        return
+    end
+
+    local adminExempt = propGuardAdminExempt:GetBool() and ply:IsAdmin()
+    if not adminExempt and ents.GetCount() >= propGuardEntityLimit:GetInt() then
+        if ply.srvrrpLastEntityLimitWarn == nil or CurTime() - ply.srvrrpLastEntityLimitWarn > 2 then
+            ply.srvrrpLastEntityLimitWarn = CurTime()
+            ply:ChatPrint("Prop spawning is temporarily limited while server entities are high.")
+        end
+
+        return false
+    end
+
+    if adminExempt then
         return
     end
 
     local now = CurTime()
+    model = string.lower(tostring(model or ""))
     local state = propSpawnState[ply]
 
     if not state or now > state.windowEnd then
         state = {
             count = 0,
             windowEnd = now + propGuardWindow:GetFloat(),
+            spawns = {},
+            blockedUntil = 0,
         }
         propSpawnState[ply] = state
     end
 
+    if now < (state.blockedUntil or 0) then
+        if state.lastWarn == nil or now - state.lastWarn > 2 then
+            state.lastWarn = now
+            local retryIn = math.max(1, math.ceil(state.blockedUntil - now))
+            ply:ChatPrint("You are spawning props too quickly. Try again in " .. retryIn .. "s.")
+        end
+
+        return false
+    end
+
+    local maxWindow = math.max(propGuardWindow:GetFloat(), propGuardDuplicateWindow:GetFloat())
+    local cutoff = now - maxWindow
+    local spawns = state.spawns or {}
+    local kept = {}
+    local duplicateCount = 0
+
+    for i = 1, #spawns do
+        local entry = spawns[i]
+        if entry and entry.t and entry.t >= cutoff then
+            kept[#kept + 1] = entry
+
+            if model ~= "" and entry.m == model and (now - entry.t) <= propGuardDuplicateWindow:GetFloat() then
+                duplicateCount = duplicateCount + 1
+            end
+        end
+    end
+
+    state.spawns = kept
+
     state.count = state.count + 1
+    state.spawns[#state.spawns + 1] = { t = now, m = model }
+
+    if model ~= "" then
+        duplicateCount = duplicateCount + 1
+    end
+
+    if duplicateCount > propGuardDuplicateLimit:GetInt() then
+        state.blockedUntil = now + propGuardCooldown:GetFloat()
+        if state.lastWarn == nil or now - state.lastWarn > 1 then
+            state.lastWarn = now
+            ply:ChatPrint("Duplicate prop burst detected. Slow down before spawning this model again.")
+        end
+
+        print(string.format("[%s][PROP_GUARD] blocked=%s reason=duplicate model=%s count=%d", addonTag, IsValid(ply) and ply:SteamID() or "unknown", model, duplicateCount))
+        return false
+    end
 
     if state.count > propGuardLimit:GetInt() then
+        state.blockedUntil = now + propGuardCooldown:GetFloat()
         if state.lastWarn == nil or now - state.lastWarn > 2 then
             state.lastWarn = now
             ply:ChatPrint("You are spawning props too quickly. Please slow down.")
         end
+
+        print(string.format("[%s][PROP_GUARD] blocked=%s reason=rate count=%d window=%.2fs", addonTag, IsValid(ply) and ply:SteamID() or "unknown", state.count, propGuardWindow:GetFloat()))
 
         return false
     end
