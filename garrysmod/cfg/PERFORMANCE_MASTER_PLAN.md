@@ -259,3 +259,31 @@ Define recurring rituals:
 6. Add basic live metrics + alert thresholds.
 
 These six steps typically produce a noticeable improvement quickly while larger refactors are planned.
+
+---
+
+## 12) Execution Status Tracker (Repository Scope)
+
+This tracker reflects what has been implemented directly in this repository versus what still requires live server operations, player load testing, or admin process rollout.
+
+### Implemented in repository (automation/config scaffolding)
+- ✅ Lightweight heartbeat snapshots with frame/entity/net/timer summaries.
+- ✅ Snapshot persistence and recent history dump commands.
+- ✅ Net budget registration and usage warning diagnostics for SRVRRP channels.
+- ✅ Prop burst rate-limit guardrail for non-admin players.
+- ✅ Optional ragdoll cleanup scheduler (disabled by default).
+- ✅ UI telemetry event aggregation heartbeat.
+- ✅ Hook runtime monitor toggle (`srvrrp_perf_hook_monitor_enabled`) for profiling passes.
+- ✅ Adaptive load state signaling (`srvrrp_adaptive_high_load`) with enter/recover thresholds.
+- ✅ Tunable defaults in `srvrrp_performance.cfg` for monitor/guardrail/adaptive controls.
+
+### Still required (ops + in-game execution)
+- ⏳ Run formal low/mid/peak baseline sessions and archive results.
+- ⏳ Publish ranked bottleneck report from live traces and hook/net/timer summaries.
+- ⏳ Enforce pre-merge load-test gate and no-regression acceptance policy.
+- ⏳ Complete addon inventory/rationalization with owner assignment.
+- ⏳ Execute map hotspot tuning passes on active production maps.
+- ⏳ Establish alert routing and incident runbooks in admin operations.
+- ⏳ Validate + enable ragdoll cleanup in production after staged soak verification.
+- ⏳ Finalize numeric SLO thresholds for frame-time, entity budget, and join performance.
+
