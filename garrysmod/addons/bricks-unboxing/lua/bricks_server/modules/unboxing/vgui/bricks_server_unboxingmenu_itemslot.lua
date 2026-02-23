@@ -108,8 +108,11 @@ function PANEL:FillPanel(globalKey, amount, actionsOrClickFunc)
         self.rarityInfo, self.rarityKey = BRICKS_SERVER.Func.GetRarityInfo("")
     end
 
+    local itemType = tostring((self.configItem or {}).Type or "")
+    local isWeaponItem = (itemType == "Weapon" or itemType == "PermWeapon")
+
     local statTrakSummary = BRICKS_SERVER.UNBOXING.Func.GetStatTrakSummary(LocalPlayer(), globalKey)
-    if ((self.itemAmount or 1) <= 1 and statTrakSummary and statTrakSummary.TierTag and statTrakSummary.Score) then
+    if ((self.itemAmount or 1) <= 1 and not isWeaponItem and statTrakSummary and statTrakSummary.TierTag and statTrakSummary.Score) then
         self:AddTopInfo(
             string.format("%s %.2f", tostring(statTrakSummary.TierTag), tonumber(statTrakSummary.Score) or 0),
             statTrakSummary.TierColor,
