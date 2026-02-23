@@ -287,12 +287,6 @@ function PANEL:FillInventory()
 
         self:AddSlot(globalKey, (itemAmount or 1), actions)
 
-        if (isItem and statTrakSummary) then
-            local slot = self.grid:GetChildren()[#self.grid:GetChildren()]
-            if (IsValid(slot)) then
-                slot:AddTopInfo(string.format("BOOST %.2f", tonumber(statTrakSummary.Score) or 0), BRICKS_SERVER.Func.GetTheme(3), BRICKS_SERVER.Func.GetTheme(6), true)
-            end
-        end
     end
 end
 

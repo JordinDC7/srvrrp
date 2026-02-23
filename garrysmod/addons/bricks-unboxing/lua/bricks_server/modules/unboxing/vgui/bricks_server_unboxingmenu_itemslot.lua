@@ -110,6 +110,11 @@ local function BRS_UC_GetDisplayName(itemName, rarityName)
     return cleanName
 end
 
+local function BRS_UC_IsWeaponItem(itemTable)
+    local itemType = string.lower(tostring((itemTable or {}).Type or ""))
+    return (itemType == "weapon" or itemType == "permweapon")
+end
+
 function PANEL:Init()
     self.themeNum = self.themeNum or 2
     self.hoverAnim = 0
@@ -153,8 +158,7 @@ function PANEL:FillPanel(globalKey, amount, actionsOrClickFunc)
         self.rarityInfo, self.rarityKey = BRICKS_SERVER.Func.GetRarityInfo("")
     end
 
-    local itemType = tostring((self.configItem or {}).Type or "")
-    local isWeaponItem = (itemType == "Weapon" or itemType == "PermWeapon")
+    local isWeaponItem = BRS_UC_IsWeaponItem(self.configItem)
 
     local statTrakSummary = BRICKS_SERVER.UNBOXING.Func.GetStatTrakSummary(LocalPlayer(), globalKey)
     if ((self.itemAmount or 1) <= 1 and not isWeaponItem and statTrakSummary and statTrakSummary.TierTag and statTrakSummary.Score) then
