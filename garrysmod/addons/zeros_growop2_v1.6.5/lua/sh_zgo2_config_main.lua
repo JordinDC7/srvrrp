@@ -169,7 +169,7 @@ zgo2.config.RenderTargetSize = 512
 	0.5 = 0.5$ per gram
 	0.1 = 0.1$ per gram
 */
-zgo2.config.WeedPriceMultiplicator = 1
+zgo2.config.WeedPriceMultiplicator = 0.75
 
 /*
 	The player can access the shop using the multitool
@@ -178,7 +178,7 @@ zgo2.config.Shop = {
 	// How much money does the player get back when selling his Equipment again using the multitool
 	// NOTE Set it to 0 to disable this function
 	// Default: 50%
-	Refund = 50,
+	Refund = 40,
 
 	// Can we place entities on other entities?
 	PlaceOnEntity = false,
@@ -427,7 +427,7 @@ zgo2.config.NPC = {
 		// Players can sell small amounts of weed directly to the NPC
 		// This value defines for how much the NPC will buy the weed in %
 		// Default: 50% (Half of its normal price)
-		Rate = 75,
+		Rate = 60,
 
 		// How much weed will the NPC buy at once
 		// Default: 50000g
@@ -483,8 +483,8 @@ zgo2.config.Marketplace = {
 		// The buy value of each Marketplace change over time
 		// Those values define how much the buy value can change in %
 		// NOTE The money value for each weed is defined in the plant config
-		Min = 70,
-		Max = 130,
+		Min = 75,
+		Max = 120,
 	},
 
 	// How many transfers can the player make simultaneously
@@ -516,7 +516,7 @@ zgo2.config.Marketplace = {
 
 		// In order to accept a contract the player needs to pay a small fee which is a percentage of the final earnings
 		// Default: 10%
-		SigningFee = 10,
+		SigningFee = 12,
 
 		// How often should we add another contract if the limit is not reached yet
 		Interval = 300,
@@ -527,7 +527,7 @@ zgo2.config.Marketplace = {
 
 		// How much profit can the player make if selling his cargo via contract?
 		// Default: +20%	+50%
-		Profit = {min = 50,max = 80}
+		Profit = {min = 30,max = 55}
 	}
 }
 

@@ -131,8 +131,8 @@ for k,v in pairs(MovieList) do
 		// This means the job will be on a 10 minute cooldown after it got completed
 		cooldown = 600,
 
-		GetPayment = function() return ZBF_CURRENCY_MONEY , 7500 end,
-		ticks = 7500,
+		GetPayment = function() return ZBF_CURRENCY_MONEY , 5000 end,
+		ticks = 6500,
 		jobs = {
 			["Render Farm Manager"] = true,
 		}
@@ -169,7 +169,7 @@ for k,v in pairs(t_list) do
 		icon_color = color_white,
 		img = Material("materials/zerochain/zbot/jobs/crypto.png"),
 
-		ticks = 1000,
+		ticks = 1200,
 
 		// Lets keep track on which Crypto ID this job is linked to
 		crypto_id = v.id,

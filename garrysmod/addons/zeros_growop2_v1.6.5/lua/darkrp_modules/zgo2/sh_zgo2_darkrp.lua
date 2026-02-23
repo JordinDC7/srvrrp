@@ -16,7 +16,7 @@ TEAM_ZGO2_AMATEUR = DarkRP.createJob("Amateur Grower", {
 	weapons = {"zgo2_multitool","zgo2_backpack"},
 	command = "zgo2_amateur",
 	max = 4,
-	salary = 0,
+	salary = 35,
 	admin = 0,
 	vote = false,
 	category = "Gangsters",
@@ -30,7 +30,7 @@ TEAM_ZGO2_BASIC = DarkRP.createJob("Basic Grower", {
 	weapons = {"zgo2_multitool","zgo2_backpack"},
 	command = "zgo2_basic",
 	max = 4,
-	salary = 0,
+	salary = 35,
 	admin = 0,
 	vote = false,
 	category = "Gangsters",
@@ -44,7 +44,7 @@ TEAM_ZGO2_PRO = DarkRP.createJob("Professional Grower", {
 	weapons = {"zgo2_multitool","zgo2_backpack"},
 	command = "zgo2_pro",
 	max = 4,
-	salary = 0,
+	salary = 35,
 	admin = 0,
 	vote = false,
 	category = "Gangsters",
@@ -95,7 +95,7 @@ local function SetupDarkRPEntities()
 	DarkRP.createEntity("Soil", {
 		ent = "zgo2_soil",
 		model = "models/zerochain/props_growop2/zgo2_soil.mdl",
-		price = 100,
+		price = 150,
 		max = 4,
 		cmd = "buy_zgo2_soil",
 		allowed = {
@@ -109,7 +109,7 @@ local function SetupDarkRPEntities()
 	DarkRP.createEntity("Splicer", {
 		ent = "zgo2_splicer",
 		model = "models/zerochain/props_growop2/zgo2_lab.mdl",
-		price = 1000,
+		price = 1400,
 		max = 1,
 		cmd = "buy_zgo2_splicer",
 		allowed = {
@@ -121,7 +121,7 @@ local function SetupDarkRPEntities()
 	DarkRP.createEntity("Drying Line", {
 		ent = "zgo2_dryline",
 		model = "models/zerochain/props_growop2/zgo2_dryline.mdl",
-		price = 1000,
+		price = 1400,
 		max = 1,
 		cmd = "buy_zgo2_dryline",
 		allowed = {
@@ -135,7 +135,7 @@ local function SetupDarkRPEntities()
 	DarkRP.createEntity("Weed Clipper", {
 		ent = "zgo2_clipper",
 		model = "models/zerochain/props_growop2/zgo2_weedcruncher.mdl",
-		price = 5000,
+		price = 7000,
 		max = 2,
 		cmd = "buy_zgo2_clipper",
 		allowed = {
@@ -148,7 +148,7 @@ local function SetupDarkRPEntities()
 	DarkRP.createEntity("Weed Packer", {
 		ent = "zgo2_packer",
 		model = "models/zerochain/props_growop2/zgo2_weedpacker.mdl",
-		price = 5000,
+		price = 7000,
 		max = 2,
 		cmd = "buy_zgo2_packer",
 		allowed = {
@@ -160,7 +160,7 @@ local function SetupDarkRPEntities()
 	DarkRP.createEntity("Palette", {
 		ent = "zgo2_palette",
 		model = "models/zerochain/props_growop2/zgo2_palette.mdl",
-		price = 100,
+		price = 150,
 		max = 6,
 		cmd = "buy_zgo2_palette",
 		allowed = {
@@ -172,7 +172,7 @@ local function SetupDarkRPEntities()
 	DarkRP.createEntity("Weed Clipper - Motor", {
 		ent = "zgo2_motor",
 		model = "models/zerochain/props_growop2/zgo2_motor.mdl",
-		price = 1000,
+		price = 1400,
 		max = 2,
 		cmd = "buy_zgo2_motor",
 		allowed = {
@@ -185,7 +185,7 @@ local function SetupDarkRPEntities()
 	DarkRP.createEntity("Jar", {
 		ent = "zgo2_jar",
 		model = "models/zerochain/props_growop2/zgo2_jar.mdl",
-		price = 500,
+		price = 700,
 		max = 12,
 		cmd = "buy_zgo2_jar",
 		allowed = {
@@ -198,7 +198,7 @@ local function SetupDarkRPEntities()
 	DarkRP.createEntity("Transport Crate", {
 		ent = "zgo2_crate",
 		model = "models/zerochain/props_growop2/zgo2_crate.mdl",
-		price = 1000,
+		price = 1400,
 		max = 6,
 		cmd = "buy_zgo2_crate",
 		allowed = {
@@ -213,7 +213,7 @@ local function SetupDarkRPEntities()
 	DarkRP.createEntity("Jar Crate", {
 		ent = "zgo2_jarcrate",
 		model = "models/zerochain/props_growop2/zgo2_jarcrate.mdl",
-		price = 1000,
+		price = 1400,
 		max = 6,
 		cmd = "buy_zgo2_jarcrate",
 		allowed = {
@@ -228,7 +228,7 @@ local function SetupDarkRPEntities()
 	DarkRP.createEntity("Log Book", {
 		ent = "zgo2_logbook",
 		model = "models/props_lab/binderblue.mdl",
-		price = 1000,
+		price = 1400,
 		max = 1,
 		cmd = "buy_zgo2_logbook",
 		allowed = {
@@ -255,7 +255,7 @@ local function SetupDarkRPEntities()
 	DarkRP.createEntity("Battery", {
 		ent = "zgo2_battery",
 		model = "models/zerochain/props_growop2/zgo2_battery.mdl",
-		price = 500,
+		price = 700,
 		max = 3,
 		cmd = "buy_zgo2_battery",
 		allowed = {
@@ -269,7 +269,7 @@ local function SetupDarkRPEntities()
 	DarkRP.createEntity("Fuel", {
 		ent = "zgo2_fuel",
 		model = "models/zerochain/props_growop2/zgo2_fuel.mdl",
-		price = 500,
+		price = 700,
 		max = 3,
 		cmd = "buy_zgo2_fuel",
 		allowed = {
@@ -282,7 +282,7 @@ local function SetupDarkRPEntities()
 	DarkRP.createEntity("Bulb", {
 		ent = "zgo2_bulb",
 		model = "models/zerochain/props_growop2/zgo2_bulb.mdl",
-		price = 500,
+		price = 700,
 		max = 3,
 		cmd = "buy_zgo2_bulb",
 		allowed = {
@@ -296,7 +296,7 @@ local function SetupDarkRPEntities()
 	DarkRP.createEntity("Seed Libary", {
 		ent = "zgo2_seedlibary",
 		model = "models/zerochain/props_growop2/zgo2_seedlibary.mdl",
-		price = 1000,
+		price = 1400,
 		max = 1,
 		cmd = "buy_zgo2_seedlibary",
 		allowed = {
@@ -491,7 +491,7 @@ local function SetupDarkRPEntities()
 	DarkRP.createEntity("DoobyTable", {
 		ent = "zgo2_doobytable",
 		model = "models/zerochain/props_growop2/zgo2_doobytable.mdl",
-		price = 1000,
+		price = 1400,
 		max = 1,
 		cmd = "buy_zgo2_doobytable",
 		allowed = {
@@ -505,7 +505,7 @@ local function SetupDarkRPEntities()
 	DarkRP.createEntity("Mixer", {
 		ent = "zgo2_mixer",
 		model = "models/zerochain/props_growop2/zgo2_mixer.mdl",
-		price = 1000,
+		price = 1400,
 		max = 5,
 		cmd = "buy_zgo2_mixer",
 		allowed = {
@@ -519,7 +519,7 @@ local function SetupDarkRPEntities()
 	DarkRP.createEntity("Oven", {
 		ent = "zgo2_oven",
 		model = "models/zerochain/props_growop2/zgo2_oven.mdl",
-		price = 1000,
+		price = 1400,
 		max = 5,
 		cmd = "buy_zgo2_oven",
 		allowed = {
@@ -534,7 +534,7 @@ local function SetupDarkRPEntities()
 		DarkRP.createEntity(v.name, {
 			ent = "zgo2_backmix",
 			model = v.backmix_model,
-			price = 1000,
+			price = 1400,
 			max = 5,
 			cmd = "buy_zgo2_backmix" .. k,
 			allowed = { TEAM_ZGO2_AMATEUR, TEAM_ZGO2_BASIC, TEAM_ZGO2_PRO },
