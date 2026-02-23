@@ -11,7 +11,7 @@ function PANEL:CreatePopout()
     self.popoutPanel = BRICKS_SERVER.Func.CreatePopoutPanel( self, self.panelWide, self.panelTall, self.popoutWide, self.popoutTall )
     self.popoutPanel.Paint = function( self2, w, h )
         Derma_DrawBackgroundBlur( self2, SysTime() )
-        draw.RoundedBox( 8, 0, 0, w, h, BRICKS_SERVER.Func.GetTheme( 2, 245 ) )
+        draw.RoundedBox( 8, 0, 0, w, h, BRICKS_SERVER.Func.GetTheme( 1, 245 ) )
     end
     self.popoutPanel.OnRemove = function()
         self:Remove()
@@ -56,11 +56,12 @@ function PANEL:CreatePopout()
         self:RefreshRows()
     end
 
-    self.scroll = vgui.Create( "bricks_server_scrollpanel_bar", self.mainPanel )
-    self.scroll:Dock( FILL )
-    self.scroll:DockMargin( 20, 12, 20, 12 )
+    self.tableArea = vgui.Create( "DPanel", self.mainPanel )
+    self.tableArea:Dock( FILL )
+    self.tableArea:DockMargin( 20, 12, 20, 12 )
+    self.tableArea.Paint = nil
 
-    self.list = vgui.Create( "DListView", self.scroll )
+    self.list = vgui.Create( "DListView", self.tableArea )
     self.list:Dock( FILL )
     self.list:SetMultiSelect( false )
     self.list:SetHeaderHeight( 24 )
@@ -90,7 +91,7 @@ function PANEL:CreatePopout()
         end
     end )
 
-    self.emptyLabel = vgui.Create( "DLabel", self.scroll )
+    self.emptyLabel = vgui.Create( "DLabel", self.tableArea )
     self.emptyLabel:Dock( TOP )
     self.emptyLabel:DockMargin( 6, 6, 6, 0 )
     self.emptyLabel:SetFont( "BRICKS_SERVER_Font19" )
