@@ -153,20 +153,36 @@ function BRICKS_SERVER.UNBOXING.Func.GetStatTrakRolls( ply, globalKey )
         return fallback and { fallback } or {}
     end
 
-    if( #rolls > 0 ) then
-        return rolls
-    end
+    -- Normalize potentially sparse/string-keyed JSON tables into a dense ordered array
+    -- so any UI iteration with ipairs() remains reliable.
+    local orderedKeys, denseRolls = {}, {}
 
-    local normalized = {}
     for k, v in pairs( rolls ) do
         local idx = tonumber( k )
         if( idx and istable( v ) ) then
-            normalized[idx] = v
+            table.insert( orderedKeys, idx )
         end
     end
 
-    if( #normalized > 0 ) then
-        return normalized
+    if( #orderedKeys > 0 ) then
+        table.sort( orderedKeys, function( a, b ) return a < b end )
+
+        for _, idx in ipairs( orderedKeys ) do
+            local roll = rolls[idx] or rolls[tostring( idx )]
+            if( istable( roll ) ) then
+                table.insert( denseRolls, roll )
+            end
+        end
+    else
+        for _, v in pairs( rolls ) do
+            if( istable( v ) ) then
+                table.insert( denseRolls, v )
+            end
+        end
+    end
+
+    if( #denseRolls > 0 ) then
+        return denseRolls
     end
 
     local fallback = BRICKS_SERVER.UNBOXING.Func.GetStatTrakSummary( ply, globalKey )
