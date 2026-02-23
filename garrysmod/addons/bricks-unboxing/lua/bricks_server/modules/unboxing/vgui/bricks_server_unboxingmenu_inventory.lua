@@ -184,6 +184,25 @@ function PANEL:FillInventory()
 
         if (isItem) then
             local devConfigItemTable = BRICKS_SERVER.DEVCONFIG.UnboxingItemTypes[configItemTable.Type] or {}
+            local statTrakSummary = BRICKS_SERVER.UNBOXING.Func.GetStatTrakSummary(LocalPlayer(), globalKey)
+
+            if (statTrakSummary) then
+                table.insert(actions, { "Inspect", function()
+                    self.popoutPanel = vgui.Create("bricks_server_unboxingmenu_stattrak_popup", self)
+                    self.popoutPanel:SetPos(0, 0)
+                    self.popoutPanel:SetSize(self.panelWide, ScrH() * 0.65 - 40)
+                    self.popoutPanel:CreatePopout()
+                    self.popoutPanel:FillPanel(globalKey, false)
+                end })
+
+                table.insert(actions, { "Ranking", function()
+                    self.popoutPanel = vgui.Create("bricks_server_unboxingmenu_stattrak_popup", self)
+                    self.popoutPanel:SetPos(0, 0)
+                    self.popoutPanel:SetSize(self.panelWide, ScrH() * 0.65 - 40)
+                    self.popoutPanel:CreatePopout()
+                    self.popoutPanel:FillPanel(globalKey, true)
+                end })
+            end
 
             if (devConfigItemTable.UseFunction) then
                 local itemKeyNum = tonumber(string.Replace(globalKey, "ITEM_", ""))

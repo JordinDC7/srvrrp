@@ -123,6 +123,81 @@ function BRICKS_SERVER.UNBOXING.Func.GetStatTrakSummary( ply, globalKey )
     return statTrakData.BestRoll or statTrakData.LastRoll
 end
 
+-- Builds a deterministic metadata id for one specific rolled item instance.
+function BRICKS_SERVER.UNBOXING.Func.BuildStatTrakBoosterID( globalKey, rollData )
+    if( not globalKey or not istable( rollData ) ) then return "" end
+
+    local seed = string.format(
+        "%s|%s|%s|%s|%s|%s",
+        tostring( globalKey ),
+        tostring( (rollData.Stats or {}).DMG or 0 ),
+        tostring( (rollData.Stats or {}).ACC or 0 ),
+        tostring( (rollData.Stats or {}).CTRL or 0 ),
+        tostring( (rollData.Stats or {}).HND or 0 ),
+        tostring( rollData.Created or os.time() )
+    )
+
+    return string.upper( util.CRC( seed ) or "" )
+end
+
+-- Calculates per-stat rank/percentile against the player's equipped inventory for a weapon class.
+function BRICKS_SERVER.UNBOXING.Func.GetStatTrakRankings( ply, weaponClass, currentStats )
+    if( not IsValid( ply ) or not weaponClass or not istable( currentStats ) ) then return {} end
+
+    local statKeys = { "DMG", "ACC", "CTRL", "HND" }
+    local compared = {
+        DMG = {},
+        ACC = {},
+        CTRL = {},
+        HND = {}
+    }
+
+    local inventory = ply:GetUnboxingInventory()
+    local inventoryData = ply:GetUnboxingInventoryData()
+
+    for globalKey, itemData in pairs( inventoryData ) do
+        if( not inventory[globalKey] or not string.StartWith( globalKey, "ITEM_" ) ) then continue end
+
+        local configItemTable = BRICKS_SERVER.CONFIG.UNBOXING.Items[tonumber( string.Replace( globalKey, "ITEM_", "" ) )]
+        if( not configItemTable ) then continue end
+        if( configItemTable.Type != "Weapon" and configItemTable.Type != "PermWeapon" ) then continue end
+        if( (configItemTable.ReqInfo or {})[1] != weaponClass ) then continue end
+
+        local summary = BRICKS_SERVER.UNBOXING.Func.GetStatTrakSummary( ply, globalKey )
+        local stats = (summary and summary.Stats) or {}
+
+        for _, statKey in ipairs( statKeys ) do
+            table.insert( compared[statKey], tonumber( stats[statKey] ) or 0 )
+        end
+    end
+
+    local output = {}
+    for _, statKey in ipairs( statKeys ) do
+        local values = compared[statKey]
+        table.sort( values, function( a, b ) return a > b end )
+
+        local rank = 1
+        local currentValue = tonumber( currentStats[statKey] ) or 0
+        for i, value in ipairs( values ) do
+            if( value == currentValue ) then
+                rank = i
+                break
+            end
+        end
+
+        local total = math.max( #values, 1 )
+        local percentile = math.Round( (1-((rank-1)/total))*100, 2 )
+
+        output[statKey] = {
+            Rank = rank,
+            Total = total,
+            Percentile = percentile
+        }
+    end
+
+    return output
+end
+
 local function brsClamp( value, minValue, maxValue )
     if( value < minValue ) then return minValue end
     if( value > maxValue ) then return maxValue end
