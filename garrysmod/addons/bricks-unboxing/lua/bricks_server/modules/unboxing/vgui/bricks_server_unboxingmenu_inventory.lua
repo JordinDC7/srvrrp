@@ -24,6 +24,8 @@ function PANEL:CalculateGrid()
 end
 
 function PANEL:FillPanel()
+    self:Clear()
+
     self:CalculateGrid()
 
     self.topBar = vgui.Create("DPanel", self)
@@ -100,6 +102,22 @@ function PANEL:FillPanel()
     hook.Add("BRS.Hooks.FillUnboxingInventory", self, function()
         self:FillInventory()
     end)
+
+    self.OnSizeChanged = function()
+        if timer.Exists("BRS_UNBOXING_INV_RESIZE_" .. tostring(self)) then
+            timer.Remove("BRS_UNBOXING_INV_RESIZE_" .. tostring(self))
+        end
+
+        timer.Create("BRS_UNBOXING_INV_RESIZE_" .. tostring(self), 0, 1, function()
+            if (not IsValid(self)) then return end
+
+            if (IsValid(self.searchBar)) then
+                self.searchBar:SetWide(math.min(ScrW() * 0.2, math.max(180, self.panelWide * 0.32)))
+            end
+
+            self:FillInventory()
+        end)
+    end
 end
 
 function PANEL:AddSlot(globalKey, amount, actions)
