@@ -61,6 +61,15 @@ net.Receive( "BRS.Net.GangUpgrade", function( len, ply )
 		local newBalance = math.Clamp( gangBalance-price, 0, BRICKS_SERVER.Func.GangGetUpgradeInfo( ply:GetGangID(), "MaxBalance" )[1] )
 		BRICKS_SERVER.Func.UpdateGangTable( ply:GetGangID(), "Money", newBalance, "Upgrades", gangUpgrades )
 
+		if( BRICKS_SERVER.Func.GangAddContribution ) then
+			BRICKS_SERVER.Func.GangAddContribution( ply:GetGangID(), ply, "UpgradeSpend", price )
+		end
+
+		if( BRICKS_SERVER.Func.GangAddActivity ) then
+			local upgradeName = upgradeConfig.Name or upgradeKey
+			BRICKS_SERVER.Func.GangAddActivity( ply:GetGangID(), ply:Nick() .. " purchased " .. upgradeName .. " for " .. DarkRP.formatMoney( price ) .. ".", Color( 255, 214, 103 ), ply:SteamID() )
+		end
+
 		DarkRP.notify( ply, 1, 5, BRICKS_SERVER.Func.L( "gangUpgradeBought", DarkRP.formatMoney( price ) ) )
 	else
 		DarkRP.notify( ply, 1, 5, BRICKS_SERVER.Func.L( "gangNotEnoughFunds" ) )

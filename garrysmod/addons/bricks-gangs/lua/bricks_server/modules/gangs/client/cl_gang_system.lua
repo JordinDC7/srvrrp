@@ -9,6 +9,22 @@ net.Receive( "BRS.Net.OpenGangMenu", function()
     end
 end )
 
+function BRICKS_SERVER.Func.RequestGangCommandData()
+    if( not LocalPlayer():HasGang() ) then return end
+
+    net.Start( "BRS.Net.RequestGangCommandData" )
+    net.SendToServer()
+end
+
+net.Receive( "BRS.Net.SendGangCommandData", function()
+    local gangID = net.ReadUInt( 16 )
+
+    BRS_GANG_COMMANDDATA = BRS_GANG_COMMANDDATA or {}
+    BRS_GANG_COMMANDDATA[gangID] = net.ReadTable() or {}
+
+    hook.Run( "BRS.Hooks.GangCommandDataUpdated", gangID )
+end )
+
 hook.Add( "PlayerButtonDown", "BricksServerHooks_PlayerButtonDown_OpenGangMenu", function( ply, button )
 	local bindText, bindButton = BRICKS_SERVER.Func.GetClientBind( "GangMenuBind" )
 	if( button == bindButton and CurTime() >= (BRS_GANGMENUCOOLDOWN or 0) ) then
