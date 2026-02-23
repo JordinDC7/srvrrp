@@ -2,6 +2,18 @@
 
 A product-and-engineering roadmap designed to make this GMod server the most compelling DarkRP experience in the market.
 
+## Execution Status (Started Now)
+
+### Phase 1 Delivered in this changeset
+- ✅ **Task 116: Server Performance Observatory** (baseline tick/entity/net telemetry, console snapshots, reset command).
+- ✅ **Task 118: Net Message Budgeting Framework** (per-message inbound budgets with block counters and admin visibility).
+- ✅ **Task 123: Canary Rollouts + Feature Flags** (runtime feature flags with admin/superadmin controls).
+
+### Next immediate slices
+1. Persist feature flags and observatory snapshots to data for restart-safe operations.
+2. Wire observatory outputs into an admin VGUI panel.
+3. Expand default budgets for all critical custom net channels after one week of live telemetry.
+
 ## Vision
 Build a server that wins on three fronts:
 1. **First-session wow** (best onboarding + VGUI quality)
