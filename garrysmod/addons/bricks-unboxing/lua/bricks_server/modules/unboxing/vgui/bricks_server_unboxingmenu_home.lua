@@ -75,7 +75,7 @@ function PANEL:FillPanel()
     local progressionBar = vgui.Create("DPanel", self)
     progressionBar:Dock(TOP)
     progressionBar:DockMargin(0, 25, 0, 0)
-    progressionBar:SetTall(154)
+    progressionBar:SetTall(196)
     progressionBar.Paint = function(self2, w, h)
         draw.RoundedBox(8, 0, 0, w, h, BRICKS_SERVER.Func.GetTheme(2))
 
@@ -87,6 +87,11 @@ function PANEL:FillPanel()
         local pityByFamily = progress.Pity or {}
         local highestPity = 0
         local highestFamily = "All Cases"
+        local season = progress.Season or {}
+        local seasonData = season.Data or {}
+        local seasonName = tostring(seasonData.Name or "No Active Season")
+        local seasonEnds = tonumber(seasonData.EndUnix) or 0
+        local nowUnix = tonumber(season.Now) or os.time()
 
         for family, value in pairs(pityByFamily) do
             local familyPity = tonumber(value) or 0
@@ -122,13 +127,44 @@ function PANEL:FillPanel()
         end
 
         draw.SimpleText("Apex guaranteed at " .. string.Comma(hardCap) .. ". " .. string.Comma(opensLeft) .. " opens remaining.", "BRICKS_SERVER_Font17", 20, 104, BRICKS_SERVER.Func.GetTheme(6, 180))
-        draw.SimpleText("Legendary / Glitched / Mythical are apex tiers.", "BRICKS_SERVER_Font17", 20, 124, BRICKS_SERVER.Func.GetTheme(6, 120))
+        draw.SimpleText("Season: " .. seasonName, "BRICKS_SERVER_Font17", 20, 124, BRICKS_SERVER.Func.GetTheme(6, 150))
+
+        local seasonCountdown = "Season window is open-ended"
+        if seasonEnds > 0 and seasonEnds >= nowUnix then
+            local secondsLeft = seasonEnds-nowUnix
+            local daysLeft = math.max(0, math.floor(secondsLeft/86400))
+            seasonCountdown = "Season ends in " .. string.Comma(daysLeft) .. "d"
+        end
+
+        draw.SimpleText(seasonCountdown, "BRICKS_SERVER_Font17", 20, 142, BRICKS_SERVER.Func.GetTheme(6, 120))
+        draw.SimpleText("Legendary / Glitched / Mythical are apex tiers.", "BRICKS_SERVER_Font17", 20, 160, BRICKS_SERVER.Func.GetTheme(6, 100))
 
         draw.SimpleText("Tip: Open the same case family to push this track faster.", "BRICKS_SERVER_Font17", w - 20, 36, BRICKS_SERVER.Func.GetTheme(6, 90), TEXT_ALIGN_RIGHT)
 
+        local trackedFamilies = {}
+        for familyName, pityValue in pairs(pityByFamily) do
+            table.insert(trackedFamilies, { Name = tostring(familyName), Value = tonumber(pityValue) or 0 })
+        end
+        table.sort(trackedFamilies, function(a, b) return a.Value > b.Value end)
+
+        local familyText = "Family tracks: "
+        if #trackedFamilies <= 0 then
+            familyText = familyText .. "none yet"
+        else
+            local maxDisplay = math.min(3, #trackedFamilies)
+            for i = 1, maxDisplay do
+                local familyData = trackedFamilies[i]
+                familyText = familyText .. string.upper(familyData.Name) .. " " .. familyData.Value
+                if i < maxDisplay then
+                    familyText = familyText .. " | "
+                end
+            end
+        end
+        draw.SimpleText(familyText, "BRICKS_SERVER_Font17", w - 20, 58, BRICKS_SERVER.Func.GetTheme(6, 120), TEXT_ALIGN_RIGHT)
+
         local rarityOrder = { "Legendary", "Glitched", "Mythical" }
         local startX = w - 20
-        local pillY = 116
+        local pillY = 168
         local pillH = 22
 
         surface.SetFont("BRICKS_SERVER_Font17")

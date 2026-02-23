@@ -167,3 +167,63 @@ concommand.Add( "unboxing_toptier_disable_family", function( ply, _, args )
 
 	BRICKS_SERVER.Func.BRS_MSGN( "unboxing", "Case family '" .. caseFamily .. "' disabled=" .. tostring( disabled ) .. " by " .. (IsValid( ply ) and ply:SteamID64() or "console") )
 end )
+
+
+concommand.Add( "unboxing_toptier_hotfix_weight", function( ply, _, args )
+	if( IsValid( ply ) and not BRICKS_SERVER.Func.HasAdminAccess( ply ) ) then return end
+
+	local caseKey = tonumber( args[1] or 0 )
+	local itemGlobalKey = tostring( args[2] or "" )
+	local multiplier = tonumber( args[3] )
+	local reason = tostring( args[4] or "manual_adjustment" )
+
+	if( caseKey <= 0 or itemGlobalKey == "" ) then return end
+	if( itemGlobalKey != "*" and not BRICKS_SERVER.UNBOXING.Func.GetItemFromGlobalKey( itemGlobalKey ) ) then return end
+
+	local limits = (((BRICKS_SERVER.UNBOXING.LUACFG.TopTier or {}).LiveOps or {}).HotfixWeightLimits or {})
+	local minM = tonumber( limits.Min ) or 0.1
+	local maxM = tonumber( limits.Max ) or 5
+	if( not multiplier ) then return end
+	multiplier = math.Clamp( multiplier, minM, maxM )
+
+	if( itemGlobalKey == "*" ) then
+		local caseCfg = BRICKS_SERVER.CONFIG.UNBOXING.Cases[caseKey]
+		if( not caseCfg or not istable( caseCfg.Items ) ) then return end
+
+		for caseItemGlobalKey, _ in pairs( caseCfg.Items ) do
+			BRICKS_SERVER.UNBOXING.Func.SetDropWeightHotfix( ply, caseKey, caseItemGlobalKey, multiplier, reason )
+		end
+	else
+		BRICKS_SERVER.UNBOXING.Func.SetDropWeightHotfix( ply, caseKey, itemGlobalKey, multiplier, reason )
+	end
+
+	BRICKS_SERVER.Func.BRS_MSGN( "unboxing", "Hotfix weight set for case " .. tostring( caseKey ) .. ", item " .. itemGlobalKey .. ", multiplier " .. tostring( multiplier ) )
+end )
+
+concommand.Add( "unboxing_toptier_hotfix_clear", function( ply, _, args )
+	if( IsValid( ply ) and not BRICKS_SERVER.Func.HasAdminAccess( ply ) ) then return end
+
+	local caseKey = tonumber( args[1] or 0 )
+	local itemGlobalKey = tostring( args[2] or "" )
+	if( caseKey <= 0 ) then return end
+
+	if( itemGlobalKey != "" ) then
+		if( itemGlobalKey == "*" ) then
+			local caseCfg = BRICKS_SERVER.CONFIG.UNBOXING.Cases[caseKey]
+			if( caseCfg and caseCfg.Items ) then
+				for caseItemGlobalKey, _ in pairs( caseCfg.Items ) do
+					BRICKS_SERVER.UNBOXING.Func.SetDropWeightHotfix( ply, caseKey, caseItemGlobalKey, nil, "clear_case_hotfix" )
+				end
+			end
+		else
+			BRICKS_SERVER.UNBOXING.Func.SetDropWeightHotfix( ply, caseKey, itemGlobalKey, nil, "clear_item_hotfix" )
+		end
+	else
+		local active = BRICKS_SERVER.UNBOXING.Func.GetDropWeightHotfixes()[tostring( caseKey )] or {}
+		for caseItemGlobalKey, _ in pairs( active ) do
+			BRICKS_SERVER.UNBOXING.Func.SetDropWeightHotfix( ply, caseKey, caseItemGlobalKey, nil, "clear_case_hotfix" )
+		end
+	end
+
+	BRICKS_SERVER.Func.BRS_MSGN( "unboxing", "Hotfix weights cleared for case " .. tostring( caseKey ) .. ", item=" .. (itemGlobalKey != "" and itemGlobalKey or "all") )
+end )

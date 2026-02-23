@@ -40,6 +40,16 @@ function playerMeta:UnboxingCanOpenCase( caseKey )
 
 	if( not configItemTable ) then return false, BRICKS_SERVER.Func.L( "unboxingCaseNotExists" ) end
 
+	if( BRICKS_SERVER.UNBOXING and BRICKS_SERVER.UNBOXING.Func and BRICKS_SERVER.UNBOXING.Func.GetCaseSeasonAvailability ) then
+		local seasonAllowed, reason = BRICKS_SERVER.UNBOXING.Func.GetCaseSeasonAvailability( caseKey, configItemTable )
+		if( not seasonAllowed ) then
+			if( reason == "no_active_season" ) then
+				return false, "No active case season right now."
+			end
+			return false, "This case is vaulted this season."
+		end
+	end
+
 	local keysTable = configItemTable.Keys
 	if( keysTable ) then
 		local inventoryTable = self:GetUnboxingInventory()
