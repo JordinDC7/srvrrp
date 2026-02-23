@@ -538,6 +538,45 @@
       "Level": 138,
       "Name": "Armory Unlock: Anti-Materiel",
       "Description": "Long-range anti-armor role for elite members."
+    },
+    "Weapon_11": {
+      "SortValue": 106,
+      "ReqInfo": [
+        "m9k_remington7615p"
+      ],
+      "Icon": "https://i.imgur.com/iDezZ62.png",
+      "Key": "Weapon_11",
+      "Type": "Weapon",
+      "Price": 175000,
+      "Level": 60,
+      "Name": "Armory Unlock: Patrol Shotgun",
+      "Description": "Close-quarters power spike for territory pushes."
+    },
+    "Weapon_12": {
+      "SortValue": 110,
+      "ReqInfo": [
+        "m9k_m24"
+      ],
+      "Icon": "https://i.imgur.com/iDezZ62.png",
+      "Key": "Weapon_12",
+      "Type": "Weapon",
+      "Price": 260000,
+      "Level": 82,
+      "Name": "Armory Unlock: Recon Sniper",
+      "Description": "Long-lane control for overwatch and defense."
+    },
+    "Weapon_13": {
+      "SortValue": 114,
+      "ReqInfo": [
+        "m9k_rpg7"
+      ],
+      "Icon": "https://i.imgur.com/iDezZ62.png",
+      "Key": "Weapon_13",
+      "Type": "Weapon",
+      "Price": 450000,
+      "Level": 110,
+      "Name": "Armory Unlock: Demolition Team",
+      "Description": "High-risk anti-vehicle option for endgame gang wars."
     }
   },
   "Gang Display Distance": 10000,
