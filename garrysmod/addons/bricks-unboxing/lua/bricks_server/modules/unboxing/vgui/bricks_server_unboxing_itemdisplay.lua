@@ -43,9 +43,14 @@ function PANEL:SetItemData( type, itemTable, iconAdjust )
         self.itemModel:Dock( FILL )
         self.itemModel:SetModel( itemModel or "error.mdl" )
         self.itemModel:SetCursor( "none" )
+        self.itemModel:SetPaintBackground( false )
         function self.itemModel:LayoutEntity( Entity ) return end
         function self.itemModel:PreDrawModel( Entity )
             render.ClearDepth()
+        end
+        function self.itemModel:Paint( w, h )
+            draw.RoundedBox( 0, 0, 0, w, h, BRICKS_SERVER.Func.GetTheme( 1, 0 ) )
+            self:DrawModel()
         end
     
         local itemModelEnt = self.itemModel.Entity

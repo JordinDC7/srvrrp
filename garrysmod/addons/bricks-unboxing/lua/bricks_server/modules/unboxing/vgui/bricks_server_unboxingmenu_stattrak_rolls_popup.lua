@@ -367,4 +367,8 @@ function PANEL:RefreshRows()
     end
 end
 
+function PANEL:Paint( w, h )
+
+end
+
 vgui.Register( "bricks_server_unboxingmenu_stattrak_rolls_popup", PANEL, "DPanel" )

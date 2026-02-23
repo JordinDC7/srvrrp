@@ -214,4 +214,8 @@ function PANEL:FillPanel( globalKey, rankingMode, rollIndex )
     end
 end
 
+function PANEL:Paint( w, h )
+
+end
+
 vgui.Register( "bricks_server_unboxingmenu_stattrak_popup", PANEL, "DPanel" )
