@@ -100,7 +100,18 @@ function PANEL:Refresh()
 
     self.sheet = vgui.Create( "bricks_server_colsheet", self.mainPanel )
     self.sheet:Dock( FILL )
+    self.sheet.Paint = function( self2, w, h )
+        draw.RoundedBox( 0, 0, 0, w, h, BRICKS_SERVER.Func.GetTheme( 1 ) )
+    end
+
     self.sheet.Navigation:SetWide( BRICKS_SERVER.DEVCONFIG.MainNavWidth )
+    self.sheet.Navigation.Paint = function( self2, w, h )
+        draw.RoundedBox( 0, 0, 0, w, h, BRICKS_SERVER.Func.GetTheme( 3 ) )
+
+        surface.SetDrawColor( BRICKS_SERVER.Func.GetTheme( 6, 8 ) )
+        surface.DrawRect( w-2, 0, 2, h )
+    end
+
     self.sheet.OnSheetChange = function( activeButton )
         hook.Run( "BRS.Hooks.UnboxingSwitchpage", activeButton.label )
 
