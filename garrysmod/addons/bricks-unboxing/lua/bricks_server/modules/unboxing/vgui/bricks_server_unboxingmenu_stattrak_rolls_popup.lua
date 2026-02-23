@@ -66,6 +66,9 @@ function PANEL:CreatePopout()
     self.list:SetMultiSelect( false )
     self.list:SetHeaderHeight( 24 )
     self.list:SetDataHeight( 24 )
+    self.list.Paint = function( self2, w, h )
+        draw.RoundedBox( 8, 0, 0, w, h, BRICKS_SERVER.Func.GetTheme( 2, 245 ) )
+    end
     self.list:AddColumn( "#" )
     self.list:AddColumn( "Tier" )
     self.list:AddColumn( "Score" )
@@ -87,6 +90,20 @@ function PANEL:CreatePopout()
 
             if( IsValid( column.Header ) ) then
                 column.Header:SetTall( 24 )
+                column.Header:SetTextColor( BRICKS_SERVER.Func.GetTheme( 6 ) )
+                column.Header.Paint = function( self3, ww, hh )
+                    local isSorted = self3:GetSelected()
+                    draw.RoundedBox( 0, 0, 0, ww, hh, BRICKS_SERVER.Func.GetTheme( isSorted and 0 or 1, isSorted and 190 or 170 ) )
+                    draw.SimpleText( self3:GetText() or "", "BRICKS_SERVER_Font18", 8, hh / 2, BRICKS_SERVER.Func.GetTheme( 6 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
+                end
+            end
+        end
+
+        if( IsValid( self.list.VBar ) ) then
+            self.list.VBar:SetHideButtons( true )
+            self.list.VBar.Paint = function() end
+            self.list.VBar.btnGrip.Paint = function( self3, ww, hh )
+                draw.RoundedBox( 4, 2, 0, ww - 4, hh, BRICKS_SERVER.Func.GetTheme( 3, 180 ) )
             end
         end
     end )
