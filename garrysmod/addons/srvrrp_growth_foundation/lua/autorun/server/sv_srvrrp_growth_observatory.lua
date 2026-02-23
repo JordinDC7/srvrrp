@@ -12,6 +12,77 @@ OBS.Samples = OBS.Samples or {
     entityCount = {}
 }
 
+local PERSIST_FILE = "srvrrp_growth/observatory_state.json"
+
+local function shallowCopy(source)
+    local out = {}
+    for key, value in pairs(source or {}) do
+        out[key] = value
+    end
+
+    return out
+end
+
+local function savePersistentState()
+    if not file or not util or not file.CreateDir or not file.Write or not util.TableToJSON then return end
+
+    file.CreateDir("srvrrp_growth")
+
+    local payload = {
+        featureFlags = shallowCopy(SRVRRP_GROWTH.Config.FeatureFlags),
+        observatory = {
+            netStats = OBS.NetStats,
+            samples = {
+                tickMs = OBS.Samples.tickMs,
+                entityCount = OBS.Samples.entityCount
+            }
+        },
+        savedAt = os.time()
+    }
+
+    local encoded = util.TableToJSON(payload, false)
+    if not encoded then return end
+
+    file.Write(PERSIST_FILE, encoded)
+end
+
+local function restorePersistentState()
+    if not file or not util or not file.Exists or not file.Read or not util.JSONToTable then return end
+    if not file.Exists(PERSIST_FILE, "DATA") then return end
+
+    local raw = file.Read(PERSIST_FILE, "DATA")
+    if not raw or raw == "" then return end
+
+    local decoded = util.JSONToTable(raw)
+    if not istable(decoded) then return end
+
+    if istable(decoded.featureFlags) then
+        for flagName, value in pairs(decoded.featureFlags) do
+            if SRVRRP_GROWTH.Config.FeatureFlags[flagName] ~= nil then
+                SRVRRP_GROWTH.Config.FeatureFlags[flagName] = value == true
+            end
+        end
+    end
+
+    if istable(decoded.observatory) then
+        if istable(decoded.observatory.netStats) then
+            OBS.NetStats = decoded.observatory.netStats
+        end
+
+        if istable(decoded.observatory.samples) then
+            if istable(decoded.observatory.samples.tickMs) then
+                OBS.Samples.tickMs = decoded.observatory.samples.tickMs
+            end
+
+            if istable(decoded.observatory.samples.entityCount) then
+                OBS.Samples.entityCount = decoded.observatory.samples.entityCount
+            end
+        end
+    end
+end
+
+restorePersistentState()
+
 local function minuteBucket()
     return math.floor(os.time() / 60)
 end
@@ -237,6 +308,7 @@ concommand.Add("srvrrp_obs_reset", function(player)
     OBS.Samples.entityCount = {}
 
     print("[SRVRRP][OBS] observatory stats reset")
+    savePersistentState()
 end)
 
 concommand.Add("srvrrp_ff_list", function(player)
@@ -272,4 +344,13 @@ concommand.Add("srvrrp_ff_set", function(player, _, args)
     end
 
     print(string.format("[SRVRRP][FF] %s set to %s", flagName, tostring(enabled)))
+    savePersistentState()
+end)
+
+timer.Create("SRVRRP.Growth.PersistenceFlush", 60, 0, function()
+    savePersistentState()
+end)
+
+hook.Add("ShutDown", "SRVRRP.Growth.PersistenceFlushOnShutdown", function()
+    savePersistentState()
 end)

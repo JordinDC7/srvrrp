@@ -8,11 +8,12 @@ A product-and-engineering roadmap designed to make this GMod server the most com
 - ✅ **Task 116: Server Performance Observatory** (baseline tick/entity/net telemetry, console snapshots, reset command).
 - ✅ **Task 118: Net Message Budgeting Framework** (per-message inbound budgets with block counters and admin visibility).
 - ✅ **Task 123: Canary Rollouts + Feature Flags** (runtime feature flags with admin/superadmin controls).
+- ✅ **Restart-safe persistence slice** (feature flags + observatory net/sample snapshots now persisted to `garrysmod/data`).
 
 ### Next immediate slices
-1. Persist feature flags and observatory snapshots to data for restart-safe operations.
-2. Wire observatory outputs into an admin VGUI panel.
-3. Expand default budgets for all critical custom net channels after one week of live telemetry.
+1. Wire observatory outputs into an admin VGUI panel.
+2. Expand default budgets for all critical custom net channels after one week of live telemetry.
+3. Add basic data health checks for persisted observatory payload shape/versioning.
 
 ## Vision
 Build a server that wins on three fronts:
