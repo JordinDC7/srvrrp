@@ -197,6 +197,25 @@ function PANEL:RefreshRows()
             row.Stats.MOV,
             row.Stamp
         )
+
+        line.Paint = function( self2, w, h )
+            local isSelected = self2:IsSelected()
+            local backColor = BRICKS_SERVER.Func.GetTheme( isSelected and 5 or 1, isSelected and 210 or 140 )
+
+            if( not isSelected and (self2:GetID() % 2 == 0) ) then
+                backColor = BRICKS_SERVER.Func.GetTheme( 1, 190 )
+            end
+
+            draw.RoundedBox( 0, 0, 0, w, h, backColor )
+        end
+
+        for _, column in ipairs( line.Columns or {} ) do
+            if( IsValid( column ) ) then
+                column:SetTextColor( BRICKS_SERVER.Func.GetTheme( 6 ) )
+                column:SetFont( "BRICKS_SERVER_Font18" )
+            end
+        end
+
         line.RollIndex = row.Index
     end
 end
