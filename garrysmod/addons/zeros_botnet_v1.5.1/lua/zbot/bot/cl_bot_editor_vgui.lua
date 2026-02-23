@@ -27,8 +27,16 @@ local function UpdateModel(Bot_ent)
 
 	// Get the normal map of the material we wanna replace
     local mats = Bot_ent:GetMaterials()
-	local mat_overwrite_path = mats[math.Clamp(BotData.material.id + 1, 0, table.Count(mats) - 1)]
-    local params = util.KeyValuesToTable( file.Read( "materials/" .. mat_overwrite_path .. ".vmt", "GAME" ) ) or {}
+	local materialIndex = math.Clamp( BotData.material.id + 1, 1, table.Count( mats ) )
+	local mat_overwrite_path = mats[materialIndex]
+	local params = {}
+
+	if isstring( mat_overwrite_path ) and mat_overwrite_path ~= "" then
+		local vmtPath = "materials/" .. mat_overwrite_path .. ".vmt"
+		if file.Exists( vmtPath, "GAME" ) then
+			params = util.KeyValuesToTable( file.Read( vmtPath, "GAME" ) or "" ) or {}
+		end
+	end
 
 	local s_diff_map = BotData.material.diff
     local s_nrm_map = BotData.material.nrm

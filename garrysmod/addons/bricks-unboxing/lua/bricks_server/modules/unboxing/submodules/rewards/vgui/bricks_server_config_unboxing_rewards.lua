@@ -63,7 +63,11 @@ function PANEL:Refresh()
     contentPanel:SetTall( math.max( self.panelTall-50-self.topHeaderH, ((mostItems+1)*(slotTall+10))+10 ) )
     contentPanel.Paint = function( self, w, h ) end 
 
+    local dateTable = os.date( "*t" )
+    local weekDay = (dateTable.wday-1 >= 1 and dateTable.wday-1) or 7
+
     for i = 1, 7 do
+        BS_ConfigCopyTable.UNBOXING.Rewards[i] = BS_ConfigCopyTable.UNBOXING.Rewards[i] or {}
         local rewardEntry = vgui.Create( "DPanel", contentPanel )
         rewardEntry:Dock( LEFT )
         rewardEntry:DockMargin( 0, 0, (i != 7 and self.spacing or 0), 0 )

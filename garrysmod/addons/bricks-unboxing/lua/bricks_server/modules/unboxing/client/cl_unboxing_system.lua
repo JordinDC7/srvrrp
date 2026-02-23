@@ -87,6 +87,13 @@ net.Receive( "BRS.Net.PurchaseShopUnboxingItemsReturn", function()
 	hook.Run( "BRS.Hooks.RefreshUnboxingCart" )
 end )
 
+net.Receive( "BRS.Net.UnboxingPremiumRedirect", function()
+	local redirectURL = net.ReadString()
+	if( not isstring( redirectURL ) or redirectURL == "" ) then return end
+
+	gui.OpenURL( redirectURL )
+end )
+
 function BRICKS_SERVER.Func.CreateUnboxingItemNotification( reason, ... )
 	local argItems = { ... }
 	local items = {}
