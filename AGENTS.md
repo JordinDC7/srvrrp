@@ -1,54 +1,47 @@
-# AGENTS.md — Codex rules for this GMod server repo
+# AGENTS.md
 
-## Mission
-This repository is the source of truth for a production Garry's Mod server (DarkRP on Physgun).
-Make safe, maintainable, performance-conscious changes that improve gameplay, stability, and admin operations.
+## Scope
+This repository is the full source-controlled code/config for the Garry's Mod server.
 
-## Default editable paths
-Codex may edit these by default:
-- `garrysmod/addons/**`
-- `garrysmod/cfg/**`
-- `garrysmod/lua/**`
+Codex is authorized to inspect and modify ANY tracked file in this repository when required to complete a task, including:
+- `garrysmod/addons/`
+- `garrysmod/cfg/`
+- `garrysmod/lua/`
+- `garrysmod/data/` (for debugging, migrations, config repair, or compatibility fixes)
+- workflow/deploy files (if needed for deployment/restart fixes)
+- UI/HUD/menu files
+- trading/unboxing systems
+- weapon/damage-related hooks and configs
 
-## Debug-readable paths (read anytime)
-Codex may inspect these for debugging/investigation:
-- `garrysmod/data/**`
-- `garrysmod/logs/**`
-- `garrysmod/clientside_errors.txt`
+## Working mode
+Use a repo-wide audit-first approach, then implement fixes across related systems in a single coordinated update when requested.
 
-## Conditionally editable paths
-Codex may modify these ONLY when the task explicitly requires it, and the PR explains why:
-- `garrysmod/data/**` (config/data migrations, seeded defaults, data-driven addon config)
+When debugging gameplay issues (damage, UI, networking, trading, inventories), Codex may:
+- read logs
+- inspect data/config files
+- patch Lua across multiple addons
+- normalize duplicated hooks
+- fix conflicting UI layout code
+- update menus/HUD integration code
 
-## Generally do not edit unless explicitly requested
-- `garrysmod/cache/**`
-- `garrysmod/download/**`
-- `garrysmod/downloads/**`
-- `garrysmod/html/**`
-- `garrysmod/temp/**`
-- generated runtime files, binary caches, secrets/license files
+## Constraints
+- Do NOT touch secrets or credentials unless explicitly asked.
+- Do NOT commit runtime cache, workshop cache, generated binaries, or logs unless explicitly requested.
+- Preserve server-specific behavior where possible, but prioritize fixing broken systems when requested.
+- If multiple addons conflict, prefer the fix with the smallest blast radius and document the conflict in the summary.
 
-## Safety rules
-- Do not add malicious code, backdoors, hidden admin bypasses, credential logging, or anti-user code.
-- Do not make anti-cheat evasion or exploit code.
-- Keep diffs minimal and scoped to the requested task.
+## Testing expectations
+For gameplay fixes, include:
+- what changed
+- likely root cause
+- in-game test steps (exact steps)
+- rollback notes (which files to revert)
 
-## Performance standards (GMod/Lua)
-- Avoid heavy work in `Think` hooks unless necessary.
-- Avoid net message spam and repeated expensive calls.
-- Prefer clean hook/timer lifecycle management.
-- Preserve behavior unless the task asks for behavior changes.
-
-## PR requirements
-Every PR should include:
-1. What changed
-2. Why it changed
-3. Risks / side effects
-4. In-game testing steps
-5. Rollback notes (if applicable)
-
-## Deployment awareness
-- GitHub Actions deploys to Physgun after merge to `main`.
-- Deploy target is `/garrysmod/`.
-- CI may deploy only changed files.
-- Avoid noisy/runtime changes unless explicitly required.
+## Priority systems in this repo
+High-priority gameplay systems include:
+- weapon damage / PVP damage hooks
+- unboxing / case view popups / rewards UI
+- trade menu / trading flows
+- inventory UI / item actions
+- HUD/menu integration
+- server monetization hooks (e.g., Prometheus integrations) when relevant
