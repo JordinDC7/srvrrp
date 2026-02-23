@@ -89,9 +89,14 @@ function PANEL:SetActiveSheetByLabel( label )
     if( not sheetData ) then return end
 
     local button = self:GetSheetButton( sheetData )
-    if( IsValid( button ) and self.sheet.SetActiveButton ) then
-        self.sheet:SetActiveButton( button )
-        return
+    if( IsValid( button ) ) then
+        if( isfunction( button.DoClick ) ) then
+            button:DoClick()
+            return
+        elseif( self.sheet.SetActiveButton ) then
+            self.sheet:SetActiveButton( button )
+            return
+        end
     end
 
     if( self.sheet.SetActiveSheet ) then
