@@ -1,5 +1,7 @@
 local PANEL = {}
 
+local IMAGE_LOAD_TIMEOUT = 6
+
 function PANEL:Init()
     self.iconSizeAdjust = 1
 end
@@ -48,7 +50,18 @@ function PANEL:SetItemData( type, itemTable, iconAdjust )
     
     if( itemTable.Icon ) then
         local iconMat
-        BRICKS_SERVER.Func.GetImage( itemTable.Icon, function( mat ) iconMat = mat end )
+        local iconRequestedAt = CurTime()
+        local iconLoadFailed = false
+
+        BRICKS_SERVER.Func.GetImage( itemTable.Icon, function( mat )
+            if( not IsValid( self ) ) then return end
+
+            if( ismaterial( mat ) ) then
+                iconMat = mat
+            else
+                iconLoadFailed = true
+            end
+        end )
         
         self.itemModel = vgui.Create( "DPanel", self )
         self.itemModel:Dock( FILL )
@@ -58,6 +71,8 @@ function PANEL:SetItemData( type, itemTable, iconAdjust )
                 surface.SetMaterial( iconMat )
                 local iconSize = h*self.iconSizeAdjust
                 surface.DrawTexturedRect( (w/2)-(iconSize/2), (h/2)-(iconSize/2), iconSize, iconSize )
+            elseif( iconLoadFailed or (CurTime()-iconRequestedAt) > IMAGE_LOAD_TIMEOUT ) then
+                BRS_UNBOXING_DrawFallbackIcon( w, h, BRICKS_SERVER.Func.L( "unknown" ) )
             else
                 surface.SetDrawColor( 255, 255, 255, 255 )
                 surface.SetMaterial( loadingIcon )
