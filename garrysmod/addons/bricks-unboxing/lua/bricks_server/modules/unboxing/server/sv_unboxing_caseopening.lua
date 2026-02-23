@@ -17,11 +17,26 @@ local function brsUnboxingBuildStatTrakRoll( configItemTable )
 		Created = os.time()
 	}
 
+	local rarityRanges = statTrakConfig.RarityRollRanges or {}
+	local rarityRange = rarityRanges[configItemTable.Rarity or ""] or {}
+
 	local weightedScore, totalWeight = 0, 0
 	for _, statInfo in ipairs( stats ) do
 		local minValue = tonumber( statInfo.Min ) or 1
 		local maxValue = tonumber( statInfo.Max ) or 100
 		if( maxValue < minValue ) then
+			minValue, maxValue = maxValue, minValue
+		end
+
+		if( isnumber( rarityRange.Min ) ) then
+			minValue = math.max( minValue, rarityRange.Min )
+		end
+
+		if( isnumber( rarityRange.Max ) ) then
+			maxValue = math.min( maxValue, rarityRange.Max )
+		end
+
+		if( minValue > maxValue ) then
 			minValue, maxValue = maxValue, minValue
 		end
 
