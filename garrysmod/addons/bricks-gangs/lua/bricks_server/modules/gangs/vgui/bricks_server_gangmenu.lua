@@ -118,6 +118,7 @@ function PANEL:RefreshGang()
     local pages = {}
     if( gangTable ) then
         table.insert( pages, { BRICKS_SERVER.Func.L( "gangDashboard" ), "bricks_server_gangmenu_dashboard", "dashboard.png" } )
+        table.insert( pages, { "Command Center", "bricks_server_gangmenu_command", "gang_send.png" } )
         table.insert( pages, { BRICKS_SERVER.Func.L( "gangMembers" ), "bricks_server_gangmenu_members", "gangs_24.png" } )
 
         if( LocalPlayer():GangHasPermission( "ViewItem" ) and BRICKS_SERVER.Func.IsSubModuleEnabled( "gangs", "storage" ) ) then

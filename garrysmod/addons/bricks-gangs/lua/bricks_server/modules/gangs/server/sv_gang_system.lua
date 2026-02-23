@@ -2,6 +2,10 @@ util.AddNetworkString( "BRS.Net.OpenGangMenu" )
 function BRICKS_SERVER.Func.OpenGangMenu( ply )
 	net.Start( "BRS.Net.OpenGangMenu" )
 	net.Send( ply )
+
+	if( BRICKS_SERVER.Func.GangSendCommandData and ply:HasGang() ) then
+		BRICKS_SERVER.Func.GangSendCommandData( ply:GetGangID(), ply )
+	end
 end
 
 hook.Add( "PlayerSay", "BricksServerHooks_PlayerSay_OpenGangMenu", function( ply, text )
@@ -162,6 +166,10 @@ net.Receive( "BRS.Net.CreateGang", function( len, ply )
 		end
 
 		BRICKS_SERVER.Func.CreateGangTable( ply, gangName, gangIcon )
+
+		if( BRICKS_SERVER.Func.GangAddActivity ) then
+			BRICKS_SERVER.Func.GangAddActivity( ply:GetGangID(), ply:Nick() .. " founded the gang.", Color( 104, 220, 145 ), ply:SteamID() )
+		end
 	else
 		DarkRP.notify( ply, 1, 5, BRICKS_SERVER.Func.L( "gangCreationNoMoney", DarkRP.formatMoney( price ) ) )
 	end
@@ -321,6 +329,10 @@ net.Receive( "BRS.Net.GangKick", function( len, ply )
 	local success = BRICKS_SERVER.Func.GangKickMember( ply:GetGangID(), memberSteamID )
 
 	if( success ) then
+		if( BRICKS_SERVER.Func.GangAddActivity ) then
+			BRICKS_SERVER.Func.GangAddActivity( ply:GetGangID(), ply:Nick() .. " removed " .. memberName .. " from the gang.", Color( 255, 120, 120 ), ply:SteamID() )
+		end
+
 		DarkRP.notify( ply, 1, 5, BRICKS_SERVER.Func.L( "gangPlayerKicked", memberName ) )
 	else
 		DarkRP.notify( ply, 1, 5, BRICKS_SERVER.Func.L( "gangPlayerKickError" ) )
@@ -398,6 +410,10 @@ net.Receive( "BRS.Net.GangInviteAccept", function( len, ply )
 
 	BRICKS_SERVER.Func.UpdateGangTable( gangID, "Members", gangMembers )
 
+	if( BRICKS_SERVER.Func.GangAddActivity ) then
+		BRICKS_SERVER.Func.GangAddActivity( gangID, ply:Nick() .. " joined the gang.", Color( 110, 190, 255 ), ply:SteamID() )
+	end
+
 	DarkRP.notify( ply, 1, 5, BRICKS_SERVER.Func.L( "gangJoined", (BRICKS_SERVER_GANGS[gangID].Name or BRICKS_SERVER.Func.L( "nil" )) ) )
 
 	hook.Run( "BRS.Hooks.GangMembersChanged", gangID, table.Count( gangMembers ) )
@@ -436,6 +452,14 @@ net.Receive( "BRS.Net.GangDepositMoney", function( len, ply )
 
 	BRICKS_SERVER.Func.AddGangBalance( ply:GetGangID(), depositAmount )
 
+	if( BRICKS_SERVER.Func.GangAddContribution ) then
+		BRICKS_SERVER.Func.GangAddContribution( ply:GetGangID(), ply, "Deposited", depositAmount )
+	end
+
+	if( BRICKS_SERVER.Func.GangAddActivity ) then
+		BRICKS_SERVER.Func.GangAddActivity( ply:GetGangID(), ply:Nick() .. " deposited " .. DarkRP.formatMoney( depositAmount ) .. ".", Color( 82, 217, 124 ), ply:SteamID() )
+	end
+
 	DarkRP.notify( ply, 1, 5, BRICKS_SERVER.Func.L( "gangDepositedMoney", DarkRP.formatMoney( depositAmount ) ) )
 
 	hook.Run( "BRS.Hooks.GangBalanceChanged", ply:GetGangID(), math.Clamp( gangBalance+depositAmount, 0, maxBalance ) )
@@ -458,6 +482,14 @@ net.Receive( "BRS.Net.GangWithdrawMoney", function( len, ply )
 	local maxBalance = BRICKS_SERVER.Func.GangGetUpgradeInfo( ply:GetGangID(), "MaxBalance" )[1]
 
 	BRICKS_SERVER.Func.TakeGangBalance( ply:GetGangID(), withdrawAmount )
+
+	if( BRICKS_SERVER.Func.GangAddContribution ) then
+		BRICKS_SERVER.Func.GangAddContribution( ply:GetGangID(), ply, "Withdrawn", withdrawAmount )
+	end
+
+	if( BRICKS_SERVER.Func.GangAddActivity ) then
+		BRICKS_SERVER.Func.GangAddActivity( ply:GetGangID(), ply:Nick() .. " withdrew " .. DarkRP.formatMoney( withdrawAmount ) .. ".", Color( 238, 133, 93 ), ply:SteamID() )
+	end
 
 	ply:addMoney( withdrawAmount )
 
@@ -489,6 +521,10 @@ net.Receive( "BRS.Net.GangTransfer", function( len, ply )
 
 	BRICKS_SERVER.Func.UpdateGangTable( ply:GetGangID(), "Owner", memberSteamID )
 
+	if( BRICKS_SERVER.Func.GangAddActivity ) then
+		BRICKS_SERVER.Func.GangAddActivity( ply:GetGangID(), ply:Nick() .. " transferred ownership to " .. (gangTable.Members[memberSteamID][1] or "Unknown") .. ".", Color( 155, 128, 255 ), ply:SteamID() )
+	end
+
 	DarkRP.notify( ply, 1, 5, BRICKS_SERVER.Func.L( "gangOwnershipTransfered", (gangTable.Name or BRICKS_SERVER.Func.L( "nil" )), (gangTable.Members[memberSteamID][1] or BRICKS_SERVER.Func.L( "nil" )) ) )
 end )
 
@@ -505,6 +541,10 @@ net.Receive( "BRS.Net.GangLeave", function( len, ply )
 	BRICKS_SERVER.Func.UpdateGangTable( ply:GetGangID(), "Members", gangMembers )
 
 	DarkRP.notify( ply, 1, 5, BRICKS_SERVER.Func.L( "gangLeft", (BRICKS_SERVER_GANGS[ply:GetGangID()].Name or BRICKS_SERVER.Func.L( "nil" )) .. "!" ) )
+
+	if( BRICKS_SERVER.Func.GangAddActivity ) then
+		BRICKS_SERVER.Func.GangAddActivity( ply:GetGangID(), ply:Nick() .. " left the gang.", Color( 255, 140, 102 ), ply:SteamID() )
+	end
 
 	ply:SetGangID( 0 )
 end )
