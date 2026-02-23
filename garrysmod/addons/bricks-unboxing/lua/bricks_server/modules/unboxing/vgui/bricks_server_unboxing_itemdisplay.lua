@@ -62,9 +62,9 @@ local function BRS_UNBOXING_ResolveItemModel( itemType, itemTable )
         return itemModel
     end
 
-    -- Some workshop weapon packs don't report as valid at UI build time even though
+    -- Some workshop/content-pack models don't report as valid at UI build time even though
     -- they still render correctly in a DModelPanel once requested by path.
-    if( itemType == "ITEM" and isstring( itemModel ) and itemModel ~= "" and string.EndsWith( string.lower( itemModel ), ".mdl" ) ) then
+    if( isstring( itemModel ) and itemModel ~= "" and string.EndsWith( string.lower( itemModel ), ".mdl" ) ) then
         return itemModel
     end
 
