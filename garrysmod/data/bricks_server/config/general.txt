@@ -1,0 +1,129 @@
+{
+  "Donate Link": "https://www.blackrockgaming.co.uk/donate",
+  "Use Textured Gradients (Better FPS)": true,
+  "Server Name": "SmG Rp",
+  "3D2D Display Distance": 500000,
+  "Groups": [
+    [
+      "Staff",
+      {
+        "superadmin": true,
+        "admin": true
+      }
+    ],
+    [
+      "VIP++",
+      {
+        "superadmin": true
+      },
+      {
+        "r": 212,
+        "g": 175,
+        "b": 55,
+        "a": 255
+      }
+    ],
+    [
+      "VIP+",
+      {
+        "superadmin": true
+      },
+      {
+        "r": 170,
+        "g": 170,
+        "b": 195,
+        "a": 255
+      }
+    ],
+    [
+      "VIP",
+      {
+        "superadmin": true
+      },
+      {
+        "r": 122,
+        "g": 224,
+        "b": 255,
+        "a": 255
+      }
+    ],
+    [
+      "User",
+      [],
+      {
+        "r": 201,
+        "g": 70,
+        "b": 70,
+        "a": 255
+      },
+      true
+    ]
+  ],
+  "AdminPermissions": {
+    "superadmin": true,
+    "founder": true,
+    "owner": true
+  },
+  "Rarities": [
+    [
+      "Scrap",
+      "Gradient",
+      [
+        { "r": 55, "g": 55, "b": 60, "a": 255 },
+        { "r": 130, "g": 130, "b": 140, "a": 255 }
+      ]
+    ],
+    [
+      "Neon",
+      "Gradient",
+      [
+        { "r": 0, "g": 120, "b": 160, "a": 255 },
+        { "r": 0, "g": 255, "b": 255, "a": 255 }
+      ]
+    ],
+    [
+      "Shadow",
+      "Gradient",
+      [
+        { "r": 55, "g": 20, "b": 105, "a": 255 },
+        { "r": 165, "g": 60, "b": 235, "a": 255 }
+      ]
+    ],
+    [
+      "Holo",
+      "Gradient",
+      [
+        { "r": 110, "g": 120, "b": 145, "a": 255 },
+        { "r": 225, "g": 235, "b": 255, "a": 255 }
+      ]
+    ],
+    [
+      "Void",
+      "Gradient",
+      [
+        { "r": 120, "g": 0, "b": 80, "a": 255 },
+        { "r": 255, "g": 20, "b": 147, "a": 255 }
+      ]
+    ],
+    [
+      "Eclipse",
+      "Gradient",
+      [
+        { "r": 28, "g": 28, "b": 32, "a": 255 },
+        { "r": 212, "g": 175, "b": 55, "a": 255 }
+      ]
+    ],
+    [
+      "Hacked",
+      "Gradient",
+      [
+        { "r": 0, "g": 255, "b": 120, "a": 255 },
+        { "r": 150, "g": 255, "b": 0, "a": 255 }
+      ]
+    ],
+    [
+      "Glitched",
+      "Rainbow"
+    ]
+  ]
+}

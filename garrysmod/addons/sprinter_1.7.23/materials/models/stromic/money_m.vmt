@@ -1,0 +1,23 @@
+
+"VertexlitGeneric"
+{
+	"$basetexture" "models/stromic/money_m"
+	"$nodecal" 1
+	"$colorfix" "{250 250 250}" 
+
+"$surfaceprop" "Default"
+"Proxies" 
+{ 
+"Equals" 
+{ 
+srcVar1 $colorfix 
+resultVar $color 
+}  	
+"AnimatedTexture" 
+{ 
+"animatedTextureVar" "$basetexture" 
+"animatedTextureFrameNumVar" "$frame" 
+"animatedTextureFrameRate" "40" 
+}
+} 
+}

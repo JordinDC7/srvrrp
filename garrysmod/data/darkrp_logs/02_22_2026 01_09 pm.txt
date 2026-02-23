@@ -1,0 +1,53 @@
+Sun Feb 22 13:09:32 2026	Jumper (STEAM_0:0:774496399) has joined the game
+Sun Feb 22 13:09:32 2026	Jumper (STEAM_0:0:774496399) spawned
+Sun Feb 22 13:09:35 2026	Booffallu (STEAM_0:0:574698981) has joined the game
+Sun Feb 22 13:09:35 2026	Booffallu (STEAM_0:0:574698981) spawned
+Sun Feb 22 13:09:36 2026	2PR0 (STEAM_0:1:93928982) has joined the game
+Sun Feb 22 13:09:36 2026	2PR0 (STEAM_0:1:93928982) spawned
+Sun Feb 22 13:11:38 2026	Booffallu was killed by Jumper with a prop_physics
+Sun Feb 22 13:11:42 2026	2PR0 was killed by Jumper with a prop_physics
+Sun Feb 22 13:15:37 2026	Jumper (STEAM_0:0:774496399) disconnected
+Sun Feb 22 19:47:05 2026	cactus jack (STEAM_0:0:648900746) has joined the game
+Sun Feb 22 19:47:05 2026	XANARCHY (STEAM_0:0:648900746) spawned
+Sun Feb 22 19:57:40 2026	XANARCHY was killed by Themself with a suicide trick
+Sun Feb 22 19:57:41 2026	XANARCHY (STEAM_0:0:648900746) spawned
+Sun Feb 22 19:57:45 2026	XANARCHY was killed by Themself with a suicide trick
+Sun Feb 22 19:57:46 2026	XANARCHY (STEAM_0:0:648900746) spawned
+Sun Feb 22 19:57:51 2026	XANARCHY was killed by Themself with a suicide trick
+Sun Feb 22 19:57:51 2026	XANARCHY (STEAM_0:0:648900746) spawned
+Sun Feb 22 21:09:55 2026	XANARCHY (STEAM_0:0:648900746) spawned SENT zbf_controller
+Sun Feb 22 21:10:01 2026	XANARCHY (STEAM_0:0:648900746) spawned SENT zbf_atm
+Sun Feb 22 21:10:29 2026	XANARCHY (STEAM_0:0:648900746) spawned SENT nexus_job_creator
+Sun Feb 22 21:10:49 2026	XANARCHY (STEAM_0:0:648900746) spawned SENT bank_npc
+Sun Feb 22 21:11:03 2026	XANARCHY (STEAM_0:0:648900746) spawned SENT deathscreen_npc
+Sun Feb 22 21:11:38 2026	XANARCHY (STEAM_0:0:648900746) spawned SENT zlt_machine
+Sun Feb 22 21:12:24 2026	XANARCHY (STEAM_0:0:648900746) spawned SENT zlt_machine
+Sun Feb 22 21:14:03 2026	XANARCHY was killed by Themself with a suicide trick
+Sun Feb 22 21:19:11 2026	XANARCHY (STEAM_0:0:648900746) spawned
+Sun Feb 22 21:53:15 2026	2PR0 (STEAM_0:1:93928982) spawned
+Sun Feb 22 21:56:08 2026	2PR0 was killed by XANARCHY with a m9k_g36
+Sun Feb 22 21:58:02 2026	2PR0 (STEAM_0:1:93928982) spawned
+Sun Feb 22 22:11:52 2026	Booffallu (STEAM_0:0:574698981) spawned
+Sun Feb 22 22:13:33 2026	Booffallu (STEAM_0:0:574698981): 
+Sun Feb 22 22:14:41 2026	Booffallu (STEAM_0:0:574698981): !menu
+Sun Feb 22 22:15:45 2026	Booffallu was killed by 2PR0 with a stunstick
+Sun Feb 22 22:27:47 2026	2PR0 was killed by XANARCHY with a m9k_g36
+Sun Feb 22 22:27:50 2026	2PR0 (STEAM_0:1:93928982) spawned
+Sun Feb 22 22:28:18 2026	XANARCHY was killed by 2PR0 with a stunstick
+Sun Feb 22 22:34:05 2026	XANARCHY (STEAM_0:0:648900746) spawned
+Sun Feb 22 22:34:30 2026	XANARCHY (STEAM_0:0:648900746): // 22PR0's
+Sun Feb 22 22:34:44 2026	2PR0 was killed by XANARCHY with a m9k_aw50
+Sun Feb 22 22:38:24 2026	XANARCHY (STEAM_0:0:648900746) disconnected
+Sun Feb 22 22:52:09 2026	2PR0 (STEAM_0:1:93928982) spawned
+Sun Feb 22 23:16:12 2026	2PR0 (STEAM_0:1:93928982) disconnected
+Sun Feb 22 23:16:55 2026	2PR0 (STEAM_0:1:93928982) has joined the game
+Sun Feb 22 23:16:55 2026	2PR0 (STEAM_0:1:93928982) spawned
+Sun Feb 22 23:17:58 2026	2PR0 (STEAM_0:1:93928982) disconnected
+Sun Feb 22 23:19:46 2026	2PR0 (STEAM_0:1:93928982) has joined the game
+Sun Feb 22 23:19:46 2026	2PR0 (STEAM_0:1:93928982) spawned
+Sun Feb 22 23:24:35 2026	2PR0 (STEAM_0:1:93928982): 
+Sun Feb 22 23:29:45 2026	2PR0 (STEAM_0:1:93928982): 
+Sun Feb 22 23:31:18 2026	2PR0 was killed by Themself with a suicide trick
+Sun Feb 22 23:31:19 2026	2PR0 (STEAM_0:1:93928982) spawned
+Sun Feb 22 23:32:00 2026	2PR0 (STEAM_0:1:93928982): 
+Mon Feb 23 00:05:38 2026	Booffallu (STEAM_0:0:574698981) spawned

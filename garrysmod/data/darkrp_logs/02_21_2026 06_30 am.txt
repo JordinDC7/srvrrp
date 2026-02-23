@@ -1,0 +1,155 @@
+Sat Feb 21 06:30:57 2026	2PR0 (STEAM_0:1:93928982) has joined the game
+Sat Feb 21 06:30:57 2026	2PR0 (STEAM_0:1:93928982) spawned
+Sat Feb 21 06:30:58 2026	cactus jack (STEAM_0:0:648900746) has joined the game
+Sat Feb 21 06:30:58 2026	CACTUS JACK (STEAM_0:0:648900746) spawned
+Sat Feb 21 06:31:22 2026	2PR0 (STEAM_0:1:93928982): /setmoney 2 999999
+Sat Feb 21 06:31:22 2026	2PR0 (STEAM_0:1:93928982) set 2PR0's money to $999,999
+Sat Feb 21 06:31:32 2026	2PR0 (STEAM_0:1:93928982): /setmoney ca 999999
+Sat Feb 21 06:31:32 2026	2PR0 (STEAM_0:1:93928982) set cactus jack's money to $999,999
+Sat Feb 21 06:32:01 2026	CACTUS JACK (STEAM_0:0:648900746): \
+Sat Feb 21 06:32:27 2026	CACTUS JACK (STEAM_0:0:648900746): /selmoney 1
+Sat Feb 21 06:34:40 2026	2PR0 was killed by CACTUS JACK with a weapon_ak472
+Sat Feb 21 06:34:41 2026	2PR0 (STEAM_0:1:93928982) spawned
+Sat Feb 21 06:34:55 2026	2PR0 was killed by CACTUS JACK with a weapon_ak472
+Sat Feb 21 06:34:56 2026	2PR0 (STEAM_0:1:93928982) spawned
+Sat Feb 21 06:35:04 2026	2PR0 was killed by CACTUS JACK with a ls_sniper
+Sat Feb 21 06:35:05 2026	2PR0 (STEAM_0:1:93928982) spawned
+Sat Feb 21 06:35:30 2026	CACTUS JACK was killed by NPC [1324][npc_rollermine] with a npc_rollermine
+Sat Feb 21 06:35:31 2026	CACTUS JACK (STEAM_0:0:648900746) spawned
+Sat Feb 21 06:35:41 2026	CACTUS JACK was killed by NPC [1349][npc_rollermine] with a npc_rollermine
+Sat Feb 21 06:35:42 2026	CACTUS JACK (STEAM_0:0:648900746) spawned
+Sat Feb 21 06:35:53 2026	2PR0 was killed by NPC [1400][npc_rollermine] with a npc_rollermine
+Sat Feb 21 06:35:55 2026	2PR0 (STEAM_0:1:93928982) spawned
+Sat Feb 21 06:35:56 2026	CACTUS JACK was killed by Entity [0][worldspawn] with a unknown
+Sat Feb 21 06:35:57 2026	CACTUS JACK (STEAM_0:0:648900746) spawned
+Sat Feb 21 06:36:00 2026	2PR0 was killed by NPC [1279][npc_rollermine] with a npc_rollermine
+Sat Feb 21 06:36:03 2026	2PR0 (STEAM_0:1:93928982) spawned
+Sat Feb 21 06:36:03 2026	CACTUS JACK was killed by NPC [1351][npc_rollermine] with a npc_rollermine
+Sat Feb 21 06:36:04 2026	CACTUS JACK (STEAM_0:0:648900746) spawned
+Sat Feb 21 06:36:08 2026	2PR0 was killed by NPC [1302][npc_rollermine] with a npc_rollermine
+Sat Feb 21 06:36:10 2026	CACTUS JACK was killed by Entity [0][worldspawn] with a unknown
+Sat Feb 21 06:36:11 2026	CACTUS JACK (STEAM_0:0:648900746) spawned
+Sat Feb 21 06:36:13 2026	2PR0 (STEAM_0:1:93928982) spawned
+Sat Feb 21 06:36:19 2026	CACTUS JACK was killed by NPC [1273][npc_rollermine] with a npc_rollermine
+Sat Feb 21 06:36:20 2026	CACTUS JACK (STEAM_0:0:648900746) spawned
+Sat Feb 21 06:36:26 2026	2PR0 was killed by NPC [1293][npc_rollermine] with a npc_rollermine
+Sat Feb 21 06:36:27 2026	2PR0 (STEAM_0:1:93928982) spawned
+Sat Feb 21 06:36:28 2026	CACTUS JACK was killed by NPC [1342][npc_rollermine] with a npc_rollermine
+Sat Feb 21 06:36:33 2026	2PR0 was killed by NPC [1329][npc_rollermine] with a npc_rollermine
+Sat Feb 21 06:36:36 2026	CACTUS JACK (STEAM_0:0:648900746) spawned
+Sat Feb 21 06:36:38 2026	2PR0 (STEAM_0:1:93928982) spawned
+Sat Feb 21 06:36:42 2026	CACTUS JACK was killed by NPC [1235][npc_rollermine] with a npc_rollermine
+Sat Feb 21 06:36:49 2026	CACTUS JACK (STEAM_0:0:648900746) spawned
+Sat Feb 21 06:36:52 2026	2PR0 was killed by NPC [1255][npc_rollermine] with a npc_rollermine
+Sat Feb 21 06:36:53 2026	2PR0 (STEAM_0:1:93928982) spawned
+Sat Feb 21 06:37:01 2026	CACTUS JACK was killed by NPC [1243][npc_rollermine] with a npc_rollermine
+Sat Feb 21 06:37:02 2026	2PR0 was killed by NPC [1257][npc_rollermine] with a npc_rollermine
+Sat Feb 21 06:37:03 2026	CACTUS JACK (STEAM_0:0:648900746) spawned
+Sat Feb 21 06:37:04 2026	2PR0 (STEAM_0:1:93928982) spawned
+Sat Feb 21 06:37:10 2026	2PR0 was killed by NPC [1255][npc_rollermine] with a npc_rollermine
+Sat Feb 21 06:37:11 2026	2PR0 (STEAM_0:1:93928982) spawned
+Sat Feb 21 06:37:12 2026	CACTUS JACK was killed by NPC [1321][npc_rollermine] with a npc_rollermine
+Sat Feb 21 06:37:13 2026	CACTUS JACK (STEAM_0:0:648900746) spawned
+Sat Feb 21 06:37:19 2026	CACTUS JACK was killed by NPC [1351][npc_rollermine] with a npc_rollermine
+Sat Feb 21 06:37:19 2026	2PR0 was killed by NPC [1352][npc_rollermine] with a npc_rollermine
+Sat Feb 21 06:37:20 2026	CACTUS JACK (STEAM_0:0:648900746) spawned
+Sat Feb 21 06:37:22 2026	2PR0 (STEAM_0:1:93928982) spawned
+Sat Feb 21 06:37:28 2026	CACTUS JACK was killed by NPC [1235][npc_rollermine] with a npc_rollermine
+Sat Feb 21 06:37:29 2026	CACTUS JACK (STEAM_0:0:648900746) spawned
+Sat Feb 21 06:37:31 2026	2PR0 was killed by NPC [1357][npc_rollermine] with a npc_rollermine
+Sat Feb 21 06:37:33 2026	2PR0 (STEAM_0:1:93928982) spawned
+Sat Feb 21 06:37:40 2026	2PR0 was killed by NPC [1396][npc_rollermine] with a npc_rollermine
+Sat Feb 21 06:37:41 2026	CACTUS JACK was killed by NPC [1322][npc_rollermine] with a npc_rollermine
+Sat Feb 21 06:37:42 2026	CACTUS JACK (STEAM_0:0:648900746) spawned
+Sat Feb 21 06:37:51 2026	CACTUS JACK was killed by NPC [1353][npc_rollermine] with a npc_rollermine
+Sat Feb 21 06:37:55 2026	CACTUS JACK (STEAM_0:0:648900746) spawned
+Sat Feb 21 06:37:55 2026	2PR0 (STEAM_0:1:93928982) spawned
+Sat Feb 21 06:38:07 2026	2PR0 was killed by CACTUS JACK with a weapon_m42
+Sat Feb 21 06:38:17 2026	2PR0 (STEAM_0:1:93928982) spawned
+Sat Feb 21 06:39:31 2026	2PR0 was killed by CACTUS JACK with a ls_sniper
+Sat Feb 21 06:39:37 2026	2PR0 (STEAM_0:1:93928982) spawned
+Sat Feb 21 06:39:49 2026	2PR0 was killed by Themself with a suicide trick
+Sat Feb 21 06:39:51 2026	2PR0 (STEAM_0:1:93928982) spawned
+Sat Feb 21 06:40:16 2026	CACTUS JACK was killed by Themself with a suicide trick
+Sat Feb 21 06:40:18 2026	CACTUS JACK (STEAM_0:0:648900746) spawned
+Sat Feb 21 06:40:34 2026	2PR0 was killed by Themself with a suicide trick
+Sat Feb 21 06:40:34 2026	CACTUS JACK was killed by 2PR0 with a npc_satchel
+Sat Feb 21 06:40:36 2026	CACTUS JACK (STEAM_0:0:648900746) spawned
+Sat Feb 21 06:40:38 2026	2PR0 (STEAM_0:1:93928982) spawned
+Sat Feb 21 06:40:54 2026	2PR0 was killed by CACTUS JACK with a npc_satchel
+Sat Feb 21 06:40:55 2026	2PR0 (STEAM_0:1:93928982) spawned
+Sat Feb 21 06:41:03 2026	CACTUS JACK was killed by Themself with a suicide trick
+Sat Feb 21 06:41:04 2026	CACTUS JACK (STEAM_0:0:648900746) spawned
+Sat Feb 21 06:41:16 2026	2PR0 was killed by Themself with a suicide trick
+Sat Feb 21 06:41:17 2026	2PR0 (STEAM_0:1:93928982) spawned
+Sat Feb 21 06:41:21 2026	2PR0 (STEAM_0:1:93928982): !ult
+Sat Feb 21 06:41:23 2026	2PR0 (STEAM_0:1:93928982): !ulx
+Sat Feb 21 06:41:25 2026	CACTUS JACK was killed by Themself with a suicide trick
+Sat Feb 21 06:41:25 2026	2PR0 (STEAM_0:1:93928982): /ulx
+Sat Feb 21 06:41:27 2026	CACTUS JACK (STEAM_0:0:648900746) spawned
+Sat Feb 21 06:41:28 2026	2PR0 (STEAM_0:1:93928982): !ulx
+Sat Feb 21 06:41:49 2026	CACTUS JACK was killed by Themself with a suicide trick
+Sat Feb 21 06:41:49 2026	2PR0 was killed by CACTUS JACK with a npc_tripmine
+Sat Feb 21 06:41:51 2026	2PR0 (STEAM_0:1:93928982) spawned
+Sat Feb 21 06:41:51 2026	CACTUS JACK (STEAM_0:0:648900746) spawned
+Sat Feb 21 06:42:06 2026	2PR0 was killed by Themself with a suicide trick
+Sat Feb 21 06:42:06 2026	CACTUS JACK was killed by 2PR0 with a npc_tripmine
+Sat Feb 21 06:42:08 2026	CACTUS JACK (STEAM_0:0:648900746) spawned
+Sat Feb 21 06:42:09 2026	2PR0 (STEAM_0:1:93928982) spawned
+Sat Feb 21 06:42:21 2026	CACTUS JACK was killed by 2PR0 with a npc_tripmine
+Sat Feb 21 06:42:23 2026	CACTUS JACK (STEAM_0:0:648900746) spawned
+Sat Feb 21 06:42:40 2026	CACTUS JACK was killed by Themself with a suicide trick
+Sat Feb 21 06:42:42 2026	CACTUS JACK (STEAM_0:0:648900746) spawned
+Sat Feb 21 06:43:03 2026	CACTUS JACK was killed by Themself with a suicide trick
+Sat Feb 21 06:43:05 2026	CACTUS JACK (STEAM_0:0:648900746) spawned
+Sat Feb 21 06:43:16 2026	2PR0 was killed by CACTUS JACK with a npc_tripmine
+Sat Feb 21 06:43:16 2026	CACTUS JACK was killed by Themself with a suicide trick
+Sat Feb 21 06:43:17 2026	CACTUS JACK (STEAM_0:0:648900746) spawned
+Sat Feb 21 06:43:19 2026	2PR0 (STEAM_0:1:93928982) spawned
+Sat Feb 21 06:43:33 2026	CACTUS JACK was killed by Themself with a suicide trick
+Sat Feb 21 06:43:33 2026	2PR0 was killed by Themself with a suicide trick
+Sat Feb 21 06:43:34 2026	CACTUS JACK (STEAM_0:0:648900746) spawned
+Sat Feb 21 06:43:34 2026	2PR0 (STEAM_0:1:93928982) spawned
+Sat Feb 21 06:43:58 2026	CACTUS JACK was killed by Themself with a suicide trick
+Sat Feb 21 06:44:00 2026	CACTUS JACK (STEAM_0:0:648900746) spawned
+Sat Feb 21 06:44:46 2026	CACTUS JACK was killed by 2PR0 with a npc_tripmine
+Sat Feb 21 06:44:47 2026	CACTUS JACK (STEAM_0:0:648900746) spawned
+Sat Feb 21 06:44:58 2026	2PR0 was killed by Themself with a suicide trick
+Sat Feb 21 06:44:58 2026	CACTUS JACK was killed by 2PR0 with a npc_tripmine
+Sat Feb 21 06:45:00 2026	2PR0 (STEAM_0:1:93928982) spawned
+Sat Feb 21 06:45:01 2026	CACTUS JACK (STEAM_0:0:648900746) spawned
+Sat Feb 21 06:45:17 2026	2PR0 was killed by CACTUS JACK with a npc_satchel
+Sat Feb 21 06:45:18 2026	2PR0 (STEAM_0:1:93928982) spawned
+Sat Feb 21 06:45:22 2026	CACTUS JACK was killed by Themself with a suicide trick
+Sat Feb 21 06:45:23 2026	CACTUS JACK (STEAM_0:0:648900746) spawned
+Sat Feb 21 06:45:41 2026	2PR0 was killed by Themself with a suicide trick
+Sat Feb 21 06:45:42 2026	CACTUS JACK was killed by Themself with a suicide trick
+Sat Feb 21 06:45:44 2026	CACTUS JACK (STEAM_0:0:648900746) spawned
+Sat Feb 21 06:45:45 2026	2PR0 (STEAM_0:1:93928982) spawned
+Sat Feb 21 06:46:23 2026	2PR0 was killed by Themself with a suicide trick
+Sat Feb 21 06:46:26 2026	2PR0 (STEAM_0:1:93928982) spawned
+Sat Feb 21 06:46:37 2026	CACTUS JACK was killed by Themself with a suicide trick
+Sat Feb 21 06:46:39 2026	CACTUS JACK (STEAM_0:0:648900746) spawned
+Sat Feb 21 06:47:43 2026	2PR0 (STEAM_0:1:93928982) spawned SENT sent_ball
+Sat Feb 21 06:47:46 2026	2PR0 (STEAM_0:1:93928982) spawned SENT sent_ball
+Sat Feb 21 06:47:47 2026	2PR0 (STEAM_0:1:93928982) spawned SENT sent_ball
+Sat Feb 21 06:47:47 2026	2PR0 (STEAM_0:1:93928982) spawned SENT sent_ball
+Sat Feb 21 06:47:47 2026	2PR0 (STEAM_0:1:93928982) spawned SENT sent_ball
+Sat Feb 21 06:47:47 2026	2PR0 (STEAM_0:1:93928982) spawned SENT sent_ball
+Sat Feb 21 06:47:47 2026	2PR0 (STEAM_0:1:93928982) spawned SENT sent_ball
+Sat Feb 21 06:47:48 2026	2PR0 (STEAM_0:1:93928982) spawned SENT sent_ball
+Sat Feb 21 06:47:48 2026	2PR0 (STEAM_0:1:93928982) spawned SENT sent_ball
+Sat Feb 21 06:47:48 2026	2PR0 (STEAM_0:1:93928982) spawned SENT sent_ball
+Sat Feb 21 06:47:48 2026	2PR0 (STEAM_0:1:93928982) spawned SENT sent_ball
+Sat Feb 21 06:47:48 2026	2PR0 (STEAM_0:1:93928982) spawned SENT sent_ball
+Sat Feb 21 06:47:49 2026	2PR0 (STEAM_0:1:93928982) spawned SENT sent_ball
+Sat Feb 21 06:47:49 2026	2PR0 (STEAM_0:1:93928982) spawned SENT sent_ball
+Sat Feb 21 06:47:49 2026	2PR0 (STEAM_0:1:93928982) spawned SENT sent_ball
+Sat Feb 21 06:47:50 2026	2PR0 (STEAM_0:1:93928982) spawned SENT sent_ball
+Sat Feb 21 06:47:50 2026	2PR0 (STEAM_0:1:93928982) spawned SENT sent_ball
+Sat Feb 21 06:47:51 2026	2PR0 (STEAM_0:1:93928982) spawned SENT sent_ball
+Sat Feb 21 06:47:51 2026	2PR0 (STEAM_0:1:93928982) spawned SENT sent_ball
+Sat Feb 21 06:48:12 2026	2PR0 (STEAM_0:1:93928982) spawned SENT sent_ball
+Sat Feb 21 06:48:13 2026	2PR0 (STEAM_0:1:93928982) spawned SENT sent_ball
+Sat Feb 21 06:48:14 2026	2PR0 (STEAM_0:1:93928982) spawned SENT sent_ball
+Sat Feb 21 06:48:15 2026	2PR0 (STEAM_0:1:93928982) spawned SENT sent_ball

@@ -1,0 +1,33 @@
+"STEAM_0:1:93928982"	
+{
+	"deny"	
+	{
+	}
+	"allow"	
+	{
+	}
+	"name"	"2PR0"
+	"group"	"superadmin"
+}
+"STEAM_0:0:574698981"	
+{
+	"deny"	
+	{
+	}
+	"allow"	
+	{
+	}
+	"name"	"Booffallu"
+	"group"	"superadmin"
+}
+"STEAM_0:0:648900746"	
+{
+	"deny"	
+	{
+	}
+	"allow"	
+	{
+	}
+	"name"	"cactus jack"
+	"group"	"superadmin"
+}

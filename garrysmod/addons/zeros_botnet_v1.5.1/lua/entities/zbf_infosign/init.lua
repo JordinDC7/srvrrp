@@ -1,0 +1,37 @@
+/*
+    Addon id: 64058314-9b3d-4ee7-a98b-bcfc9a58ef8b
+    Version: v1.5.1 (stable)
+*/
+
+AddCSLuaFile("cl_init.lua")
+AddCSLuaFile("shared.lua")
+include("shared.lua")
+                                                                                                                                                                                                                                                                                                                                                                                                                                                       -- 76561199109663690
+
+function ENT:SpawnFunction(ply, tr)
+	local SpawnPos = tr.HitPos + tr.HitNormal * 5
+	local ang = (ply:GetPos() - SpawnPos):Angle()
+	ang = Angle(0, 180 + ang.y, 0)
+	local ent = ents.Create(self.ClassName)
+	ent:SetPos(SpawnPos)
+	ent:SetAngles(ang)
+	ent:Spawn()
+	ent:Activate()
+	zclib.Player.SetOwner(ent, ply)
+                                                                                                                                                                                                                                                                                                                                                                                                                                                       -- 2d758f4c397a244637d464ba034d8f901161afcac9b1cc1013a7e00e770c265e
+
+	return ent
+end
+
+function ENT:Initialize()
+	zbf.Sign.Initialize(self)
+end
+                                                                                                                                                                                                                                                                                                                                                                                                                                                       -- 76561199109663690
+
+function ENT:AcceptInput(inputName, activator, caller, data)
+	if inputName == "Use" and IsValid(activator) and activator:IsPlayer() and activator:Alive() then
+		zbf.Sign.OnUse(self, activator)
+	end
+end
+                                                                                                                                                                                                                                                                                                                                                                                                                                                       -- 76561199109663690
+                                                                                                                                                                                                                                                                                                                                                                                                                                                       -- 4fcbab3dc2aea90e138de2f251f32d28bb62fa5ce4ee5ed8ee4a1176efd8f401

@@ -1,0 +1,30 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "models/stromic/nc_rack"
+		"$bumpmap" "models/stromic/nc_rack_n"
+	"$halflambert" "1"
+	"$phong" "1"
+	"$phongboost" "2"
+	"$phongexponent" "20"
+	"$phongfresnelranges" "[.5 2 5]"
+
+
+	"$envmap" "env_cubemap"
+	"$normalmapalphaenvmapmask" "1"
+	"$envmaptint" "[.05 .05 .05]"
+
+	"$rimlight" "1"
+	"$rimlightexponent" "10"
+	"$rimlightboost" "2"	
+	"$surfaceprop" "Metal"
+	"$nodecal" 1
+		"$colorfix" "{250 250 250}" 
+	"Proxies" 
+{ 
+"Equals" 
+{ 
+srcVar1 $colorfix 
+resultVar $color 
+} 
+} 	
+}

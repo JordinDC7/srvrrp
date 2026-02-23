@@ -1,0 +1,289 @@
+<Logging continued from "data/ulx_logs/02-22-26.txt">
+[00:05:45] Booffallu teleported to 2PR0
+[00:09:04] Server is shutting down/changing levels.
+
+
+
+[00:09:24] New map: rp_downtown_tits_v2
+[00:09:25] Client "Booffallu" connected.
+[00:09:46] Client "Booffallu" spawned in server <STEAM_0:0:574698981> (took 21 seconds).
+[00:17:13] Client "2PR0" connected.
+[00:17:39] Client "2PR0" spawned in server <STEAM_0:1:93928982> (took 26 seconds).
+[01:09:45] Dropped "2PR0" from server<STEAM_0:1:93928982>
+[01:24:22] Client "2PR0" connected.
+[01:24:41] Server is shutting down/changing levels.
+
+
+
+[01:25:00] New map: rp_downtown_tits_v2
+[01:26:24] Client "2PR0" connected.
+[01:27:01] Client "2PR0" spawned in server <STEAM_0:1:93928982> (took 37 seconds).
+[01:29:07] Server is shutting down/changing levels.
+
+
+
+[01:29:23] New map: rp_downtown_tits_v2
+[01:29:24] Client "2PR0" connected.
+[01:29:33] Client "Booffallu" connected.
+[01:29:49] Client "2PR0" spawned in server <STEAM_0:1:93928982> (took 25 seconds).
+[01:29:56] Client "Booffallu" spawned in server <STEAM_0:0:574698981> (took 23 seconds).
+[01:46:57] Booffallu suicided!
+[01:47:07] Booffallu killed 2PR0 using player
+[01:47:20] Booffallu killed 2PR0 using player
+[01:47:31] Booffallu killed 2PR0 using player
+[01:47:41] 2PR0 killed Booffallu using player
+[01:48:44] Booffallu killed 2PR0 using player
+[01:49:22] Server is shutting down/changing levels.
+
+
+
+[01:49:47] New map: rp_downtown_tits_v2
+[01:49:48] Client "Booffallu" connected.
+[01:49:48] Client "Booffallu" connected.
+[01:50:09] Client "Booffallu" spawned in server <STEAM_0:0:574698981> (took 21 seconds).
+[01:54:30] Server is shutting down/changing levels.
+
+
+
+[01:55:03] New map: rp_downtown_tits_v2
+[01:55:18] Client "Booffallu" connected.
+[01:55:38] Client "Booffallu" spawned in server <STEAM_0:0:574698981> (took 20 seconds).
+[01:58:43] Client "cactus jack" connected.
+[01:59:24] Client "cactus jack" spawned in server <STEAM_0:0:648900746> (took 41 seconds).
+[02:04:53] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube3x6x025.mdl
+[02:04:57] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube2x6x025.mdl
+[02:05:09] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/plates/plate2x5.mdl
+[02:06:17] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/plates/plate2x5.mdl
+[02:18:18] Booffallu: yo
+[02:19:20] Server is shutting down/changing levels.
+
+
+
+[02:19:37] New map: rp_downtown_tits_v2
+[02:19:39] Client "Booffallu" connected.
+[02:20:00] Client "Booffallu" spawned in server <STEAM_0:0:574698981> (took 21 seconds).
+[02:20:29] Client "2PR0" connected.
+[02:21:03] Client "2PR0" spawned in server <STEAM_0:1:93928982> (took 34 seconds).
+[02:24:56] 2PR0 killed Booffallu using stunstick
+[02:25:19] Booffallu teleported to 2PR0
+[02:25:20] Booffallu killed 2PR0 using player
+[02:25:46] Booffallu teleported to 2PR0
+[02:28:46] Server is shutting down/changing levels.
+
+
+
+[02:29:17] New map: rp_downtown_tits_v2
+[02:29:18] Client "Booffallu" connected.
+[02:29:18] Client "Booffallu" connected.
+[02:29:18] Client "Booffallu" connected.
+[02:29:40] Client "Booffallu" spawned in server <STEAM_0:0:574698981> (took 22 seconds).
+[02:36:02] Server is shutting down/changing levels.
+
+
+
+[02:36:23] New map: rp_downtown_tits_v2
+[02:36:24] Client "Booffallu" connected.
+[02:36:24] Client "Booffallu" connected.
+[02:36:46] Client "Booffallu" spawned in server <STEAM_0:0:574698981> (took 22 seconds).
+[02:44:20] Server is shutting down/changing levels.
+
+
+
+[02:44:47] New map: rp_downtown_tits_v2
+[02:44:48] Client "Booffallu" connected.
+[02:44:48] Client "Booffallu" connected.
+[02:45:10] Client "Booffallu" spawned in server <STEAM_0:0:574698981> (took 22 seconds).
+[02:48:57] Server is shutting down/changing levels.
+
+
+
+[02:49:14] New map: rp_downtown_tits_v2
+[02:51:36] Client "Booffallu" connected.
+[02:51:57] Client "Booffallu" spawned in server <STEAM_0:0:574698981> (took 21 seconds).
+[02:52:29] Client "2PR0" connected.
+[02:53:03] Client "2PR0" spawned in server <STEAM_0:1:93928982> (took 34 seconds).
+[02:54:00] 2PR0 suicided!
+[02:54:08] 2PR0 suicided!
+[02:54:37] 2PR0 killed Booffallu using player
+[02:54:55] Booffallu killed 2PR0 using player
+[02:55:05] 2PR0 killed Booffallu using player
+[02:55:12] 2PR0 killed Booffallu using player
+[02:57:42] 2PR0<STEAM_0:1:93928982> spawned model models/props_c17/fence03a.mdl
+[02:57:42] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube8x8x1.mdl
+[02:57:42] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube6x6x1.mdl
+[02:57:42] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube6x8x1.mdl
+[02:57:42] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube8x8x1.mdl
+[02:57:42] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube8x8x1.mdl
+[02:57:42] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube4x6x1.mdl
+[02:57:42] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube2x4x025.mdl
+[02:57:42] 2PR0<STEAM_0:1:93928982> spawned sent sammyservers_textscreen
+[02:57:42] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube025x7x025.mdl
+[02:57:42] 2PR0<STEAM_0:1:93928982> spawned model models/props_c17/fence03a.mdl
+[02:57:42] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube3x3x05.mdl
+[02:57:42] 2PR0<STEAM_0:1:93928982> spawned model models/props_c17/fence01a.mdl
+[02:57:42] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube6x6x05.mdl
+[02:57:42] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/plates/plate5.mdl
+[02:57:42] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube6x6x1.mdl
+[02:57:42] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube6x8x1.mdl
+[02:57:42] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube8x8x1.mdl
+[02:57:42] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube8x8x1.mdl
+[02:57:43] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube8x8x1.mdl
+[02:57:43] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/plates/plate1x3.mdl
+[02:57:43] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/plates/plate6.mdl
+[02:57:43] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube6x8x1.mdl
+[02:57:43] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube3x4x025.mdl
+[02:57:43] 2PR0<STEAM_0:1:93928982> spawned model models/props_c17/fence03a.mdl
+[02:57:43] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube8x8x1.mdl
+[02:57:43] 2PR0<STEAM_0:1:93928982> spawned model models/props_c17/fence03a.mdl
+[02:57:43] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube2x2x1.mdl
+[02:57:43] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube8x8x1.mdl
+[02:57:43] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube8x8x1.mdl
+[02:57:43] 2PR0<STEAM_0:1:93928982> spawned model models/props_c17/fence01b.mdl
+[02:57:43] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube3x3x05.mdl
+[02:57:43] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube2x8x1.mdl
+[02:57:43] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube025x7x025.mdl
+[02:57:43] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube2x2x1.mdl
+[02:57:43] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/plates/plate1x6.mdl
+[02:57:44] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube8x8x1.mdl
+[02:57:44] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube2x2x1.mdl
+[02:57:44] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube2x2x1.mdl
+[02:57:44] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube8x8x1.mdl
+[02:57:44] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube6x6x05.mdl
+[02:57:44] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube8x8x1.mdl
+[02:57:44] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube3x4x025.mdl
+[02:57:44] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube2x4x1.mdl
+[02:57:44] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube6x8x1.mdl
+[02:57:44] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube8x8x1.mdl
+[02:57:44] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube2x8x1.mdl
+[02:57:44] 2PR0<STEAM_0:1:93928982> spawned model models/props_c17/fence03a.mdl
+[02:57:44] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube4x6x1.mdl
+[02:57:44] 2PR0<STEAM_0:1:93928982> spawned model models/props_c17/fence03a.mdl
+[02:57:44] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube8x8x1.mdl
+[02:57:44] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube2x2x1.mdl
+[02:57:44] 2PR0<STEAM_0:1:93928982> spawned model models/props_c17/fence03a.mdl
+[02:57:44] 2PR0<STEAM_0:1:93928982> spawned model models/props_c17/fence01a.mdl
+[02:57:44] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube2x8x1.mdl
+[02:57:44] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube1x6x05.mdl
+[02:57:45] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube4x6x1.mdl
+[02:57:45] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube1x3x1.mdl
+[02:57:45] 2PR0<STEAM_0:1:93928982> spawned model models/props_c17/fence01b.mdl
+[02:57:45] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube025x7x025.mdl
+[02:57:45] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube3x4x025.mdl
+[02:57:45] 2PR0<STEAM_0:1:93928982> spawned model models/props_c17/fence03a.mdl
+[02:57:45] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube4x6x1.mdl
+[02:57:45] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube8x8x1.mdl
+[02:57:45] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube8x8x1.mdl
+[02:57:45] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube8x8x1.mdl
+[02:57:45] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube6x6x1.mdl
+[02:57:45] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube3x4x025.mdl
+[02:57:45] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube1x3x1.mdl
+[02:57:45] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube2x8x1.mdl
+[02:57:45] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube8x8x1.mdl
+[02:57:45] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube8x8x1.mdl
+[02:57:45] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube8x8x1.mdl
+[02:57:45] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/plates/plate025x4.mdl
+[03:04:43] Server is shutting down/changing levels.
+
+
+
+[03:05:06] New map: rp_downtown_tits_v2
+[03:05:07] Client "Booffallu" connected.
+[03:05:29] Client "Booffallu" spawned in server <STEAM_0:0:574698981> (took 22 seconds).
+[03:14:42] Server is shutting down/changing levels.
+
+
+
+[03:15:08] New map: rp_downtown_tits_v2
+[03:15:09] Client "Booffallu" connected.
+[03:15:09] Client "Booffallu" connected.
+[03:15:32] Client "Booffallu" spawned in server <STEAM_0:0:574698981> (took 23 seconds).
+[03:24:13] Server is shutting down/changing levels.
+
+
+
+[03:24:33] New map: rp_downtown_tits_v2
+[03:25:02] Client "Booffallu" connected.
+[03:25:23] Client "Booffallu" spawned in server <STEAM_0:0:574698981> (took 21 seconds).
+[03:37:19] Server is shutting down/changing levels.
+
+
+
+[03:37:40] New map: rp_downtown_tits_v2
+[03:37:41] Client "Booffallu" connected.
+[03:38:02] Client "Booffallu" spawned in server <STEAM_0:0:574698981> (took 21 seconds).
+[03:46:29] Client "2PR0" connected.
+[03:47:06] Client "2PR0" spawned in server <STEAM_0:1:93928982> (took 37 seconds).
+[03:47:49] Server is shutting down/changing levels.
+
+
+
+[03:48:07] New map: rp_downtown_tits_v2
+[03:48:54] Client "2PR0" connected.
+[03:49:19] Client "Booffallu" connected.
+[03:49:26] Client "2PR0" spawned in server <STEAM_0:1:93928982> (took 32 seconds).
+[03:49:41] Client "Booffallu" spawned in server <STEAM_0:0:574698981> (took 22 seconds).
+[03:50:34] 2PR0: /setmoney xa 3000000
+[03:54:41] Server is shutting down/changing levels.
+
+
+
+[03:55:11] New map: rp_downtown_tits_v2
+[03:55:13] Client "Booffallu" connected.
+[03:55:13] Client "Booffallu" connected.
+[03:55:17] Client "2PR0" connected.
+[03:55:34] Client "Booffallu" spawned in server <STEAM_0:0:574698981> (took 21 seconds).
+[03:55:50] Client "2PR0" spawned in server <STEAM_0:1:93928982> (took 33 seconds).
+[03:57:01] 2PR0: /setmoney 76561199258067220 3000000
+[03:58:38] Server is shutting down/changing levels.
+
+
+
+[03:59:03] New map: rp_downtown_tits_v2
+[03:59:04] Client "Booffallu" connected.
+[03:59:04] Client "Booffallu" connected.
+[03:59:26] Client "Booffallu" spawned in server <STEAM_0:0:574698981> (took 22 seconds).
+[04:00:14] Client "2PR0" connected.
+[04:00:46] Client "2PR0" spawned in server <STEAM_0:1:93928982> (took 32 seconds).
+[04:01:38] 2PR0 killed Booffallu using stunstick
+[04:16:19] Server is shutting down/changing levels.
+
+
+
+[04:16:41] New map: rp_downtown_tits_v2
+[04:16:42] Client "Booffallu" connected.
+[04:17:03] Client "Booffallu" spawned in server <STEAM_0:0:574698981> (took 21 seconds).
+[04:28:27] Server is shutting down/changing levels.
+
+
+
+[04:28:44] New map: rp_downtown_tits_v2
+[04:28:45] Client "Booffallu" connected.
+[04:29:07] Client "Booffallu" spawned in server <STEAM_0:0:574698981> (took 22 seconds).
+[04:42:47] Server is shutting down/changing levels.
+
+
+
+[04:43:05] New map: rp_downtown_tits_v2
+[04:44:35] Client "Booffallu" connected.
+[04:44:56] Client "Booffallu" spawned in server <STEAM_0:0:574698981> (took 21 seconds).
+[04:58:14] Server is shutting down/changing levels.
+
+
+
+[04:58:32] New map: rp_downtown_tits_v2
+[04:59:14] Client "Booffallu" connected.
+[04:59:35] Client "Booffallu" spawned in server <STEAM_0:0:574698981> (took 21 seconds).
+[05:07:19] Server is shutting down/changing levels.
+
+
+
+[05:07:44] New map: rp_downtown_tits_v2
+[05:08:46] Client "Booffallu" connected.
+[05:09:06] Client "Booffallu" spawned in server <STEAM_0:0:574698981> (took 20 seconds).
+[05:15:19] Server is shutting down/changing levels.
+
+
+
+[05:15:36] New map: rp_downtown_tits_v2
+[05:15:37] Client "Booffallu" connected.
+[05:15:59] Client "Booffallu" spawned in server <STEAM_0:0:574698981> (took 22 seconds).

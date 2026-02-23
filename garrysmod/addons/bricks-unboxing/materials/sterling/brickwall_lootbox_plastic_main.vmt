@@ -1,0 +1,26 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "sterling/brickwall_lootbox_plastic_main"
+	"$bumpmap" "sterling/brickwall_lootbox_plastic_norm"
+
+	"$envmap" "env_cubemap"
+	"$normalmapalphaenvmapmask" "1"
+	"$envmaptint" "[.025 .025 .025]"
+
+	"$phong" "1"
+	"$phongboost" "1.5"
+	"$phongexponent" "20"
+	"$phongfresnelranges" "[0.5 0.5 0.5]"
+
+	"$rimlight" "1"
+	"$rimlightboost"		"1"
+	"$rimlightexponent"		"10"
+
+	"$blendtintbybasealpha" "1"	
+
+	Proxies {
+		CaseColor {
+			resultVar $color2
+		}
+	}
+}

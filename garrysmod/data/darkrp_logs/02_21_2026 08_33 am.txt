@@ -1,0 +1,8 @@
+Sat Feb 21 08:33:10 2026	cactus jack (STEAM_0:0:648900746) has joined the game
+Sat Feb 21 08:33:10 2026	CACTUS JACK (STEAM_0:0:648900746) spawned
+Sat Feb 21 08:33:18 2026	2PR0 (STEAM_0:1:93928982) has joined the game
+Sat Feb 21 08:33:18 2026	2PR0 (STEAM_0:1:93928982) spawned
+Sat Feb 21 08:33:53 2026	CACTUS JACK (STEAM_0:0:648900746) spawned SENT nexus_job_creator
+Sat Feb 21 08:34:14 2026	CACTUS JACK (STEAM_0:0:648900746) spawned SENT nexus_job_creator
+Sat Feb 21 08:34:42 2026	CACTUS JACK (STEAM_0:0:648900746) disconnected
+Sat Feb 21 08:34:45 2026	2PR0 (STEAM_0:1:93928982) disconnected

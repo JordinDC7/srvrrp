@@ -1,0 +1,148 @@
+"srcds_addons"
+{
+	"1527403485"
+	{
+		"name"		"RP Downtown Tits V2"
+		"path"		"/home/container/steam_cache/content/4000/1527403485/957476389753568817_legacy.bin"
+	}
+	"1595332211"
+	{
+		"name"		"GmodAdminSuite"
+		"path"		"/home/container/steam_cache/content/4000/1595332211"
+	}
+	"2206993805"
+	{
+		"name"		"slib - Stromic's Library"
+		"path"		"/home/container/steam_cache/content/4000/2206993805"
+	}
+	"2532060111"
+	{
+		"name"		"Zeros Lua Libary"
+		"path"		"/home/container/steam_cache/content/4000/2532060111"
+	}
+	"2532421807"
+	{
+		"name"		"Zero´s Scratchcards - Contentpack"
+		"path"		"/home/container/steam_cache/content/4000/2532421807"
+	}
+	"3402202751"
+	{
+		"name"		"Nexus Library"
+		"path"		"/home/container/steam_cache/content/4000/3402202751"
+	}
+	"2136421687"
+	{
+		"name"		"Brick's Server Framework"
+		"path"		"/home/container/steam_cache/content/4000/2136421687"
+	}
+	"2303752974"
+	{
+		"name"		"Brick's Unboxing - Content"
+		"path"		"/home/container/steam_cache/content/4000/2303752974"
+	}
+	"128089118"
+	{
+		"name"		"M9K Assault Rifles"
+		"path"		"/home/container/steam_cache/content/4000/128089118/402305231593262083_legacy.bin"
+	}
+	"128091208"
+	{
+		"name"		"M9K Heavy Weapons"
+		"path"		"/home/container/steam_cache/content/4000/128091208/402305231593297895_legacy.bin"
+	}
+	"128093075"
+	{
+		"name"		"M9K Small Arms pack"
+		"path"		"/home/container/steam_cache/content/4000/128093075/402305231593278521_legacy.bin"
+	}
+	"2777886858"
+	{
+		"name"		"Zeros BotNet - Contentpack"
+		"path"		"/home/container/steam_cache/content/4000/2777886858"
+	}
+	"2251982296"
+	{
+		"name"		"Ultimate Party System Content"
+		"path"		"/home/container/steam_cache/content/4000/2251982296"
+	}
+	"2172708113"
+	{
+		"name"		"Brick's Gangs - Content"
+		"path"		"/home/container/steam_cache/content/4000/2172708113"
+	}
+	"3579603358"
+	{
+		"name"		"Zero's GrowOp 2"
+		"path"		"/home/container/steam_cache/content/4000/3579603358"
+	}
+	"2832823698"
+	{
+		"name"		"Zeros GrowOP2 - Contentpack"
+		"path"		"/home/container/steam_cache/content/4000/2832823698"
+	}
+	"2228228831"
+	{
+		"name"		"pCasino - Content"
+		"path"		"/home/container/steam_cache/content/4000/2228228831"
+	}
+	"2299543771"
+	{
+		"name"		"Billy's Keypads Content"
+		"path"		"/home/container/steam_cache/content/4000/2299543771"
+	}
+	"2328355906"
+	{
+		"name"		"Billy's Keypad Cracker Content"
+		"path"		"/home/container/steam_cache/content/4000/2328355906"
+	}
+	"220336312"
+	{
+		"name"		"PermaProps"
+		"path"		"/home/container/steam_cache/content/4000/220336312"
+	}
+	"3310729138"
+	{
+		"name"		"Fixed RemoveProp 1.0"
+		"path"		"/home/container/steam_cache/content/4000/3310729138"
+	}
+	"104482086"
+	{
+		"name"		"[Official] Precision Tool"
+		"path"		"/home/container/steam_cache/content/4000/104482086/447357553619383301_legacy.bin"
+	}
+	"3466954346"
+	{
+		"name"		"Improved Prop Shadow Remover"
+		"path"		"/home/container/steam_cache/content/4000/3466954346"
+	}
+	"3605530206"
+	{
+		"name"		"Onyx Framework"
+		"path"		"/home/container/steam_cache/content/4000/3605530206"
+	}
+	"1953525147"
+	{
+		"name"		"!ThirdPerson Content"
+		"path"		"/home/container/steam_cache/content/4000/1953525147"
+	}
+	"105841291"
+	{
+		"name"		"More Materials!"
+		"path"		"/home/container/steam_cache/content/4000/105841291/540707526534733782_legacy.bin"
+	}
+	"109643223"
+	{
+		"name"		"3D2D Textscreens"
+		"path"		"/home/container/steam_cache/content/4000/109643223"
+	}
+	"3118788923"
+	{
+		"name"		"Advanced Material | REBORN"
+		"path"		"/home/container/steam_cache/content/4000/3118788923"
+	}
+	"1246554779"
+	{
+		"name"		"Roleplay Props Extended"
+		"path"		"/home/container/steam_cache/content/4000/1246554779/918038023544174847_legacy.bin"
+	}
+}

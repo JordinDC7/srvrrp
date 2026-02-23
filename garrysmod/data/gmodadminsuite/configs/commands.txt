@@ -1,0 +1,1 @@
+~'Commands":{~'!bwhitelist":{~'help":'Opens GmodAdminSuite module Billy's Whitelist"'action":{~'type":n7;'module_name":'jobwhitelist"}'hide_command":b1}}'ModuleCommands":{~'jobwhitelist":b1}

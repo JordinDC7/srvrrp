@@ -1,0 +1,16 @@
+Sat Feb 21 08:35:51 2026	2PR0 (STEAM_0:1:93928982) has joined the game
+Sat Feb 21 08:35:51 2026	2PR0 (STEAM_0:1:93928982) spawned
+Sat Feb 21 08:35:56 2026	cactus jack (STEAM_0:0:648900746) has joined the game
+Sat Feb 21 08:35:56 2026	CACTUS JACK (STEAM_0:0:648900746) spawned
+Sat Feb 21 08:36:10 2026	CACTUS JACK (STEAM_0:0:648900746) spawned SENT nexus_job_creator
+Sat Feb 21 08:46:17 2026	2PR0 was killed by CACTUS JACK with a ls_sniper
+Sat Feb 21 08:46:32 2026	2PR0 (STEAM_0:1:93928982) spawned
+Sat Feb 21 08:46:48 2026	2PR0 was killed by CACTUS JACK with a ls_sniper
+Sat Feb 21 08:46:59 2026	2PR0 (STEAM_0:1:93928982) spawned
+Sat Feb 21 08:49:30 2026	CACTUS JACK (STEAM_0:0:648900746): /NAME XANARCHY
+Sat Feb 21 08:50:57 2026	XANARCHY (STEAM_0:0:648900746) disconnected
+Sat Feb 21 08:53:58 2026	cactus jack (STEAM_0:0:648900746) has joined the game
+Sat Feb 21 08:53:58 2026	XANARCHY (STEAM_0:0:648900746) spawned
+Sat Feb 21 08:54:17 2026	XANARCHY (STEAM_0:0:648900746) spawned SENT nexus_job_creator
+Sat Feb 21 09:01:45 2026	XANARCHY was killed by 2PR0 with a stunstick
+Sat Feb 21 09:01:47 2026	XANARCHY (STEAM_0:0:648900746) spawned

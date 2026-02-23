@@ -1,0 +1,2153 @@
+[03:07:31] New map: rp_downtown_tits_v2
+[03:08:13] Client "2PR0" connected.
+[03:09:20] Client "2PR0" spawned in server <STEAM_0:1:93928982> (took 67 seconds).
+[03:12:02] Server is shutting down/changing levels.
+
+
+
+[03:12:19] New map: rp_downtown_tits_v2
+[03:12:23] Client "2PR0" connected.
+[03:12:37] Client "2PR0" spawned in server <STEAM_0:1:93928982> (took 14 seconds).
+[03:13:48] Dropped "2PR0" from server<STEAM_0:1:93928982>
+[03:13:48] Client "2PR0" connected.
+[03:14:01] Client "2PR0" spawned in server <STEAM_0:1:93928982> (took 13 seconds).
+[03:15:17] Server is shutting down/changing levels.
+
+
+
+[03:15:31] New map: rp_downtown_tits_v2
+[03:15:44] Client "2PR0" connected.
+[03:15:56] Client "2PR0" spawned in server <STEAM_0:1:93928982> (took 12 seconds).
+[03:15:56] Dropped "2PR0" from server<STEAM_0:1:93928982>
+[03:16:12] Client "2PR0" connected.
+[03:16:24] Client "2PR0" spawned in server <STEAM_0:1:93928982> (took 12 seconds).
+[03:18:24] 2PR0<STEAM_0:1:93928982> spawned model models/props_debris/metal_panel02a.mdl
+[03:18:33] 2PR0<STEAM_0:1:93928982> spawned model models/props_interiors/pot01a.mdl
+[03:18:39] 2PR0<STEAM_0:1:93928982> spawned model models/props_borealis/bluebarrel001.mdl
+[03:19:11] 2PR0<STEAM_0:1:93928982> spawned model models/props_borealis/bluebarrel001.mdl
+[03:19:12] 2PR0<STEAM_0:1:93928982> spawned model models/props_borealis/bluebarrel001.mdl
+[03:19:13] 2PR0<STEAM_0:1:93928982> spawned model models/props_borealis/bluebarrel001.mdl
+[03:19:13] 2PR0<STEAM_0:1:93928982> spawned model models/props_borealis/bluebarrel001.mdl
+[03:19:13] 2PR0<STEAM_0:1:93928982> spawned model models/props_borealis/bluebarrel001.mdl
+[03:19:13] 2PR0<STEAM_0:1:93928982> spawned model models/props_borealis/bluebarrel001.mdl
+[03:19:14] 2PR0<STEAM_0:1:93928982> spawned model models/props_borealis/bluebarrel001.mdl
+[03:19:14] 2PR0<STEAM_0:1:93928982> spawned model models/props_borealis/bluebarrel001.mdl
+[03:19:14] 2PR0<STEAM_0:1:93928982> spawned model models/props_borealis/bluebarrel001.mdl
+[03:19:14] 2PR0<STEAM_0:1:93928982> spawned model models/props_borealis/bluebarrel001.mdl
+[03:19:15] 2PR0<STEAM_0:1:93928982> spawned model models/props_borealis/bluebarrel001.mdl
+[03:19:16] 2PR0<STEAM_0:1:93928982> spawned model models/props_borealis/bluebarrel001.mdl
+[03:19:19] 2PR0<STEAM_0:1:93928982> spawned model models/props_borealis/bluebarrel001.mdl
+[03:19:20] 2PR0<STEAM_0:1:93928982> spawned model models/props_borealis/bluebarrel001.mdl
+[03:19:21] 2PR0<STEAM_0:1:93928982> spawned model models/props_borealis/bluebarrel001.mdl
+[03:19:22] 2PR0<STEAM_0:1:93928982> spawned model models/props_borealis/bluebarrel001.mdl
+[03:19:22] Server is shutting down/changing levels.
+
+
+
+[03:19:37] New map: rp_downtown_tits_v2
+[03:19:52] Client "2PR0" connected.
+[03:20:04] Client "2PR0" spawned in server <STEAM_0:1:93928982> (took 12 seconds).
+[03:20:35] 2PR0: /invholster
+[03:20:37] 2PR0: /invholster
+[03:20:38] 2PR0: /invholster
+[03:20:38] 2PR0: /invholster
+[03:20:39] 2PR0: /invholster
+[03:20:43] 2PR0: /invholster
+[03:20:44] 2PR0: /invholster
+[03:20:45] 2PR0: /invholster
+[03:20:45] 2PR0: /invholster
+[03:20:46] 2PR0: /invholster
+[03:20:47] 2PR0: /invholster
+[03:20:48] 2PR0: /invholster
+[03:20:50] 2PR0: /invholster
+[03:20:50] 2PR0: /invholster
+[03:21:02] Client "cactus jack" connected.
+[03:22:09] Client "cactus jack" spawned in server <STEAM_0:0:648900746> (took 67 seconds).
+[03:23:14] 2PR0 suicided!
+[03:23:25] Dropped "cactus jack" from server<STEAM_0:0:648900746>
+[03:23:25] Client "cactus jack" connected.
+[03:23:39] Client "cactus jack" spawned in server <STEAM_0:0:648900746> (took 14 seconds).
+[03:25:19] 2PR0 killed cactus jack using player
+[03:26:03] cactus jack killed 2PR0 using player
+[03:26:19] 2PR0 killed cactus jack using player
+[03:26:41] cactus jack<STEAM_0:0:648900746> spawned model models/props_borealis/bluebarrel001.mdl
+[03:26:50] 2PR0<STEAM_0:1:93928982> spawned model models/props_borealis/bluebarrel001.mdl
+[03:27:22] cactus jack killed 2PR0 using stunstick
+[03:27:39] Server is shutting down/changing levels.
+
+
+
+[03:28:17] New map: rp_downtown_tits_v2
+[03:28:18] Client "2PR0" connected.
+[03:28:18] Client "2PR0" connected.
+[03:28:18] Client "2PR0" connected.
+[03:28:32] Client "2PR0" spawned in server <STEAM_0:1:93928982> (took 14 seconds).
+[03:28:35] Client "cactus jack" connected.
+[03:28:49] Client "cactus jack" spawned in server <STEAM_0:0:648900746> (took 14 seconds).
+[03:29:06] (Console) added 2PR0 to group superadmin
+[03:29:23] cactus jack killed 2PR0 using player
+[03:29:25] (Console) added cactus jack to group superadmin
+[03:32:08] cactus jack: !REPORT
+[03:32:17] cactus jack: // NIGGER I AM OWNER
+[03:32:22] 2PR0: e
+[03:32:42] 2PR0: !report
+[03:33:39] 2PR0 brought cactus jack
+[03:33:39] 2PR0 froze cactus jack
+[03:33:43] 2PR0 unfroze cactus jack
+[03:33:43] 2PR0 returned cactus jack to their original position
+[03:33:48] (SILENT) 2PR0 began spectating cactus jack
+[03:33:50] (SILENT) 2PR0 stopped spectating cactus jack
+[03:34:04] cactus jack brought 2PR0
+[03:34:04] cactus jack froze 2PR0
+[03:34:26] cactus jack unfroze 2PR0
+[03:34:26] cactus jack returned 2PR0 to their original position
+[03:34:31] cactus jack kicked 2PR0 (You have been kicked)
+[03:34:31] Dropped "2PR0" from server<STEAM_0:1:93928982>
+[03:34:45] Client "2PR0" connected.
+[03:34:58] Client "2PR0" spawned in server <STEAM_0:1:93928982> (took 13 seconds).
+[03:36:43] cactus jack killed 2PR0 using player
+[03:37:17] cactus jack suicided!
+[03:37:32] Server is shutting down/changing levels.
+
+
+
+[03:37:44] New map: rp_downtown_tits_v2
+[03:37:44] Client "2PR0" connected.
+[03:37:56] Client "2PR0" spawned in server <STEAM_0:1:93928982> (took 12 seconds).
+[03:39:31] Client "cactus jack" connected.
+[03:39:40] Server is shutting down/changing levels.
+
+
+
+[03:39:53] New map: rp_downtown_tits_v2
+[03:39:53] Client "2PR0" connected.
+[03:39:54] Client "cactus jack" connected.
+[03:40:05] Client "2PR0" spawned in server <STEAM_0:1:93928982> (took 12 seconds).
+[03:40:08] Client "cactus jack" spawned in server <STEAM_0:0:648900746> (took 14 seconds).
+[03:41:11] 2PR0<STEAM_0:1:93928982> spawned model models/props_combine/headcrabcannister01a.mdl
+[03:41:21] cactus jack<STEAM_0:0:648900746> spawned model models/props_debris/concrete_spawnchunk001j.mdl
+[03:41:25] cactus jack<STEAM_0:0:648900746> spawned model models/props_debris/concrete_spawnchunk001f.mdl
+[03:41:37] cactus jack<STEAM_0:0:648900746> spawned model models/props_debris/concrete_chunk06c.mdl
+[03:41:43] 2PR0<STEAM_0:1:93928982> spawned model models/props_combine/headcrabcannister01a.mdl
+[03:41:58] cactus jack brought 2PR0
+[03:41:58] cactus jack froze 2PR0
+[03:42:12] cactus jack unfroze 2PR0
+[03:42:12] cactus jack returned 2PR0 to their original position
+[03:42:17] cactus jack<STEAM_0:0:648900746> spawned model models/props_debris/tile_wall001a_chunk09.mdl
+[03:42:30] cactus jack<STEAM_0:0:648900746> spawned model models/props_rooftop/dome_terminal_01.mdl
+[03:42:36] cactus jack<STEAM_0:0:648900746> spawned model models/props_canal/bridge_pillar02.mdl
+[03:42:44] 2PR0<STEAM_0:1:93928982> spawned model models/props_combine/headcrabcannister01a.mdl
+[03:42:48] 2PR0 suicided!
+[03:42:53] 2PR0<STEAM_0:1:93928982> spawned model models/props_combine/headcrabcannister01a.mdl
+[03:42:59] 2PR0 was killed by prop_physics
+[03:44:30] (SILENT) cactus jack began spectating 2PR0
+[03:44:50] (SILENT) cactus jack stopped spectating 2PR0
+[03:44:50] (SILENT) cactus jack began spectating 2PR0
+[03:45:44] (SILENT) cactus jack stopped spectating 2PR0
+[03:45:51] 2PR0 suicided!
+[03:46:13] 2PR0 suicided!
+[03:46:32] 2PR0 suicided!
+[03:46:46] cactus jack killed 2PR0 using weapon_357
+[03:47:02] cactus jack killed 2PR0 using crossbow_bolt
+[03:47:30] 2PR0 killed cactus jack using player
+[03:47:43] 2PR0 killed cactus jack using player
+[03:47:48] cactus jack killed 2PR0 using player
+[03:48:02] cactus jack killed 2PR0 using player
+[03:48:17] cactus jack killed 2PR0 using weapon_357
+[03:48:23] cactus jack: /name nigga butt
+[03:51:46] Server is shutting down/changing levels.
+
+
+
+[03:51:50] New map: rp_downtown_tits_v2
+[03:51:50] Client "2PR0" connected.
+
+
+
+[03:52:02] New map: rp_downtown_tits_v2
+[03:52:02] Client "cactus jack" connected.
+[03:52:02] Client "2PR0" connected.
+[03:52:14] Client "cactus jack" spawned in server <STEAM_0:0:648900746> (took 12 seconds).
+[03:52:15] Client "2PR0" spawned in server <STEAM_0:1:93928982> (took 13 seconds).
+[03:52:33] Server is shutting down/changing levels.
+
+
+
+[03:52:44] New map: rp_downtown_tits_v2
+[03:52:48] Client "cactus jack" connected.
+[03:52:53] Client "2PR0" connected.
+[03:53:01] Client "cactus jack" spawned in server <STEAM_0:0:648900746> (took 13 seconds).
+[03:53:06] Client "2PR0" spawned in server <STEAM_0:1:93928982> (took 13 seconds).
+[03:53:27] Dropped "2PR0" from server<STEAM_0:1:93928982>
+[03:53:27] Client "2PR0" connected.
+[03:53:39] Client "2PR0" spawned in server <STEAM_0:1:93928982> (took 12 seconds).
+[03:55:41] nigga butt teleported to 2PR0
+[03:56:22] 2PR0<STEAM_0:1:93928982> spawned ragdoll models/dog.mdl
+[03:57:53] 2PR0: u
+[03:57:58] 2PR0: e
+[03:59:07] nigga butt brought 2PR0
+[03:59:14] 2PR0: /dropmoney 10
+[03:59:25] 2PR0: /dropmoney 100
+[04:00:40] nigga butt was killed by entityflame
+[04:00:49] nigga butt brought 2PR0
+[04:01:05] nigga butt: // real bad man
+[04:01:25] nigga butt killed 2PR0 using stunstick
+[04:02:33] Server is shutting down/changing levels.
+
+
+
+[04:02:56] New map: rp_downtown_tits_v2
+[04:02:56] Client "cactus jack" connected.
+[04:02:56] Client "2PR0" connected.
+[04:02:56] Client "2PR0" connected.
+[04:03:10] Client "2PR0" spawned in server <STEAM_0:1:93928982> (took 14 seconds).
+[04:03:11] Client "cactus jack" spawned in server <STEAM_0:0:648900746> (took 15 seconds).
+[04:03:35] nigga butt: !unbox
+[04:03:43] 2PR0: e
+[04:03:52] 2PR0: :hugging_face: 
+[04:03:58] 2PR0: /ooc eee
+[04:04:06] nigga butt killed 2PR0 using stunstick
+[04:04:27] nigga butt: // {*kill yourself} 
+[04:07:31] Server is shutting down/changing levels.
+
+
+
+[04:07:49] New map: rp_downtown_tits_v2
+[04:07:52] Client "cactus jack" connected.
+[04:07:53] Client "2PR0" connected.
+[04:08:05] Client "cactus jack" spawned in server <STEAM_0:0:648900746> (took 13 seconds).
+[04:08:07] Client "2PR0" spawned in server <STEAM_0:1:93928982> (took 14 seconds).
+[04:08:52] Server is shutting down/changing levels.
+
+
+
+[04:09:08] New map: rp_downtown_tits_v2
+[04:09:08] Client "cactus jack" connected.
+[04:09:08] Client "2PR0" connected.
+[04:09:11] Client "cactus jack" connected.
+[04:09:21] Client "2PR0" spawned in server <STEAM_0:1:93928982> (took 13 seconds).
+[04:09:23] Client "cactus jack" spawned in server <STEAM_0:0:648900746> (took 12 seconds).
+[04:09:35] 2PR0: eee
+[04:09:37] 2PR0: ewqeqweqwe
+[04:09:39] 2PR0: ewqeqweqwe
+[04:09:42] 2PR0: weewewe
+[04:09:48] 2PR0: {#d4af37 change_me} NIGGER
+[04:13:16] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube4x6x05.mdl
+[04:13:16] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/plates/plate4.mdl
+[04:13:16] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube4x6x05.mdl
+[04:13:16] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube8x8x05.mdl
+[04:13:17] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube025x8x025.mdl
+[04:13:17] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/plates/plate8x16.mdl
+[04:13:17] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube8x8x1.mdl
+[04:13:17] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube8x8x1.mdl
+[04:13:17] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube4x8x05.mdl
+[04:13:17] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube8x8x1.mdl
+[04:13:17] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube8x8x1.mdl
+[04:13:17] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/plates/plate2x3.mdl
+[04:13:17] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube8x8x05.mdl
+[04:13:17] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube6x8x1.mdl
+[04:13:17] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube2x8x05.mdl
+[04:13:17] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube2x8x1.mdl
+[04:13:17] 2PR0<STEAM_0:1:93928982> spawned model models/props_wasteland/exterior_fence002d.mdl
+[04:13:17] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube8x8x05.mdl
+[04:13:17] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube8x8x1.mdl
+[04:13:17] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube8x8x1.mdl
+[04:13:17] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube8x8x1.mdl
+[04:13:17] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube8x8x1.mdl
+[04:13:17] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube2x8x1.mdl
+[04:13:17] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube8x8x1.mdl
+[04:13:17] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube025x8x025.mdl
+[04:13:18] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube8x8x05.mdl
+[04:13:18] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/plates/plate8x16.mdl
+[04:13:18] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube2x8x05.mdl
+[04:13:18] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube8x8x1.mdl
+[04:13:18] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube8x8x1.mdl
+[04:13:18] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube6x8x05.mdl
+[04:13:18] 2PR0<STEAM_0:1:93928982> spawned model models/props_wasteland/interior_fence002d.mdl
+[04:13:18] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube025x8x025.mdl
+[04:13:18] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube4x6x05.mdl
+[04:13:18] 2PR0<STEAM_0:1:93928982> spawned model models/props_wasteland/exterior_fence002d.mdl
+[04:13:18] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube8x8x1.mdl
+[04:13:18] 2PR0<STEAM_0:1:93928982> spawned model models/props_wasteland/exterior_fence002d.mdl
+[04:13:18] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube6x8x1.mdl
+[04:13:18] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube8x8x1.mdl
+[04:13:18] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube025x4x025.mdl
+[04:13:18] 2PR0<STEAM_0:1:93928982> spawned model models/props_wasteland/exterior_fence002d.mdl
+[04:13:18] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube025x4x025.mdl
+[04:13:18] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube6x8x05.mdl
+[04:13:18] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube025x8x025.mdl
+[04:13:18] 2PR0<STEAM_0:1:93928982> spawned model models/props_wasteland/exterior_fence002d.mdl
+[04:13:18] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube8x8x1.mdl
+[04:13:19] 2PR0<STEAM_0:1:93928982> spawned model models/props_wasteland/interior_fence001c.mdl
+[04:13:19] 2PR0<STEAM_0:1:93928982> spawned model models/props_wasteland/exterior_fence002d.mdl
+[04:13:19] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube2x8x1.mdl
+[04:13:19] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube2x8x1.mdl
+[04:13:19] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube8x8x1.mdl
+[04:13:19] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube8x8x1.mdl
+[04:13:19] 2PR0<STEAM_0:1:93928982> spawned model models/props_wasteland/interior_fence002b.mdl
+[04:13:19] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube2x8x05.mdl
+[04:13:19] 2PR0<STEAM_0:1:93928982> spawned model models/props_wasteland/exterior_fence002c.mdl
+[04:13:19] nigga butt: /name CACTUS JACK
+[04:13:19] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube2x2x1.mdl
+[04:13:19] 2PR0<STEAM_0:1:93928982> spawned model models/props_wasteland/interior_fence002b.mdl
+[04:13:19] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube6x8x1.mdl
+[04:13:19] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube4x6x05.mdl
+[04:13:19] 2PR0<STEAM_0:1:93928982> spawned model models/props_wasteland/exterior_fence002d.mdl
+[04:13:19] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube8x8x1.mdl
+[04:13:19] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube8x8x1.mdl
+[04:13:19] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube025x4x025.mdl
+[04:13:19] 2PR0<STEAM_0:1:93928982> spawned model models/props_wasteland/exterior_fence002d.mdl
+[04:13:19] 2PR0<STEAM_0:1:93928982> spawned model models/props_wasteland/exterior_fence002e.mdl
+[04:13:19] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube8x8x1.mdl
+[04:13:19] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube2x8x1.mdl
+[04:13:20] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube025x8x025.mdl
+[04:13:20] 2PR0<STEAM_0:1:93928982> spawned model models/props_wasteland/exterior_fence002d.mdl
+[04:13:20] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube4x8x1.mdl
+[04:13:20] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube4x4x1.mdl
+[04:13:20] 2PR0<STEAM_0:1:93928982> spawned model models/props_wasteland/exterior_fence002d.mdl
+[04:13:20] 2PR0<STEAM_0:1:93928982> spawned model models/props_wasteland/exterior_fence002d.mdl
+[04:13:20] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube2x4x1.mdl
+[04:13:20] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube025x8x025.mdl
+[04:13:20] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube2x8x1.mdl
+[04:13:20] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube8x8x1.mdl
+[04:13:20] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube2x8x1.mdl
+[04:13:20] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube2x8x05.mdl
+[04:13:20] 2PR0<STEAM_0:1:93928982> spawned model models/props_c17/fence01b.mdl
+[04:15:39] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube025x1x025.mdl
+[04:15:39] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube025x075x025.mdl
+[04:15:40] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube05x05x025.mdl
+[04:15:40] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube025x05x025.mdl
+[04:15:40] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube025x4x025.mdl
+[04:15:40] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube025x05x025.mdl
+[04:15:40] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube025x4x025.mdl
+[04:15:40] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube025x1x025.mdl
+[04:15:40] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/plates/plate3x3.mdl
+[04:15:40] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/tubes/tube2x2x025b.mdl
+[04:15:48] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube025x1x025.mdl
+[04:15:48] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube025x075x025.mdl
+[04:15:48] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube05x05x025.mdl
+[04:15:48] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube025x05x025.mdl
+[04:15:48] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube025x4x025.mdl
+[04:15:48] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube025x05x025.mdl
+[04:15:48] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube025x4x025.mdl
+[04:15:49] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube025x1x025.mdl
+[04:15:49] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/plates/plate3x3.mdl
+[04:15:49] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/tubes/tube2x2x025b.mdl
+[04:15:50] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube025x1x025.mdl
+[04:15:50] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube025x075x025.mdl
+[04:15:51] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube05x05x025.mdl
+[04:15:51] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube025x05x025.mdl
+[04:15:51] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube025x4x025.mdl
+[04:15:51] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube025x05x025.mdl
+[04:15:51] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube025x4x025.mdl
+[04:15:51] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube025x1x025.mdl
+[04:15:51] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/plates/plate3x3.mdl
+[04:15:51] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/tubes/tube2x2x025b.mdl
+[04:15:54] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube025x1x025.mdl
+[04:15:54] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube025x075x025.mdl
+[04:15:55] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube05x05x025.mdl
+[04:15:55] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube025x05x025.mdl
+[04:15:55] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube025x4x025.mdl
+[04:15:55] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube025x05x025.mdl
+[04:15:55] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube025x4x025.mdl
+[04:15:55] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube025x1x025.mdl
+[04:15:55] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/plates/plate3x3.mdl
+[04:15:56] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/tubes/tube2x2x025b.mdl
+[04:16:09] Server is shutting down/changing levels.
+
+
+
+[04:16:32] New map: rp_downtown_tits_v2
+[04:16:36] Client "2PR0" connected.
+[04:16:43] Client "cactus jack" connected.
+[04:16:49] Client "2PR0" spawned in server <STEAM_0:1:93928982> (took 13 seconds).
+[04:16:59] Client "cactus jack" spawned in server <STEAM_0:0:648900746> (took 16 seconds).
+[04:17:42] CACTUS JACK killed 2PR0 using stunstick
+[04:18:25] 2PR0: /invholster
+[04:18:59] CACTUS JACK killed 2PR0 using stunstick
+[04:19:07] CACTUS JACK brought 2PR0
+[04:19:07] CACTUS JACK froze 2PR0
+[04:19:14] CACTUS JACK unfroze 2PR0
+[04:19:14] CACTUS JACK returned 2PR0 to their original position
+[04:19:20] CACTUS JACK teleported to 2PR0
+[04:19:21] CACTUS JACK brought 2PR0
+[04:19:21] CACTUS JACK froze 2PR0
+[04:19:22] CACTUS JACK unfroze 2PR0
+[04:19:22] CACTUS JACK returned 2PR0 to their original position
+[04:19:43] CACTUS JACK banned 2PR0 for 2 hours (You have received a 2 Hour ban)
+[04:19:43] Dropped "2PR0" from server<STEAM_0:1:93928982>
+[04:21:30] (Console) unbanned steamid STEAM_0:1:93928982 (2PR0)
+[04:21:47] Client "2PR0" connected.
+[04:22:00] Client "2PR0" spawned in server <STEAM_0:1:93928982> (took 13 seconds).
+[04:22:58] 2PR0: e
+[04:22:58] CACTUS JACK: \
+[04:23:04] Server is shutting down/changing levels.
+
+
+
+[04:23:21] New map: rp_downtown_tits_v2
+[04:23:21] Client "cactus jack" connected.
+[04:23:21] Client "2PR0" connected.
+[04:23:23] Client "cactus jack" connected.
+[04:23:34] Client "2PR0" spawned in server <STEAM_0:1:93928982> (took 13 seconds).
+[04:23:36] Client "cactus jack" spawned in server <STEAM_0:0:648900746> (took 13 seconds).
+[04:23:40] 2PR0: ee
+[04:24:14] CACTUS JACK teleported to 2PR0
+[04:24:16] Server is shutting down/changing levels.
+
+
+
+[04:24:29] New map: rp_downtown_tits_v2
+[04:24:29] Client "cactus jack" connected.
+[04:24:29] Client "2PR0" connected.
+[04:24:45] Client "cactus jack" spawned in server <STEAM_0:0:648900746> (took 16 seconds).
+[04:24:45] Client "2PR0" spawned in server <STEAM_0:1:93928982> (took 16 seconds).
+[04:25:14] CACTUS JACK: !blacklist
+[04:25:17] 2PR0<STEAM_0:1:93928982> spawned model models/props_debris/metal_panel02a.mdl
+[04:25:20] CACTUS JACK<STEAM_0:0:648900746> spawned model models/props_combine/breenchair.mdl
+[04:25:20] 2PR0<STEAM_0:1:93928982> spawned model models/combine_helicopter/helicopter_bomb01.mdl
+[04:25:34] 2PR0<STEAM_0:1:93928982> spawned model models/props/cs_militia/coveredbridge01_left.mdl
+[04:28:01] 2PR0<STEAM_0:1:93928982> spawned effect models/cliffs/bridge.mdl
+[04:28:23] 2PR0<STEAM_0:1:93928982> spawned effect models/cliffs/bridge02.mdl
+[04:28:26] 2PR0<STEAM_0:1:93928982> spawned effect models/cliffs/bridge02.mdl
+[04:29:00] 2PR0<STEAM_0:1:93928982> spawned effect models/cliffs/bridge.mdl
+[04:29:10] 2PR0<STEAM_0:1:93928982> spawned effect models/cliffs/bridge.mdl
+[04:29:26] 2PR0<STEAM_0:1:93928982> spawned effect models/cliffs/bridge.mdl
+[04:31:21] Server is shutting down/changing levels.
+
+
+
+[04:31:38] New map: rp_downtown_tits_v2
+[04:31:41] Client "2PR0" connected.
+[04:31:52] Client "cactus jack" connected.
+[04:31:56] Client "2PR0" spawned in server <STEAM_0:1:93928982> (took 15 seconds).
+[04:32:04] 2PR0: e
+[04:32:07] Client "cactus jack" spawned in server <STEAM_0:0:648900746> (took 15 seconds).
+[04:33:06] Dropped "2PR0" from server<STEAM_0:1:93928982>
+[04:33:06] Client "2PR0" connected.
+[04:33:20] Client "2PR0" spawned in server <STEAM_0:1:93928982> (took 14 seconds).
+[04:33:57] CACTUS JACK: /pm 2PR0 nigga
+[04:34:28] 2PR0: !admin
+[04:35:07] 2PR0: /setmoney 2p 1000
+[04:35:25] 2PR0: /setmoney c 1000
+[04:35:52] Server is shutting down/changing levels.
+
+
+
+[04:36:11] New map: rp_downtown_tits_v2
+[04:36:14] Client "cactus jack" connected.
+[04:36:15] Client "2PR0" connected.
+[04:36:28] Client "2PR0" spawned in server <STEAM_0:1:93928982> (took 13 seconds).
+[04:36:32] Client "cactus jack" spawned in server <STEAM_0:0:648900746> (took 18 seconds).
+[04:37:04] CACTUS JACK to admins: I would like to report 2PR0 STEAM_0:1:93928982
+[04:37:36] CACTUS JACK kicked 2PR0 (You have been kicked)
+[04:37:36] Dropped "2PR0" from server<STEAM_0:1:93928982>
+[04:37:40] Client "2PR0" connected.
+[04:37:54] Client "2PR0" spawned in server <STEAM_0:1:93928982> (took 14 seconds).
+[04:38:10] CACTUS JACK brought 2PR0
+[04:38:10] (SILENT) CACTUS JACK began spectating 2PR0
+[04:38:11] CACTUS JACK froze 2PR0
+[04:38:12] (SILENT) CACTUS JACK stopped spectating 2PR0
+[04:38:12] (SILENT) CACTUS JACK began spectating 2PR0
+[04:38:27] (SILENT) CACTUS JACK stopped spectating 2PR0
+[04:38:41] CACTUS JACK unfroze 2PR0
+[04:38:41] CACTUS JACK returned 2PR0 to their original position
+[04:38:46] CACTUS JACK unfroze 2PR0
+[04:38:48] CACTUS JACK brought 2PR0
+[04:38:48] CACTUS JACK froze 2PR0
+[04:39:01] CACTUS JACK kicked 2PR0 (You have been kicked)
+[04:39:01] Dropped "2PR0" from server<STEAM_0:1:93928982>
+[04:39:05] Client "2PR0" connected.
+[04:39:19] Client "2PR0" spawned in server <STEAM_0:1:93928982> (took 14 seconds).
+[04:40:24] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube4x8x1.mdl
+[04:40:24] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube2x2x1.mdl
+[04:40:24] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube4x4x05.mdl
+[04:40:24] 2PR0<STEAM_0:1:93928982> spawned model models/props_c17/fence01b.mdl
+[04:40:24] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube4x4x05.mdl
+[04:40:24] 2PR0<STEAM_0:1:93928982> spawned model models/props_phx/mechanics/slider2.mdl
+[04:40:24] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/plates/plate075x4.mdl
+[04:40:24] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube6x6x05.mdl
+[04:40:24] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube2x6x025.mdl
+[04:40:24] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube4x8x1.mdl
+[04:40:24] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube3x3x05.mdl
+[04:40:24] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube3x3x05.mdl
+[04:40:24] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube3x3x05.mdl
+[04:40:24] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube2x6x1.mdl
+[04:40:24] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube3x3x05.mdl
+[04:40:24] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube4x8x1.mdl
+[04:40:25] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube4x6x1.mdl
+[04:40:25] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube2x6x1.mdl
+[04:40:25] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube1x2x025.mdl
+[04:40:25] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube1x2x1.mdl
+[04:40:25] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube4x8x1.mdl
+[04:40:25] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube4x6x05.mdl
+[04:40:25] 2PR0<STEAM_0:1:93928982> spawned model models/props_c17/fence03a.mdl
+[04:40:25] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube2x6x1.mdl
+[04:40:25] 2PR0<STEAM_0:1:93928982> spawned model models/props_wasteland/interior_fence001g.mdl
+[04:40:25] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube4x6x1.mdl
+[04:40:25] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube4x8x1.mdl
+[04:40:25] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube4x8x1.mdl
+[04:40:25] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube4x8x1.mdl
+[04:40:25] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube025x8x025.mdl
+[04:40:25] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube025x8x025.mdl
+[04:40:26] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube025x8x025.mdl
+[04:40:26] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube4x8x1.mdl
+[04:40:26] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube2x6x025.mdl
+[04:40:26] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/plates/plate2x5.mdl
+[04:40:26] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube6x6x05.mdl
+[04:40:26] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube4x8x025.mdl
+[04:40:26] 2PR0<STEAM_0:1:93928982> spawned model models/props_c17/fence01b.mdl
+[04:40:26] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube4x4x05.mdl
+[04:40:26] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube4x6x1.mdl
+[04:40:26] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube2x2x1.mdl
+[04:40:26] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube6x6x05.mdl
+[04:40:26] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube2x2x1.mdl
+[04:40:26] 2PR0<STEAM_0:1:93928982> spawned model models/props_c17/fence03a.mdl
+[04:40:26] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube4x8x1.mdl
+[04:40:26] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube4x8x025.mdl
+[04:40:27] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube2x6x025.mdl
+[04:40:27] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube6x6x05.mdl
+[04:40:27] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube6x6x05.mdl
+[04:40:27] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube025x8x025.mdl
+[04:40:27] 2PR0<STEAM_0:1:93928982> spawned model models/props_phx/mechanics/slider2.mdl
+[04:40:27] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube2x4x1.mdl
+[04:40:27] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube2x2x1.mdl
+[04:40:27] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube4x8x1.mdl
+[04:40:27] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube1x2x025.mdl
+[04:40:27] 2PR0<STEAM_0:1:93928982> spawned model models/props_c17/fence01a.mdl
+[04:40:27] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube075x3x025.mdl
+[04:40:27] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube4x8x1.mdl
+[04:40:27] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube4x8x1.mdl
+[04:40:27] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube025x8x025.mdl
+[04:40:27] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube4x8x1.mdl
+[04:40:28] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube2x6x1.mdl
+[04:40:28] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube2x6x1.mdl
+[04:40:28] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube2x4x1.mdl
+[04:40:28] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/plates/plate2x3.mdl
+[04:40:28] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube4x8x1.mdl
+[04:40:28] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube4x8x1.mdl
+[04:40:28] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube025x8x025.mdl
+[04:40:28] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube6x6x05.mdl
+[04:40:28] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube4x6x1.mdl
+[04:40:28] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube2x6x025.mdl
+[04:40:28] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube2x6x1.mdl
+[04:40:28] 2PR0<STEAM_0:1:93928982> spawned model models/props_c17/fence01b.mdl
+[04:40:28] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube4x6x1.mdl
+[04:40:28] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube2x6x1.mdl
+[04:40:28] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube6x6x05.mdl
+[04:40:28] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube6x6x05.mdl
+[04:42:38] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube2x4x05.mdl
+[04:42:39] 2PR0<STEAM_0:1:93928982> spawned model models/props_c17/fence01b.mdl
+[04:42:39] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube2x6x05.mdl
+[04:42:39] 2PR0<STEAM_0:1:93928982> spawned model models/props_wasteland/interior_fence002d.mdl
+[04:42:39] 2PR0<STEAM_0:1:93928982> spawned model models/props_wasteland/interior_fence002d.mdl
+[04:42:39] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/plates/plate2x4.mdl
+[04:42:39] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube8x8x05.mdl
+[04:42:39] 2PR0<STEAM_0:1:93928982> spawned model models/props_wasteland/interior_fence002d.mdl
+[04:42:39] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube2x4x05.mdl
+[04:42:39] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube2x4x05.mdl
+[04:42:39] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube2x4x05.mdl
+[04:42:39] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/plates/plate8.mdl
+[04:42:39] 2PR0<STEAM_0:1:93928982> spawned model models/props_wasteland/interior_fence002d.mdl
+[04:42:39] 2PR0<STEAM_0:1:93928982> spawned model models/props_c17/fence01b.mdl
+[04:42:39] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube8x8x05.mdl
+[04:42:39] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube2x6x05.mdl
+[04:42:39] 2PR0<STEAM_0:1:93928982> spawned model models/props_wasteland/interior_fence002d.mdl
+[04:42:39] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube8x8x1.mdl
+[04:42:39] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube2x4x05.mdl
+[04:42:39] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube8x8x1.mdl
+[04:42:40] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/plates/plate1x2.mdl
+[04:42:40] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube2x6x05.mdl
+[04:42:40] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube8x8x1.mdl
+[04:42:40] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube2x6x05.mdl
+[04:42:40] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube8x8x05.mdl
+[04:42:40] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube2x6x05.mdl
+[04:42:40] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube2x6x05.mdl
+[04:42:40] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube8x8x05.mdl
+[04:42:40] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube2x4x05.mdl
+[04:42:40] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube2x4x05.mdl
+[04:42:40] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube2x6x05.mdl
+[04:42:40] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube2x2x05.mdl
+[04:42:40] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube8x8x1.mdl
+[04:42:40] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/plates/plate8.mdl
+[04:42:40] 2PR0<STEAM_0:1:93928982> spawned model models/props_wasteland/interior_fence002d.mdl
+[04:42:40] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube8x8x05.mdl
+[04:42:40] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube2x4x05.mdl
+[04:42:40] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube2x4x05.mdl
+[04:42:41] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube2x4x05.mdl
+[04:42:41] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube2x4x05.mdl
+[04:42:41] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube2x6x05.mdl
+[04:42:41] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube8x8x1.mdl
+[04:42:41] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/plates/plate1x2.mdl
+[04:42:41] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube2x4x05.mdl
+[04:42:41] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube2x4x05.mdl
+[04:42:41] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube8x8x05.mdl
+[04:42:41] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/plates/plate8.mdl
+[04:42:41] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube2x4x05.mdl
+[04:42:41] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/plates/plate8.mdl
+[04:42:41] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube8x8x1.mdl
+[04:42:41] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/plates/plate2x4.mdl
+[04:42:41] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube8x8x05.mdl
+[04:42:41] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube2x4x05.mdl
+[04:42:42] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube8x8x1.mdl
+[04:42:42] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube2x2x05.mdl
+[04:42:42] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube2x6x05.mdl
+[04:42:42] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube2x4x05.mdl
+[04:42:42] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube2x4x05.mdl
+[04:42:42] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube2x6x05.mdl
+[04:42:42] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube2x6x05.mdl
+[04:42:42] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube2x4x05.mdl
+[04:42:42] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/plates/plate05.mdl
+[04:42:42] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube8x8x1.mdl
+[04:42:42] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube2x4x05.mdl
+[04:42:42] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/plates/plate8.mdl
+[04:42:42] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/plates/plate2x5.mdl
+[04:42:42] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube8x8x05.mdl
+[04:42:42] 2PR0<STEAM_0:1:93928982> spawned model models/props_c17/fence01b.mdl
+[04:42:42] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/plates/plate8.mdl
+[04:43:53] CACTUS JACK: /advert retard
+[04:44:05] 2PR0: /advert nig
+[04:44:20] CACTUS JACK: /advert sammy is retarded
+[04:45:19] CACTUS JACK: /advert NIGGAS ARE CUMMING
+[04:45:38] 2PR0<STEAM_0:1:93928982> spawned model models/props_wasteland/interior_fence001g.mdl
+[04:45:38] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/plates/plate4x6.mdl
+[04:45:38] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube075x3x075.mdl
+[04:45:38] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/plates/plate7x7.mdl
+[04:45:38] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube6x8x1.mdl
+[04:45:38] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube2x6x1.mdl
+[04:45:38] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube6x6x1.mdl
+[04:45:38] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube3x3x05.mdl
+[04:45:38] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube05x4x05.mdl
+[04:45:38] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube4x6x05.mdl
+[04:45:38] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/plates/plate075x3.mdl
+[04:45:38] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/plates/plate2x2.mdl
+[04:45:38] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/plates/plate2x2.mdl
+[04:45:38] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube4x4x1.mdl
+[04:45:38] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/plates/plate1x6.mdl
+[04:45:38] 2PR0<STEAM_0:1:93928982> spawned model models/props_wasteland/interior_fence002d.mdl
+[04:45:38] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube4x8x1.mdl
+[04:45:38] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube1x2x05.mdl
+[04:45:38] 2PR0<STEAM_0:1:93928982> spawned model models/props_c17/fence03a.mdl
+[04:45:39] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube05x4x05.mdl
+[04:45:39] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube2x4x05.mdl
+[04:45:39] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/plates/plate2x8.mdl
+[04:45:39] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube3x3x05.mdl
+[04:45:39] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube2x6x1.mdl
+[04:45:39] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube4x6x1.mdl
+[04:45:39] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube4x6x1.mdl
+[04:45:39] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube2x6x1.mdl
+[04:45:39] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube1x2x05.mdl
+[04:45:39] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube1x2x05.mdl
+[04:45:39] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/plates/plate2x4.mdl
+[04:45:39] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/plates/plate1x4.mdl
+[04:45:39] 2PR0<STEAM_0:1:93928982> spawned model models/props_c17/fence01b.mdl
+[04:45:39] 2PR0<STEAM_0:1:93928982> spawned model models/props_wasteland/interior_fence002d.mdl
+[04:45:39] 2PR0<STEAM_0:1:93928982> spawned model models/props_c17/fence01a.mdl
+[04:45:39] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube2x4x1.mdl
+[04:45:39] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube4x6x1.mdl
+[04:45:39] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube2x4x05.mdl
+[04:45:39] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube6x6x1.mdl
+[04:45:39] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube1x2x1.mdl
+[04:45:39] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube6x6x1.mdl
+[04:45:39] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube4x4x1.mdl
+[04:45:40] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/plates/plate2x7.mdl
+[04:45:40] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube6x6x1.mdl
+[04:45:40] 2PR0<STEAM_0:1:93928982> spawned model models/props_c17/fence01b.mdl
+[04:45:40] 2PR0<STEAM_0:1:93928982> spawned model models/props_wasteland/interior_fence002d.mdl
+[04:45:40] 2PR0<STEAM_0:1:93928982> spawned model models/props_c17/fence03a.mdl
+[04:45:40] 2PR0<STEAM_0:1:93928982> spawned model models/props_wasteland/interior_fence002d.mdl
+[04:45:40] 2PR0<STEAM_0:1:93928982> spawned model models/props_interiors/vendingmachinesoda01a.mdl
+[04:45:40] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube6x8x1.mdl
+[04:45:40] 2PR0<STEAM_0:1:93928982> spawned model models/props_wasteland/interior_fence002d.mdl
+[04:45:40] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube4x4x1.mdl
+[04:45:40] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube025x3x025.mdl
+[04:45:40] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube2x2x1.mdl
+[04:45:40] 2PR0<STEAM_0:1:93928982> spawned model models/props_c17/fence01b.mdl
+[04:45:40] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube4x4x1.mdl
+[04:45:40] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/plates/plate1x6.mdl
+[04:45:40] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube2x4x1.mdl
+[04:45:40] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/plates/plate1x3.mdl
+[04:45:40] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube2x2x1.mdl
+[04:45:40] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube1x2x1.mdl
+[04:45:40] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/plates/plate2x5.mdl
+[04:45:40] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube4x4x1.mdl
+[04:45:40] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube6x6x1.mdl
+[04:45:41] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube025x3x025.mdl
+[04:45:41] 2PR0<STEAM_0:1:93928982> spawned model models/props_c17/fence03a.mdl
+[04:45:41] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube3x3x05.mdl
+[04:45:41] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube1x2x05.mdl
+[04:45:41] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube1x2x1.mdl
+[04:45:41] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube1x6x05.mdl
+[04:45:41] 2PR0<STEAM_0:1:93928982> spawned model models/props_wasteland/interior_fence001g.mdl
+[04:45:41] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/plates/plate7x7.mdl
+[04:45:41] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/plates/plate2x8.mdl
+[04:45:41] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/plates/plate2x2.mdl
+[04:45:41] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube6x6x1.mdl
+[04:46:09] CACTUS JACK: /advert sammy is a retard who got his bitch stolen by 2pro <3
+[04:47:20] CACTUS JACK suicided!
+[04:49:03] CACTUS JACK: /ADVERT BUST A NUT
+[04:49:26] CACTUS JACK<STEAM_0:0:648900746> spawned model models/props_interiors/bathtub01a.mdl
+[04:49:56] 2PR0<STEAM_0:1:93928982> spawned model models/props_borealis/bluebarrel001.mdl
+[04:50:00] CACTUS JACK<STEAM_0:0:648900746> spawned model models/props_c17/furniturebathtub001a.mdl
+[04:50:10] 2PR0 suicided!
+[04:50:35] 2PR0<STEAM_0:1:93928982> spawned model models/props_borealis/bluebarrel001.mdl
+[04:50:43] 2PR0<STEAM_0:1:93928982> spawned model models/props_borealis/bluebarrel001.mdl
+[04:50:46] CACTUS JACK killed 2PR0 using prop_physics
+[04:50:47] Server is shutting down/changing levels.
+
+
+
+[04:51:03] New map: rp_downtown_tits_v2
+[04:51:04] Client "cactus jack" connected.
+[04:51:06] Client "2PR0" connected.
+[04:51:52] Client "2PR0" spawned in server <STEAM_0:1:93928982> (took 46 seconds).
+[04:51:55] Client "cactus jack" spawned in server <STEAM_0:0:648900746> (took 51 seconds).
+[04:52:11] Server is shutting down/changing levels.
+
+
+
+[04:52:34] New map: rp_downtown_tits_v2
+[04:52:38] Client "cactus jack" connected.
+[04:52:39] Client "2PR0" connected.
+[04:52:55] Client "2PR0" spawned in server <STEAM_0:1:93928982> (took 16 seconds).
+[04:52:56] Dropped "2PR0" from server<STEAM_0:1:93928982>
+[04:52:56] Client "cactus jack" spawned in server <STEAM_0:0:648900746> (took 18 seconds).
+[04:53:03] Client "2PR0" connected.
+[04:53:18] Client "2PR0" spawned in server <STEAM_0:1:93928982> (took 15 seconds).
+[04:56:10] Server is shutting down/changing levels.
+
+
+
+[04:56:23] New map: rp_downtown_tits_v2
+[04:56:23] Client "2PR0" connected.
+[04:56:37] Client "2PR0" spawned in server <STEAM_0:1:93928982> (took 14 seconds).
+[04:57:29] Client "cactus jack" connected.
+[04:57:45] Client "cactus jack" spawned in server <STEAM_0:0:648900746> (took 16 seconds).
+[04:58:13] Server is shutting down/changing levels.
+
+
+
+[04:58:26] New map: rp_downtown_tits_v2
+[04:58:26] Client "cactus jack" connected.
+[04:58:38] Client "2PR0" connected.
+[04:58:41] Client "cactus jack" spawned in server <STEAM_0:0:648900746> (took 15 seconds).
+[04:58:53] Client "2PR0" spawned in server <STEAM_0:1:93928982> (took 15 seconds).
+[04:59:59] Server is shutting down/changing levels.
+
+
+
+[05:00:24] New map: rp_downtown_tits_v2
+[05:00:54] Client "cactus jack" connected.
+[05:00:55] Client "2PR0" connected.
+[05:01:09] Client "2PR0" spawned in server <STEAM_0:1:93928982> (took 14 seconds).
+[05:01:10] Client "cactus jack" spawned in server <STEAM_0:0:648900746> (took 16 seconds).
+[05:01:38] Server is shutting down/changing levels.
+
+
+
+[05:01:52] New map: rp_downtown_tits_v2
+[05:01:52] Client "cactus jack" connected.
+[05:02:06] Client "cactus jack" spawned in server <STEAM_0:0:648900746> (took 14 seconds).
+[05:02:21] Client "2PR0" connected.
+[05:02:35] Client "2PR0" spawned in server <STEAM_0:1:93928982> (took 14 seconds).
+[05:03:46] Server is shutting down/changing levels.
+
+
+
+[05:04:02] New map: rp_downtown_tits_v2
+[05:04:02] Client "cactus jack" connected.
+[05:04:17] Client "cactus jack" spawned in server <STEAM_0:0:648900746> (took 15 seconds).
+[05:04:37] Client "2PR0" connected.
+[05:04:52] Client "2PR0" spawned in server <STEAM_0:1:93928982> (took 15 seconds).
+[05:05:22] Server is shutting down/changing levels.
+
+
+
+[05:05:36] New map: rp_downtown_tits_v2
+[05:05:36] Client "cactus jack" connected.
+[05:05:51] Client "cactus jack" spawned in server <STEAM_0:0:648900746> (took 15 seconds).
+[05:05:51] Client "2PR0" connected.
+[05:06:06] Client "2PR0" spawned in server <STEAM_0:1:93928982> (took 15 seconds).
+[05:08:21] Server is shutting down/changing levels.
+
+
+
+[05:08:33] New map: rp_downtown_tits_v2
+[05:08:33] Client "cactus jack" connected.
+[05:08:43] Client "2PR0" connected.
+[05:08:48] Client "cactus jack" spawned in server <STEAM_0:0:648900746> (took 15 seconds).
+[05:08:58] Client "2PR0" spawned in server <STEAM_0:1:93928982> (took 15 seconds).
+[05:09:31] 2PR0: e
+[05:09:35] 2PR0: /ooc test
+[05:13:40] Server is shutting down/changing levels.
+
+
+
+[05:13:54] New map: rp_downtown_tits_v2
+[05:13:54] Client "cactus jack" connected.
+[05:14:14] Client "cactus jack" spawned in server <STEAM_0:0:648900746> (took 20 seconds).
+[05:14:26] Client "2PR0" connected.
+[05:14:44] Client "2PR0" spawned in server <STEAM_0:1:93928982> (took 18 seconds).
+[05:15:13] 2PR0<STEAM_0:1:93928982> spawned model models/props_combine/weaponstripper.mdl
+[05:15:48] 2PR0: !sam
+[05:15:53] 2PR0: !sit
+[05:15:57] 2PR0: !sam
+[05:18:16] Server is shutting down/changing levels.
+
+
+
+[05:18:31] New map: rp_downtown_tits_v2
+[05:18:34] Client "2PR0" connected.
+[05:18:34] Client "cactus jack" connected.
+[05:18:49] Client "2PR0" spawned in server <STEAM_0:1:93928982> (took 15 seconds).
+[05:18:50] Client "cactus jack" spawned in server <STEAM_0:0:648900746> (took 16 seconds).
+[05:19:24] 2PR0: /noclip
+[05:23:01] Server is shutting down/changing levels.
+
+
+
+[05:23:14] New map: rp_downtown_tits_v2
+[05:23:14] Client "cactus jack" connected.
+[05:23:14] Client "2PR0" connected.
+[05:23:30] Client "cactus jack" spawned in server <STEAM_0:0:648900746> (took 16 seconds).
+[05:23:31] Client "2PR0" spawned in server <STEAM_0:1:93928982> (took 17 seconds).
+[05:26:59] 2PR0: !sam
+[05:27:02] 2PR0: !sit
+[05:27:04] 2PR0: !report
+[05:27:05] CACTUS JACK: !REPORT
+[05:27:14] 2PR0: /report
+[05:27:54] 2PR0 suicided!
+[05:28:14] CACTUS JACK teleported to 2PR0
+[05:28:34] 2PR0 killed CACTUS JACK using rpg_missile
+[05:28:42] 2PR0 killed CACTUS JACK using rpg_missile
+[05:28:53] CACTUS JACK killed 2PR0 using player
+[05:29:05] 2PR0 killed CACTUS JACK using npc_satchel
+[05:29:23] 2PR0 suicided!
+[05:29:26] CACTUS JACK suicided!
+[05:29:55] CACTUS JACK suicided!
+[05:30:33] 2PR0 killed CACTUS JACK using weapon_ar2
+[05:30:39] 2PR0 killed CACTUS JACK using crossbow_bolt
+[05:30:50] 2PR0 killed CACTUS JACK using crossbow_bolt
+[05:31:23] CACTUS JACK killed 2PR0 using weapon_smg1
+[05:31:24] CACTUS JACK suicided!
+[05:31:29] CACTUS JACK killed 2PR0 using crossbow_bolt
+[05:32:03] CACTUS JACK was killed by npc_rollermine
+[05:32:20] Server is shutting down/changing levels.
+
+
+
+[05:32:35] New map: rp_downtown_tits_v2
+[05:32:42] Client "2PR0" connected.
+[05:32:42] Client "cactus jack" connected.
+[05:32:58] Client "cactus jack" spawned in server <STEAM_0:0:648900746> (took 16 seconds).
+[05:32:58] Client "2PR0" spawned in server <STEAM_0:1:93928982> (took 16 seconds).
+[05:34:14] CACTUS JACK teleported to 2PR0
+[05:35:13] CACTUS JACK killed 2PR0 using player
+[05:35:26] CACTUS JACK killed 2PR0 using player
+[05:41:07] CACTUS JACK<STEAM_0:0:648900746> spawned sent bank_npc
+[05:41:11] CACTUS JACK<STEAM_0:0:648900746> spawned sent bank_npc
+[05:41:24] CACTUS JACK<STEAM_0:0:648900746> spawned sent bank_npc
+[06:08:50] Dropped "CACTUS JACK" from server<STEAM_0:0:648900746>
+[06:11:43] Client "cactus jack" connected.
+[06:16:35] Client "cactus jack" connected.
+[06:17:00] Client "cactus jack" spawned in server <STEAM_0:0:648900746> (took 25 seconds).
+[06:17:09] CACTUS JACK teleported to 2PR0
+[06:19:14] Server is shutting down/changing levels.
+
+
+
+[06:19:33] New map: rp_downtown_tits_v2
+[06:19:33] Client "cactus jack" connected.
+[06:19:39] Client "2PR0" connected.
+[06:19:41] Client "cactus jack" connected.
+[06:20:07] Client "cactus jack" connected.
+[06:20:34] Client "2PR0" spawned in server <STEAM_0:1:93928982> (took 55 seconds).
+[06:20:34] Client "cactus jack" spawned in server <STEAM_0:0:648900746> (took 27 seconds).
+[06:21:34] CACTUS JACK<STEAM_0:0:648900746> spawned sent bank_npc
+[06:22:55] Server is shutting down/changing levels.
+
+
+
+[06:23:10] New map: rp_downtown_tits_v2
+[06:23:10] Client "2PR0" connected.
+[06:23:10] Client "cactus jack" connected.
+[06:23:11] Client "cactus jack" connected.
+[06:23:25] Client "2PR0" spawned in server <STEAM_0:1:93928982> (took 15 seconds).
+[06:23:26] Client "cactus jack" spawned in server <STEAM_0:0:648900746> (took 15 seconds).
+[06:25:30] CACTUS JACK brought 2PR0
+[06:26:13] CACTUS JACK brought 2PR0
+[06:26:58] CACTUS JACK suicided!
+[06:28:03] (SILENT) CACTUS JACK began spectating 2PR0
+[06:28:09] (SILENT) CACTUS JACK stopped spectating 2PR0
+[06:28:47] 2PR0: !sam
+[06:29:01] (SILENT) CACTUS JACK began spectating 2PR0
+[06:29:02] (SILENT) CACTUS JACK stopped spectating 2PR0
+[06:29:32] 2PR0: /enablestorm
+[06:30:01] CACTUS JACK teleported to 2PR0
+[06:30:27] Server is shutting down/changing levels.
+
+
+
+[06:30:41] New map: rp_downtown_tits_v2
+[06:30:41] Client "2PR0" connected.
+[06:30:41] Client "cactus jack" connected.
+[06:30:57] Client "2PR0" spawned in server <STEAM_0:1:93928982> (took 16 seconds).
+[06:30:58] Client "cactus jack" spawned in server <STEAM_0:0:648900746> (took 17 seconds).
+[06:31:22] 2PR0: /setmoney 2 999999
+[06:31:32] 2PR0: /setmoney ca 999999
+[06:32:01] CACTUS JACK: \
+[06:32:27] CACTUS JACK: /selmoney 1
+[06:32:58] 2PR0<STEAM_0:1:93928982> spawned model models/props_trainstation/train001.mdl
+[06:34:40] CACTUS JACK killed 2PR0 using player
+[06:34:55] CACTUS JACK killed 2PR0 using player
+[06:35:04] CACTUS JACK killed 2PR0 using player
+[06:35:30] CACTUS JACK was killed by npc_rollermine
+[06:35:41] CACTUS JACK was killed by npc_rollermine
+[06:35:53] 2PR0 was killed by npc_rollermine
+[06:36:00] 2PR0 was killed by npc_rollermine
+[06:36:03] CACTUS JACK was killed by npc_rollermine
+[06:36:08] 2PR0 was killed by npc_rollermine
+[06:36:19] CACTUS JACK was killed by npc_rollermine
+[06:36:26] 2PR0 was killed by npc_rollermine
+[06:36:28] CACTUS JACK was killed by npc_rollermine
+[06:36:33] 2PR0 was killed by npc_rollermine
+[06:36:42] CACTUS JACK was killed by npc_rollermine
+[06:36:52] 2PR0 was killed by npc_rollermine
+[06:37:01] CACTUS JACK was killed by npc_rollermine
+[06:37:02] 2PR0 was killed by npc_rollermine
+[06:37:10] 2PR0 was killed by npc_rollermine
+[06:37:12] CACTUS JACK was killed by npc_rollermine
+[06:37:19] CACTUS JACK was killed by npc_rollermine
+[06:37:19] 2PR0 was killed by npc_rollermine
+[06:37:28] CACTUS JACK was killed by npc_rollermine
+[06:37:31] 2PR0 was killed by npc_rollermine
+[06:37:40] 2PR0 was killed by npc_rollermine
+[06:37:41] CACTUS JACK was killed by npc_rollermine
+[06:37:51] CACTUS JACK was killed by npc_rollermine
+[06:38:07] CACTUS JACK killed 2PR0 using player
+[06:39:31] CACTUS JACK killed 2PR0 using player
+[06:39:49] 2PR0 suicided!
+[06:40:16] CACTUS JACK suicided!
+[06:40:34] 2PR0 suicided!
+[06:40:34] 2PR0 killed CACTUS JACK using npc_satchel
+[06:40:54] CACTUS JACK killed 2PR0 using npc_satchel
+[06:41:03] CACTUS JACK suicided!
+[06:41:16] 2PR0 suicided!
+[06:41:21] 2PR0: !ult
+[06:41:23] 2PR0: !ulx
+[06:41:25] CACTUS JACK suicided!
+[06:41:25] 2PR0: /ulx
+[06:41:28] 2PR0: !ulx
+[06:41:49] CACTUS JACK suicided!
+[06:41:49] CACTUS JACK killed 2PR0 using npc_tripmine
+[06:42:06] 2PR0 suicided!
+[06:42:06] 2PR0 killed CACTUS JACK using npc_tripmine
+[06:42:21] 2PR0 killed CACTUS JACK using npc_tripmine
+[06:42:40] CACTUS JACK suicided!
+[06:43:03] CACTUS JACK suicided!
+[06:43:16] CACTUS JACK killed 2PR0 using npc_tripmine
+[06:43:16] CACTUS JACK suicided!
+[06:43:33] CACTUS JACK suicided!
+[06:43:33] 2PR0 suicided!
+[06:43:58] CACTUS JACK suicided!
+[06:44:46] 2PR0 killed CACTUS JACK using npc_tripmine
+[06:44:58] 2PR0 suicided!
+[06:44:58] 2PR0 killed CACTUS JACK using npc_tripmine
+[06:45:17] CACTUS JACK killed 2PR0 using npc_satchel
+[06:45:22] CACTUS JACK suicided!
+[06:45:41] 2PR0 suicided!
+[06:45:42] CACTUS JACK suicided!
+[06:46:23] 2PR0 suicided!
+[06:46:37] CACTUS JACK suicided!
+[06:47:43] 2PR0<STEAM_0:1:93928982> spawned sent sent_ball
+[06:47:46] 2PR0<STEAM_0:1:93928982> spawned sent sent_ball
+[06:47:47] 2PR0<STEAM_0:1:93928982> spawned sent sent_ball
+[06:47:47] 2PR0<STEAM_0:1:93928982> spawned sent sent_ball
+[06:47:47] 2PR0<STEAM_0:1:93928982> spawned sent sent_ball
+[06:47:47] 2PR0<STEAM_0:1:93928982> spawned sent sent_ball
+[06:47:47] 2PR0<STEAM_0:1:93928982> spawned sent sent_ball
+[06:47:48] 2PR0<STEAM_0:1:93928982> spawned sent sent_ball
+[06:47:48] 2PR0<STEAM_0:1:93928982> spawned sent sent_ball
+[06:47:48] 2PR0<STEAM_0:1:93928982> spawned sent sent_ball
+[06:47:48] 2PR0<STEAM_0:1:93928982> spawned sent sent_ball
+[06:47:48] 2PR0<STEAM_0:1:93928982> spawned sent sent_ball
+[06:47:49] 2PR0<STEAM_0:1:93928982> spawned sent sent_ball
+[06:47:49] 2PR0<STEAM_0:1:93928982> spawned sent sent_ball
+[06:47:49] 2PR0<STEAM_0:1:93928982> spawned sent sent_ball
+[06:47:50] 2PR0<STEAM_0:1:93928982> spawned sent sent_ball
+[06:47:50] 2PR0<STEAM_0:1:93928982> spawned sent sent_ball
+[06:47:51] 2PR0<STEAM_0:1:93928982> spawned sent sent_ball
+[06:47:51] 2PR0<STEAM_0:1:93928982> spawned sent sent_ball
+[06:48:12] 2PR0<STEAM_0:1:93928982> spawned sent sent_ball
+[06:48:13] 2PR0<STEAM_0:1:93928982> spawned sent sent_ball
+[06:48:14] 2PR0<STEAM_0:1:93928982> spawned sent sent_ball
+[06:48:15] 2PR0<STEAM_0:1:93928982> spawned sent sent_ball
+[06:48:17] Server is shutting down/changing levels.
+
+
+
+[06:48:30] New map: rp_downtown_tits_v2
+[06:48:30] Client "2PR0" connected.
+[06:48:30] Client "cactus jack" connected.
+[06:48:44] Client "2PR0" spawned in server <STEAM_0:1:93928982> (took 14 seconds).
+[06:48:46] Client "cactus jack" spawned in server <STEAM_0:0:648900746> (took 16 seconds).
+[06:49:58] CACTUS JACK: /advert retard = sammy & 2PR0
+[06:50:20] CACTUS JACK brought 2PR0
+[06:51:53] CACTUS JACK<STEAM_0:0:648900746> spawned sent bank_npc
+[06:52:06] CACTUS JACK: /advert retard = sammy & 2PR0
+[06:52:33] CACTUS JACK: /advert SAMMY IS DISABLED
+[06:52:43] CACTUS JACK: /advert SAMMY IS DISABLED
+[06:52:53] CACTUS JACK: /advert retard = sammy & 2PR0
+[06:52:58] CACTUS JACK<STEAM_0:0:648900746> spawned model models/props_c17/fence03a.mdl
+[06:53:02] CACTUS JACK<STEAM_0:0:648900746> spawned model models/props_c17/fence03a.mdl
+[06:53:54] CACTUS JACK<STEAM_0:0:648900746> spawned model models/props_c17/fence03a.mdl
+[06:54:00] 2PR0: /advert nigger
+[06:54:19] Server is shutting down/changing levels.
+
+
+
+[06:54:37] New map: rp_downtown_tits_v2
+[06:54:41] Client "cactus jack" connected.
+[06:54:56] Client "2PR0" connected.
+[06:54:57] Client "cactus jack" spawned in server <STEAM_0:0:648900746> (took 16 seconds).
+[06:55:12] Client "2PR0" spawned in server <STEAM_0:1:93928982> (took 16 seconds).
+[06:57:02] Dropped "2PR0" from server<STEAM_0:1:93928982>
+[06:58:07] Dropped "CACTUS JACK" from server<STEAM_0:0:648900746>
+[06:58:09] Client "cactus jack" connected.
+[06:58:10] Server is shutting down/changing levels.
+
+
+
+[06:58:27] New map: rp_downtown_tits_v2
+[06:58:29] Client "cactus jack" connected.
+[06:58:45] Client "cactus jack" spawned in server <STEAM_0:0:648900746> (took 16 seconds).
+[06:58:48] Client "2PR0" connected.
+[06:59:05] Client "2PR0" spawned in server <STEAM_0:1:93928982> (took 17 seconds).
+[07:00:32] 2PR0 was killed by sprinter_rack
+[07:00:55] 2PR0: /setmoney * 99999999
+[07:01:09] 2PR0: /setmoney 2p 99999999
+[07:01:16] 2PR0: /setmoney ca 999999999
+[07:06:46] Server is shutting down/changing levels.
+
+
+
+[07:06:59] New map: rp_downtown_tits_v2
+[07:07:00] Client "cactus jack" connected.
+[07:07:06] Client "2PR0" connected.
+[07:07:17] Client "cactus jack" spawned in server <STEAM_0:0:648900746> (took 17 seconds).
+[07:07:21] Client "2PR0" spawned in server <STEAM_0:1:93928982> (took 15 seconds).
+[07:11:49] CACTUS JACK<STEAM_0:0:648900746> spawned model models/props_wasteland/interior_fence001g.mdl
+[07:11:50] CACTUS JACK<STEAM_0:0:648900746> spawned model models/props_wasteland/interior_fence002d.mdl
+[07:12:03] CACTUS JACK<STEAM_0:0:648900746> spawned model models/props_wasteland/interior_fence002d.mdl
+[07:12:27] CACTUS JACK<STEAM_0:0:648900746> spawned model models/props_wasteland/interior_fence002d.mdl
+[07:13:47] Server is shutting down/changing levels.
+
+
+
+[07:14:01] New map: rp_downtown_tits_v2
+[07:14:01] Client "2PR0" connected.
+[07:14:01] Client "cactus jack" connected.
+[07:14:16] Client "2PR0" spawned in server <STEAM_0:1:93928982> (took 15 seconds).
+[07:14:18] Client "cactus jack" spawned in server <STEAM_0:0:648900746> (took 17 seconds).
+[07:14:50] CACTUS JACK killed 2PR0 using sprinter_rack
+[07:15:13] CACTUS JACK was killed by sprinter_rack
+[07:15:37] Server is shutting down/changing levels.
+
+
+
+[07:15:50] New map: rp_downtown_tits_v2
+[07:15:50] Client "cactus jack" connected.
+[07:16:06] Client "cactus jack" spawned in server <STEAM_0:0:648900746> (took 16 seconds).
+[07:16:21] Client "2PR0" connected.
+[07:16:37] Server is shutting down/changing levels.
+
+
+
+[07:16:53] New map: rp_downtown_tits_v2
+[07:16:56] Client "2PR0" connected.
+[07:16:56] Client "cactus jack" connected.
+[07:17:10] Client "2PR0" spawned in server <STEAM_0:1:93928982> (took 14 seconds).
+[07:17:12] Client "cactus jack" spawned in server <STEAM_0:0:648900746> (took 16 seconds).
+[07:19:43] Server is shutting down/changing levels.
+
+
+
+[07:19:56] New map: rp_downtown_tits_v2
+[07:19:56] Client "2PR0" connected.
+[07:19:57] Client "cactus jack" connected.
+[07:19:58] Client "cactus jack" connected.
+[07:20:10] Client "2PR0" spawned in server <STEAM_0:1:93928982> (took 14 seconds).
+[07:20:15] Client "cactus jack" spawned in server <STEAM_0:0:648900746> (took 17 seconds).
+[07:21:36] Server is shutting down/changing levels.
+
+
+
+[07:21:50] New map: rp_downtown_tits_v2
+[07:21:50] Client "2PR0" connected.
+[07:21:50] Client "cactus jack" connected.
+[07:22:04] Client "2PR0" spawned in server <STEAM_0:1:93928982> (took 14 seconds).
+[07:22:08] Client "cactus jack" spawned in server <STEAM_0:0:648900746> (took 18 seconds).
+[07:27:57] Server is shutting down/changing levels.
+
+
+
+[07:28:12] New map: rp_downtown_tits_v2
+[07:28:12] Client "cactus jack" connected.
+[07:28:37] Client "cactus jack" spawned in server <STEAM_0:0:648900746> (took 25 seconds).
+[07:28:52] CACTUS JACK<STEAM_0:0:648900746> spawned sent zlt_machine
+[07:29:04] CACTUS JACK<STEAM_0:0:648900746> spawned sent zlt_machine
+[07:29:11] CACTUS JACK<STEAM_0:0:648900746> spawned sent sprinter_rack
+[07:29:13] CACTUS JACK<STEAM_0:0:648900746> spawned sent sprinter_tier_4
+[07:29:14] CACTUS JACK<STEAM_0:0:648900746> spawned sent sprinter_tier_4
+[07:29:15] CACTUS JACK<STEAM_0:0:648900746> spawned sent sprinter_tier_4
+[07:29:16] CACTUS JACK<STEAM_0:0:648900746> spawned sent sprinter_tier_4
+[07:29:20] CACTUS JACK<STEAM_0:0:648900746> spawned sent sprinter_tier_4
+[07:29:21] CACTUS JACK<STEAM_0:0:648900746> spawned sent sprinter_tier_4
+[07:29:22] CACTUS JACK<STEAM_0:0:648900746> spawned sent sprinter_tier_4
+[07:29:23] CACTUS JACK<STEAM_0:0:648900746> spawned sent sprinter_tier_4
+[07:30:17] Client "2PR0" connected.
+[07:30:39] Client "2PR0" spawned in server <STEAM_0:1:93928982> (took 22 seconds).
+[07:30:41] Server is shutting down/changing levels.
+
+
+
+[07:30:54] New map: rp_downtown_tits_v2
+[07:31:17] Client "cactus jack" connected.
+[07:31:34] Client "2PR0" connected.
+[07:31:53] Client "2PR0" spawned in server <STEAM_0:1:93928982> (took 19 seconds).
+[07:31:58] Client "cactus jack" spawned in server <STEAM_0:0:648900746> (took 41 seconds).
+[07:32:12] CACTUS JACK<STEAM_0:0:648900746> spawned sent zlt_machine
+[07:32:22] CACTUS JACK<STEAM_0:0:648900746> spawned sent zlt_machine
+[07:32:23] CACTUS JACK<STEAM_0:0:648900746> spawned sent zlt_machine
+[07:32:23] CACTUS JACK<STEAM_0:0:648900746> spawned sent zlt_machine
+[07:32:25] CACTUS JACK<STEAM_0:0:648900746> spawned sent zlt_machine
+[07:32:40] 2PR0<STEAM_0:1:93928982> spawned sent zlt_machine
+[07:32:47] CACTUS JACK<STEAM_0:0:648900746> spawned sent zlt_machine
+[07:33:03] CACTUS JACK<STEAM_0:0:648900746> spawned sent zlt_machine
+[07:33:15] CACTUS JACK<STEAM_0:0:648900746> spawned sent zlt_machine
+[07:33:16] 2PR0<STEAM_0:1:93928982> spawned sent zlt_machine
+[07:33:44] CACTUS JACK<STEAM_0:0:648900746> spawned sent zlt_machine
+[07:33:53] CACTUS JACK<STEAM_0:0:648900746> spawned sent bank_npc
+[07:36:13] Server is shutting down/changing levels.
+
+
+
+[07:36:46] New map: rp_downtown_tits_v2
+[07:36:46] Client "cactus jack" connected.
+[07:37:03] Client "cactus jack" spawned in server <STEAM_0:0:648900746> (took 17 seconds).
+[07:37:04] Client "2PR0" connected.
+[07:37:19] Client "2PR0" spawned in server <STEAM_0:1:93928982> (took 15 seconds).
+[07:37:22] CACTUS JACK<STEAM_0:0:648900746> spawned sent zlt_machine
+[07:37:39] Dropped "2PR0" from server<STEAM_0:1:93928982>
+[07:37:45] Dropped "CACTUS JACK" from server<STEAM_0:0:648900746>
+[07:37:45] Client "cactus jack" connected.
+[07:38:01] Client "cactus jack" spawned in server <STEAM_0:0:648900746> (took 16 seconds).
+[07:38:08] Client "2PR0" connected.
+[07:38:16] CACTUS JACK<STEAM_0:0:648900746> spawned sent zlt_machine
+[07:38:27] Client "2PR0" spawned in server <STEAM_0:1:93928982> (took 19 seconds).
+[07:38:41] 2PR0<STEAM_0:1:93928982> spawned sent zlt_machine
+[07:39:00] Dropped "CACTUS JACK" from server<STEAM_0:0:648900746>
+[07:39:10] Client "cactus jack" connected.
+[07:39:42] Client "cactus jack" spawned in server <STEAM_0:0:648900746> (took 32 seconds).
+[07:40:50] Dropped "CACTUS JACK" from server<STEAM_0:0:648900746>
+[07:41:42] 2PR0<STEAM_0:1:93928982> spawned sent zlt_machine
+[07:42:08] Client "cactus jack" connected.
+[07:42:24] 2PR0<STEAM_0:1:93928982> spawned sent zlt_machine
+[07:42:30] Client "cactus jack" spawned in server <STEAM_0:0:648900746> (took 22 seconds).
+[07:42:45] CACTUS JACK<STEAM_0:0:648900746> spawned sent zlt_machine
+[07:43:12] CACTUS JACK<STEAM_0:0:648900746> spawned sent zlt_machine
+[07:43:16] CACTUS JACK<STEAM_0:0:648900746> spawned sent zlt_machine
+[07:43:20] CACTUS JACK<STEAM_0:0:648900746> spawned sent zlt_machine
+[07:44:21] CACTUS JACK<STEAM_0:0:648900746> spawned sent zlt_machine
+[07:45:51] CACTUS JACK: !SIT
+[07:48:32] 2PR0<STEAM_0:1:93928982> spawned sent zlt_machine
+[07:49:11] CACTUS JACK<STEAM_0:0:648900746> spawned sent zlt_machine
+[07:49:42] 2PR0<STEAM_0:1:93928982> spawned sent zlt_machine
+[07:50:26] CACTUS JACK: // I AM A JEW
+[07:52:15] CACTUS JACK<STEAM_0:0:648900746> spawned sent combine_mine
+[07:52:17] CACTUS JACK<STEAM_0:0:648900746> spawned sent combine_mine
+[07:52:18] CACTUS JACK<STEAM_0:0:648900746> spawned sent combine_mine
+[07:52:18] CACTUS JACK<STEAM_0:0:648900746> spawned sent combine_mine
+[07:52:18] CACTUS JACK<STEAM_0:0:648900746> spawned sent combine_mine
+[07:52:19] CACTUS JACK<STEAM_0:0:648900746> spawned sent item_ammo_crossbow
+[07:52:19] CACTUS JACK<STEAM_0:0:648900746> spawned sent item_ammo_crossbow
+[07:52:19] CACTUS JACK<STEAM_0:0:648900746> spawned sent item_healthkit
+[07:52:32] CACTUS JACK<STEAM_0:0:648900746> spawned sent item_rpg_round
+[07:52:34] CACTUS JACK<STEAM_0:0:648900746> spawned sent item_rpg_round
+[07:52:40] CACTUS JACK<STEAM_0:0:648900746> spawned sent item_rpg_round
+[07:52:41] CACTUS JACK<STEAM_0:0:648900746> spawned sent item_rpg_round
+[07:52:45] CACTUS JACK<STEAM_0:0:648900746> spawned sent item_rpg_round
+[07:52:58] CACTUS JACK killed 2PR0 using player
+[07:53:07] CACTUS JACK<STEAM_0:0:648900746> spawned sent item_rpg_round
+[07:54:08] CACTUS JACK killed 2PR0 using weapon_357
+[07:56:10] CACTUS JACK suicided!
+[07:56:15] CACTUS JACK suicided!
+[07:56:20] CACTUS JACK suicided!
+[07:56:22] CACTUS JACK:    
+[07:56:23] CACTUS JACK:    
+[07:56:24] CACTUS JACK suicided!
+[07:56:27] CACTUS JACK suicided!
+[07:56:28] CACTUS JACK suicided!
+[07:56:29] CACTUS JACK suicided!
+[07:56:30] CACTUS JACK suicided!
+[07:56:31] CACTUS JACK suicided!
+[07:56:32] CACTUS JACK suicided!
+[07:56:45] CACTUS JACK suicided!
+[07:56:49] CACTUS JACK suicided!
+[07:56:55] CACTUS JACK suicided!
+[07:56:56] CACTUS JACK suicided!
+[07:56:57] CACTUS JACK suicided!
+[07:57:01] 2PR0: /ulx
+[07:57:03] 2PR0: !ulx
+[07:57:33] CACTUS JACK suicided!
+[07:57:37] CACTUS JACK suicided!
+[07:57:39] 2PR0<STEAM_0:1:93928982> spawned sent zlt_machine
+[07:58:32] CACTUS JACK brought 2PR0
+[07:58:32] CACTUS JACK froze 2PR0
+[07:58:36] CACTUS JACK unfroze 2PR0
+[07:58:36] CACTUS JACK returned 2PR0 to their original position
+[07:58:38] CACTUS JACK brought 2PR0
+[07:58:38] CACTUS JACK teleported to 2PR0
+[07:58:39] CACTUS JACK brought 2PR0
+[07:58:39] CACTUS JACK brought 2PR0
+[07:58:40] CACTUS JACK brought 2PR0
+[07:58:40] CACTUS JACK brought 2PR0
+[07:58:40] CACTUS JACK teleported to 2PR0
+[07:59:34] CACTUS JACK killed 2PR0 using rpg_missile
+[07:59:58] CACTUS JACK<STEAM_0:0:648900746> spawned sent item_rpg_round
+[07:59:58] CACTUS JACK<STEAM_0:0:648900746> spawned sent item_rpg_round
+[07:59:58] CACTUS JACK<STEAM_0:0:648900746> spawned sent item_rpg_round
+[07:59:59] CACTUS JACK<STEAM_0:0:648900746> spawned sent item_rpg_round
+[07:59:59] CACTUS JACK<STEAM_0:0:648900746> spawned sent item_rpg_round
+[07:59:59] CACTUS JACK<STEAM_0:0:648900746> spawned sent item_rpg_round
+[07:59:59] CACTUS JACK<STEAM_0:0:648900746> spawned sent item_rpg_round
+[07:59:59] CACTUS JACK<STEAM_0:0:648900746> spawned sent item_rpg_round
+[07:59:59] CACTUS JACK<STEAM_0:0:648900746> spawned sent item_rpg_round
+[08:00:00] CACTUS JACK<STEAM_0:0:648900746> spawned sent item_rpg_round
+[08:00:00] CACTUS JACK<STEAM_0:0:648900746> spawned sent item_rpg_round
+[08:00:00] CACTUS JACK<STEAM_0:0:648900746> spawned sent item_rpg_round
+[08:00:06] CACTUS JACK suicided!
+[08:00:08] CACTUS JACK<STEAM_0:0:648900746> spawned sent item_rpg_round
+[08:00:11] CACTUS JACK<STEAM_0:0:648900746> spawned sent item_rpg_round
+[08:00:11] CACTUS JACK<STEAM_0:0:648900746> spawned sent item_rpg_round
+[08:00:12] CACTUS JACK<STEAM_0:0:648900746> spawned sent item_rpg_round
+[08:00:12] CACTUS JACK<STEAM_0:0:648900746> spawned sent item_rpg_round
+[08:00:12] CACTUS JACK<STEAM_0:0:648900746> spawned sent item_rpg_round
+[08:00:12] CACTUS JACK<STEAM_0:0:648900746> spawned sent item_rpg_round
+[08:00:12] CACTUS JACK<STEAM_0:0:648900746> spawned sent item_rpg_round
+[08:00:13] CACTUS JACK<STEAM_0:0:648900746> spawned sent item_rpg_round
+[08:00:13] CACTUS JACK<STEAM_0:0:648900746> spawned sent item_rpg_round
+[08:00:13] CACTUS JACK<STEAM_0:0:648900746> spawned sent item_rpg_round
+[08:00:13] CACTUS JACK<STEAM_0:0:648900746> spawned sent item_rpg_round
+[08:00:13] CACTUS JACK<STEAM_0:0:648900746> spawned sent item_rpg_round
+[08:00:14] CACTUS JACK<STEAM_0:0:648900746> spawned sent item_rpg_round
+[08:00:14] CACTUS JACK<STEAM_0:0:648900746> spawned sent item_rpg_round
+[08:00:14] CACTUS JACK<STEAM_0:0:648900746> spawned sent item_rpg_round
+[08:00:14] CACTUS JACK<STEAM_0:0:648900746> spawned sent item_rpg_round
+[08:00:14] CACTUS JACK<STEAM_0:0:648900746> spawned sent item_rpg_round
+[08:00:19] CACTUS JACK<STEAM_0:0:648900746> spawned sent item_rpg_round
+[08:00:19] CACTUS JACK<STEAM_0:0:648900746> spawned sent item_rpg_round
+[08:00:20] CACTUS JACK<STEAM_0:0:648900746> spawned sent item_rpg_round
+[08:00:20] CACTUS JACK<STEAM_0:0:648900746> spawned sent item_rpg_round
+[08:00:24] CACTUS JACK<STEAM_0:0:648900746> spawned sent item_rpg_round
+[08:00:25] CACTUS JACK<STEAM_0:0:648900746> spawned sent item_rpg_round
+[08:00:27] CACTUS JACK<STEAM_0:0:648900746> spawned sent item_rpg_round
+[08:00:56] CACTUS JACK suicided!
+[08:01:06] CACTUS JACK suicided!
+[08:01:17] CACTUS JACK<STEAM_0:0:648900746> spawned sent bank_npc
+[08:01:17] CACTUS JACK<STEAM_0:0:648900746> spawned sent bank_npc
+[08:01:17] CACTUS JACK<STEAM_0:0:648900746> spawned sent bank_npc
+[08:01:17] CACTUS JACK<STEAM_0:0:648900746> spawned sent bank_npc
+[08:01:18] CACTUS JACK<STEAM_0:0:648900746> spawned sent bank_npc
+[08:01:18] CACTUS JACK<STEAM_0:0:648900746> spawned sent bank_npc
+[08:01:18] CACTUS JACK<STEAM_0:0:648900746> spawned sent bank_npc
+[08:01:18] CACTUS JACK<STEAM_0:0:648900746> spawned sent bank_npc
+[08:01:18] CACTUS JACK<STEAM_0:0:648900746> spawned sent bank_npc
+[08:01:19] CACTUS JACK<STEAM_0:0:648900746> spawned sent bank_npc
+[08:01:19] CACTUS JACK<STEAM_0:0:648900746> spawned sent bank_npc
+[08:01:19] CACTUS JACK<STEAM_0:0:648900746> spawned sent bank_npc
+[08:01:19] CACTUS JACK<STEAM_0:0:648900746> spawned sent bank_npc
+[08:01:20] CACTUS JACK<STEAM_0:0:648900746> spawned sent bank_npc
+[08:01:20] CACTUS JACK<STEAM_0:0:648900746> spawned sent bank_npc
+[08:01:20] CACTUS JACK<STEAM_0:0:648900746> spawned sent bank_npc
+[08:01:20] CACTUS JACK<STEAM_0:0:648900746> spawned sent bank_npc
+[08:01:31] CACTUS JACK<STEAM_0:0:648900746> spawned sent item_rpg_round
+[08:01:32] CACTUS JACK<STEAM_0:0:648900746> spawned sent item_rpg_round
+[08:01:34] CACTUS JACK<STEAM_0:0:648900746> spawned sent item_rpg_round
+[08:01:35] CACTUS JACK<STEAM_0:0:648900746> spawned sent item_rpg_round
+[08:01:35] CACTUS JACK<STEAM_0:0:648900746> spawned sent item_rpg_round
+[08:01:35] CACTUS JACK<STEAM_0:0:648900746> spawned sent item_rpg_round
+[08:01:36] CACTUS JACK<STEAM_0:0:648900746> spawned sent item_rpg_round
+[08:01:36] CACTUS JACK<STEAM_0:0:648900746> spawned sent item_rpg_round
+[08:01:36] CACTUS JACK<STEAM_0:0:648900746> spawned sent item_rpg_round
+[08:01:36] CACTUS JACK<STEAM_0:0:648900746> spawned sent item_rpg_round
+[08:01:37] CACTUS JACK<STEAM_0:0:648900746> spawned sent item_rpg_round
+[08:01:37] CACTUS JACK<STEAM_0:0:648900746> spawned sent item_rpg_round
+[08:01:37] CACTUS JACK<STEAM_0:0:648900746> spawned sent item_rpg_round
+[08:01:37] CACTUS JACK<STEAM_0:0:648900746> spawned sent item_rpg_round
+[08:01:37] CACTUS JACK<STEAM_0:0:648900746> spawned sent item_rpg_round
+[08:01:38] CACTUS JACK<STEAM_0:0:648900746> spawned sent item_rpg_round
+[08:01:38] CACTUS JACK<STEAM_0:0:648900746> spawned sent item_rpg_round
+[08:01:38] CACTUS JACK<STEAM_0:0:648900746> spawned sent item_rpg_round
+[08:01:38] CACTUS JACK<STEAM_0:0:648900746> spawned sent item_rpg_round
+[08:01:39] CACTUS JACK<STEAM_0:0:648900746> spawned sent item_rpg_round
+[08:01:40] CACTUS JACK<STEAM_0:0:648900746> spawned sent item_rpg_round
+[08:01:40] CACTUS JACK<STEAM_0:0:648900746> spawned sent item_rpg_round
+[08:01:40] CACTUS JACK<STEAM_0:0:648900746> spawned sent item_rpg_round
+[08:01:41] CACTUS JACK<STEAM_0:0:648900746> spawned sent item_rpg_round
+[08:01:41] CACTUS JACK<STEAM_0:0:648900746> spawned sent item_rpg_round
+[08:01:41] CACTUS JACK<STEAM_0:0:648900746> spawned sent item_rpg_round
+[08:01:41] CACTUS JACK<STEAM_0:0:648900746> spawned sent item_rpg_round
+[08:01:42] CACTUS JACK<STEAM_0:0:648900746> spawned sent item_rpg_round
+[08:01:42] CACTUS JACK<STEAM_0:0:648900746> spawned sent item_rpg_round
+[08:01:42] CACTUS JACK<STEAM_0:0:648900746> spawned sent item_rpg_round
+[08:01:43] CACTUS JACK<STEAM_0:0:648900746> spawned sent item_rpg_round
+[08:01:44] CACTUS JACK<STEAM_0:0:648900746> spawned sent item_rpg_round
+[08:01:44] CACTUS JACK<STEAM_0:0:648900746> spawned sent item_rpg_round
+[08:01:45] CACTUS JACK<STEAM_0:0:648900746> spawned sent item_rpg_round
+[08:01:45] CACTUS JACK<STEAM_0:0:648900746> spawned sent item_rpg_round
+[08:01:46] CACTUS JACK<STEAM_0:0:648900746> spawned sent item_rpg_round
+[08:01:46] CACTUS JACK<STEAM_0:0:648900746> spawned sent item_rpg_round
+[08:01:47] CACTUS JACK<STEAM_0:0:648900746> spawned sent item_rpg_round
+[08:01:47] CACTUS JACK<STEAM_0:0:648900746> spawned sent item_rpg_round
+[08:01:48] CACTUS JACK<STEAM_0:0:648900746> spawned sent item_rpg_round
+[08:01:48] CACTUS JACK<STEAM_0:0:648900746> spawned sent item_rpg_round
+[08:01:50] CACTUS JACK killed 2PR0 using rpg_missile
+[08:02:11] CACTUS JACK killed 2PR0 using rpg_missile
+[08:02:31] Server is shutting down/changing levels.
+
+
+
+[08:02:47] New map: rp_downtown_tits_v2
+[08:02:47] Client "cactus jack" connected.
+[08:02:47] Client "2PR0" connected.
+[08:03:02] Client "2PR0" spawned in server <STEAM_0:1:93928982> (took 15 seconds).
+[08:03:19] Client "cactus jack" spawned in server <STEAM_0:0:648900746> (took 32 seconds).
+[08:03:30] 2PR0<STEAM_0:1:93928982> spawned sent zlt_machine
+[08:03:56] CACTUS JACK<STEAM_0:0:648900746> spawned sent zlt_machine
+[08:06:27] CACTUS JACK killed 2PR0 using player
+[08:08:09] 2PR0<STEAM_0:1:93928982> spawned model models/props_wasteland/rockcliff05b.mdl
+[08:12:02] Server is shutting down/changing levels.
+
+
+
+[08:12:15] New map: rp_downtown_tits_v2
+[08:12:16] Client "cactus jack" connected.
+[08:12:37] Client "cactus jack" spawned in server <STEAM_0:0:648900746> (took 21 seconds).
+[08:12:45] Client "2PR0" connected.
+[08:12:51] CACTUS JACK<STEAM_0:0:648900746> spawned sent zlt_machine
+[08:13:02] Client "2PR0" spawned in server <STEAM_0:1:93928982> (took 17 seconds).
+[08:13:14] 2PR0<STEAM_0:1:93928982> spawned sent zlt_machine
+[08:13:55] Server is shutting down/changing levels.
+
+
+
+[08:14:08] New map: rp_downtown_tits_v2
+[08:14:08] Client "cactus jack" connected.
+[08:14:23] Client "cactus jack" spawned in server <STEAM_0:0:648900746> (took 15 seconds).
+[08:14:44] Client "2PR0" connected.
+[08:14:59] Client "2PR0" spawned in server <STEAM_0:1:93928982> (took 15 seconds).
+[08:16:18] CACTUS JACK<STEAM_0:0:648900746> spawned sent item_ammo_pistol_large
+[08:16:37] CACTUS JACK killed 2PR0 using player
+[08:16:55] CACTUS JACK killed 2PR0 using player
+[08:16:56] CACTUS JACK suicided!
+[08:17:01] CACTUS JACK suicided!
+[08:17:13] CACTUS JACK killed 2PR0 using player
+[08:17:55] 2PR0<STEAM_0:1:93928982> spawned sent item_rpg_round
+[08:18:03] 2PR0<STEAM_0:1:93928982> spawned sent item_rpg_round
+[08:18:03] 2PR0<STEAM_0:1:93928982> spawned sent item_rpg_round
+[08:18:03] 2PR0<STEAM_0:1:93928982> spawned sent item_rpg_round
+[08:18:04] 2PR0<STEAM_0:1:93928982> spawned sent item_rpg_round
+[08:18:04] 2PR0<STEAM_0:1:93928982> spawned sent item_rpg_round
+[08:18:06] 2PR0<STEAM_0:1:93928982> spawned sent item_rpg_round
+[08:18:07] 2PR0<STEAM_0:1:93928982> spawned sent item_rpg_round
+[08:18:09] 2PR0<STEAM_0:1:93928982> spawned sent item_rpg_round
+[08:18:11] 2PR0<STEAM_0:1:93928982> spawned sent item_rpg_round
+[08:18:12] 2PR0<STEAM_0:1:93928982> spawned sent item_rpg_round
+[08:18:35] 2PR0<STEAM_0:1:93928982> spawned sent item_suit
+[08:18:37] CACTUS JACK killed 2PR0 using player
+[08:18:41] 2PR0<STEAM_0:1:93928982> spawned sent item_suit
+[08:18:45] CACTUS JACK killed 2PR0 using player
+[08:18:50] 2PR0<STEAM_0:1:93928982> spawned sent item_suitcharger
+[08:19:02] CACTUS JACK killed 2PR0 using player
+[08:19:23] 2PR0<STEAM_0:1:93928982> spawned sent sent_ball
+[08:19:23] 2PR0<STEAM_0:1:93928982> spawned sent sent_ball
+[08:19:23] 2PR0<STEAM_0:1:93928982> spawned sent sent_ball
+[08:19:23] 2PR0<STEAM_0:1:93928982> spawned sent sent_ball
+[08:19:23] 2PR0<STEAM_0:1:93928982> spawned sent sent_ball
+[08:19:24] 2PR0<STEAM_0:1:93928982> spawned sent sent_ball
+[08:19:24] CACTUS JACK killed 2PR0 using player
+[08:19:24] 2PR0<STEAM_0:1:93928982> spawned sent sent_ball
+[08:19:25] 2PR0<STEAM_0:1:93928982> spawned sent sent_ball
+[08:19:25] 2PR0<STEAM_0:1:93928982> spawned sent sent_ball
+[08:19:26] 2PR0<STEAM_0:1:93928982> spawned sent sent_ball
+[08:19:26] 2PR0<STEAM_0:1:93928982> spawned sent sent_ball
+[08:19:27] 2PR0<STEAM_0:1:93928982> spawned sent sent_ball
+[08:19:29] 2PR0<STEAM_0:1:93928982> spawned sent sent_ball
+[08:19:32] 2PR0<STEAM_0:1:93928982> spawned sent sent_ball
+[08:19:34] 2PR0<STEAM_0:1:93928982> spawned sent sent_ball
+[08:19:35] 2PR0<STEAM_0:1:93928982> spawned sent sent_ball
+[08:19:36] 2PR0<STEAM_0:1:93928982> spawned sent sent_ball
+[08:19:37] 2PR0<STEAM_0:1:93928982> spawned sent sent_ball
+[08:19:37] 2PR0<STEAM_0:1:93928982> spawned sent sent_ball
+[08:19:38] 2PR0<STEAM_0:1:93928982> spawned sent sent_ball
+[08:19:39] 2PR0<STEAM_0:1:93928982> spawned sent sent_ball
+[08:19:40] 2PR0<STEAM_0:1:93928982> spawned sent sent_ball
+[08:19:41] 2PR0<STEAM_0:1:93928982> spawned sent sent_ball
+[08:19:41] 2PR0<STEAM_0:1:93928982> spawned sent sent_ball
+[08:19:42] 2PR0<STEAM_0:1:93928982> spawned sent sent_ball
+[08:19:43] 2PR0<STEAM_0:1:93928982> spawned sent sent_ball
+[08:19:44] 2PR0<STEAM_0:1:93928982> spawned sent sent_ball
+[08:19:44] 2PR0<STEAM_0:1:93928982> spawned sent sent_ball
+[08:19:45] CACTUS JACK killed 2PR0 using player
+[08:19:45] 2PR0<STEAM_0:1:93928982> spawned sent sent_ball
+[08:19:47] 2PR0<STEAM_0:1:93928982> spawned sent sent_ball
+[08:19:48] 2PR0<STEAM_0:1:93928982> spawned sent sent_ball
+[08:19:49] 2PR0<STEAM_0:1:93928982> spawned sent sent_ball
+[08:19:50] 2PR0<STEAM_0:1:93928982> spawned sent sent_ball
+[08:19:51] 2PR0<STEAM_0:1:93928982> spawned sent sent_ball
+[08:19:51] 2PR0<STEAM_0:1:93928982> spawned sent sent_ball
+[08:19:52] 2PR0<STEAM_0:1:93928982> spawned sent sent_ball
+[08:19:53] 2PR0<STEAM_0:1:93928982> spawned sent sent_ball
+[08:19:54] 2PR0<STEAM_0:1:93928982> spawned sent sent_ball
+[08:19:54] 2PR0<STEAM_0:1:93928982> spawned sent sent_ball
+[08:19:55] 2PR0<STEAM_0:1:93928982> spawned sent sent_ball
+[08:19:56] 2PR0<STEAM_0:1:93928982> spawned sent sent_ball
+[08:19:57] 2PR0<STEAM_0:1:93928982> spawned sent sent_ball
+[08:19:58] CACTUS JACK killed 2PR0 using player
+[08:20:22] 2PR0<STEAM_0:1:93928982> spawned sent sent_ball
+[08:20:24] 2PR0<STEAM_0:1:93928982> spawned sent sent_ball
+[08:20:25] 2PR0<STEAM_0:1:93928982> spawned sent sent_ball
+[08:20:28] 2PR0<STEAM_0:1:93928982> spawned sent sent_ball
+[08:20:30] 2PR0<STEAM_0:1:93928982> spawned sent sent_ball
+[08:20:30] CACTUS JACK<STEAM_0:0:648900746> spawned sent sent_ball
+[08:20:30] 2PR0<STEAM_0:1:93928982> spawned sent sent_ball
+[08:20:38] 2PR0<STEAM_0:1:93928982> spawned sent sent_ball
+[08:21:09] CACTUS JACK<STEAM_0:0:648900746> spawned sent sent_ball
+[08:21:37] CACTUS JACK<STEAM_0:0:648900746> spawned sent sent_ball
+[08:21:38] CACTUS JACK<STEAM_0:0:648900746> spawned sent sent_ball
+[08:21:41] 2PR0<STEAM_0:1:93928982> spawned sent sent_ball
+[08:21:41] CACTUS JACK<STEAM_0:0:648900746> spawned sent sent_ball
+[08:21:42] CACTUS JACK<STEAM_0:0:648900746> spawned sent sent_ball
+[08:21:42] CACTUS JACK<STEAM_0:0:648900746> spawned sent sent_ball
+[08:21:42] CACTUS JACK<STEAM_0:0:648900746> spawned sent sent_ball
+[08:21:42] CACTUS JACK<STEAM_0:0:648900746> spawned sent sent_ball
+[08:21:43] CACTUS JACK<STEAM_0:0:648900746> spawned sent sent_ball
+[08:21:43] CACTUS JACK<STEAM_0:0:648900746> spawned sent sent_ball
+[08:21:43] CACTUS JACK<STEAM_0:0:648900746> spawned sent sent_ball
+[08:21:44] CACTUS JACK<STEAM_0:0:648900746> spawned sent sent_ball
+[08:21:44] CACTUS JACK<STEAM_0:0:648900746> spawned sent sent_ball
+[08:21:45] CACTUS JACK<STEAM_0:0:648900746> spawned sent sent_ball
+[08:21:45] CACTUS JACK<STEAM_0:0:648900746> spawned sent sent_ball
+[08:21:45] CACTUS JACK<STEAM_0:0:648900746> spawned sent sent_ball
+[08:21:45] CACTUS JACK<STEAM_0:0:648900746> spawned sent sent_ball
+[08:21:45] CACTUS JACK<STEAM_0:0:648900746> spawned sent sent_ball
+[08:21:46] CACTUS JACK<STEAM_0:0:648900746> spawned sent sent_ball
+[08:21:46] CACTUS JACK<STEAM_0:0:648900746> spawned sent sent_ball
+[08:21:46] CACTUS JACK<STEAM_0:0:648900746> spawned sent sent_ball
+[08:21:46] CACTUS JACK<STEAM_0:0:648900746> spawned sent sent_ball
+[08:21:47] CACTUS JACK<STEAM_0:0:648900746> spawned sent sent_ball
+[08:21:47] CACTUS JACK<STEAM_0:0:648900746> spawned sent sent_ball
+[08:21:47] CACTUS JACK<STEAM_0:0:648900746> spawned sent sent_ball
+[08:21:47] CACTUS JACK<STEAM_0:0:648900746> spawned sent sent_ball
+[08:21:47] CACTUS JACK<STEAM_0:0:648900746> spawned sent sent_ball
+[08:21:48] CACTUS JACK<STEAM_0:0:648900746> spawned sent sent_ball
+[08:21:48] CACTUS JACK<STEAM_0:0:648900746> spawned sent sent_ball
+[08:21:48] CACTUS JACK<STEAM_0:0:648900746> spawned sent sent_ball
+[08:21:48] CACTUS JACK<STEAM_0:0:648900746> spawned sent sent_ball
+[08:21:48] CACTUS JACK<STEAM_0:0:648900746> spawned sent sent_ball
+[08:21:48] CACTUS JACK<STEAM_0:0:648900746> spawned sent sent_ball
+[08:21:49] CACTUS JACK<STEAM_0:0:648900746> spawned sent sent_ball
+[08:21:49] CACTUS JACK<STEAM_0:0:648900746> spawned sent sent_ball
+[08:21:49] CACTUS JACK<STEAM_0:0:648900746> spawned sent sent_ball
+[08:21:49] CACTUS JACK<STEAM_0:0:648900746> spawned sent sent_ball
+[08:21:51] CACTUS JACK<STEAM_0:0:648900746> spawned sent sent_ball
+[08:21:52] CACTUS JACK<STEAM_0:0:648900746> spawned sent sent_ball
+[08:21:52] CACTUS JACK<STEAM_0:0:648900746> spawned sent sent_ball
+[08:22:03] 2PR0<STEAM_0:1:93928982> spawned sent sent_ball
+[08:22:06] 2PR0<STEAM_0:1:93928982> spawned sent sent_ball
+[08:22:12] 2PR0<STEAM_0:1:93928982> spawned sent sent_ball
+[08:22:14] 2PR0<STEAM_0:1:93928982> spawned sent sent_ball
+[08:22:17] 2PR0<STEAM_0:1:93928982> spawned sent sent_ball
+[08:22:23] 2PR0<STEAM_0:1:93928982> spawned sent sent_ball
+[08:22:24] 2PR0<STEAM_0:1:93928982> spawned sent sent_ball
+[08:22:25] 2PR0<STEAM_0:1:93928982> spawned sent sent_ball
+[08:22:28] 2PR0<STEAM_0:1:93928982> spawned sent sent_ball
+[08:22:31] 2PR0<STEAM_0:1:93928982> spawned sent sent_ball
+[08:22:33] 2PR0<STEAM_0:1:93928982> spawned sent sent_ball
+[08:22:34] 2PR0<STEAM_0:1:93928982> spawned sent sent_ball
+[08:22:40] 2PR0<STEAM_0:1:93928982> spawned sent sent_ball
+[08:22:41] 2PR0<STEAM_0:1:93928982> spawned sent sent_ball
+[08:22:42] 2PR0<STEAM_0:1:93928982> spawned sent sent_ball
+[08:22:46] 2PR0<STEAM_0:1:93928982> spawned sent sent_ball
+[08:22:57] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube8x8x1.mdl
+[08:23:00] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube8x8x1.mdl
+[08:23:02] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube075x2x025.mdl
+[08:23:05] CACTUS JACK<STEAM_0:0:648900746> spawned sent sent_ball
+[08:23:06] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube3x4x025.mdl
+[08:23:07] CACTUS JACK<STEAM_0:0:648900746> spawned sent sent_ball
+[08:23:08] CACTUS JACK<STEAM_0:0:648900746> spawned sent sent_ball
+[08:23:09] CACTUS JACK<STEAM_0:0:648900746> spawned sent sent_ball
+[08:23:09] CACTUS JACK<STEAM_0:0:648900746> spawned sent sent_ball
+[08:23:10] CACTUS JACK<STEAM_0:0:648900746> spawned sent sent_ball
+[08:23:12] CACTUS JACK<STEAM_0:0:648900746> spawned sent sent_ball
+[08:23:12] CACTUS JACK<STEAM_0:0:648900746> spawned sent sent_ball
+[08:23:13] CACTUS JACK<STEAM_0:0:648900746> spawned sent sent_ball
+[08:23:13] CACTUS JACK<STEAM_0:0:648900746> spawned sent sent_ball
+[08:23:13] CACTUS JACK<STEAM_0:0:648900746> spawned sent sent_ball
+[08:23:14] CACTUS JACK<STEAM_0:0:648900746> spawned sent sent_ball
+[08:23:14] CACTUS JACK<STEAM_0:0:648900746> spawned sent sent_ball
+[08:23:15] CACTUS JACK<STEAM_0:0:648900746> spawned sent sent_ball
+[08:23:15] CACTUS JACK<STEAM_0:0:648900746> spawned sent sent_ball
+[08:23:16] CACTUS JACK<STEAM_0:0:648900746> spawned sent sent_ball
+[08:23:16] CACTUS JACK<STEAM_0:0:648900746> spawned sent sent_ball
+[08:23:17] CACTUS JACK<STEAM_0:0:648900746> spawned sent sent_ball
+[08:23:17] CACTUS JACK<STEAM_0:0:648900746> spawned sent sent_ball
+[08:23:18] CACTUS JACK<STEAM_0:0:648900746> spawned sent sent_ball
+[08:23:18] CACTUS JACK<STEAM_0:0:648900746> spawned sent sent_ball
+[08:23:40] CACTUS JACK teleported to 2PR0
+[08:23:40] CACTUS JACK killed 2PR0 using player
+[08:23:55] Server is shutting down/changing levels.
+
+
+
+[08:24:11] New map: rp_downtown_tits_v2
+[08:24:11] Client "cactus jack" connected.
+[08:24:11] Client "2PR0" connected.
+[08:24:29] Client "2PR0" spawned in server <STEAM_0:1:93928982> (took 18 seconds).
+[08:24:51] 2PR0<STEAM_0:1:93928982> spawned sent zlt_machine
+[08:24:54] Client "cactus jack" spawned in server <STEAM_0:0:648900746> (took 43 seconds).
+[08:25:16] CACTUS JACK<STEAM_0:0:648900746> spawned sent zlt_machine
+[08:31:27] 2PR0: /setmoney 2 100000
+[08:31:40] 2PR0: /setmoney 2p 100000
+[08:32:25] Server is shutting down/changing levels.
+
+
+
+[08:32:41] New map: rp_downtown_tits_v2
+[08:32:41] Client "cactus jack" connected.
+[08:32:54] Client "2PR0" connected.
+[08:33:10] Client "cactus jack" spawned in server <STEAM_0:0:648900746> (took 29 seconds).
+[08:33:18] Client "2PR0" spawned in server <STEAM_0:1:93928982> (took 24 seconds).
+[08:33:53] CACTUS JACK<STEAM_0:0:648900746> spawned sent nexus_job_creator
+[08:34:14] CACTUS JACK<STEAM_0:0:648900746> spawned sent nexus_job_creator
+[08:34:42] Dropped "CACTUS JACK" from server<STEAM_0:0:648900746>
+[08:34:45] Dropped "2PR0" from server<STEAM_0:1:93928982>
+[08:35:06] Server is shutting down/changing levels.
+
+
+
+[08:35:30] New map: rp_downtown_tits_v2
+[08:35:30] Client "2PR0" connected.
+[08:35:30] Client "cactus jack" connected.
+[08:35:51] Client "2PR0" spawned in server <STEAM_0:1:93928982> (took 21 seconds).
+[08:35:56] Client "cactus jack" spawned in server <STEAM_0:0:648900746> (took 26 seconds).
+[08:36:10] CACTUS JACK<STEAM_0:0:648900746> spawned sent nexus_job_creator
+[08:46:17] CACTUS JACK killed 2PR0 using player
+[08:46:30] CACTUS JACK froze 2PR0
+[08:46:32] CACTUS JACK unfroze 2PR0
+[08:46:48] CACTUS JACK killed 2PR0 using player
+[08:49:30] CACTUS JACK: /NAME XANARCHY
+[08:50:57] Dropped "XANARCHY" from server<STEAM_0:0:648900746>
+[08:53:31] Client "cactus jack" connected.
+[08:53:58] Client "cactus jack" spawned in server <STEAM_0:0:648900746> (took 27 seconds).
+[08:54:17] XANARCHY<STEAM_0:0:648900746> spawned sent nexus_job_creator
+[09:01:45] 2PR0 killed XANARCHY using stunstick
+[09:03:20] Server is shutting down/changing levels.
+
+
+
+[09:03:49] New map: rp_downtown_tits_v2
+[09:03:49] Client "2PR0" connected.
+[09:03:49] Client "2PR0" connected.
+[09:04:06] Client "2PR0" spawned in server <STEAM_0:1:93928982> (took 17 seconds).
+[09:04:17] Client "cactus jack" connected.
+[09:04:23] 2PR0: !unbox
+[09:04:26] 2PR0: !unboxing
+[09:04:29] 2PR0: !unbox
+[09:04:36] 2PR0: !bricksserver
+[09:04:41] 2PR0: !brickserver
+[09:05:10] Client "cactus jack" spawned in server <STEAM_0:0:648900746> (took 53 seconds).
+[09:08:18] Server is shutting down/changing levels.
+
+
+
+[09:08:34] New map: rp_downtown_tits_v2
+[09:08:35] Client "cactus jack" connected.
+[09:08:41] Client "2PR0" connected.
+[09:08:55] Client "cactus jack" spawned in server <STEAM_0:0:648900746> (took 20 seconds).
+[09:08:56] Client "2PR0" spawned in server <STEAM_0:1:93928982> (took 15 seconds).
+[09:09:08] 2PR0: !unbox
+[09:09:12] 2PR0: !bricksunbox
+[09:09:14] 2PR0: !unbox
+[09:09:19] 2PR0: !unboxing
+[09:10:04] XANARCHY<STEAM_0:0:648900746> spawned sent zlt_machine
+[09:15:36] Server is shutting down/changing levels.
+
+
+
+[09:17:18] New map: rp_downtown_tits_v2
+[09:18:43] Server is shutting down/changing levels.
+
+
+
+[09:18:56] New map: rp_downtown_tits_v2
+[09:18:56] Client "2PR0" connected.
+[09:19:16] Client "2PR0" spawned in server <STEAM_0:1:93928982> (took 20 seconds).
+[09:21:11] Client "cactus jack" connected.
+[09:21:41] Client "cactus jack" spawned in server <STEAM_0:0:648900746> (took 30 seconds).
+[09:22:22] XANARCHY: !UNBOXING
+[09:34:06] XANARCHY: !unboxing
+[09:34:46] XANARCHY killed 2PR0 using player
+[09:39:59] Server is shutting down/changing levels.
+
+
+
+[09:40:41] New map: rp_downtown_tits_v2
+[09:40:41] Client "cactus jack" connected.
+[09:40:58] Client "cactus jack" spawned in server <STEAM_0:0:648900746> (took 17 seconds).
+[09:41:29] Client "2PR0" connected.
+[09:41:49] Client "2PR0" spawned in server <STEAM_0:1:93928982> (took 20 seconds).
+[09:42:55] XANARCHY: !unbox\
+[09:44:55] Dropped "2PR0" from server<STEAM_0:1:93928982>
+[09:45:04] Server is shutting down/changing levels.
+
+
+
+[09:45:25] New map: rp_downtown_tits_v2
+[09:46:00] Client "2PR0" connected.
+[09:46:20] Client "2PR0" spawned in server <STEAM_0:1:93928982> (took 20 seconds).
+[09:49:34] Dropped "2PR0" from server<STEAM_0:1:93928982>
+[09:50:05] Client "2PR0" connected.
+[09:50:27] Client "2PR0" spawned in server <STEAM_0:1:93928982> (took 22 seconds).
+[09:58:59] Client "cactus jack" connected.
+[09:59:17] Client "cactus jack" spawned in server <STEAM_0:0:648900746> (took 18 seconds).
+[10:05:05] 2PR0 killed XANARCHY using player
+[10:10:32] Server is shutting down/changing levels.
+
+
+
+[10:10:47] New map: rp_downtown_tits_v2
+[10:10:51] Server is shutting down/changing levels.
+
+
+
+[10:11:09] New map: rp_downtown_tits_v2
+[10:17:12] Client "Booffallu" connected.
+[10:18:34] Client "Booffallu" spawned in server <STEAM_0:0:574698981> (took 82 seconds).
+[10:22:45] Booffallu: !adduserid STEAM_0:0:574698981 superadmin
+[10:23:02] (Console) added Booffallu to group superadmin
+[10:23:29] Dropped "Booffallu" from server<STEAM_0:0:574698981>
+[10:23:34] Client "Booffallu" connected.
+[10:23:47] Client "Booffallu" spawned in server <STEAM_0:0:574698981> (took 13 seconds).
+[10:35:15] Dropped "Booffallu" from server<STEAM_0:0:574698981>
+[10:35:21] Client "Booffallu" connected.
+[10:35:35] Client "Booffallu" spawned in server <STEAM_0:0:574698981> (took 14 seconds).
+[10:40:41] Booffallu: !give money
+[10:43:15] Booffallu: !setmoney Booffallu 1000000
+[10:44:12] Booffallu: !menu
+[10:45:51] Booffallu: !help
+[10:45:54] Booffallu: !commands
+[10:46:18] Booffallu: ulx setmoney "Booffallu" 1000000
+[10:50:14] Server is shutting down/changing levels.
+
+
+
+[10:50:30] New map: rp_downtown_tits_v2
+[10:51:17] Client "Booffallu" connected.
+[10:51:32] Client "Booffallu" spawned in server <STEAM_0:0:574698981> (took 15 seconds).
+[10:52:50] Server is shutting down/changing levels.
+
+
+
+[10:53:09] New map: rp_downtown_tits_v2
+[10:53:31] Client "Booffallu" connected.
+[10:53:45] Client "Booffallu" spawned in server <STEAM_0:0:574698981> (took 14 seconds).
+[10:54:21] Server is shutting down/changing levels.
+
+
+
+[10:54:42] New map: rp_downtown_tits_v2
+[10:55:11] Client "Booffallu" connected.
+[10:55:27] Client "Booffallu" spawned in server <STEAM_0:0:574698981> (took 16 seconds).
+[10:58:12] Server is shutting down/changing levels.
+
+
+
+[11:04:09] New map: rp_downtown_tits_v2
+[11:04:09] Client "Booffallu" connected.
+[11:04:26] Client "Booffallu" spawned in server <STEAM_0:0:574698981> (took 17 seconds).
+[11:10:29] Server is shutting down/changing levels.
+
+
+
+[11:10:43] New map: rp_downtown_tits_v2
+[11:10:44] Client "Booffallu" connected.
+[11:11:03] Client "Booffallu" spawned in server <STEAM_0:0:574698981> (took 19 seconds).
+[11:14:21] Server is shutting down/changing levels.
+
+
+
+[11:14:36] New map: rp_downtown_tits_v2
+[11:14:36] Client "Booffallu" connected.
+[11:14:54] Client "Booffallu" spawned in server <STEAM_0:0:574698981> (took 18 seconds).
+[11:18:23] Server is shutting down/changing levels.
+
+
+
+[11:18:39] New map: rp_downtown_tits_v2
+[11:18:39] Client "Booffallu" connected.
+[11:18:54] Client "Booffallu" spawned in server <STEAM_0:0:574698981> (took 15 seconds).
+[11:24:48] Server is shutting down/changing levels.
+
+
+
+[11:25:05] New map: rp_downtown_tits_v2
+[11:25:06] Client "Booffallu" connected.
+[11:25:21] Client "Booffallu" spawned in server <STEAM_0:0:574698981> (took 15 seconds).
+[11:25:33] Booffallu: !gang
+[11:27:14] Server is shutting down/changing levels.
+
+
+
+[11:27:30] New map: rp_downtown_tits_v2
+[11:27:30] Client "Booffallu" connected.
+[11:27:45] Client "Booffallu" spawned in server <STEAM_0:0:574698981> (took 15 seconds).
+[11:27:59] Booffallu: !gang
+[11:28:18] Dropped "Booffallu" from server<STEAM_0:0:574698981>
+[11:31:04] Client "Booffallu" connected.
+[11:31:21] Client "Booffallu" spawned in server <STEAM_0:0:574698981> (took 17 seconds).
+[11:31:35] Booffallu: !gang
+[11:31:38] Booffallu: !gangs
+[11:35:46] Booffallu: /gang
+[11:36:20] Booffallu: !bricksgang
+[11:36:50] Booffallu: !gangmenu
+[12:04:24] Server is shutting down/changing levels.
+
+
+
+[12:04:39] New map: rp_downtown_tits_v2
+[12:04:41] Client "Booffallu" connected.
+[12:04:56] Client "Booffallu" spawned in server <STEAM_0:0:574698981> (took 15 seconds).
+[12:06:56] Booffallu: !gang
+[12:13:16] Client "Ganesha" connected.
+[12:13:27] Server is shutting down/changing levels.
+
+
+
+[12:13:42] New map: rp_downtown_tits_v2
+[12:13:42] Client "Booffallu" connected.
+[12:13:57] Client "Booffallu" spawned in server <STEAM_0:0:574698981> (took 15 seconds).
+[12:14:12] Booffallu: !bgang
+[12:16:32] Client "Ganesha" connected.
+[12:18:52] Client "Ganesha" spawned in server <STEAM_0:1:40952666> (took 140 seconds).
+[12:20:07] Ganesha: Bottle
+[12:20:57] Dropped "Ganesha" from server<STEAM_0:1:40952666>
+[12:23:43] Server is shutting down/changing levels.
+
+
+
+[12:24:06] New map: rp_downtown_tits_v2
+[12:24:06] Client "Booffallu" connected.
+[12:24:06] Client "Booffallu" connected.
+[12:24:26] Client "Booffallu" spawned in server <STEAM_0:0:574698981> (took 20 seconds).
+[12:28:33] Server is shutting down/changing levels.
+
+
+
+[12:28:57] New map: rp_downtown_tits_v2
+[12:28:58] Client "Booffallu" connected.
+[12:29:17] Client "Booffallu" spawned in server <STEAM_0:0:574698981> (took 19 seconds).
+[12:34:27] Server is shutting down/changing levels.
+
+
+
+[12:34:51] New map: rp_downtown_tits_v2
+[12:35:13] Client "Booffallu" connected.
+[12:35:32] Client "Booffallu" spawned in server <STEAM_0:0:574698981> (took 19 seconds).
+[12:36:01] Booffallu: pCasino
+[12:36:18] Booffallu: !pCasino
+[12:36:25] Booffallu: !casino
+[12:41:04] Booffallu: pcasino
+[12:41:41] Booffallu<STEAM_0:0:574698981> spawned model models/freeman/owain_mystery_wheel.mdl
+[12:41:53] Booffallu<STEAM_0:0:574698981> spawned ragdoll models/freeman/pcasino/owain_croupier_female01.mdl
+[12:45:26] Booffallu: !casino
+[12:45:31] Booffallu: /casino
+[12:47:16] Server is shutting down/changing levels.
+
+
+
+[12:47:32] New map: rp_downtown_tits_v2
+[12:47:58] Client "Booffallu" connected.
+[12:48:15] Client "Booffallu" spawned in server <STEAM_0:0:574698981> (took 17 seconds).
+[12:53:25] Server is shutting down/changing levels.
+
+
+
+[12:53:44] New map: rp_downtown_tits_v2
+
+
+
+[13:27:26] New map: rp_downtown_tits_v2
+
+
+
+[14:00:06] New map: rp_downtown_tits_v2
+
+
+
+[14:33:13] New map: rp_downtown_tits_v2
+
+
+
+[15:05:25] New map: rp_downtown_tits_v2
+
+
+
+[15:37:27] New map: rp_downtown_tits_v2
+
+
+
+[16:09:12] New map: rp_downtown_tits_v2
+
+
+
+[16:41:10] New map: rp_downtown_tits_v2
+
+
+
+[17:10:00] New map: rp_downtown_tits_v2
+
+
+
+[17:41:51] New map: rp_downtown_tits_v2
+
+
+
+[18:14:17] New map: rp_downtown_tits_v2
+
+
+
+[18:46:01] New map: rp_downtown_tits_v2
+
+
+
+[19:16:41] New map: rp_downtown_tits_v2
+
+
+
+[19:48:10] New map: rp_downtown_tits_v2
+
+
+
+[20:18:18] New map: rp_downtown_tits_v2
+[20:35:04] Client "2PR0" connected.
+[20:35:29] Client "2PR0" connected.
+[20:36:50] Client "2PR0" spawned in server <STEAM_0:1:93928982> (took 81 seconds).
+[21:04:13] Dropped "2PR0" from server<STEAM_0:1:93928982>
+[21:04:15] Client "2PR0" connected.
+[21:04:40] Client "2PR0" spawned in server <STEAM_0:1:93928982> (took 25 seconds).
+[21:06:56] Dropped "2PR0" from server<STEAM_0:1:93928982>
+[21:06:57] Client "2PR0" connected.
+[21:07:17] Client "2PR0" spawned in server <STEAM_0:1:93928982> (took 20 seconds).
+[21:08:09] Client "Booffallu" connected.
+[21:08:34] Client "Booffallu" spawned in server <STEAM_0:0:574698981> (took 25 seconds).
+[21:10:51] Dropped "2PR0" from server<STEAM_0:1:93928982>
+[21:11:51] Client "2PR0" connected.
+[21:12:18] Client "2PR0" spawned in server <STEAM_0:1:93928982> (took 27 seconds).
+[21:18:11] Dropped "2PR0" from server<STEAM_0:1:93928982>
+[21:28:02] Server is shutting down/changing levels.
+
+
+
+[21:28:19] New map: rp_downtown_tits_v2
+[21:28:20] Client "Booffallu" connected.
+[21:28:20] Client "Booffallu" connected.
+[21:28:37] Client "Booffallu" spawned in server <STEAM_0:0:574698981> (took 17 seconds).
+[21:30:38] Server is shutting down/changing levels.
+
+
+
+[21:30:57] New map: rp_downtown_tits_v2
+[21:31:27] Client "Booffallu" connected.
+[21:31:43] Client "Booffallu" spawned in server <STEAM_0:0:574698981> (took 16 seconds).
+[21:34:25] Server is shutting down/changing levels.
+
+
+
+[21:34:54] New map: rp_downtown_tits_v2
+[21:34:55] Client "Booffallu" connected.
+[21:35:12] Client "Booffallu" spawned in server <STEAM_0:0:574698981> (took 17 seconds).
+[21:36:24] Dropped "Booffallu" from server<STEAM_0:0:574698981>
+[21:36:24] Client "Booffallu" connected.
+[21:36:41] Client "Booffallu" spawned in server <STEAM_0:0:574698981> (took 17 seconds).
+[21:36:50] Client "2PR0" connected.
+[21:37:18] Client "2PR0" spawned in server <STEAM_0:1:93928982> (took 28 seconds).
+[21:38:43] Dropped "2PR0" from server<STEAM_0:1:93928982>
+[21:38:46] Client "2PR0" connected.
+[21:39:08] Client "2PR0" spawned in server <STEAM_0:1:93928982> (took 22 seconds).
+[21:40:20] 2PR0 killed Booffallu using player
+[21:41:10] 2PR0<STEAM_0:1:93928982> spawned model models/props_c17/fence03a.mdl
+[21:41:10] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube8x8x1.mdl
+[21:41:11] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube6x6x1.mdl
+[21:41:11] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube6x8x1.mdl
+[21:41:11] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube8x8x1.mdl
+[21:41:11] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube8x8x1.mdl
+[21:41:11] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube4x6x1.mdl
+[21:41:11] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube2x4x025.mdl
+[21:41:11] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube025x7x025.mdl
+[21:41:11] 2PR0<STEAM_0:1:93928982> spawned model models/props_c17/fence03a.mdl
+[21:41:11] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube3x3x05.mdl
+[21:41:11] 2PR0<STEAM_0:1:93928982> spawned model models/props_c17/fence01a.mdl
+[21:41:11] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube6x6x05.mdl
+[21:41:11] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/plates/plate5.mdl
+[21:41:11] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube6x6x1.mdl
+[21:41:11] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube6x8x1.mdl
+[21:41:11] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube8x8x1.mdl
+[21:41:11] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube8x8x1.mdl
+[21:41:11] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube8x8x1.mdl
+[21:41:12] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/plates/plate1x3.mdl
+[21:41:12] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/plates/plate6.mdl
+[21:41:12] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube6x8x1.mdl
+[21:41:12] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube3x4x025.mdl
+[21:41:12] 2PR0<STEAM_0:1:93928982> spawned model models/props_c17/fence03a.mdl
+[21:41:12] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube8x8x1.mdl
+[21:41:12] 2PR0<STEAM_0:1:93928982> spawned model models/props_c17/fence03a.mdl
+[21:41:12] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube2x2x1.mdl
+[21:41:12] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube8x8x1.mdl
+[21:41:12] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube8x8x1.mdl
+[21:41:12] 2PR0<STEAM_0:1:93928982> spawned model models/props_c17/fence01b.mdl
+[21:41:12] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube3x3x05.mdl
+[21:41:12] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube2x8x1.mdl
+[21:41:12] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube025x7x025.mdl
+[21:41:12] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube2x2x1.mdl
+[21:41:12] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/plates/plate1x6.mdl
+[21:41:12] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube8x8x1.mdl
+[21:41:12] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube2x2x1.mdl
+[21:41:12] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube2x2x1.mdl
+[21:41:13] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube8x8x1.mdl
+[21:41:13] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube6x6x05.mdl
+[21:41:13] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube8x8x1.mdl
+[21:41:13] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube3x4x025.mdl
+[21:41:13] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube2x4x1.mdl
+[21:41:13] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube6x8x1.mdl
+[21:41:13] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube8x8x1.mdl
+[21:41:13] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube2x8x1.mdl
+[21:41:13] 2PR0<STEAM_0:1:93928982> spawned model models/props_c17/fence03a.mdl
+[21:41:13] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube4x6x1.mdl
+[21:41:13] 2PR0<STEAM_0:1:93928982> spawned model models/props_c17/fence03a.mdl
+[21:41:13] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube8x8x1.mdl
+[21:41:13] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube2x2x1.mdl
+[21:41:13] 2PR0<STEAM_0:1:93928982> spawned model models/props_c17/fence03a.mdl
+[21:41:13] 2PR0<STEAM_0:1:93928982> spawned model models/props_c17/fence01a.mdl
+[21:41:13] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube2x8x1.mdl
+[21:41:13] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube1x6x05.mdl
+[21:41:13] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube4x6x1.mdl
+[21:41:13] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube1x3x1.mdl
+[21:41:13] 2PR0<STEAM_0:1:93928982> spawned model models/props_c17/fence01b.mdl
+[21:41:14] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube025x7x025.mdl
+[21:41:14] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube3x4x025.mdl
+[21:41:14] 2PR0<STEAM_0:1:93928982> spawned model models/props_c17/fence03a.mdl
+[21:41:14] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube4x6x1.mdl
+[21:41:14] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube8x8x1.mdl
+[21:41:14] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube8x8x1.mdl
+[21:41:14] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube8x8x1.mdl
+[21:41:14] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube6x6x1.mdl
+[21:41:14] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube3x4x025.mdl
+[21:41:14] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube1x3x1.mdl
+[21:41:14] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube2x8x1.mdl
+[21:41:14] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube8x8x1.mdl
+[21:41:14] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube8x8x1.mdl
+[21:41:14] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube8x8x1.mdl
+[21:41:14] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/plates/plate025x4.mdl
+[21:43:29] Server is shutting down/changing levels.
+
+
+
+[21:43:50] New map: rp_downtown_tits_v2
+[21:48:25] Client "Booffallu" connected.
+[21:48:42] Client "Booffallu" spawned in server <STEAM_0:0:574698981> (took 17 seconds).
+[21:48:44] Client "2PR0" connected.
+[21:49:08] Client "2PR0" spawned in server <STEAM_0:1:93928982> (took 24 seconds).
+[21:49:54] 2PR0: e
+[21:56:00] Server is shutting down/changing levels.
+
+
+
+[21:56:20] New map: rp_downtown_tits_v2
+[21:56:21] Client "2PR0" connected.
+[21:56:53] Client "2PR0" spawned in server <STEAM_0:1:93928982> (took 32 seconds).
+[21:59:24] Client "Booffallu" connected.
+[21:59:53] Client "Booffallu" spawned in server <STEAM_0:0:574698981> (took 29 seconds).
+[22:01:35] Server is shutting down/changing levels.
+
+
+
+[22:01:52] New map: rp_downtown_tits_v2
+[22:02:13] Client "2PR0" connected.
+[22:02:35] Client "2PR0" spawned in server <STEAM_0:1:93928982> (took 22 seconds).
+[22:02:35] Client "Booffallu" connected.
+[22:02:54] Client "Booffallu" spawned in server <STEAM_0:0:574698981> (took 19 seconds).
+[22:09:46] 2PR0 brought Booffallu
+[22:10:03] 2PR0<STEAM_0:1:93928982> spawned model models/props_c17/fence03a.mdl
+[22:10:03] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube8x8x1.mdl
+[22:10:03] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube6x6x1.mdl
+[22:10:03] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube6x8x1.mdl
+[22:10:03] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube8x8x1.mdl
+[22:10:03] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube8x8x1.mdl
+[22:10:03] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube4x6x1.mdl
+[22:10:03] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube2x4x025.mdl
+[22:10:03] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube025x7x025.mdl
+[22:10:03] 2PR0<STEAM_0:1:93928982> spawned model models/props_c17/fence03a.mdl
+[22:10:03] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube3x3x05.mdl
+[22:10:03] 2PR0<STEAM_0:1:93928982> spawned model models/props_c17/fence01a.mdl
+[22:10:04] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube6x6x05.mdl
+[22:10:04] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/plates/plate5.mdl
+[22:10:04] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube6x6x1.mdl
+[22:10:04] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube6x8x1.mdl
+[22:10:04] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube8x8x1.mdl
+[22:10:04] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube8x8x1.mdl
+[22:10:04] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube8x8x1.mdl
+[22:10:04] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/plates/plate1x3.mdl
+[22:10:04] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/plates/plate6.mdl
+[22:10:04] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube6x8x1.mdl
+[22:10:04] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube3x4x025.mdl
+[22:10:04] 2PR0<STEAM_0:1:93928982> spawned model models/props_c17/fence03a.mdl
+[22:10:04] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube8x8x1.mdl
+[22:10:04] 2PR0<STEAM_0:1:93928982> spawned model models/props_c17/fence03a.mdl
+[22:10:04] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube2x2x1.mdl
+[22:10:04] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube8x8x1.mdl
+[22:10:04] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube8x8x1.mdl
+[22:10:04] 2PR0<STEAM_0:1:93928982> spawned model models/props_c17/fence01b.mdl
+[22:10:05] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube3x3x05.mdl
+[22:10:05] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube2x8x1.mdl
+[22:10:05] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube025x7x025.mdl
+[22:10:05] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube2x2x1.mdl
+[22:10:05] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/plates/plate1x6.mdl
+[22:10:05] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube8x8x1.mdl
+[22:10:05] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube2x2x1.mdl
+[22:10:05] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube2x2x1.mdl
+[22:10:05] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube8x8x1.mdl
+[22:10:05] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube6x6x05.mdl
+[22:10:05] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube8x8x1.mdl
+[22:10:05] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube3x4x025.mdl
+[22:10:05] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube2x4x1.mdl
+[22:10:05] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube6x8x1.mdl
+[22:10:05] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube8x8x1.mdl
+[22:10:05] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube2x8x1.mdl
+[22:10:05] 2PR0<STEAM_0:1:93928982> spawned model models/props_c17/fence03a.mdl
+[22:10:05] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube4x6x1.mdl
+[22:10:05] 2PR0<STEAM_0:1:93928982> spawned model models/props_c17/fence03a.mdl
+[22:10:06] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube8x8x1.mdl
+[22:10:06] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube2x2x1.mdl
+[22:10:06] 2PR0<STEAM_0:1:93928982> spawned model models/props_c17/fence03a.mdl
+[22:10:06] 2PR0<STEAM_0:1:93928982> spawned model models/props_c17/fence01a.mdl
+[22:10:06] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube2x8x1.mdl
+[22:10:06] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube1x6x05.mdl
+[22:10:06] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube4x6x1.mdl
+[22:10:06] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube1x3x1.mdl
+[22:10:06] 2PR0<STEAM_0:1:93928982> spawned model models/props_c17/fence01b.mdl
+[22:10:06] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube025x7x025.mdl
+[22:10:06] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube3x4x025.mdl
+[22:10:06] 2PR0<STEAM_0:1:93928982> spawned model models/props_c17/fence03a.mdl
+[22:10:06] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube4x6x1.mdl
+[22:10:06] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube8x8x1.mdl
+[22:10:06] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube8x8x1.mdl
+[22:10:06] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube8x8x1.mdl
+[22:10:06] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube6x6x1.mdl
+[22:10:06] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube3x4x025.mdl
+[22:10:06] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube1x3x1.mdl
+[22:10:06] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube2x8x1.mdl
+[22:10:06] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube8x8x1.mdl
+[22:10:07] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube8x8x1.mdl
+[22:10:07] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/blocks/cube8x8x1.mdl
+[22:10:07] 2PR0<STEAM_0:1:93928982> spawned model models/hunter/plates/plate025x4.mdl
+[22:20:46] Booffallu: ulx menu
+[22:20:49] Booffallu: !ulx
+[22:20:53] Booffallu: !ulx menu
+[22:21:11] 2PR0: !ulx
+[22:21:18] 2PR0: /ulx
+[22:21:21] 2PR0: !ulx
+[22:21:34] Booffallu: !ulx
+[22:21:37] Booffallu: !ulx menu
+[22:21:41] Booffallu: ulx
+[22:21:43] Booffallu: ulx menu
+[22:21:49] Booffallu suicided!
+[22:21:49] 2PR0 slayed Booffallu
+[22:25:26] 2PR0<STEAM_0:1:93928982> spawned sent bricks_server_territory
+[22:26:44] Booffallu: !menu
+[22:26:52] 2PR0: !gangs
+[22:26:55] Booffallu: !xeninconfig
+[22:26:56] 2PR0: !brickgangs
+[22:26:59] Booffallu: !xconfig
+[22:31:07] Booffallu: !menu
+[22:31:31] Booffallu removed all access rights from 2PR0
+[22:31:44] Booffallu added 2PR0 to group admin
+[22:32:03] Booffallu added 2PR0 to group superadmin
+[22:32:45] Booffallu ignited 2PR0 for 300 seconds
+[22:32:48] Booffallu extinguished 2PR0
+[22:32:54] Booffallu whipped 2PR0 10 times with 0 damage
+[22:33:00] Booffallu whipped 2PR0 10 times with 0 damage
+[22:34:13] Server is shutting down/changing levels.
+
+
+
+[22:34:35] New map: rp_downtown_tits_v2
+[22:34:36] Client "Booffallu" connected.
+[22:34:36] Client "Booffallu" connected.
+[22:34:55] Client "Booffallu" spawned in server <STEAM_0:0:574698981> (took 19 seconds).
+[22:35:02] Client "2PR0" connected.
+[22:35:28] Client "2PR0" spawned in server <STEAM_0:1:93928982> (took 26 seconds).
+[22:35:56] Client "Banana Bunch" connected.
+[22:36:05] Booffallu: !menu
+[22:36:19] Booffallu added 2PR0 to group noaccess
+[22:36:30] Booffallu removed all access rights from 2PR0
+[22:37:35] Client "Banana Bunch" spawned in server <STEAM_0:0:134028706> (took 99 seconds).
+[22:37:53] Booffallu: !menu
+[22:37:58] Banana Bunch: /a hi
+[22:38:00] Booffallu added 2PR0 to group superadmin
+[22:38:06] 2PR0: sup
+[22:38:06] Booffallu: sup
+[22:38:10] Booffallu: /ooc sup
+[22:38:19] Booffallu: /ooc we are developing 
+[22:38:41] Booffallu: !menu
+[22:40:15] 2PR0<STEAM_0:1:93928982> spawned sent nexus_job_creator
+[22:40:57] Banana Bunch: /a oooh
+[22:41:48] Banana Bunch: !addons
+[22:42:18] Banana Bunch: got a list of the addons? i have a lot of errors lol
+[22:47:35] Server is shutting down/changing levels.
+
+
+
+[22:47:57] New map: rp_downtown_tits_v2
+[22:47:58] Client "Booffallu" connected.
+[22:47:58] Client "2PR0" connected.
+[22:47:58] Client "2PR0" connected.
+[22:48:18] Client "Booffallu" spawned in server <STEAM_0:0:574698981> (took 20 seconds).
+[22:48:23] Client "2PR0" spawned in server <STEAM_0:1:93928982> (took 25 seconds).
+[22:56:14] 2PR0<STEAM_0:1:93928982> spawned sent nexus_job_creator
+[22:56:32] Server is shutting down/changing levels.
+
+
+
+[22:56:57] New map: rp_downtown_tits_v2
+[22:56:57] Client "2PR0" connected.
+[22:57:22] Client "2PR0" spawned in server <STEAM_0:1:93928982> (took 25 seconds).
+[23:17:35] Client "Booffallu" connected.
+[23:17:54] 2PR0<STEAM_0:1:93928982> spawned sent sent_ball
+[23:17:55] Client "Booffallu" spawned in server <STEAM_0:0:574698981> (took 20 seconds).
+[23:19:26] 2PR0 teleported to Booffallu
+[23:20:04] 2PR0 teleported to Booffallu
+[23:20:30] 2PR0 killed Booffallu using player
+[23:20:41] 2PR0 suicided!
+[23:22:51] 2PR0<STEAM_0:1:93928982> spawned sent zgo2_npc_export
+[23:23:31] 2PR0<STEAM_0:1:93928982> spawned sent zgo2_weedblock
+[23:35:33] 2PR0: /jobcreator
+[23:59:02] 2PR0<STEAM_0:1:93928982> spawned sent zgo2_weedblock
+[23:59:03] 2PR0<STEAM_0:1:93928982> spawned sent zgo2_weedblock
+[23:59:03] 2PR0<STEAM_0:1:93928982> spawned sent zgo2_weedblock
+[23:59:03] 2PR0<STEAM_0:1:93928982> spawned sent zgo2_weedblock
+[23:59:04] 2PR0<STEAM_0:1:93928982> spawned sent zgo2_weedblock
+[23:59:04] 2PR0<STEAM_0:1:93928982> spawned sent zgo2_weedblock
+[23:59:05] 2PR0<STEAM_0:1:93928982> spawned sent zgo2_weedblock
+<Logging continued in "data/ulx_logs/02-22-26.txt">

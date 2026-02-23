@@ -1,0 +1,7 @@
+"VertexLitGeneric"
+{
+	"$basetexture" "models/ogl/ogl_flag_flag"
+
+		$selfillum 1
+    $selfillummask "models/ogl/ogl_flag_flag"
+}

@@ -1,0 +1,39 @@
+Sat Feb 21 05:23:30 2026	cactus jack (STEAM_0:0:648900746) has joined the game
+Sat Feb 21 05:23:30 2026	CACTUS JACK (STEAM_0:0:648900746) spawned
+Sat Feb 21 05:23:31 2026	2PR0 (STEAM_0:1:93928982) has joined the game
+Sat Feb 21 05:23:31 2026	2PR0 (STEAM_0:1:93928982) spawned
+Sat Feb 21 05:26:59 2026	2PR0 (STEAM_0:1:93928982): !sam
+Sat Feb 21 05:27:02 2026	2PR0 (STEAM_0:1:93928982): !sit
+Sat Feb 21 05:27:04 2026	2PR0 (STEAM_0:1:93928982): !report
+Sat Feb 21 05:27:05 2026	CACTUS JACK (STEAM_0:0:648900746): !REPORT
+Sat Feb 21 05:27:14 2026	2PR0 (STEAM_0:1:93928982): /report
+Sat Feb 21 05:27:54 2026	2PR0 was killed by Themself with a suicide trick
+Sat Feb 21 05:27:55 2026	2PR0 (STEAM_0:1:93928982) spawned
+Sat Feb 21 05:28:34 2026	CACTUS JACK was killed by 2PR0 with a rpg_missile
+Sat Feb 21 05:28:35 2026	CACTUS JACK (STEAM_0:0:648900746) spawned
+Sat Feb 21 05:28:42 2026	CACTUS JACK was killed by 2PR0 with a rpg_missile
+Sat Feb 21 05:28:44 2026	CACTUS JACK (STEAM_0:0:648900746) spawned
+Sat Feb 21 05:28:53 2026	2PR0 was killed by CACTUS JACK with a weapon_pumpshotgun2
+Sat Feb 21 05:28:54 2026	2PR0 (STEAM_0:1:93928982) spawned
+Sat Feb 21 05:29:05 2026	CACTUS JACK was killed by 2PR0 with a npc_satchel
+Sat Feb 21 05:29:06 2026	CACTUS JACK (STEAM_0:0:648900746) spawned
+Sat Feb 21 05:29:23 2026	2PR0 was killed by Themself with a suicide trick
+Sat Feb 21 05:29:25 2026	2PR0 (STEAM_0:1:93928982) spawned
+Sat Feb 21 05:29:26 2026	CACTUS JACK was killed by Themself with a suicide trick
+Sat Feb 21 05:29:28 2026	CACTUS JACK (STEAM_0:0:648900746) spawned
+Sat Feb 21 05:29:55 2026	CACTUS JACK was killed by Themself with a suicide trick
+Sat Feb 21 05:29:57 2026	CACTUS JACK (STEAM_0:0:648900746) spawned
+Sat Feb 21 05:30:33 2026	CACTUS JACK was killed by 2PR0 with a weapon_ar2
+Sat Feb 21 05:30:34 2026	CACTUS JACK (STEAM_0:0:648900746) spawned
+Sat Feb 21 05:30:39 2026	CACTUS JACK was killed by 2PR0 with a crossbow_bolt
+Sat Feb 21 05:30:41 2026	CACTUS JACK (STEAM_0:0:648900746) spawned
+Sat Feb 21 05:30:50 2026	CACTUS JACK was killed by 2PR0 with a crossbow_bolt
+Sat Feb 21 05:30:51 2026	CACTUS JACK (STEAM_0:0:648900746) spawned
+Sat Feb 21 05:31:23 2026	2PR0 was killed by CACTUS JACK with a weapon_smg1
+Sat Feb 21 05:31:24 2026	2PR0 (STEAM_0:1:93928982) spawned
+Sat Feb 21 05:31:24 2026	CACTUS JACK was killed by Themself with a suicide trick
+Sat Feb 21 05:31:25 2026	CACTUS JACK (STEAM_0:0:648900746) spawned
+Sat Feb 21 05:31:29 2026	2PR0 was killed by CACTUS JACK with a crossbow_bolt
+Sat Feb 21 05:31:30 2026	2PR0 (STEAM_0:1:93928982) spawned
+Sat Feb 21 05:32:03 2026	CACTUS JACK was killed by NPC [1341][npc_rollermine] with a npc_rollermine
+Sat Feb 21 05:32:06 2026	CACTUS JACK (STEAM_0:0:648900746) spawned

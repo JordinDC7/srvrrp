@@ -1,0 +1,1 @@
+BRICKS_SERVER.Func.AddConfigPage( BRICKS_SERVER.Func.L( "gangAchievements" ), "bricks_server_config_gang_achievements", "gangs" )

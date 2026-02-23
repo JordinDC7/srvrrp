@@ -1,0 +1,16 @@
+"VertexLitGeneric"
+{
+	"$basetexture" "models/ogl/ogl_brick_rgb"
+		"Proxies"
+	{
+		"TextureScroll"
+			{
+			"Texturescrollvar" "$Basetexturetransform"
+			"Texturescrollrate" "0.1"
+			"texturescrollangle" "0"
+			}
+	}
+	
+			$selfillum 1
+    $selfillummask "models/ogl/ogl_brick_rgb"
+}

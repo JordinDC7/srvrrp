@@ -1,0 +1,2 @@
+BRICKS_SERVER.Func.AddConfigPage( BRICKS_SERVER.Func.L( "gangPrinters" ), "bricks_server_config_gang_printers", "gangs" )
+BRICKS_SERVER.Func.AddConfigPage( BRICKS_SERVER.Func.L( "gangPrinterUpgrades" ), "bricks_server_config_gang_printerupgrades", "gangs" )

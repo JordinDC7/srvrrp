@@ -1,0 +1,18 @@
+Sat Feb 21 22:34:55 2026	Booffallu (STEAM_0:0:574698981) has joined the game
+Sat Feb 21 22:34:55 2026	Booffallu (STEAM_0:0:574698981) spawned
+Sat Feb 21 22:35:28 2026	2PR0 (STEAM_0:1:93928982) has joined the game
+Sat Feb 21 22:35:28 2026	2PR0 (STEAM_0:1:93928982) spawned
+Sat Feb 21 22:36:05 2026	Booffallu (STEAM_0:0:574698981): !menu
+Sat Feb 21 22:37:35 2026	Banana Bunch (STEAM_0:0:134028706) has joined the game
+Sat Feb 21 22:37:35 2026	Banana Bunch (STEAM_0:0:134028706) spawned
+Sat Feb 21 22:37:53 2026	Booffallu (STEAM_0:0:574698981): !menu
+Sat Feb 21 22:37:58 2026	Banana Bunch (STEAM_0:0:134028706): /a hi
+Sat Feb 21 22:38:06 2026	2PR0 (STEAM_0:1:93928982): sup
+Sat Feb 21 22:38:06 2026	Booffallu (STEAM_0:0:574698981): sup
+Sat Feb 21 22:38:10 2026	Booffallu (STEAM_0:0:574698981): /ooc sup
+Sat Feb 21 22:38:19 2026	Booffallu (STEAM_0:0:574698981): /ooc we are developing 
+Sat Feb 21 22:38:41 2026	Booffallu (STEAM_0:0:574698981): !menu
+Sat Feb 21 22:40:15 2026	2PR0 (STEAM_0:1:93928982) spawned SENT nexus_job_creator
+Sat Feb 21 22:40:57 2026	Banana Bunch (STEAM_0:0:134028706): /a oooh
+Sat Feb 21 22:41:48 2026	Banana Bunch (STEAM_0:0:134028706): !addons
+Sat Feb 21 22:42:18 2026	Banana Bunch (STEAM_0:0:134028706): got a list of the addons? i have a lot of errors lol

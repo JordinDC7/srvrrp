@@ -1,0 +1,10 @@
+"AddonInfo"
+{
+        "name"              "!ThirdPerson"
+        "version"           "1.4.5"
+        "up_date"           "76561199109663690"
+        "author_name"       "Imperial Knight - https://www.gmodstore.com/market/view/6571"
+        "author_email"      ""
+        "info"              "A realistic and advanced third-person suite."
+        "override"          "0"
+}

@@ -1,0 +1,16 @@
+﻿# Ignore large game binary files and cache
+# VPKs
+garrysmod/*.vpk
+*.vpk
+# Source engine BSP maps
+*.bsp
+# GMA addon caches
+*.gma
+# Cache directories
+garrysmod/cache/
+garrysmod/cache/*
+# Workshop / srcds caches
+cache/
+cache/*
+# Other large assets
+*.vtt

@@ -1,0 +1,15 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "models/stromic/screen"
+	"$nodecal" 1
+	
+		"$colorfix" "{250 250 250}" 
+	"Proxies" 
+{ 
+"Equals" 
+{ 
+srcVar1 $colorfix 
+resultVar $color 
+} 
+} 	
+}

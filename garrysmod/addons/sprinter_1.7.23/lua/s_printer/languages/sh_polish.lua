@@ -1,0 +1,56 @@
+if CLIENT then
+    slib.setLang("sprinter", "pl", "main", "Główny")
+    slib.setLang("sprinter", "pl", "logs", "Dzienniki")
+    slib.setLang("sprinter", "pl", "upgrades", "Aktualizacje")
+    slib.setLang("sprinter", "pl", "settings", "Ustawienia")
+    slib.setLang("sprinter", "pl", "overclocking", "Przetaktowywanie")
+    slib.setLang("sprinter", "pl", "noisereduction", "Redukcja szumów")
+    slib.setLang("sprinter", "pl", "dmgresistance", "Odporność na uszkodzenia")
+    slib.setLang("sprinter", "pl", "notifications", "Powiadomienia")
+
+    slib.setLang("sprinter", "pl", "notify-withdraw", "Powiadom o wypłacie")
+    slib.setLang("sprinter", "pl", "notify-on-damage", "Powiadom w przypadku uszkodzenia")
+    slib.setLang("sprinter", "pl", "notify-low-hp", "Powiadom przy niskim HP")
+    slib.setLang("sprinter", "pl", "notify-low-battery", "Powiadom o niskim poziomie naładowania baterii")
+
+    slib.setLang("sprinter", "pl", "withdrawn-money", "Wypłacone pieniądze")
+    slib.setLang("sprinter", "pl", "received-damage", "Otrzymane obrażenia")
+    slib.setLang("sprinter", "pl", "upgraded-printer", "Ulepszona drukarka")
+    slib.setLang("sprinter", "pl", "turned-on", "Włączone")
+    slib.setLang("sprinter", "pl", "turned-off", "Wyłączony")
+
+    slib.setLang("sprinter", "pl", "are-you-sure", "Jesteś pewny?")
+    slib.setLang("sprinter", "pl", "this-will-cost", "To będzie kosztować %s")
+
+    slib.setLang("sprinter", "pl", "nothing-to-show", "Nie ma tu nic do pokazania")
+
+    slib.setLang("sprinter", "pl", "condition", "Stan: schorzenie")
+    slib.setLang("sprinter", "pl", "temperature", "Temperatura")
+    slib.setLang("sprinter", "pl", "clockspeed", "Szybkośc zegara")
+    slib.setLang("sprinter", "pl", "income", "Dochód(min)")
+    slib.setLang("sprinter", "pl", "eject", "Wyrzucać")
+    slib.setLang("sprinter", "pl", "withdraw", "Wycofać")
+    slib.setLang("sprinter", "pl", "repair", "Naprawic")
+    slib.setLang("sprinter", "pl", "recharge", "Naładuj")
+
+    slib.setLang("sprinter", "pl", "empty", "Pusty")
+else
+    slib.setLang("sprinter", "pl", "upgraded", "Zaktualizowałeś drukarkę dla %s")
+    slib.setLang("sprinter", "pl", "recharged", "Naładowałeś drukarkę za %s")
+    slib.setLang("sprinter", "pl", "repaired", "Naprawiłeś drukarkę dla %s")
+    slib.setLang("sprinter", "pl", "repaired-rack", "Naprawiłeś stojak dla %s")
+    slib.setLang("sprinter", "pl", "withdrawn", "Wycofałeś się %s")
+    slib.setLang("sprinter", "pl", "recharged-all", "Naładowałeś każdą drukarkę w stojaku za %s")
+    slib.setLang("sprinter", "pl", "recharged-this-many", "Naładowałeś %s drukarki w stojaku na %s")
+    slib.setLang("sprinter", "pl", "repaired-all", "Naprawiłeś każdą drukarkę w szafie dla %s")
+    slib.setLang("sprinter", "pl", "repaired-this-many", "Naprawiłeś %s drukarki w stojaku na %s")
+    slib.setLang("sprinter", "pl", "no-eject-space", "Nie ma miejsca na wysunięcie drukarki")
+    slib.setLang("sprinter", "pl", "printer-was-damaged", "Twój %s drukarka została uszkodzona!")
+    slib.setLang("sprinter", "pl", "printer-low-hp", "Twój %s drukarka ma niską moc!")
+    slib.setLang("sprinter", "pl", "someone-has-withdrawn", "Ktoś wypłacił pieniądze z Twojego %s drukarka!")
+    slib.setLang("sprinter", "pl", "battery-low", "Twój %s drukarka ma słabą baterię, należy ją naładować!")
+    slib.setLang("sprinter", "pl", "rewarded-on-destroy", "Twoje otrzymały %s w nagrodę za zniszczenie drukarki!")
+end
+
+slib.setLang("sprinter", "pl", "rack", "Drukarkę")
+slib.setLang("sprinter", "pl", "insufficient-permissions", "Masz niewystarczające uprawnienia, aby to zrobić!")

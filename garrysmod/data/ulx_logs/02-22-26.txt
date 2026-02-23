@@ -1,0 +1,1342 @@
+<Logging continued from "data/ulx_logs/02-21-26.txt">
+[00:11:54] Booffallu: !jobcreator
+[00:11:59] Booffallu: job_creator
+[00:12:16] Client "Devilish.Venom" connected.
+[00:12:39] Booffallu: /jobcreator
+[00:14:46] Client "Devilish.Venom" spawned in server <STEAM_0:0:81639428> (took 150 seconds).
+[00:16:32] Booffallu: yo develish
+[00:16:36] Booffallu: /ooc develish
+[00:16:43] Booffallu: /ooc did u start in with 2 mil?
+[00:16:50] 2PR0 brought Booffallu
+[00:17:16] Booffallu: /menu
+[00:17:30] Booffallu: did u start with 2 mil
+[00:17:31] Devilish.Venom: hello 
+[00:17:35] Devilish.Venom: yes
+[00:17:49] Devilish.Venom: ahh ok 
+[00:18:33] Booffallu: put your printers down
+[00:20:17] 2PR0 brought Booffallu
+[00:21:30] Booffallu: /ooc we are doing a hud soon working on cc's for now
+[00:21:47] Booffallu brought Devilish.Venom
+[00:22:24] Booffallu: u know how to grow?
+[00:23:09] Client "cactus jack" connected.
+[00:24:51] Devilish.Venom: kinda 
+[00:24:54] Client "cactus jack" spawned in server <STEAM_0:0:648900746> (took 105 seconds).
+[00:25:01] Booffallu: feel free test and report bugs to me 
+[00:25:09] Devilish.Venom: ok
+[00:25:23] Booffallu: we got botnet, casino, scratchoffs, keypads, custom jobs etc
+[00:25:44] Dropped "Devilish.Venom" from server<STEAM_0:0:81639428>
+[00:27:11] Booffallu brought XANARCHY
+[00:29:12] Dropped "XANARCHY" from server<STEAM_0:0:648900746>
+[00:29:47] Booffallu teleported to 2PR0
+[00:29:55] Client "cactus jack" connected.
+[00:30:24] 2PR0: /setmoney 2 3000000
+[00:30:34] Client "cactus jack" spawned in server <STEAM_0:0:648900746> (took 39 seconds).
+[00:30:34] 2PR0: /setmoney cac 3000000
+[00:31:29] XANARCHY<STEAM_0:0:648900746> spawned sent zbf_infosign
+[00:32:00] 2PR0: /setmoney cac 3000000
+[00:33:53] XANARCHY: !bricksever
+[00:34:02] XANARCHY: !brickserver
+[00:36:31] XANARCHY: !unboxing
+[00:40:28] XANARCHY teleported to 2PR0
+[00:40:30] XANARCHY killed 2PR0 using player
+[00:40:45] XANARCHY suicided!
+[00:42:04] XANARCHY<STEAM_0:0:648900746> spawned sent zbf_atm
+[00:42:14] XANARCHY<STEAM_0:0:648900746> spawned sent zlt_machine
+[00:43:31] Dropped "XANARCHY" from server<STEAM_0:0:648900746>
+[00:44:05] Client "cactus jack" connected.
+[00:44:31] Client "cactus jack" spawned in server <STEAM_0:0:648900746> (took 26 seconds).
+[00:46:31] XANARCHY<STEAM_0:0:648900746> spawned sent bricks_server_territory
+[00:48:28] 2PR0<STEAM_0:1:93928982> spawned sent bricks_server_territory
+[00:49:05] 2PR0<STEAM_0:1:93928982> spawned sent bricks_server_territory
+[00:50:33] Server is shutting down/changing levels.
+
+
+
+[00:50:50] New map: rp_downtown_tits_v2
+[00:50:51] Client "2PR0" connected.
+[00:50:51] Client "2PR0" connected.
+[00:51:25] Client "2PR0" spawned in server <STEAM_0:1:93928982> (took 34 seconds).
+[00:53:42] Client "cactus jack" connected.
+[00:54:08] Client "cactus jack" spawned in server <STEAM_0:0:648900746> (took 26 seconds).
+[00:55:05] 2PR0 teleported to XANARCHY
+[00:56:49] 2PR0<STEAM_0:1:93928982> spawned sent zgo2_npc_export
+[01:04:21] XANARCHY killed 2PR0 using player
+[01:05:10] XANARCHY killed 2PR0 using player
+[01:05:21] XANARCHY suicided!
+[01:05:31] XANARCHY<STEAM_0:0:648900746> spawned model models/props_canal/canal_bridge03b.mdl
+[01:08:25] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/plates/plate4x6.mdl
+[01:08:27] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/plates/plate24x24.mdl
+[01:08:29] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/plates/plate6x8.mdl
+[01:09:14] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/plates/plate4x6.mdl
+[01:09:19] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/plates/plate6x7.mdl
+[01:09:31] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/plates/plate6x7.mdl
+[01:19:12] Client "bts909" connected.
+[01:19:42] XANARCHY: /PM 2PR0 BAN 
+[01:20:03] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube8x8x1.mdl
+[01:22:29] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/plates/plate075x24.mdl
+[01:22:39] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/plates/plate075x24.mdl
+[01:22:51] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/plates/plate05x05.mdl
+[01:22:55] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/plates/plate05x05.mdl
+[01:22:57] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/plates/plate05x05.mdl
+[01:22:58] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/plates/plate05x05.mdl
+[01:22:59] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/plates/plate05x05.mdl
+[01:23:15] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/plates/plate05x05.mdl
+[01:23:16] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/plates/plate05x05.mdl
+[01:23:16] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/plates/plate05x05.mdl
+[01:23:18] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/plates/plate05x05.mdl
+[01:23:20] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/plates/plate05x05.mdl
+[01:23:21] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/plates/plate05x05.mdl
+[01:23:21] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/plates/plate05x05.mdl
+[01:23:22] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/plates/plate05x05.mdl
+[01:29:05] XANARCHY<STEAM_0:0:648900746> spawned sent zlt_machine
+[01:29:42] XANARCHY<STEAM_0:0:648900746> spawned sent zlt_machine
+[01:29:52] XANARCHY<STEAM_0:0:648900746> spawned sent zlt_machine
+[01:30:06] XANARCHY<STEAM_0:0:648900746> spawned sent zbf_atm
+[01:30:50] XANARCHY<STEAM_0:0:648900746> spawned sent zbf_infosign
+[01:31:08] XANARCHY<STEAM_0:0:648900746> spawned sent zbf_infosign
+[01:31:27] XANARCHY<STEAM_0:0:648900746> spawned sent zbf_infosign
+[01:33:00] XANARCHY<STEAM_0:0:648900746> spawned sent zbf_infosign
+[01:35:04] XANARCHY<STEAM_0:0:648900746> spawned sent zbf_infosign
+[01:36:20] XANARCHY<STEAM_0:0:648900746> spawned sent zbf_infosign
+[01:37:18] XANARCHY<STEAM_0:0:648900746> spawned sent bank_npc
+[01:38:30] XANARCHY<STEAM_0:0:648900746> spawned sent bricks_server_gangprinter
+[01:55:49] XANARCHY killed 2PR0 using stunstick
+[01:58:15] XANARCHY<STEAM_0:0:648900746> spawned sent zlt_machine
+[02:03:41] XANARCHY suicided!
+[02:09:55] Dropped "XANARCHY" from server<STEAM_0:0:648900746>
+[02:09:58] Client "cactus jack" connected.
+[02:10:53] Client "cactus jack" spawned in server <STEAM_0:0:648900746> (took 55 seconds).
+[02:10:58] Server is shutting down/changing levels.
+
+
+
+[02:11:16] New map: rp_downtown_tits_v2
+[02:11:17] Client "2PR0" connected.
+[02:11:17] Client "2PR0" connected.
+[02:11:17] Client "cactus jack" connected.
+[02:11:17] Client "cactus jack" connected.
+[02:11:41] Client "cactus jack" connected.
+[02:12:03] Client "cactus jack" spawned in server <STEAM_0:0:648900746> (took 22 seconds).
+[02:12:04] Client "2PR0" spawned in server <STEAM_0:1:93928982> (took 47 seconds).
+[02:13:37] Server is shutting down/changing levels.
+
+
+
+[02:13:52] New map: rp_downtown_tits_v2
+[02:14:32] Client "cactus jack" connected.
+[02:14:54] Client "cactus jack" spawned in server <STEAM_0:0:648900746> (took 22 seconds).
+[02:15:15] Client "2PR0" connected.
+[02:15:44] Client "2PR0" spawned in server <STEAM_0:1:93928982> (took 29 seconds).
+[02:15:45] XANARCHY to admins: I would like to report XANARCHY STEAM_0:0:648900746
+[02:16:44] Dropped "XANARCHY" from server<STEAM_0:0:648900746>
+[02:16:44] Client "cactus jack" connected.
+[02:17:07] Client "cactus jack" spawned in server <STEAM_0:0:648900746> (took 23 seconds).
+[02:19:44] XANARCHY<STEAM_0:0:648900746> spawned sent zlt_machine
+[02:19:46] XANARCHY<STEAM_0:0:648900746> spawned sent zlt_machine
+[02:19:52] XANARCHY<STEAM_0:0:648900746> spawned sent zlt_machine
+[02:20:32] Dropped "XANARCHY" from server<STEAM_0:0:648900746>
+[02:24:06] Client "cactus jack" connected.
+[02:24:41] Client "cactus jack" spawned in server <STEAM_0:0:648900746> (took 35 seconds).
+[02:25:02] XANARCHY<STEAM_0:0:648900746> spawned sent zlt_machine
+[02:25:13] XANARCHY<STEAM_0:0:648900746> spawned sent bank_npc
+[02:25:27] XANARCHY<STEAM_0:0:648900746> spawned sent nexus_job_creator
+[02:26:47] XANARCHY<STEAM_0:0:648900746> spawned sent zbf_controller
+[02:26:48] XANARCHY<STEAM_0:0:648900746> spawned sent zbf_atm
+[02:26:53] XANARCHY<STEAM_0:0:648900746> spawned sent zbf_atm
+[02:28:11] XANARCHY<STEAM_0:0:648900746> spawned sent zlt_machine
+[02:31:14] XANARCHY<STEAM_0:0:648900746> spawned sent zbf_rack
+[02:42:58] XANARCHY: /ADVERT SAMMY = RETARD JEW GOY BOY
+[02:44:44] XANARCHY: !unboc
+[02:55:28] XANARCHY suicided!
+[02:56:05] XANARCHY teleported to 2PR0
+[03:07:06] Server is shutting down/changing levels.
+
+
+
+[03:07:29] New map: rp_downtown_tits_v2
+[03:07:30] Client "2PR0" connected.
+[03:07:30] Client "cactus jack" connected.
+[03:07:54] Client "2PR0" spawned in server <STEAM_0:1:93928982> (took 24 seconds).
+[03:07:57] Client "cactus jack" spawned in server <STEAM_0:0:648900746> (took 27 seconds).
+[03:16:18] Server is shutting down/changing levels.
+
+
+
+[03:16:34] New map: rp_downtown_tits_v2
+[03:16:34] Client "cactus jack" connected.
+[03:16:56] Client "cactus jack" spawned in server <STEAM_0:0:648900746> (took 22 seconds).
+[03:17:16] Client "2PR0" connected.
+[03:17:40] Client "2PR0" spawned in server <STEAM_0:1:93928982> (took 24 seconds).
+[03:18:32] XANARCHY: !3
+[03:18:36] XANARCHY: !3rd
+[03:18:46] XANARCHY: !3rd person
+[03:20:55] (TEAM) XANARCHY: !ThirdPerson
+[03:20:57] XANARCHY: !ThirdPerson
+[03:21:13] Dropped "XANARCHY" from server<STEAM_0:0:648900746>
+[03:25:22] Client "cactus jack" connected.
+[03:26:00] Client "cactus jack" spawned in server <STEAM_0:0:648900746> (took 38 seconds).
+[03:27:12] Dropped "XANARCHY" from server<STEAM_0:0:648900746>
+[03:28:46] Client "cactus jack" connected.
+[03:29:15] Client "cactus jack" spawned in server <STEAM_0:0:648900746> (took 29 seconds).
+[03:29:58] XANARCHY brought 2PR0
+[03:30:46] XANARCHY<STEAM_0:0:648900746> spawned sent zlt_machine
+[03:31:29] XANARCHY<STEAM_0:0:648900746> spawned sent zlt_machine
+[03:38:27] Server is shutting down/changing levels.
+
+
+
+[03:38:50] New map: rp_downtown_tits_v2
+[03:38:51] Client "cactus jack" connected.
+[03:38:51] Client "cactus jack" connected.
+[03:38:51] Client "2PR0" connected.
+[03:39:22] Client "cactus jack" spawned in server <STEAM_0:0:648900746> (took 31 seconds).
+[03:39:26] Client "2PR0" spawned in server <STEAM_0:1:93928982> (took 35 seconds).
+[03:39:58] Dropped "2PR0" from server<STEAM_0:1:93928982>
+[03:40:48] Dropped "XANARCHY" from server<STEAM_0:0:648900746>
+[03:42:06] Client "cactus jack" connected.
+[03:42:37] Client "cactus jack" spawned in server <STEAM_0:0:648900746> (took 31 seconds).
+[03:43:00] Client "2PR0" connected.
+[03:43:31] Client "2PR0" spawned in server <STEAM_0:1:93928982> (took 31 seconds).
+[03:43:52] XANARCHY: !thridperson
+[03:43:56] 2PR0: !thirdperson
+[03:46:21] 2PR0: !ThirdPerson
+[03:46:22] XANARCHY killed 2PR0 using player
+[03:46:46] XANARCHY killed 2PR0 using player
+[03:47:02] XANARCHY killed 2PR0 using player
+[03:47:20] XANARCHY killed 2PR0 using player
+[03:48:33] XANARCHY suicided!
+[03:49:04] (SILENT) XANARCHY began spectating 2PR0
+[03:49:12] (SILENT) XANARCHY stopped spectating 2PR0
+[03:49:37] Server is shutting down/changing levels.
+
+
+
+[03:49:54] New map: rp_downtown_tits_v2
+
+
+
+[03:50:10] New map: rp_downtown_tits_v2
+[03:50:11] Client "cactus jack" connected.
+[03:50:11] Client "2PR0" connected.
+[03:50:11] Client "cactus jack" connected.
+[03:50:41] Client "2PR0" spawned in server <STEAM_0:1:93928982> (took 30 seconds).
+[03:50:45] Client "cactus jack" spawned in server <STEAM_0:0:648900746> (took 34 seconds).
+[03:50:59] Dropped "XANARCHY" from server<STEAM_0:0:648900746>
+[03:51:27] Client "cactus jack" connected.
+[03:51:59] Client "cactus jack" spawned in server <STEAM_0:0:648900746> (took 32 seconds).
+[03:52:41] 2PR0: /ooc 73.50.127.39
+[03:52:41] 2PR0: /ooc 73.50.127.39
+[03:52:43] 2PR0: /ooc 73.50.127.39
+[03:52:44] 2PR0: /ooc 73.50.127.39
+[03:52:47] 2PR0: /ooc 73.50.127.39
+[03:52:48] 2PR0: /ooc 73.50.127.39
+[03:52:50] 2PR0: /ooc 73.50.127.39
+[03:52:52] 2PR0: /ooc 73.50.127.39
+[03:53:16] XANARCHY banned 2PR0 for 2 hours (You have received a 2 Hour ban)
+[03:53:16] Dropped "2PR0" from server<STEAM_0:1:93928982>
+[03:54:07] XANARCHY: !munu
+[03:54:14] XANARCHY: !menu
+[03:54:23] XANARCHY unbanned steamid STEAM_0:1:93928982 (2PR0)
+[03:54:28] Client "2PR0" connected.
+[03:54:52] Client "2PR0" spawned in server <STEAM_0:1:93928982> (took 24 seconds).
+[03:54:55] XANARCHY set the hp for Themself to 2147483647
+[03:54:59] XANARCHY set the hp for 2PR0 to 1
+[03:55:07] XANARCHY ignited 2PR0 for 300 seconds
+[03:55:07] 2PR0 was killed by entityflame
+[03:55:37] XANARCHY: !menu
+[03:56:05] XANARCHY: !menu
+[03:56:11] XANARCHY ignited 2PR0 for 300 seconds
+[04:00:48] Dropped "XANARCHY" from server<STEAM_0:0:648900746>
+[04:00:49] Client "cactus jack" connected.
+[04:00:51] Dropped "2PR0" from server<STEAM_0:1:93928982>
+[04:01:14] Client "2PR0" connected.
+[04:01:16] Client "cactus jack" spawned in server <STEAM_0:0:648900746> (took 27 seconds).
+[04:01:17] Client "Booffallu" connected.
+[04:01:44] Client "Booffallu" spawned in server <STEAM_0:0:574698981> (took 27 seconds).
+[04:01:46] Client "2PR0" spawned in server <STEAM_0:1:93928982> (took 32 seconds).
+[04:02:11] XANARCHY suicided!
+[04:02:16] XANARCHY suicided!
+[04:02:35] Booffallu kicked XANARCHY (You have been kicked)
+[04:02:35] Dropped "XANARCHY" from server<STEAM_0:0:648900746>
+[04:02:52] Client "cactus jack" connected.
+[04:03:19] Client "cactus jack" spawned in server <STEAM_0:0:648900746> (took 27 seconds).
+[04:03:59] Dropped "XANARCHY" from server<STEAM_0:0:648900746>
+[04:04:19] Client "cactus jack" connected.
+[04:04:52] Client "cactus jack" spawned in server <STEAM_0:0:648900746> (took 33 seconds).
+[04:06:10] Dropped "XANARCHY" from server<STEAM_0:0:648900746>
+[04:06:11] Client "cactus jack" connected.
+[04:06:29] (SILENT) Booffallu began spectating 2PR0
+[04:06:33] Client "cactus jack" spawned in server <STEAM_0:0:648900746> (took 22 seconds).
+[04:07:16] (SILENT) Booffallu stopped spectating 2PR0
+[04:11:03] XANARCHY suicided!
+[04:25:17] XANARCHY killed 2PR0 using player
+[04:25:57] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube3x8x025.mdl
+[04:26:31] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube3x8x025.mdl
+[04:26:55] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube3x8x025.mdl
+[04:26:56] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube3x8x025.mdl
+[04:27:37] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube3x6x025.mdl
+[04:27:48] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube3x6x025.mdl
+[04:27:54] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube3x6x025.mdl
+[04:27:55] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube3x6x025.mdl
+[04:27:56] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube3x6x025.mdl
+[04:27:57] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube3x6x025.mdl
+[04:28:00] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube3x6x025.mdl
+[04:29:53] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube3x8x025.mdl
+[04:30:08] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube3x8x025.mdl
+[04:30:08] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube3x8x025.mdl
+[04:30:09] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube3x8x025.mdl
+[04:31:39] XANARCHY<STEAM_0:0:648900746> spawned model models/props/cs_assault/forklift.mdl
+[04:31:42] XANARCHY<STEAM_0:0:648900746> spawned model models/props/cs_assault/forklift.mdl
+[04:32:06] XANARCHY<STEAM_0:0:648900746> spawned model models/props/cs_militia/bottle03.mdl
+[04:32:16] XANARCHY<STEAM_0:0:648900746> spawned model models/props/cs_assault/box_stack1.mdl
+[04:32:21] XANARCHY<STEAM_0:0:648900746> spawned model models/props/cs_militia/crate_stackmill.mdl
+[04:32:25] XANARCHY<STEAM_0:0:648900746> spawned model models/props/cs_militia/dryer.mdl
+[04:34:17] XANARCHY<STEAM_0:0:648900746> spawned model models/props_c17/canister01a.mdl
+[04:34:53] XANARCHY<STEAM_0:0:648900746> spawned model models/props_borealis/bluebarrel001.mdl
+[04:35:51] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube2x4x025.mdl
+[04:35:57] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube025x4x025.mdl
+[04:36:22] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube025x1x025.mdl
+[04:36:24] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube025x150x025.mdl
+[04:37:04] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube025x150x025.mdl
+[04:37:41] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube025x150x025.mdl
+[04:37:45] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube025x150x025.mdl
+[04:37:49] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube025x4x025.mdl
+[04:38:40] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube025x150x025.mdl
+[04:38:41] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube025x150x025.mdl
+[04:38:43] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube025x150x025.mdl
+[04:38:43] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube025x150x025.mdl
+[04:38:48] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube025x3x025.mdl
+[04:38:55] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube025x4x025.mdl
+[04:39:23] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube025x4x025.mdl
+[04:39:43] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube025x150x025.mdl
+[04:39:53] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube025x150x025.mdl
+[04:42:24] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube3x8x025.mdl
+[04:44:16] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube2x4x025.mdl
+[04:44:21] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube2x3x025.mdl
+[04:44:32] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube2x3x025.mdl
+[04:44:52] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube2x3x025.mdl
+[04:46:41] XANARCHY was killed by prop_physics
+[04:46:56] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube1x2x025.mdl
+[04:47:01] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube1x2x025.mdl
+[04:47:30] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube1x2x025.mdl
+[04:47:45] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube125x125x025.mdl
+[04:48:00] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube125x125x025.mdl
+[04:48:37] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube1x2x025.mdl
+[04:49:07] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube125x125x025.mdl
+[04:49:08] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube125x125x025.mdl
+[04:49:14] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube1x2x025.mdl
+[04:49:46] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube125x125x025.mdl
+[04:49:48] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube125x125x025.mdl
+[04:51:42] 2PR0 teleported to XANARCHY
+[04:52:05] 2PR0 brought Booffallu
+[04:53:03] 2PR0 killed Booffallu using prop_physics
+[04:53:06] 2PR0 was killed by prop_physics
+[04:53:12] Server is shutting down/changing levels.
+
+
+
+[04:53:35] New map: rp_downtown_tits_v2
+[04:53:36] Client "cactus jack" connected.
+[04:53:36] Client "2PR0" connected.
+[04:53:36] Client "cactus jack" connected.
+[04:53:57] Client "Booffallu" connected.
+[04:54:16] Client "2PR0" spawned in server <STEAM_0:1:93928982> (took 40 seconds).
+[04:54:17] Client "Booffallu" spawned in server <STEAM_0:0:574698981> (took 20 seconds).
+[04:54:20] Client "cactus jack" spawned in server <STEAM_0:0:648900746> (took 44 seconds).
+[04:55:54] XANARCHY killed Booffallu using player
+[04:56:54] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube2x4x025.mdl
+[04:56:58] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube1x4x025.mdl
+[04:57:27] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube1x4x025.mdl
+[04:57:39] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube1x2x025.mdl
+[04:58:09] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube1x2x025.mdl
+[05:00:12] XANARCHY<STEAM_0:0:648900746> spawned model models/props_combine/breenchair.mdl
+[05:00:48] XANARCHY<STEAM_0:0:648900746> spawned ragdoll models/props_c17/furnituremattress001a.mdl
+[05:00:49] XANARCHY<STEAM_0:0:648900746> spawned model models/props_c17/furniturecouch001a.mdl
+[05:01:04] XANARCHY<STEAM_0:0:648900746> spawned model models/props_c17/furniturecouch002a.mdl
+[05:01:33] XANARCHY was killed by prop_physics
+[05:01:43] XANARCHY<STEAM_0:0:648900746> spawned model models/props_c17/furniturecouch002a.mdl
+[05:02:00] XANARCHY<STEAM_0:0:648900746> spawned model models/props_c17/furniturecouch002a.mdl
+[05:02:37] Booffallu was killed by gmod_wheel
+[05:03:19] 2PR0 was killed by gmod_wheel
+[05:03:51] XANARCHY was killed by prop_physics
+[05:03:58] Server is shutting down/changing levels.
+
+
+
+[05:04:31] New map: rp_downtown_tits_v2
+[05:04:34] Client "cactus jack" connected.
+[05:04:56] Client "cactus jack" spawned in server <STEAM_0:0:648900746> (took 22 seconds).
+[05:05:03] Client "Booffallu" connected.
+[05:05:24] Client "Booffallu" spawned in server <STEAM_0:0:574698981> (took 21 seconds).
+[05:12:13] Server is shutting down/changing levels.
+
+
+
+[05:12:30] New map: rp_downtown_tits_v2
+[05:12:30] Client "Booffallu" connected.
+[05:12:50] Client "Booffallu" spawned in server <STEAM_0:0:574698981> (took 20 seconds).
+[05:13:35] Client "cactus jack" connected.
+[05:14:04] Client "cactus jack" spawned in server <STEAM_0:0:648900746> (took 29 seconds).
+[05:15:37] XANARCHY suicided!
+[05:15:42] XANARCHY suicided!
+[05:20:46] Server is shutting down/changing levels.
+
+
+
+[05:21:06] New map: rp_downtown_tits_v2
+[05:21:07] Client "Booffallu" connected.
+[05:21:07] Client "cactus jack" connected.
+[05:21:28] Client "Booffallu" spawned in server <STEAM_0:0:574698981> (took 21 seconds).
+[05:21:37] Client "cactus jack" spawned in server <STEAM_0:0:648900746> (took 30 seconds).
+[05:23:07] Client "2PR0" connected.
+[05:23:32] Client "2PR0" spawned in server <STEAM_0:1:93928982> (took 25 seconds).
+[05:25:28] XANARCHY killed 2PR0 using player
+[05:26:05] XANARCHY killed Booffallu using player
+[05:26:16] 2PR0 killed XANARCHY using player
+[05:26:28] 2PR0 killed Booffallu using player
+[05:26:51] XANARCHY killed Booffallu using player
+[05:26:58] 2PR0 suicided!
+[05:27:11] XANARCHY teleported to 2PR0
+[05:27:23] XANARCHY killed 2PR0 using player
+[05:27:31] XANARCHY killed 2PR0 using player
+[05:27:55] 2PR0 killed XANARCHY using player
+[05:28:01] 2PR0 killed Booffallu using player
+[05:28:10] 2PR0 killed XANARCHY using player
+[05:28:19] XANARCHY killed 2PR0 using player
+[05:30:43] XANARCHY<STEAM_0:0:648900746> spawned model models/props_interiors/bathtub01a.mdl
+[05:32:12] XANARCHY<STEAM_0:0:648900746> spawned model models/props_interiors/bathtub01a.mdl
+[05:32:23] XANARCHY<STEAM_0:0:648900746> spawned model models/props_interiors/bathtub01a.mdl
+[05:33:50] Server is shutting down/changing levels.
+
+
+
+[05:34:15] New map: rp_downtown_tits_v2
+[05:34:16] Client "cactus jack" connected.
+[05:34:16] Client "2PR0" connected.
+[05:34:16] Client "2PR0" connected.
+[05:34:26] Client "Booffallu" connected.
+[05:34:40] Client "cactus jack" spawned in server <STEAM_0:0:648900746> (took 24 seconds).
+[05:34:41] Client "2PR0" spawned in server <STEAM_0:1:93928982> (took 25 seconds).
+[05:34:48] Client "Booffallu" spawned in server <STEAM_0:0:574698981> (took 22 seconds).
+[05:35:01] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube3x6x025.mdl
+[05:35:27] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube3x6x025.mdl
+[05:35:29] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube3x6x025.mdl
+[05:35:33] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube3x6x025.mdl
+[05:35:34] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube3x6x025.mdl
+[05:35:44] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube3x6x025.mdl
+[05:35:45] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube3x6x025.mdl
+[05:35:59] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube3x6x025.mdl
+[05:36:00] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube3x6x025.mdl
+[05:36:01] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube3x6x025.mdl
+[05:36:19] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube3x6x025.mdl
+[05:38:07] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube2x4x025.mdl
+[05:38:11] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube3x6x025.mdl
+[05:38:50] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube3x6x025.mdl
+[05:38:51] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube3x6x025.mdl
+[05:39:09] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube3x6x025.mdl
+[05:39:10] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube3x6x025.mdl
+[05:39:11] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube3x6x025.mdl
+[05:39:40] Server is shutting down/changing levels.
+
+
+
+[05:39:59] New map: rp_downtown_tits_v2
+[05:39:59] Client "cactus jack" connected.
+[05:40:22] Client "cactus jack" spawned in server <STEAM_0:0:648900746> (took 23 seconds).
+[05:40:24] Client "Booffallu" connected.
+[05:40:45] Client "Booffallu" spawned in server <STEAM_0:0:574698981> (took 21 seconds).
+[05:40:53] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube2x4x025.mdl
+[05:40:58] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube3x6x025.mdl
+[05:41:22] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube3x6x025.mdl
+[05:41:24] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube3x6x025.mdl
+[05:41:25] Client "2PR0" connected.
+[05:41:49] Client "2PR0" spawned in server <STEAM_0:1:93928982> (took 24 seconds).
+[05:42:14] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube3x6x025.mdl
+[05:42:15] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube3x6x025.mdl
+[05:42:16] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube3x6x025.mdl
+[05:42:47] Booffallu killed 2PR0 using player
+[05:42:52] Booffallu killed XANARCHY using player
+[05:43:21] 2PR0 killed Booffallu using player
+[05:43:26] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube3x6x025.mdl
+[05:43:27] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube3x6x025.mdl
+[05:43:37] 2PR0 killed Booffallu using player
+[05:44:04] 2PR0 suicided!
+[05:45:07] XANARCHY<STEAM_0:0:648900746> spawned model models/props/cs_office/sofa.mdl
+[05:45:20] XANARCHY<STEAM_0:0:648900746> spawned model models/props/cs_office/sofa.mdl
+[05:45:56] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube4x4x1.mdl
+[05:45:59] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube6x6x1.mdl
+[05:46:25] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube6x6x1.mdl
+[05:46:37] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube6x6x1.mdl
+[05:46:43] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube6x6x1.mdl
+[05:46:44] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube6x6x1.mdl
+[05:46:45] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube6x6x1.mdl
+[05:46:48] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube6x6x1.mdl
+[05:46:51] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube6x6x1.mdl
+[05:46:57] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube6x6x1.mdl
+[05:46:58] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube6x6x1.mdl
+[05:46:59] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube6x6x1.mdl
+[05:47:00] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube6x6x1.mdl
+[05:47:01] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube6x6x1.mdl
+[05:47:02] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube6x6x1.mdl
+[05:47:04] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube6x6x1.mdl
+[05:47:04] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube6x6x1.mdl
+[05:47:05] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube6x6x1.mdl
+[05:47:08] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube6x6x1.mdl
+[05:48:10] Server is shutting down/changing levels.
+
+
+
+[05:48:28] New map: rp_downtown_tits_v2
+[05:48:29] Client "Booffallu" connected.
+[05:48:29] Client "Booffallu" connected.
+[05:48:29] Client "cactus jack" connected.
+[05:48:29] Client "cactus jack" connected.
+[05:48:50] Client "Booffallu" spawned in server <STEAM_0:0:574698981> (took 21 seconds).
+[05:48:53] Client "cactus jack" spawned in server <STEAM_0:0:648900746> (took 24 seconds).
+[05:49:31] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube3x4x025.mdl
+[05:49:32] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube3x6x025.mdl
+[05:50:39] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube4x8x1.mdl
+[05:50:45] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube6x8x1.mdl
+[05:51:12] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube6x8x1.mdl
+[05:51:15] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube6x8x1.mdl
+[05:51:17] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube6x8x1.mdl
+[05:51:19] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube6x8x1.mdl
+[05:51:21] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube6x8x1.mdl
+[05:51:23] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube6x8x1.mdl
+[05:51:24] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube6x8x1.mdl
+[05:51:27] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube6x8x1.mdl
+[05:51:29] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube6x8x1.mdl
+[05:51:50] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube6x8x1.mdl
+[05:51:52] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube6x8x1.mdl
+[05:51:53] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube6x8x1.mdl
+[05:52:00] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube6x8x1.mdl
+[05:52:11] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube6x8x1.mdl
+[05:52:14] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube6x8x1.mdl
+[05:52:20] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube6x8x1.mdl
+[05:52:21] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube6x8x1.mdl
+[05:52:26] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube6x8x1.mdl
+[05:52:42] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube6x8x1.mdl
+[05:52:42] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube6x8x1.mdl
+[05:52:44] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube6x8x1.mdl
+[05:52:48] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube6x8x1.mdl
+[05:54:19] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube6x8x1.mdl
+[05:54:20] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube6x8x1.mdl
+[05:54:24] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube6x8x1.mdl
+[05:54:59] Client "2PR0" connected.
+[05:55:19] XANARCHY: // SHUT THE FUCK UP DRITY NIGGER
+[05:55:25] Client "2PR0" spawned in server <STEAM_0:1:93928982> (took 26 seconds).
+[05:56:25] 2PR0 killed Booffallu using stunstick
+[05:56:41] 2PR0 killed XANARCHY using stunstick
+[05:58:31] XANARCHY killed 2PR0 using stunstick
+[05:59:21] XANARCHY teleported to 2PR0
+[05:59:44] XANARCHY killed 2PR0 using player
+[06:00:19] XANARCHY<STEAM_0:0:648900746> spawned model models/props_canal/canal_bridge03a.mdl
+[06:00:38] XANARCHY: !MENU
+[06:00:58] Server is shutting down/changing levels.
+
+
+
+[06:01:30] New map: rp_downtown_tits_v2
+[06:01:31] Client "Booffallu" connected.
+[06:01:31] Client "cactus jack" connected.
+[06:01:52] Client "Booffallu" spawned in server <STEAM_0:0:574698981> (took 21 seconds).
+[06:01:55] Client "cactus jack" spawned in server <STEAM_0:0:648900746> (took 24 seconds).
+[06:04:29] Server is shutting down/changing levels.
+
+
+
+[06:05:19] New map: rp_downtown_tits_v2
+[06:05:20] Client "cactus jack" connected.
+[06:05:20] Client "Booffallu" connected.
+[06:05:42] Client "Booffallu" spawned in server <STEAM_0:0:574698981> (took 22 seconds).
+[06:05:45] Client "cactus jack" spawned in server <STEAM_0:0:648900746> (took 25 seconds).
+[06:07:02] XANARCHY killed Booffallu using player
+[06:07:16] Booffallu killed XANARCHY using player
+[06:07:39] XANARCHY teleported to Booffallu
+[06:07:41] XANARCHY killed Booffallu using player
+[06:08:25] Server is shutting down/changing levels.
+
+
+
+[06:08:45] New map: rp_downtown_tits_v2
+[06:08:46] Client "Booffallu" connected.
+[06:08:46] Client "cactus jack" connected.
+[06:08:46] Client "cactus jack" connected.
+[06:09:10] Client "Booffallu" spawned in server <STEAM_0:0:574698981> (took 24 seconds).
+[06:09:11] Client "cactus jack" spawned in server <STEAM_0:0:648900746> (took 25 seconds).
+[06:09:50] XANARCHY killed Booffallu using player
+[06:09:57] Booffallu killed XANARCHY using player
+[06:10:19] XANARCHY killed Booffallu using player
+[06:10:30] XANARCHY killed Booffallu using player
+[06:11:21] XANARCHY killed Booffallu using player
+[06:11:56] XANARCHY suicided!
+[06:12:04] XANARCHY teleported to Booffallu
+[06:12:33] XANARCHY teleported to Booffallu
+[06:12:34] XANARCHY killed Booffallu using player
+[06:12:56] Booffallu killed XANARCHY using player
+[06:13:32] XANARCHY teleported to Booffallu
+[06:13:36] XANARCHY killed Booffallu using player
+[06:26:35] Client "2PR0" connected.
+[06:27:02] Client "2PR0" spawned in server <STEAM_0:1:93928982> (took 27 seconds).
+[06:27:30] Dropped "XANARCHY" from server<STEAM_0:0:648900746>
+[06:27:33] Client "cactus jack" connected.
+[06:27:58] Client "cactus jack" spawned in server <STEAM_0:0:648900746> (took 25 seconds).
+[06:28:19] Dropped "XANARCHY" from server<STEAM_0:0:648900746>
+[06:29:08] Client "cactus jack" connected.
+[06:29:34] Server is shutting down/changing levels.
+
+
+
+[06:30:13] New map: rp_downtown_tits_v2
+[06:30:14] Client "cactus jack" connected.
+[06:30:14] Client "2PR0" connected.
+[06:30:14] Client "2PR0" connected.
+[06:30:38] Client "cactus jack" spawned in server <STEAM_0:0:648900746> (took 24 seconds).
+[06:30:41] Client "2PR0" spawned in server <STEAM_0:1:93928982> (took 27 seconds).
+[06:31:12] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube6x6x025.mdl
+[06:31:16] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube8x8x05.mdl
+[06:31:58] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube8x8x025.mdl
+[06:32:52] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube8x8x025.mdl
+[06:35:32] Server is shutting down/changing levels.
+
+
+
+[06:35:50] New map: rp_downtown_tits_v2
+[06:35:51] Client "Booffallu" connected.
+[06:36:12] Client "Booffallu" spawned in server <STEAM_0:0:574698981> (took 21 seconds).
+[06:36:47] Client "cactus jack" connected.
+[06:37:11] Client "cactus jack" spawned in server <STEAM_0:0:648900746> (took 24 seconds).
+[06:38:17] Dropped "XANARCHY" from server<STEAM_0:0:648900746>
+[06:41:37] Client "2PR0" connected.
+[06:41:39] Server is shutting down/changing levels.
+
+
+
+[06:41:57] New map: rp_downtown_tits_v2
+[06:41:58] Client "Booffallu" connected.
+[06:41:58] Client "Booffallu" connected.
+[06:42:20] Client "Booffallu" spawned in server <STEAM_0:0:574698981> (took 22 seconds).
+[06:42:39] Client "2PR0" connected.
+[06:43:06] Client "2PR0" spawned in server <STEAM_0:1:93928982> (took 27 seconds).
+[08:01:01] Dropped "2PR0" from server<STEAM_0:1:93928982>
+[09:41:58] Client "cactus jack" connected.
+[09:42:43] Client "cactus jack" spawned in server <STEAM_0:0:648900746> (took 45 seconds).
+[09:43:13] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube2x4x025.mdl
+[09:43:19] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube6x6x05.mdl
+[09:43:21] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube8x8x025.mdl
+[09:45:13] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube8x8x025.mdl
+[09:45:19] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube8x8x025.mdl
+[09:46:18] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube8x8x025.mdl
+[09:46:34] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube8x8x025.mdl
+[09:47:13] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube4x8x025.mdl
+[09:47:17] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube8x8x025.mdl
+[09:47:48] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube8x8x025.mdl
+[09:48:52] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube8x8x025.mdl
+[09:50:10] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube4x8x025.mdl
+[09:50:32] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube05x5x05.mdl
+[09:50:59] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube075x5x075.mdl
+[09:51:01] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube05x4x05.mdl
+[09:51:44] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube05x4x05.mdl
+[09:52:16] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube05x5x05.mdl
+[09:52:33] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube05x4x05.mdl
+[09:52:34] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube05x4x05.mdl
+[09:52:40] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube05x5x05.mdl
+[09:52:41] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube05x5x05.mdl
+[09:57:24] Dropped "XANARCHY" from server<STEAM_0:0:648900746>
+[09:57:24] Client "cactus jack" connected.
+[09:57:29] Client "2PR0" connected.
+[09:57:59] Client "cactus jack" spawned in server <STEAM_0:0:648900746> (took 35 seconds).
+[09:58:18] Client "2PR0" spawned in server <STEAM_0:1:93928982> (took 49 seconds).
+[10:02:36] 2PR0<STEAM_0:1:93928982> spawned model models/mechanics/solid_steel/u_beam_16.mdl
+[10:02:39] 2PR0<STEAM_0:1:93928982> spawned model models/xeon133/slider/slider_12x12x24.mdl
+[10:02:46] 2PR0<STEAM_0:1:93928982> spawned ragdoll models/humans/group01/female_02.mdl
+[10:02:59] 2PR0<STEAM_0:1:93928982> spawned effect models/soldier_stripped.mdl
+[10:03:08] 2PR0<STEAM_0:1:93928982> spawned ragdoll models/pigeon.mdl
+[10:03:38] Dropped "XANARCHY" from server<STEAM_0:0:648900746>
+[10:03:39] Client "cactus jack" connected.
+[10:04:03] Client "cactus jack" spawned in server <STEAM_0:0:648900746> (took 24 seconds).
+[10:10:14] XANARCHY: /ADVERT SAMMY IS A JEW NIGGER !!!!
+[10:11:06] XANARCHY: /ADVERT SAMMY IS A RETARDED DISABLED SLAVE OWNER
+[10:12:36] XANARCHY: /ADVERT TSA = THE SCAM ADMINANIGGARETARDAION
+[10:12:55] XANARCHY: /ADVERT TSA = THE SCAM ADMINANIGGARETARDAION
+[10:12:57] XANARCHY: /ADVERT TSA = THE SCAM ADMINANIGGARETARDAION
+[10:14:57] XANARCHY: /ADVERT THERE IS 2 TWO PROS!
+[10:15:31] XANARCHY: /ADVERT WHY IS TSA SO SHIT
+[10:17:54] Dropped "XANARCHY" from server<STEAM_0:0:648900746>
+[10:18:15] Client "cactus jack" connected.
+[10:18:40] Client "cactus jack" spawned in server <STEAM_0:0:648900746> (took 25 seconds).
+[10:20:47] Dropped "XANARCHY" from server<STEAM_0:0:648900746>
+[12:52:34] Client "Jumper" connected.
+[12:53:46] Client "Jumper" spawned in server <STEAM_0:0:774496399> (took 72 seconds).
+[12:54:03] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/metal_plate4x4.mdl
+[12:54:06] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/glass/glass_angle360.mdl
+[12:54:07] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/glass/glass_angle360.mdl
+[12:55:07] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/glass/glass_angle360.mdl
+[12:55:08] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/metal_plate4x4.mdl
+[12:55:09] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/metal_plate4x4.mdl
+[12:55:10] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/metal_plate4x4.mdl
+[12:55:10] Jumper<STEAM_0:0:774496399> spawned model models/props/cs_militia/refrigerator01.mdl
+[12:55:11] Jumper<STEAM_0:0:774496399> spawned model models/props/cs_militia/refrigerator01.mdl
+[12:55:11] Jumper killed 2PR0 using prop_physics
+[12:55:13] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/metal_plate4x4.mdl
+[12:55:18] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/metal_plate4x4.mdl
+[12:55:26] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/glass/glass_angle360.mdl
+[12:55:27] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/metal_plate4x4.mdl
+[12:55:30] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/metal_plate4x4.mdl
+[12:55:32] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/metal_plate4x4.mdl
+[12:55:33] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/metal_plate4x4.mdl
+[12:55:35] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/metal_plate4x4.mdl
+[12:55:36] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/metal_plate4x4.mdl
+[12:55:37] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/metal_plate4x4.mdl
+[12:55:38] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/metal_plate4x4.mdl
+[12:55:39] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/glass/glass_angle360.mdl
+[12:55:40] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/glass/glass_angle360.mdl
+[12:55:42] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/glass/glass_angle360.mdl
+[12:55:43] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/metal_plate4x4.mdl
+[12:55:45] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/metal_plate4x4.mdl
+[12:55:48] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/metal_plate4x4.mdl
+[12:56:15] Jumper killed Booffallu using gmod_dynamite
+[12:56:15] Jumper suicided!
+[12:56:18] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/metal_plate4x4.mdl
+[12:56:19] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/metal_plate4x4.mdl
+[12:56:21] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/metal_plate4x4.mdl
+[12:56:22] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/metal_plate4x4.mdl
+[12:56:23] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/metal_plate4x4.mdl
+[12:56:25] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/metal_plate4x4.mdl
+[12:56:39] Jumper: !discord
+[12:56:41] Jumper: /discod
+[12:56:42] Jumper: /discord
+[13:00:23] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/metal_plate4x4.mdl
+[13:01:02] Jumper: /buy Desert eagle
+[13:01:13] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/metal_plate4x4.mdl
+[13:01:14] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/metal_plate4x4.mdl
+[13:01:15] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/metal_plate4x4.mdl
+[13:01:16] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/metal_plate4x4.mdl
+[13:01:18] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/metal_plate4x4.mdl
+[13:01:19] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/metal_plate4x4.mdl
+[13:01:20] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/metal_plate4x4.mdl
+[13:01:21] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/metal_plate4x4.mdl
+[13:01:22] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/metal_plate4x4.mdl
+[13:01:24] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/glass/glass_angle360.mdl
+[13:01:26] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/metal_plate4x4.mdl
+[13:01:27] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/metal_plate4x4.mdl
+[13:01:28] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/metal_plate4x4.mdl
+[13:01:29] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/metal_plate4x4.mdl
+[13:01:37] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/metal_plate4x4.mdl
+[13:01:41] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/metal_plate4x4.mdl
+[13:01:42] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/metal_plate4x4.mdl
+[13:01:50] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/metal_plate4x4.mdl
+[13:01:52] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/metal_plate4x4.mdl
+[13:01:52] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/metal_plate4x4.mdl
+[13:01:54] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/metal_plate4x4.mdl
+[13:01:55] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/metal_plate4x4.mdl
+[13:01:55] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/metal_plate4x4.mdl
+[13:01:57] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/metal_plate4x4.mdl
+[13:01:58] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/metal_plate4x4.mdl
+[13:01:59] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/metal_plate4x4.mdl
+[13:02:02] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/metal_plate4x4.mdl
+[13:02:11] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/metal_plate4x4.mdl
+[13:02:12] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/metal_plate4x4.mdl
+[13:02:13] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/metal_plate4x4.mdl
+[13:02:16] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/metal_plate4x4.mdl
+[13:02:24] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/metal_plate4x4.mdl
+[13:02:35] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/metal_plate4x4.mdl
+[13:02:37] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/metal_plate4x4.mdl
+[13:02:39] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/metal_plate4x4.mdl
+[13:02:41] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/metal_plate4x4.mdl
+[13:02:42] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/metal_plate4x4.mdl
+[13:02:53] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/metal_plate4x4.mdl
+[13:02:54] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/metal_plate4x4.mdl
+[13:02:56] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/glass/glass_angle360.mdl
+[13:02:58] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/metal_plate4x4.mdl
+[13:02:59] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/metal_plate4x4.mdl
+[13:03:20] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:03:20] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:03:20] Jumper<STEAM_0:0:774496399> spawned model models/maxofs2d/companion_doll.mdl
+[13:03:20] Jumper<STEAM_0:0:774496399> spawned model models/props_c17/furnituretable003a.mdl
+[13:03:20] Jumper<STEAM_0:0:774496399> spawned model models/props_c17/furniturecouch002a.mdl
+[13:03:20] Jumper<STEAM_0:0:774496399> spawned model models/props_c17/furniturecouch001a.mdl
+[13:03:20] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:03:20] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:03:20] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:03:20] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:03:20] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:03:20] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:03:20] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:03:20] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:03:20] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:03:20] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:03:20] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:03:20] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:03:20] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:03:20] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:03:20] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:03:21] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:03:21] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:03:21] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:03:21] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:03:21] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:03:21] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:03:21] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:03:21] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:03:21] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:03:21] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:03:21] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:03:21] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:03:21] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:03:21] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:03:21] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:03:21] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:03:21] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:03:22] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:03:22] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:03:22] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:03:23] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:03:23] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:03:23] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:03:23] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:03:23] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:03:24] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:03:24] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:03:25] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:03:25] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:03:25] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:03:25] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:03:26] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:03:27] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:03:27] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:03:29] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:03:29] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:03:30] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:03:31] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:03:32] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:03:33] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:03:34] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:03:35] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:03:36] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:03:38] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:03:39] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:03:41] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+
+
+
+[13:04:01] New map: rp_downtown_tits_v2
+[13:04:16] Client "Booffallu" connected.
+[13:04:16] Client "2PR0" connected.
+[13:04:20] Client "Jumper" connected.
+[13:04:38] Client "Booffallu" spawned in server <STEAM_0:0:574698981> (took 22 seconds).
+[13:04:41] Client "2PR0" spawned in server <STEAM_0:1:93928982> (took 25 seconds).
+[13:04:47] Client "Jumper" spawned in server <STEAM_0:0:774496399> (took 27 seconds).
+[13:05:16] Jumper<STEAM_0:0:774496399> spawned model models/props/cs_militia/refrigerator01.mdl
+[13:05:16] Jumper killed Booffallu using prop_physics
+[13:05:17] Jumper<STEAM_0:0:774496399> spawned model models/props/cs_militia/refrigerator01.mdl
+[13:05:24] Jumper killed 2PR0 using prop_physics
+[13:05:25] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/metal_plate4x4.mdl
+[13:05:28] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/metal_plate4x4.mdl
+[13:05:29] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/metal_plate4x4.mdl
+[13:05:31] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/metal_plate4x4.mdl
+[13:05:32] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/metal_plate4x4.mdl
+[13:06:31] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:06:32] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:06:32] Jumper<STEAM_0:0:774496399> spawned model models/maxofs2d/companion_doll.mdl
+[13:06:32] Jumper<STEAM_0:0:774496399> spawned model models/props_c17/furnituretable003a.mdl
+[13:06:32] Jumper<STEAM_0:0:774496399> spawned model models/props_c17/furniturecouch002a.mdl
+[13:06:32] Jumper<STEAM_0:0:774496399> spawned model models/props_c17/furniturecouch001a.mdl
+[13:06:32] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:06:32] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:06:32] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:06:32] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:06:32] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:06:32] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:06:32] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:06:32] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:06:32] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:06:32] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:06:32] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:06:32] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:06:32] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:06:32] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:06:32] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:06:32] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:06:33] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:06:33] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:06:33] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:06:33] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:06:33] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:06:33] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:06:33] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:06:33] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:06:33] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:06:33] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:06:33] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:06:33] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:06:33] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:06:33] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:06:33] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:06:33] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:06:33] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:06:33] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:06:33] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:06:33] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:06:33] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:06:33] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:06:34] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:06:34] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:06:34] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:06:34] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:06:34] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:06:34] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:06:34] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:06:34] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:06:34] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:06:34] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:06:34] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:06:34] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:06:34] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:06:34] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:06:34] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:06:34] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:06:34] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:06:34] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:06:34] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:06:34] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:06:34] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:06:35] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:06:35] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:06:35] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:06:35] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:06:35] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:06:35] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:06:35] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:06:35] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:06:35] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:06:35] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:06:35] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:06:35] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:06:35] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:06:35] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:07:42] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:07:42] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:07:43] Jumper<STEAM_0:0:774496399> spawned model models/maxofs2d/companion_doll.mdl
+[13:07:43] Jumper<STEAM_0:0:774496399> spawned model models/props_c17/furnituretable003a.mdl
+[13:07:43] Jumper<STEAM_0:0:774496399> spawned model models/props_c17/furniturecouch002a.mdl
+[13:07:43] Jumper<STEAM_0:0:774496399> spawned model models/props_c17/furniturecouch001a.mdl
+[13:07:43] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:07:43] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:07:43] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:07:43] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:07:43] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:07:43] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:07:43] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:07:43] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:07:43] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:07:43] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:07:43] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:07:43] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:07:43] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:07:43] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:07:43] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:00] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:00] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:00] Jumper<STEAM_0:0:774496399> spawned model models/maxofs2d/companion_doll.mdl
+[13:08:00] Jumper<STEAM_0:0:774496399> spawned model models/props_c17/furnituretable003a.mdl
+[13:08:00] Jumper<STEAM_0:0:774496399> spawned model models/props_c17/furniturecouch002a.mdl
+[13:08:00] Jumper<STEAM_0:0:774496399> spawned model models/props_c17/furniturecouch001a.mdl
+[13:08:00] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:00] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:01] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:01] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:01] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:01] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:01] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:01] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:01] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:01] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:01] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:01] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:01] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:01] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:01] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:01] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:01] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:01] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:01] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:01] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:01] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:01] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:01] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:02] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:02] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:02] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:02] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:02] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:02] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:02] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:02] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:02] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:02] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:02] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:02] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:02] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:02] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:02] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:02] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:02] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:02] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:05] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:05] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:05] Jumper<STEAM_0:0:774496399> spawned model models/maxofs2d/companion_doll.mdl
+[13:08:05] Jumper<STEAM_0:0:774496399> spawned model models/props_c17/furnituretable003a.mdl
+[13:08:05] Jumper<STEAM_0:0:774496399> spawned model models/props_c17/furniturecouch002a.mdl
+[13:08:05] Jumper<STEAM_0:0:774496399> spawned model models/props_c17/furniturecouch001a.mdl
+[13:08:05] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:05] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:05] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:06] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:06] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:06] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:06] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:06] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:06] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:06] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:06] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:06] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:06] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:06] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:06] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:06] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:06] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:06] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:06] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:06] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:06] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:06] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:06] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:06] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:07] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:07] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:07] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:07] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:07] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:07] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:07] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:07] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:07] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:07] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:07] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:07] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:07] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:07] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:07] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:07] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:07] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:07] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:07] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:07] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:07] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:08] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:08] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:08] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:08] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:08] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:08] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:08] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:08] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:08] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:08] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:08] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:08] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:08] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:08] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:08] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:08] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:08] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:08] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:08] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:08] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:08] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:08] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:08] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:09] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:09] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:09] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:09] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:09] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:16] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:16] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:16] Jumper<STEAM_0:0:774496399> spawned model models/maxofs2d/companion_doll.mdl
+[13:08:16] Jumper<STEAM_0:0:774496399> spawned model models/props_c17/furnituretable003a.mdl
+[13:08:16] Jumper<STEAM_0:0:774496399> spawned model models/props_c17/furniturecouch002a.mdl
+[13:08:16] Jumper<STEAM_0:0:774496399> spawned model models/props_c17/furniturecouch001a.mdl
+[13:08:16] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:16] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:16] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:16] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:16] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:17] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:17] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:17] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:17] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:17] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:17] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:17] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:17] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:17] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:17] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:17] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:17] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:17] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:17] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:17] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:17] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:17] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:17] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:17] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:17] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:17] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:18] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:18] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:18] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:18] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:18] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:18] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:18] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:18] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:18] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:18] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:18] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:18] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:18] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:18] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:18] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:18] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:18] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:18] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:18] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:18] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:18] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:18] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:19] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:19] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:19] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:19] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:19] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:19] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:19] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:19] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:19] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:19] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:19] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:19] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:19] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:19] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:19] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:19] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:19] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:19] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:19] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:19] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:20] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:20] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:20] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:20] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+[13:08:20] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/windows/window_curve360x2.mdl
+
+
+
+[13:08:59] New map: rp_downtown_tits_v2
+[13:09:06] Client "Jumper" connected.
+[13:09:14] Client "2PR0" connected.
+[13:09:14] Client "Booffallu" connected.
+[13:09:32] Client "Jumper" spawned in server <STEAM_0:0:774496399> (took 26 seconds).
+[13:09:35] Client "Booffallu" spawned in server <STEAM_0:0:574698981> (took 21 seconds).
+[13:09:36] Client "2PR0" spawned in server <STEAM_0:1:93928982> (took 22 seconds).
+[13:09:50] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/wheels/moped_tire.mdl
+[13:10:26] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/metal_plate4x4.mdl
+[13:10:27] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/metal_plate4x4.mdl
+[13:10:28] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/metal_plate4x4.mdl
+[13:10:30] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/metal_plate4x4.mdl
+[13:10:31] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/metal_plate4x4.mdl
+[13:10:32] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/metal_plate4x4.mdl
+[13:10:33] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/metal_plate4x4.mdl
+[13:10:34] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/metal_plate4x4.mdl
+[13:10:35] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/metal_plate4x4.mdl
+[13:10:36] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/metal_plate4x4.mdl
+[13:10:38] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/metal_plate4x4.mdl
+[13:10:39] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/metal_plate4x4.mdl
+[13:10:41] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/metal_plate4x4.mdl
+[13:10:43] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/metal_plate4x4.mdl
+[13:10:44] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/metal_plate4x4.mdl
+[13:11:31] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/metal_plate4x4.mdl
+[13:11:32] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/metal_plate4x4.mdl
+[13:11:33] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/metal_plate4x4.mdl
+[13:11:34] Jumper<STEAM_0:0:774496399> spawned model models/props/cs_militia/refrigerator01.mdl
+[13:11:37] Jumper<STEAM_0:0:774496399> spawned model models/props/cs_militia/refrigerator01.mdl
+[13:11:38] Jumper killed Booffallu using prop_physics
+[13:11:40] Jumper<STEAM_0:0:774496399> spawned model models/props/cs_militia/refrigerator01.mdl
+[13:11:41] Jumper<STEAM_0:0:774496399> spawned model models/props/cs_militia/refrigerator01.mdl
+[13:11:42] Jumper killed 2PR0 using prop_physics
+[13:12:40] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/metal_plate4x4.mdl
+[13:12:41] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/metal_plate4x4.mdl
+[13:12:43] Jumper<STEAM_0:0:774496399> spawned model models/props_phx/construct/metal_plate4x4.mdl
+[13:15:37] Dropped "Jumper" from server<STEAM_0:0:774496399>
+[19:46:02] Client "cactus jack" connected.
+[19:46:07] Client "cactus jack" connected.
+[19:47:05] Client "cactus jack" spawned in server <STEAM_0:0:648900746> (took 58 seconds).
+[19:48:29] XANARCHY<STEAM_0:0:648900746> spawned model models/env/furniture/decosofa_wood/decosofa_wood_dou.mdl
+[19:48:47] XANARCHY<STEAM_0:0:648900746> spawned model models/env/furniture/decosofa_wood/decosofa_wood_dou.mdl
+[19:51:10] XANARCHY<STEAM_0:0:648900746> spawned model models/props_interiors/sofa_chair02.mdl
+[19:51:43] XANARCHY<STEAM_0:0:648900746> spawned model models/props_interiors/sofa_chair02.mdl
+[19:52:35] XANARCHY<STEAM_0:0:648900746> spawned model models/env/decor/tall_plant_b/tall_plant_b.mdl
+[19:52:49] XANARCHY<STEAM_0:0:648900746> spawned model models/env/decor/tall_plant_b/tall_plant_b.mdl
+[19:53:24] XANARCHY<STEAM_0:0:648900746> spawned model models/env/decor/plant_decofern/plant_decofern.mdl
+[19:53:32] XANARCHY<STEAM_0:0:648900746> spawned model models/env/decor/plant_decofern/plant_decofern.mdl
+[19:54:15] XANARCHY<STEAM_0:0:648900746> spawned model models/props_interiors/sofa_chair02.mdl
+[19:55:44] XANARCHY<STEAM_0:0:648900746> spawned model models/props_interiors/sofa_chair02.mdl
+[19:56:06] XANARCHY<STEAM_0:0:648900746> spawned model models/highrise/potted_plant_05.mdl
+[19:56:10] XANARCHY<STEAM_0:0:648900746> spawned model models/highrise/potted_plant_05.mdl
+[19:56:12] XANARCHY<STEAM_0:0:648900746> spawned model models/highrise/potted_plant_05.mdl
+[19:56:16] XANARCHY<STEAM_0:0:648900746> spawned model models/env/decor/plant_decofern/plant_decofern.mdl
+[19:56:19] XANARCHY<STEAM_0:0:648900746> spawned model models/env/decor/plant_decofern/plant_decofern.mdl
+[19:56:31] XANARCHY<STEAM_0:0:648900746> spawned model models/env/decor/plant_decofern/plant_decofern.mdl
+[19:57:40] XANARCHY suicided!
+[19:57:45] XANARCHY suicided!
+[19:57:51] XANARCHY suicided!
+[19:58:05] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube1x4x025.mdl
+[19:58:09] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube2x6x025.mdl
+[19:58:16] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube2x6x05.mdl
+[19:59:01] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube2x6x05.mdl
+[19:59:03] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube2x6x05.mdl
+[19:59:05] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube2x6x05.mdl
+[19:59:28] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube2x6x05.mdl
+[19:59:29] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube2x6x05.mdl
+[19:59:30] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube2x6x05.mdl
+[19:59:31] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube2x6x05.mdl
+[19:59:47] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube1x4x025.mdl
+[19:59:55] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube2x8x05.mdl
+[20:01:35] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube2x8x05.mdl
+[20:02:05] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube05x3x05.mdl
+[20:02:38] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube05x3x05.mdl
+[20:03:13] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube05x3x05.mdl
+[20:03:24] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube05x3x05.mdl
+[20:04:25] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube05x3x05.mdl
+[20:05:39] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube05x3x05.mdl
+[20:05:57] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube05x3x05.mdl
+[20:10:10] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube2x4x025.mdl
+[20:10:16] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube3x6x025.mdl
+[20:10:56] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube3x6x025.mdl
+[20:11:15] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube3x6x025.mdl
+[20:11:54] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube3x6x025.mdl
+[20:12:44] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube3x6x025.mdl
+[20:16:12] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube3x6x025.mdl
+[20:17:57] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube05x3x05.mdl
+[20:18:00] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube025x7x025.mdl
+[20:18:02] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube025x5x025.mdl
+[20:18:05] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube025x6x025.mdl
+[20:18:08] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube025x7x025.mdl
+[20:18:21] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube025x7x025.mdl
+[20:19:15] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube025x7x025.mdl
+[20:19:50] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube025x6x025.mdl
+[20:20:49] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube025x6x025.mdl
+[20:29:38] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube3x8x025.mdl
+[20:29:44] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube2x4x025.mdl
+[20:29:57] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube2x6x025.mdl
+[20:30:17] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube1x4x025.mdl
+[20:30:58] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube1x4x025.mdl
+[20:30:59] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube1x4x025.mdl
+[20:31:00] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube1x4x025.mdl
+[20:31:01] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube1x4x025.mdl
+[20:31:03] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube1x4x025.mdl
+[20:31:16] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube1x4x025.mdl
+[20:31:51] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube1x4x025.mdl
+[20:31:53] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube1x4x025.mdl
+[20:34:14] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube05x4x05.mdl
+[20:34:17] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube4x8x05.mdl
+[20:34:19] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube4x8x05.mdl
+[20:34:55] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube4x8x05.mdl
+[20:34:56] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube4x8x05.mdl
+[20:35:00] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube4x8x05.mdl
+[20:35:06] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube4x8x05.mdl
+[20:35:20] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube4x8x05.mdl
+[20:35:21] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube4x8x05.mdl
+[20:35:25] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube4x8x05.mdl
+[20:35:30] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube4x8x05.mdl
+[20:35:38] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube4x8x05.mdl
+[20:37:41] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/plates/plate6x7.mdl
+[20:38:23] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/plates/plate6x7.mdl
+[20:38:24] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/plates/plate6x7.mdl
+[20:39:10] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/plates/plate6x7.mdl
+[20:39:12] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/plates/plate6x7.mdl
+[20:39:13] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/plates/plate6x7.mdl
+[20:40:41] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/plates/plate6x7.mdl
+[20:40:52] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/plates/plate6x7.mdl
+[20:41:25] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/plates/plate2x8.mdl
+[20:41:34] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/plates/plate16x32.mdl
+[20:41:38] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/plates/plate8x16.mdl
+[20:42:09] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/plates/plate8x16.mdl
+[20:42:15] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/plates/plate8x16.mdl
+[20:44:25] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube8x8x025.mdl
+[20:44:32] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube8x8x025.mdl
+[20:45:18] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube8x8x025.mdl
+[20:45:22] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube8x8x025.mdl
+[20:46:11] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/plates/plate075x4.mdl
+[20:46:40] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/plates/plate075x4.mdl
+[20:46:42] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/plates/plate075x4.mdl
+[20:46:43] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/plates/plate075x4.mdl
+[20:47:01] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/plates/plate1x4.mdl
+[20:47:58] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/plates/plate2x2.mdl
+[20:48:04] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/plates/plate2x3.mdl
+[20:48:15] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/plates/plate075x4.mdl
+[20:48:17] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/plates/plate075x4.mdl
+[20:48:17] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/plates/plate075x4.mdl
+[20:48:21] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/plates/plate075x4.mdl
+[20:48:21] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/plates/plate075x4.mdl
+[20:49:51] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/plates/plate2x5.mdl
+[20:50:30] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/plates/plate2x5.mdl
+[20:50:34] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/plates/plate2x5.mdl
+[20:50:35] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/plates/plate2x5.mdl
+[20:51:03] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/plates/plate2x5.mdl
+[20:51:04] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/plates/plate2x5.mdl
+[20:51:05] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/plates/plate2x5.mdl
+[20:51:06] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/plates/plate2x5.mdl
+[20:51:07] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/plates/plate2x5.mdl
+[20:51:08] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/plates/plate2x5.mdl
+[20:51:09] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/plates/plate2x5.mdl
+[20:51:09] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/plates/plate2x5.mdl
+[20:51:11] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/plates/plate2x5.mdl
+[20:51:15] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/plates/plate2x5.mdl
+[20:51:16] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/plates/plate2x5.mdl
+[20:51:17] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/plates/plate2x5.mdl
+[20:51:18] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/plates/plate2x5.mdl
+[20:51:19] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/plates/plate2x5.mdl
+[20:51:38] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/plates/plate2x5.mdl
+[20:53:22] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/plates/plate2x3.mdl
+[21:08:06] XANARCHY<STEAM_0:0:648900746> spawned model models/hunter/blocks/cube3x4x025.mdl
+[21:09:55] XANARCHY<STEAM_0:0:648900746> spawned sent zbf_controller
+[21:10:01] XANARCHY<STEAM_0:0:648900746> spawned sent zbf_atm
+[21:10:29] XANARCHY<STEAM_0:0:648900746> spawned sent nexus_job_creator
+[21:10:49] XANARCHY<STEAM_0:0:648900746> spawned sent bank_npc
+[21:11:03] XANARCHY<STEAM_0:0:648900746> spawned sent deathscreen_npc
+[21:11:38] XANARCHY<STEAM_0:0:648900746> spawned sent zlt_machine
+[21:12:24] XANARCHY<STEAM_0:0:648900746> spawned sent zlt_machine
+[21:14:03] XANARCHY suicided!
+[21:56:08] XANARCHY killed 2PR0 using player
+[22:14:41] Booffallu: !menu
+[22:15:45] 2PR0 killed Booffallu using stunstick
+[22:27:47] XANARCHY killed 2PR0 using player
+[22:28:18] 2PR0 killed XANARCHY using stunstick
+[22:34:30] XANARCHY: // 22PR0's
+[22:34:44] XANARCHY killed 2PR0 using player
+[22:38:24] Dropped "XANARCHY" from server<STEAM_0:0:648900746>
+[23:16:12] Dropped "2PR0" from server<STEAM_0:1:93928982>
+[23:16:15] Client "2PR0" connected.
+[23:16:55] Client "2PR0" spawned in server <STEAM_0:1:93928982> (took 40 seconds).
+[23:17:58] Dropped "2PR0" from server<STEAM_0:1:93928982>
+[23:19:11] Client "2PR0" connected.
+[23:19:46] Client "2PR0" spawned in server <STEAM_0:1:93928982> (took 35 seconds).
+[23:23:06] 2PR0<STEAM_0:1:93928982> spawned model models/props_c17/furniturecouch002a.mdl
+[23:31:18] 2PR0 suicided!
+[23:34:35] 2PR0 whipped Themself 10 times with 0 damage
+[23:35:02] 2PR0 jailed Booffallu for 5 seconds
+[23:35:05] 2PR0 jailed Themself for 5 seconds
+<Logging continued in "data/ulx_logs/02-23-26.txt">

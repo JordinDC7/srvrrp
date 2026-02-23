@@ -1,0 +1,38 @@
+[
+	{
+		"ang": "{-0.0127 90.0436 0.2502}",
+		"pos": "[1166.0533 -1133.8575 -195.6069]",
+		"mdata": {
+			"Paint": "[0.0196 0.0078 0.0078]",
+			"LogoScaleW": 1,
+			"Slot04": "8c75418131a",
+			"Logo": "YtNiTIU",
+			"LogoPosY": 0.5,
+			"Slot03": -1,
+			"LogoScaleH": 1,
+			"Light": "[0.0392 0.0745 0.7882]",
+			"LogoPosX": 0.5,
+			"Slot01": "8c75418131a",
+			"Slot02": "bea1c2c0d0a"
+		},
+		"class": "zlt_machine"
+	},
+	{
+		"ang": "{-0.0262 90.1981 0.2272}",
+		"pos": "[1264.5555 -1133.8159 -195.6235]",
+		"mdata": {
+			"Paint": "[0.0471 0.0353 0.0353]",
+			"LogoScaleW": 1,
+			"Slot04": "8c75418131a",
+			"Logo": "YtNiTIU",
+			"LogoPosY": 0.5,
+			"Slot03": -1,
+			"LogoScaleH": 1,
+			"Light": "[0.0824 0.0588 0.7882]",
+			"LogoPosX": 0.5,
+			"Slot01": "8c75418131a",
+			"Slot02": "bea1c2c0d0a"
+		},
+		"class": "zlt_machine"
+	}
+]

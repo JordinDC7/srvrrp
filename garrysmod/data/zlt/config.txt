@@ -1,0 +1,366 @@
+[
+	{
+		"logo_url": "YtNiTIU",
+		"title_font": "zlt_ticket_title01",
+		"bg_url": "",
+		"uniqueid": "8c75418131a",
+		"logo_scale_h": 0.32,
+		"bg_scale_w": 0.5,
+		"symbol_rot": 0,
+		"logo_y": 0.8,
+		"scratch_col": {
+			"r": 255,
+			"b": 255,
+			"a": 255,
+			"g": 255
+		},
+		"bg_scale_h": 0.5,
+		"scratch_url": "Hxan37Q",
+		"bg_col": {
+			"r": 255,
+			"b": 255,
+			"a": 255,
+			"g": 255
+		},
+		"desc_val": "Hella Wins",
+		"symbol_y": 0.4,
+		"title_color": {
+			"r": 0,
+			"b": 89,
+			"a": 255,
+			"g": 255
+		},
+		"title_val": "SmG\nCASH",
+		"desc_color": {
+			"r": 0,
+			"b": 12,
+			"a": 255,
+			"g": 255
+		},
+		"price_bg_col": {
+			"r": 0,
+			"b": 0,
+			"a": 100,
+			"g": 0
+		},
+		"title_aligncenter": 1,
+		"symbol_col": {
+			"r": 0,
+			"b": 0,
+			"a": 100,
+			"g": 0
+		},
+		"color": {
+			"r": 0,
+			"b": 0,
+			"a": 255,
+			"g": 0
+		},
+		"title_x": 0.25,
+		"prizelist": [
+			{
+				"type": 1,
+				"final_chance": 16.67,
+				"chance": 10
+			},
+			{
+				"type": 2,
+				"money": 1000000,
+				"final_chance": 83.33,
+				"chance": 50
+			}
+		],
+		"bg_y": 0.5,
+		"desc_aligncenter": 2,
+		"scratch_bg_col": {
+			"r": 255,
+			"b": 255,
+			"a": 255,
+			"g": 255
+		},
+		"price_col": {
+			"r": 255,
+			"b": 255,
+			"a": 255,
+			"g": 255
+		},
+		"scratch_y": 0,
+		"logo_col": {
+			"r": 255,
+			"b": 255,
+			"a": 255,
+			"g": 255
+		},
+		"logo_scale_w": 0.24,
+		"scratch_scale": 1,
+		"logo_x": 0.15,
+		"symbol_scale_w": 0.39,
+		"symbol_x": 0.34,
+		"symbol_scale_h": 0.44,
+		"logo_rot": 0,
+		"title_y": 0.24,
+		"scratch_outline_type": "border01",
+		"desc_x": 0.98,
+		"scratch_outline_col": {
+			"r": 58,
+			"b": 227,
+			"a": 255,
+			"g": 69
+		},
+		"scratch_x": 0,
+		"bg_rot": 0,
+		"desc_y": 0.9,
+		"price": 100000,
+		"bg_x": 0.5,
+		"symbol_url": "YtNiTIU"
+	},
+	{
+		"logo_url": "YtNiTIU",
+		"title_font": "zlt_ticket_title01",
+		"bg_url": "",
+		"uniqueid": "bea1c2c0d0a",
+		"logo_scale_h": 0.2,
+		"bg_scale_w": 0.5,
+		"symbol_rot": 0,
+		"logo_y": 0.87,
+		"scratch_col": {
+			"r": 255,
+			"b": 255,
+			"a": 255,
+			"g": 255
+		},
+		"bg_scale_h": 0.5,
+		"scratch_url": "Hxan37Q",
+		"bg_col": {
+			"r": 255,
+			"b": 255,
+			"a": 255,
+			"g": 255
+		},
+		"desc_val": "Your Insane",
+		"symbol_y": 0.4,
+		"title_color": {
+			"r": 255,
+			"b": 9,
+			"a": 255,
+			"g": 144
+		},
+		"title_val": "MR Take \nThat risk",
+		"desc_color": {
+			"r": 241,
+			"b": 2,
+			"a": 255,
+			"g": 2
+		},
+		"price_bg_col": {
+			"r": 156,
+			"b": 15,
+			"a": 100,
+			"g": 15
+		},
+		"title_aligncenter": 1,
+		"symbol_col": {
+			"r": 0,
+			"b": 0,
+			"a": 100,
+			"g": 0
+		},
+		"color": {
+			"r": 0,
+			"b": 0,
+			"a": 255,
+			"g": 0
+		},
+		"title_x": 0.25,
+		"prizelist": [
+			{
+				"type": 1,
+				"final_chance": 94.34,
+				"chance": 50
+			},
+			{
+				"icon": {
+					"icon_url": "YtNiTIU",
+					"icon_color": {
+						"r": 255,
+						"b": 255,
+						"a": 255,
+						"g": 255
+					}
+				},
+				"chance": 3,
+				"type": 2,
+				"money": 10000000,
+				"final_chance": 5.66
+			}
+		],
+		"bg_y": 0.5,
+		"desc_aligncenter": 2,
+		"scratch_bg_col": {
+			"r": 255,
+			"b": 255,
+			"a": 255,
+			"g": 255
+		},
+		"price_col": {
+			"r": 255,
+			"b": 255,
+			"a": 255,
+			"g": 255
+		},
+		"scratch_y": 0,
+		"logo_col": {
+			"r": 255,
+			"b": 255,
+			"a": 255,
+			"g": 255
+		},
+		"symbol_url": "DwUoAia",
+		"scratch_scale": 1,
+		"logo_x": 0.07,
+		"symbol_scale_w": 0.39,
+		"price": 2000000,
+		"symbol_scale_h": 0.44,
+		"logo_rot": 0,
+		"bg_rot": 0,
+		"scratch_x": 0,
+		"desc_x": 0.98,
+		"scratch_outline_col": {
+			"r": 234,
+			"b": 4,
+			"a": 255,
+			"g": 131
+		},
+		"scratch_outline_type": "border01",
+		"title_y": 0.24,
+		"desc_y": 0.9,
+		"symbol_x": 0.28,
+		"bg_x": 0.5,
+		"logo_scale_w": 0.1
+	},
+	{
+		"logo_url": "YtNiTIU",
+		"title_font": "zlt_ticket_title01",
+		"bg_url": "0k2Efa2",
+		"uniqueid": "4b6077b2b3a",
+		"logo_scale_h": 0.2,
+		"bg_scale_w": 0.5,
+		"symbol_rot": 0,
+		"logo_y": 0.87,
+		"scratch_col": {
+			"r": 255,
+			"b": 255,
+			"a": 255,
+			"g": 255
+		},
+		"bg_scale_h": 0.5,
+		"scratch_url": "Hxan37Q",
+		"bg_col": {
+			"r": 255,
+			"b": 255,
+			"a": 255,
+			"g": 255
+		},
+		"desc_val": "NEVER STRESS",
+		"symbol_y": 0.4,
+		"title_color": {
+			"r": 227,
+			"b": 58,
+			"a": 255,
+			"g": 154
+		},
+		"title_val": "BOOF\nBUCKS",
+		"desc_color": {
+			"r": 231,
+			"b": 4,
+			"a": 255,
+			"g": 114
+		},
+		"price_bg_col": {
+			"r": 0,
+			"b": 0,
+			"a": 100,
+			"g": 0
+		},
+		"title_aligncenter": 1,
+		"symbol_col": {
+			"r": 0,
+			"b": 0,
+			"a": 100,
+			"g": 0
+		},
+		"color": {
+			"r": 97,
+			"b": 3,
+			"a": 255,
+			"g": 204
+		},
+		"title_x": 0.24,
+		"prizelist": [
+			{
+				"type": 1,
+				"final_chance": 50,
+				"chance": 50
+			},
+			{
+				"icon": {
+					"icon_url": "YtNiTIU",
+					"icon_color": {
+						"r": 255,
+						"b": 255,
+						"a": 255,
+						"g": 255
+					}
+				},
+				"chance": 50,
+				"type": 2,
+				"money": 100000,
+				"name": "BooF Grand prize",
+				"final_chance": 50
+			}
+		],
+		"bg_y": 0.5,
+		"desc_aligncenter": 2,
+		"scratch_bg_col": {
+			"r": 255,
+			"b": 255,
+			"a": 255,
+			"g": 255
+		},
+		"price_col": {
+			"r": 255,
+			"b": 255,
+			"a": 255,
+			"g": 255
+		},
+		"scratch_y": 0,
+		"logo_col": {
+			"r": 255,
+			"b": 255,
+			"a": 255,
+			"g": 255
+		},
+		"logo_scale_w": 0.1,
+		"scratch_scale": 1,
+		"logo_x": 0.07,
+		"symbol_scale_w": 0.39,
+		"symbol_x": 0.28,
+		"symbol_scale_h": 0.44,
+		"logo_rot": 0,
+		"title_y": 0.29,
+		"scratch_outline_type": "border01",
+		"desc_x": 0.42,
+		"scratch_outline_col": {
+			"r": 227,
+			"b": 58,
+			"a": 255,
+			"g": 154
+		},
+		"scratch_x": 0,
+		"bg_rot": 0,
+		"desc_y": 0.68,
+		"price": 1000,
+		"bg_x": 0.5,
+		"symbol_url": "DwUoAia"
+	}
+]

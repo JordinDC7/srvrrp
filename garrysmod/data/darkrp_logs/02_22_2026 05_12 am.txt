@@ -1,0 +1,9 @@
+Sun Feb 22 05:12:50 2026	Booffallu (STEAM_0:0:574698981) has joined the game
+Sun Feb 22 05:12:50 2026	Booffallu (STEAM_0:0:574698981) spawned
+Sun Feb 22 05:13:07 2026	Booffallu (STEAM_0:0:574698981): 
+Sun Feb 22 05:14:04 2026	cactus jack (STEAM_0:0:648900746) has joined the game
+Sun Feb 22 05:14:04 2026	XANARCHY (STEAM_0:0:648900746) spawned
+Sun Feb 22 05:15:37 2026	XANARCHY was killed by Themself with a suicide trick
+Sun Feb 22 05:15:38 2026	XANARCHY (STEAM_0:0:648900746) spawned
+Sun Feb 22 05:15:42 2026	XANARCHY was killed by Themself with a suicide trick
+Sun Feb 22 05:15:43 2026	XANARCHY (STEAM_0:0:648900746) spawned
