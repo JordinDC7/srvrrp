@@ -30,6 +30,7 @@ function ENT:Think()
 		if( CurTime() >= self.caseOpenTime ) then
 			if( IsValid( self.openerPly ) ) then
 				self.openerPly:AddUnboxingInventoryItem( self:GetWinningItemKey() )
+				BRICKS_SERVER.UNBOXING.Func.TryRollAndStoreStatTrak( self.openerPly, self:GetWinningItemKey() )
 		
 				local configItemTable = BRICKS_SERVER.UNBOXING.Func.GetItemFromGlobalKey( self:GetWinningItemKey() )
 				if( configItemTable and configItemTable.Rarity and (BRICKS_SERVER.CONFIG.UNBOXING.NotificationRarities or {})[configItemTable.Rarity] ) then

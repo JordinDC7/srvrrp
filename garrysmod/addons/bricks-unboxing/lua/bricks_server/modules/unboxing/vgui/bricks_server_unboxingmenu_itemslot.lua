@@ -300,6 +300,11 @@ function PANEL:Paint(w, h)
     local item = self.configItem or {}
     local itemName = tostring(item.Name or BRICKS_SERVER.Func.L("unknown") or "Unknown")
     local rarityName = tostring(item.Rarity or "")
+
+    local statTrakSummary = BRICKS_SERVER.UNBOXING.Func.GetStatTrakSummary(LocalPlayer(), self.globalKey)
+    if (statTrakSummary and statTrakSummary.TierName and statTrakSummary.Score) then
+        itemName = string.format("%s | %s", tostring(statTrakSummary.TierName), itemName)
+    end
     local rarityColor = BRICKS_SERVER.Func.GetRarityColor(self.rarityInfo or rarityName) or Color(255,255,255)
 
     if IsValid(self.previewPanel) then
