@@ -1,4 +1,6 @@
-﻿# Ignore large game binary files and cache
+﻿# Never deploy workflow files
+.github/
+# Ignore large game binary files and cache
 # VPKs
 garrysmod/*.vpk
 *.vpk

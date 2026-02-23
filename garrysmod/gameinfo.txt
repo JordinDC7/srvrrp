@@ -1,3 +1,4 @@
+// Copilot deploy test: Feb 23, 2026
 "GameInfo"
 {
 	game	"Garry's Mod"
