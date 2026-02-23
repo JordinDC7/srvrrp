@@ -75,7 +75,7 @@ function PANEL:CreatePopout()
     self.list:Dock( FILL )
     self.list:SetMultiSelect( false )
     self.list:SetHeaderHeight( 24 )
-    self.list:SetDataHeight( 24 )
+    self.list:SetDataHeight( 32 )
     self.list.Paint = function( self2, w, h )
         draw.RoundedBox( 8, 0, 0, w, h, BRICKS_SERVER.Func.GetTheme( 2, 245 ) )
     end
@@ -142,13 +142,14 @@ function PANEL:CreatePopout()
 
     self.list.OnRowSelected = function( _, _, row )
         local rollIndex = row.RollIndex
+        local globalKey = row.RollGlobalKey or self.globalKey
         if( not rollIndex ) then return end
 
         self.inspectPopup = vgui.Create( "bricks_server_unboxingmenu_stattrak_popup", self )
         self.inspectPopup:SetPos( 0, 0 )
         self.inspectPopup:SetSize( self.panelWide, ScrH() * 0.65 - 40 )
         self.inspectPopup:CreatePopout()
-        self.inspectPopup:FillPanel( self.globalKey, false, rollIndex )
+        self.inspectPopup:FillPanel( globalKey, false, rollIndex )
     end
 
     self.closeButton = vgui.Create( "DButton", self.mainPanel )
@@ -312,28 +313,36 @@ function PANEL:RefreshRows()
             if( tostring( (configItem.ReqInfo or {})[1] or "" ) != self.weaponClass ) then continue end
 
 
-            local roll = BRICKS_SERVER.UNBOXING.Func.GetStatTrakSummary( LocalPlayer(), itemGlobalKey )
-            if( not roll ) then continue end
+            local itemRolls = BRICKS_SERVER.UNBOXING.Func.GetStatTrakRolls( LocalPlayer(), itemGlobalKey ) or {}
+            if( #itemRolls <= 0 ) then
+                local summary = BRICKS_SERVER.UNBOXING.Func.GetStatTrakSummary( LocalPlayer(), itemGlobalKey )
+                if( summary ) then
+                    itemRolls = { summary }
+                end
+            end
 
-            local stats = roll.Stats or {}
-            table.insert( rows, {
-                Index = #rows+1,
-                ItemName = tostring( configItem.Name or itemGlobalKey ),
-                Owned = tonumber( amount ) or 1,
-                Tier = tostring( roll.TierTag or "RAW" ),
-                AvgBoost = brsGetAverageBoostPercent( stats ),
-                Score = tonumber( roll.Score ) or 0,
-                Time = tonumber( roll.Created ) or 0,
-                Stamp = os.date( "%d/%m/%Y %H:%M:%S", tonumber( roll.Created ) or os.time() ),
-                RollIndex = nil,
-                Stats = {
-                    DMG = tonumber( stats.DMG ) or 0,
-                    ACC = tonumber( stats.ACC ) or 0,
-                    CTRL = tonumber( stats.CTRL ) or 0,
-                    HND = tonumber( stats.HND ) or 0,
-                    MOV = tonumber( stats.MOV ) or 0
-                }
-            } )
+            for rollIndex, roll in ipairs( itemRolls ) do
+                local stats = roll.Stats or {}
+                table.insert( rows, {
+                    Index = #rows+1,
+                    ItemName = tostring( configItem.Name or itemGlobalKey ),
+                    Owned = tonumber( amount ) or 1,
+                    Tier = tostring( roll.TierTag or "RAW" ),
+                    AvgBoost = brsGetAverageBoostPercent( stats ),
+                    Score = tonumber( roll.Score ) or 0,
+                    Time = tonumber( roll.Created ) or 0,
+                    Stamp = os.date( "%d/%m/%Y %H:%M:%S", tonumber( roll.Created ) or os.time() ),
+                    RollIndex = rollIndex,
+                    RollGlobalKey = itemGlobalKey,
+                    Stats = {
+                        DMG = tonumber( stats.DMG ) or 0,
+                        ACC = tonumber( stats.ACC ) or 0,
+                        CTRL = tonumber( stats.CTRL ) or 0,
+                        HND = tonumber( stats.HND ) or 0,
+                        MOV = tonumber( stats.MOV ) or 0
+                    }
+                } )
+            end
         end
     end
 
@@ -350,6 +359,7 @@ function PANEL:RefreshRows()
                 Time = tonumber( roll.Created ) or 0,
                 Stamp = os.date( "%d/%m/%Y %H:%M:%S", tonumber( roll.Created ) or os.time() ),
                 RollIndex = idx,
+                RollGlobalKey = self.globalKey,
                 Stats = {
                     DMG = tonumber( stats.DMG ) or 0,
                     ACC = tonumber( stats.ACC ) or 0,
@@ -419,13 +429,20 @@ function PANEL:RefreshRows()
 
         line.Paint = function( self2, w, h )
             local isSelected = self2:IsSelected()
-            local backColor = BRICKS_SERVER.Func.GetTheme( isSelected and 5 or 1, isSelected and 210 or 140 )
+            local isHovered = self2:IsHovered()
+            local backColor = BRICKS_SERVER.Func.GetTheme( isSelected and 5 or 1, isSelected and 220 or 140 )
 
             if( not isSelected and (self2:GetID() % 2 == 0) ) then
                 backColor = BRICKS_SERVER.Func.GetTheme( 1, 190 )
             end
 
+            if( isHovered and not isSelected ) then
+                backColor = BRICKS_SERVER.Func.GetTheme( 0, 130 )
+            end
+
             draw.RoundedBox( 0, 0, 0, w, h, backColor )
+            surface.SetDrawColor( BRICKS_SERVER.Func.GetTheme( 3, isHovered and 210 or 130 ) )
+            surface.DrawOutlinedRect( 0, 0, w, h, 1 )
         end
 
         for _, column in ipairs( line.Columns or {} ) do
@@ -436,6 +453,7 @@ function PANEL:RefreshRows()
         end
 
         line.RollIndex = row.RollIndex
+        line.RollGlobalKey = row.RollGlobalKey
     end
 end
 
