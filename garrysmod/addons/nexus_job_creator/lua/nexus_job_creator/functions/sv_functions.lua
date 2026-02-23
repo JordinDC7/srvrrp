@@ -334,6 +334,9 @@ net.Receive("Nexus:JobCreator:PurchaseJob", function(len, ply)
 
                 Nexus.JobCreator:Untimeout(ply)
 
+                -- Ensure each additional owned custom job increases the next purchase cost.
+                data.OwnedJobsCount = #(tbl or {})
+
                 local price = Nexus.JobCreator:CalculatePrice(data)
                 if not Nexus.JobCreator:CanAfford(ply, price) then
                     Nexus.JobCreator:Notification(ply, Nexus.JobCreator:GetPhrase("Not Afford", ply), 3)

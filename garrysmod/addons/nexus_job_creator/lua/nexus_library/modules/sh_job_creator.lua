@@ -90,6 +90,7 @@ Nexus:AddLanguages("Nexus_JobCreator", "en", {
     [":Maximum Salary"] = "Maximum salary a job can have",
 
     [":Base Cost"] = "Base cost of the job",
+    [":Owned Job Multiplier"] = "Extra % cost per already owned custom job",
     [":Price Health"] = "Price per unit of health",
     [":Price Armor"] = "Price per unit of armor",
     [":Price Salary"] = "Price per unit of salary",
@@ -233,7 +234,7 @@ Nexus.Builder:Start()
 
     :AddButtons({
         id = "nexus-jobcreator-selectedcurrency",
-        defaultValue = "darkrp",
+        defaultValue = "Prometheus",
         showSelected = true,
         label = {":Selected Currency", "Nexus_JobCreator"},
 
@@ -309,6 +310,17 @@ Nexus.Builder:Start()
 
         label = {":Base Cost", "Nexus_JobCreator"},
         placeholder = "1000",
+        isNumeric = true,
+
+        onChange = function(value) end,
+    })
+
+    :AddTextEntry({
+        id = "nexus-jobcreator-price-ownedJobMultiplier",
+        defaultValue = 15,
+
+        label = {":Owned Job Multiplier", "Nexus_JobCreator"},
+        placeholder = "15",
         isNumeric = true,
 
         onChange = function(value) end,
