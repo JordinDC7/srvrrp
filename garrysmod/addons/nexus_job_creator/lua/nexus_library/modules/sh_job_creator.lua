@@ -75,6 +75,8 @@ Nexus:AddLanguages("Nexus_JobCreator", "en", {
     ["$/MB"] = "%s / MB",
     ["Maximum Size MB"] = "max MB of %s",
     ["Your Balance"] = "Your Balance",
+    ["Buy Credits"] = "Buy Credits",
+    ["Opening Shop"] = "Opening premium credit shop...",
     ["Options Multiplier"] = "Options Multiplier",
 
     [":MySQL Details"] = "MySQL Details",
@@ -108,6 +110,7 @@ Nexus:AddLanguages("Nexus_JobCreator", "en", {
     [":Can Refund Delete"] = "Can players refund their custom job",
     [":Refund %"] = "The % refund if players can refund their job (0-100)",
     [":NPC Model"] = "NPC Model",
+    [":Shop URL"] = "Shop URL",
     [":Admins"] = "Admin ranks who can edit/disable/validate players jobs",
 })
 
@@ -229,6 +232,17 @@ Nexus.Builder:Start()
 
         label = {":NPC Model", "Nexus_JobCreator"},
         placeholder = "models/gman_high.mdl",
+        isNumeric = false,
+
+        onChange = function(value) end,
+    })
+
+    :AddTextEntry({
+        id = "nexus-jobcreator-shopURL",
+        defaultValue = "https://smgrpdonate.shop/",
+
+        label = {":Shop URL", "Nexus_JobCreator"},
+        placeholder = "https://smgrpdonate.shop/",
         isNumeric = false,
 
         onChange = function(value) end,

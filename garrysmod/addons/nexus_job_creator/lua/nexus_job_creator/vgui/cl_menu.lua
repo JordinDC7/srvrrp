@@ -79,6 +79,23 @@ function PANEL:CreateHeader()
         end
     end
 
+    self.Header.BuyCredits = self.Header:Add("Nexus:V2:Button")
+    self.Header.BuyCredits:Dock(RIGHT)
+    self.Header.BuyCredits:DockMargin(0, 0, self.margin, 0)
+    self.Header.BuyCredits:SetSize(Nexus:Scale(200), self.Header.YourJobs:GetTall())
+    self.Header.BuyCredits:SetSecondary()
+    self.Header.BuyCredits:SetText(Nexus.JobCreator:GetPhrase("Buy Credits"))
+    self.Header.BuyCredits:SetFont(Nexus:GetFont({size = 20}))
+    self.Header.BuyCredits.DoClick = function()
+        local shopURL = tostring(Nexus:GetValue("nexus-jobcreator-shopURL") or "")
+        if shopURL == "" then
+            shopURL = "https://smgrpdonate.shop/"
+        end
+
+        gui.OpenURL(shopURL)
+        Nexus.JobCreator:CreateNotification(Nexus.JobCreator:GetPhrase("Opening Shop"), 3)
+    end
+
     self.Header.Language = self.Header:Add("Nexus:V2:Button")
     self.Header.Language:Dock(RIGHT)
     self.Header.Language:DockMargin(0, 0, self.margin, 0)
