@@ -75,41 +75,75 @@ function PANEL:FillPanel()
     local progressionBar = vgui.Create("DPanel", self)
     progressionBar:Dock(TOP)
     progressionBar:DockMargin(0, 25, 0, 0)
-    progressionBar:SetTall(126)
+    progressionBar:SetTall(154)
     progressionBar.Paint = function(self2, w, h)
         draw.RoundedBox(8, 0, 0, w, h, BRICKS_SERVER.Func.GetTheme(2))
 
         local progress = BRS_UNBOXING_PROGRESS or {}
+        local topTierCfg = (BRICKS_SERVER.UNBOXING.LUACFG or {}).TopTier or {}
+        local pityCfg = topTierCfg.Pity or {}
+
         local masteryXP = tonumber(progress.MasteryXP) or 0
-        local pityDepth = 0
-        for _, value in pairs(progress.Pity or {}) do
-            pityDepth = math.max(pityDepth, tonumber(value) or 0)
+        local pityByFamily = progress.Pity or {}
+        local highestPity = 0
+        local highestFamily = "All Cases"
+
+        for family, value in pairs(pityByFamily) do
+            local familyPity = tonumber(value) or 0
+            if familyPity >= highestPity then
+                highestPity = familyPity
+                highestFamily = tostring(family or "All Cases")
+            end
         end
+
+        local softStart = math.max(0, tonumber(pityCfg.SoftPityStart) or 0)
+        local hardCap = math.max(0, tonumber(pityCfg.HardPityCap) or 0)
+        local opensLeft = hardCap > 0 and math.max(0, hardCap - highestPity) or 0
+        local pityPercent = hardCap > 0 and math.Clamp(highestPity / hardCap, 0, 1) or 0
 
         draw.SimpleText("ELITE UNBOXING FLOW: PICK CASE → OPEN → CLAIM", "BRICKS_SERVER_Font18", 20, 10, BRICKS_SERVER.Func.GetTheme(6, 120))
         draw.SimpleText("MASTERY XP: " .. string.Comma(masteryXP), "BRICKS_SERVER_Font23", 20, 32, BRICKS_SERVER.Func.GetTheme(6))
-        draw.SimpleText("PITY TRACK: " .. string.Comma(pityDepth), "BRICKS_SERVER_Font20", 20, 58, BRICKS_SERVER.Func.GetTheme(6, 75))
 
-        draw.SimpleText("Tip: Inventory > Weapon Stats / Weapon Rank", "BRICKS_SERVER_Font17", w - 20, 32, BRICKS_SERVER.Func.GetTheme(6, 90), TEXT_ALIGN_RIGHT)
-        draw.SimpleText("Simple now, deeper systems can be added later.", "BRICKS_SERVER_Font17", w - 20, 54, BRICKS_SERVER.Func.GetTheme(6, 65), TEXT_ALIGN_RIGHT)
+        local pityHeader = "PITY TRACK (" .. string.upper(highestFamily) .. "): " .. string.Comma(highestPity) .. "/" .. string.Comma(hardCap)
+        draw.SimpleText(pityHeader, "BRICKS_SERVER_Font20", 20, 58, BRICKS_SERVER.Func.GetTheme(6, 220))
 
-        local rarityOrder = { "Common", "Uncommon", "Rare", "Epic", "Legendary", "Glitched", "Mythical" }
-        local startX = 20
-        local pillY = 84
-        local pillH = 24
+        local barX, barY = 20, 84
+        local barW, barH = math.max(180, w - 40), 16
+        draw.RoundedBox(6, barX, barY, barW, barH, BRICKS_SERVER.Func.GetTheme(1))
+
+        local fillW = math.floor((barW - 4) * pityPercent)
+        draw.RoundedBox(6, barX + 2, barY + 2, fillW, barH - 4, Color(235, 76, 76))
+
+        if softStart > 0 and hardCap > 0 then
+            local softX = barX + math.floor((barW - 1) * math.Clamp(softStart / hardCap, 0, 1))
+            surface.SetDrawColor(255, 255, 255, 140)
+            surface.DrawLine(softX, barY - 2, softX, barY + barH + 2)
+            draw.SimpleText("SOFT PITY", "BRICKS_SERVER_Font15", softX, barY - 4, BRICKS_SERVER.Func.GetTheme(6, 170), TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
+        end
+
+        draw.SimpleText("Apex guaranteed at " .. string.Comma(hardCap) .. ". " .. string.Comma(opensLeft) .. " opens remaining.", "BRICKS_SERVER_Font17", 20, 104, BRICKS_SERVER.Func.GetTheme(6, 180))
+        draw.SimpleText("Legendary / Glitched / Mythical are apex tiers.", "BRICKS_SERVER_Font17", 20, 124, BRICKS_SERVER.Func.GetTheme(6, 120))
+
+        draw.SimpleText("Tip: Open the same case family to push this track faster.", "BRICKS_SERVER_Font17", w - 20, 36, BRICKS_SERVER.Func.GetTheme(6, 90), TEXT_ALIGN_RIGHT)
+
+        local rarityOrder = { "Legendary", "Glitched", "Mythical" }
+        local startX = w - 20
+        local pillY = 116
+        local pillH = 22
 
         surface.SetFont("BRICKS_SERVER_Font17")
-        for _, rarityName in ipairs(rarityOrder) do
+        for i = #rarityOrder, 1, -1 do
+            local rarityName = rarityOrder[i]
             local rarityColor = BRICKS_SERVER.Func.GetRarityColor(rarityName) or BRICKS_SERVER.Func.GetTheme(5)
             local tw = surface.GetTextSize(rarityName)
-            local pillW = tw + 22
+            local pillW = tw + 20
+            startX = startX - pillW
 
             draw.RoundedBox(6, startX, pillY, pillW, pillH, BRICKS_SERVER.Func.GetTheme(3))
             draw.RoundedBox(6, startX, pillY, 5, pillH, rarityColor)
             draw.SimpleText(rarityName, "BRICKS_SERVER_Font17", startX + (pillW / 2) + 3, pillY + (pillH / 2), BRICKS_SERVER.Func.GetTheme(6, 210), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
 
-            startX = startX + pillW + 8
-            if startX > (w - 100) then break end
+            startX = startX - 8
         end
     end
 
