@@ -137,7 +137,8 @@ function PANEL:Refresh()
             slotBack:FillPanel( k, v, function()
 
             end )
-            slotBack.button.Paint = function( self2, w, h ) 
+            local paintTarget = (IsValid(slotBack.button) and slotBack.button) or slotBack
+            paintTarget.PaintOver = function( self2, w, h ) 
                 if( isClaimed ) then
                     draw.RoundedBox( 8, 0, 0, w, h, BRICKS_SERVER.Func.GetTheme( 3, 10 ) )
 
