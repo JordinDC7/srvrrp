@@ -1,4 +1,4 @@
--- Applies MUTINY-style rolled unboxing stats to equipped unboxing weapons.
+-- Applies Elite Arsenal rolled unboxing stats to equipped unboxing weapons.
 if( CLIENT ) then return end
 
 local function brsGetPlayerFromWeaponOwner( owner )
@@ -20,8 +20,13 @@ hook.Add( "EntityFireBullets", "BricksServerHooks_EntityFireBullets_UnboxingStat
 
     bulletData.Spread = bulletData.Spread or Vector( 0, 0, 0 )
     local spreadScale = (tonumber( statScalars.AccuracySpreadScale ) or 1)*(tonumber( statScalars.ControlMoveSpreadScale ) or 1)
-    bulletData.Spread.x = bulletData.Spread.x*spreadScale
-    bulletData.Spread.y = bulletData.Spread.y*spreadScale
+
+    local velocity = ply:GetVelocity():Length2D()
+    local velocityRatio = math.Clamp( velocity/250, 0, 1 )
+    local movementSpreadScale = Lerp( velocityRatio, 1, tonumber( statScalars.MobilitySpreadScale ) or 1 )
+
+    bulletData.Spread.x = bulletData.Spread.x*spreadScale*movementSpreadScale
+    bulletData.Spread.y = bulletData.Spread.y*spreadScale*movementSpreadScale
 
     local nextFireDelay = (wep:GetNextPrimaryFire() or CurTime())-CurTime()
     nextFireDelay = math.max( nextFireDelay, 0 )

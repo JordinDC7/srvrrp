@@ -2,9 +2,10 @@ local PANEL = {}
 
 local statRows = {
     { Key = "DMG", Label = "Damage", Color = Color( 255, 70, 70 ) },
-    { Key = "HND", Label = "RPM", Color = Color( 20, 210, 50 ) },
-    { Key = "CTRL", Label = "Recoil", Color = Color( 255, 174, 0 ) },
-    { Key = "ACC", Label = "Accuracy", Color = Color( 36, 223, 224 ) }
+    { Key = "HND", Label = "Rate", Color = Color( 20, 210, 50 ) },
+    { Key = "CTRL", Label = "Control", Color = Color( 255, 174, 0 ) },
+    { Key = "ACC", Label = "Precision", Color = Color( 36, 223, 224 ) },
+    { Key = "MOV", Label = "Mobility", Color = Color( 173, 118, 255 ) }
 }
 
 function PANEL:Init()
@@ -49,6 +50,9 @@ function PANEL:CreatePopout()
 
         draw.SimpleText( self.itemName or "Unknown", "BRICKS_SERVER_Font30", w / 2, 30, BRICKS_SERVER.Func.GetTheme( 6 ), TEXT_ALIGN_CENTER, 0 )
         draw.SimpleText( self.rarityInfo or "", "BRICKS_SERVER_Font24", w / 2, 62, rarityColor, TEXT_ALIGN_CENTER, 0 )
+        if( self.rollTierName ) then
+            draw.SimpleText( string.format( "%s | Forge %.2f", tostring( self.rollTierName ), tonumber( self.rollScore ) or 0 ), "BRICKS_SERVER_Font18", w / 2, 86, BRICKS_SERVER.Func.GetTheme( 6 ), TEXT_ALIGN_CENTER, 0 )
+        end
     end
 
     self.preview = vgui.Create( "bricks_server_unboxing_itemdisplay", self.card )
@@ -77,6 +81,9 @@ function PANEL:FillPanel( globalKey, rankingMode )
     self.rarityInfo = configItemTable.Rarity or ""
 
     self.preview:SetItemData( "ITEM", configItemTable )
+
+    self.rollTierName = summary.TierName
+    self.rollScore = summary.Score
 
     self.detailsBack:Clear()
 
@@ -128,7 +135,11 @@ function PANEL:FillPanel( globalKey, rankingMode )
     infoLabel:SetFont( "BRICKS_SERVER_Font16" )
     infoLabel:SetTextColor( BRICKS_SERVER.Func.GetTheme( 6 ) )
     infoLabel:SetText( string.format(
-        "Booster ID: %s\nUUID: %s\nUnboxed by: %s\nUnboxer SteamID64: %s\nUnboxed at: %s",
+        "Forge Tier: %s (%s)\nRoll Flavor: %s\nJackpot: %s\nBooster ID: %s\nUUID: %s\nUnboxed by: %s\nUnboxer SteamID64: %s\nUnboxed at: %s",
+        tostring( summary.TierName or "Raw" ),
+        tostring( summary.TierTag or "RAW" ),
+        tostring( summary.RollFlavor or "Field" ),
+        (summary.IsJackpot and "YES" or "No"),
         tostring( summary.BoosterID or "N/A" ),
         tostring( summary.UUID or "N/A" ),
         tostring( summary.UnboxedBy or "Unknown" ),
