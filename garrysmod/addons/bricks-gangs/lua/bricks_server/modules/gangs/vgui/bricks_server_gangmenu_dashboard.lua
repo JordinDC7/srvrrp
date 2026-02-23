@@ -34,17 +34,18 @@ function PANEL:FillPanel( gangTable )
             Color2 = Color( 74, 211, 114 ),
             HighlightColor = Color( 71, 204, 112 ),
             SubTitle = function() return DarkRP.formatMoney( gangTable.Money or 0 ) end,
-            BottomTitle = "LAST TRANSACTION",
+            BottomTitle = "TREASURY CAP",
             BottomSubTitle = function() 
-                local transaction
+                local maxBalance = BRICKS_SERVER.Func.GangGetUpgradeInfo( LocalPlayer():GetGangID(), "MaxBalance" )[1] or 0
 
-                if( transaction ) then
-                    return {
-                        { ((transaction >= 0 and "+") or "-") .. DarkRP.formatMoney( transaction ), "BRICKS_SERVER_Font33", ((transaction >= 0 and Color( 71, 204, 112 )) or Color( 229, 62, 62 )) }
-                    }
-                else
-                    return "???"
+                if( maxBalance <= 0 ) then
+                    return "UNLIMITED"
                 end
+
+                return {
+                    { DarkRP.formatMoney( maxBalance ) },
+                    { " (" .. math.Clamp( math.floor( 100*((gangTable.Money or 0)/maxBalance) ), 0, 100 ) .. "%)", "BRICKS_SERVER_Font21", Color( BRICKS_SERVER.Func.GetTheme( 6 ).r, BRICKS_SERVER.Func.GetTheme( 6 ).g, BRICKS_SERVER.Func.GetTheme( 6 ).b, 175 ) }
+                }
             end
         },
         [4] = {
@@ -95,6 +96,27 @@ function PANEL:FillPanel( gangTable )
             BottomTitle = "STORAGE DISABLED",
             BottomSubTitle = function() return "0% FILLED" end
         }
+    end
+
+    if( BRICKS_SERVER.Func.IsSubModuleEnabled( "gangs", "printers" ) ) then
+        table.insert( graphs, {
+            Title = BRICKS_SERVER.Func.L( "gangPrinters" ),
+            Color1 = Color( 217, 123, 28 ),
+            Color2 = Color( 230, 145, 39 ),
+            HighlightColor = Color( 215, 133, 29 ),
+            SubTitle = function()
+                local activePrinters = table.Count( gangTable.Printers or {} )
+                return {
+                    { activePrinters },
+                    { "/" .. (BRICKS_SERVER.DEVCONFIG.GangPrinterSlots or 0), "BRICKS_SERVER_Font28B" }
+                }
+            end,
+            BottomTitle = "DEPLOYMENT",
+            BottomSubTitle = function()
+                local maxPrinters = math.max( BRICKS_SERVER.DEVCONFIG.GangPrinterSlots or 0, 1 )
+                return math.Clamp( math.floor( 100*(table.Count( gangTable.Printers or {} )/maxPrinters) ), 0, 100 ) .. "% ACTIVE"
+            end
+        } )
     end
 
     local outerMargin = 24
