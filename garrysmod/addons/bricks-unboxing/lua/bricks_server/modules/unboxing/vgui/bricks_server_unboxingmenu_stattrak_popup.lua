@@ -8,6 +8,14 @@ local statRows = {
     { Key = "MOV", Label = "Mobility", Color = Color( 173, 118, 255 ) }
 }
 
+local function BRS_UC_AlphaColor( col, alpha )
+    if( not IsColor( col ) ) then
+        return Color( 255, 255, 255, alpha or 255 )
+    end
+
+    return Color( col.r, col.g, col.b, alpha or col.a or 255 )
+end
+
 local function BRS_UC_GetDisplayName( itemName, rarityName )
     local cleanName = string.Trim( tostring( itemName or "" ) )
     local cleanRarity = string.Trim( tostring( rarityName or "" ) )
@@ -57,23 +65,40 @@ function PANEL:CreatePopout()
     self.card:Dock( FILL )
     self.card:DockMargin( 25, 20, 25, 20 )
     self.card.Paint = function( self2, w, h )
-        draw.RoundedBox( 8, 0, 0, w, h, BRICKS_SERVER.Func.GetTheme( 1 ) )
-
+        local baseBg = BRICKS_SERVER.Func.GetTheme( 2 )
+        local innerBg = BRICKS_SERVER.Func.GetTheme( 1 )
+        local txtCol = BRICKS_SERVER.Func.GetTheme( 6 )
         local rarityColor = BRICKS_SERVER.Func.GetRarityColor( self.rarityInfo ) or Color( 255, 255, 255 )
-        surface.SetDrawColor( rarityColor )
-        surface.DrawOutlinedRect( 3, 3, w - 6, h - 6, 2 )
 
-        draw.SimpleText( self.displayName or self.itemName or "Unknown", "BRICKS_SERVER_Font30", w / 2, 30, BRICKS_SERVER.Func.GetTheme( 6 ), TEXT_ALIGN_CENTER, 0 )
-        draw.SimpleText( self.rarityInfo or "", "BRICKS_SERVER_Font24", w / 2, 62, rarityColor, TEXT_ALIGN_CENTER, 0 )
+        draw.RoundedBox( 10, 0, 0, w, h, baseBg )
+        surface.SetDrawColor( BRS_UC_AlphaColor( rarityColor, 32 ) )
+        surface.DrawOutlinedRect( 0, 0, w, h, 1 )
+
+        local topStripH = 26
+        draw.RoundedBoxEx( 10, 0, 0, w, topStripH, BRS_UC_AlphaColor( innerBg, 175 ), true, true, false, false )
+
+        local contentTop = topStripH + 6
+        local bottomPad = 40
+        local previewBottom = h - 246
+        local contentH = math.max( 80, previewBottom - contentTop )
+
+        draw.RoundedBox( 8, 6, contentTop, w - 12, contentH, BRS_UC_AlphaColor( innerBg, 155 ) )
+        draw.RoundedBox( 8, 6, contentTop, w - 12, 4, BRS_UC_AlphaColor( rarityColor, 175 ) )
+
+        draw.SimpleText( self.displayName or self.itemName or "Unknown", "BRICKS_SERVER_Font20", w / 2, h - bottomPad + 8, BRS_UC_AlphaColor( txtCol, 210 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+        draw.SimpleText( self.rarityInfo or "", "BRICKS_SERVER_Font17", w / 2, h - bottomPad + 24, BRS_UC_AlphaColor( rarityColor, 230 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+
         if( self.rollTierName and (tonumber( self.rollCount ) or 1) <= 1 ) then
-            draw.SimpleText( string.format( "%s | Forge %.2f", tostring( self.rollTierName ), tonumber( self.rollScore ) or 0 ), "BRICKS_SERVER_Font18", w / 2, 86, BRICKS_SERVER.Func.GetTheme( 6 ), TEXT_ALIGN_CENTER, 0 )
+            draw.SimpleText( string.format( "%s | Forge %.2f", tostring( self.rollTierName ), tonumber( self.rollScore ) or 0 ), "BRICKS_SERVER_Font17", w / 2, h - bottomPad + 40, BRS_UC_AlphaColor( txtCol, 180 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
         end
+
+        draw.RoundedBoxEx( 6, 0, h - 6, w, 6, rarityColor, false, false, true, true )
     end
 
     self.preview = vgui.Create( "bricks_server_unboxing_itemdisplay", self.card )
-    self.preview:SetPos( 20, 92 )
-    self.preview:SetSize( self.popoutWide - 90, 200 )
-    self.preview:SetIconSizeAdjust( 0.9 )
+    self.preview:SetPos( 6, 32 )
+    self.preview:SetSize( self.popoutWide - 62, 250 )
+    self.preview:SetIconSizeAdjust( 0.82 )
 
     self.detailsBack = vgui.Create( "DPanel", self.card )
     self.detailsBack:Dock( BOTTOM )
