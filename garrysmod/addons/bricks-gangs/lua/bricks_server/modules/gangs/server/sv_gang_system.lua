@@ -5,7 +5,9 @@ function BRICKS_SERVER.Func.OpenGangMenu( ply )
 end
 
 hook.Add( "PlayerSay", "BricksServerHooks_PlayerSay_OpenGangMenu", function( ply, text )
-	if( BRICKS_SERVER.GANGS.LUACFG.MenuCommands[string.lower( text )] ) then
+	local commandText = string.Trim( string.lower( text or "" ) )
+
+	if( BRICKS_SERVER.GANGS.LUACFG.MenuCommands[commandText] ) then
 		BRICKS_SERVER.Func.OpenGangMenu( ply )
 		return ""
 	end
