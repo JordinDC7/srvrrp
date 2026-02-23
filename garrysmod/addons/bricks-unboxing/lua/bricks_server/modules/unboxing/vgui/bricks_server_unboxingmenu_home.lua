@@ -86,8 +86,12 @@ function PANEL:FillPanel()
             pityDepth = math.max(pityDepth, tonumber(value) or 0)
         end
 
-        draw.SimpleText("MASTERY XP: " .. string.Comma(masteryXP), "BRICKS_SERVER_Font23", 20, 20, BRICKS_SERVER.Func.GetTheme(6))
-        draw.SimpleText("HIGHEST PITY DEPTH: " .. string.Comma(pityDepth), "BRICKS_SERVER_Font20", 20, 52, BRICKS_SERVER.Func.GetTheme(6, 75))
+        draw.SimpleText("CS STYLE FLOW: OPEN → BOOSTERS → RANK", "BRICKS_SERVER_Font18", 20, 10, BRICKS_SERVER.Func.GetTheme(6, 120))
+        draw.SimpleText("MASTERY XP: " .. string.Comma(masteryXP), "BRICKS_SERVER_Font23", 20, 34, BRICKS_SERVER.Func.GetTheme(6))
+        draw.SimpleText("PITY TRACK: " .. string.Comma(pityDepth), "BRICKS_SERVER_Font20", 20, 62, BRICKS_SERVER.Func.GetTheme(6, 75))
+
+        draw.SimpleText("Tip: Inventory > Weapon Stats / Weapon Rank", "BRICKS_SERVER_Font17", w - 20, 34, BRICKS_SERVER.Func.GetTheme(6, 90), TEXT_ALIGN_RIGHT)
+        draw.SimpleText("Edit drops + boosters in config menu.", "BRICKS_SERVER_Font17", w - 20, 58, BRICKS_SERVER.Func.GetTheme(6, 65), TEXT_ALIGN_RIGHT)
     end
 
     local bottomBack = vgui.Create("DPanel", self)
