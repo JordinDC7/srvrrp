@@ -319,6 +319,11 @@ end
 local function brsApplySocketModifier( scalar, statKey, modifierScalars )
     local baseScalar = tonumber( scalar ) or 1
     local bonus = tonumber( (modifierScalars or {})[statKey] ) or 0
+
+    -- Legacy / corrupted socket data can contain out-of-band percentages (e.g. -75 or 400)
+    -- which would collapse damage scaling to near-zero and make weapons feel non-lethal.
+    bonus = math.Clamp( bonus, -0.5, 0.5 )
+
     if( bonus == 0 ) then return scalar end
 
     -- Keep runtime stat scalars in a sane range even if persisted socket data was tampered/corrupted.
@@ -331,7 +336,7 @@ local function brsApplySocketModifier( scalar, statKey, modifierScalars )
     end
 
     if( statKey == "DamageScale" ) then
-        return brsClampScalar( baseScalar*(1+bonus), 0.05, 5 )
+        return brsClampScalar( baseScalar*(1+bonus), 0.5, 5 )
     end
 
     return brsClampScalar( baseScalar*(1-bonus), 0.05, 5 )
