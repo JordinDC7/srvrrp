@@ -94,6 +94,16 @@ function PANEL:FillPanel(globalKey, amount, actionsOrClickFunc)
         self.rarityInfo, self.rarityKey = BRICKS_SERVER.Func.GetRarityInfo("")
     end
 
+    local statTrakSummary = BRICKS_SERVER.UNBOXING.Func.GetStatTrakSummary(LocalPlayer(), globalKey)
+    if (statTrakSummary and statTrakSummary.TierTag and statTrakSummary.Score) then
+        self:AddTopInfo(
+            string.format("%s %.2f", tostring(statTrakSummary.TierTag), tonumber(statTrakSummary.Score) or 0),
+            statTrakSummary.TierColor,
+            BRICKS_SERVER.Func.GetTheme(5),
+            true
+        )
+    end
+
     -- Auto add stack count for inventory-like entries if >1 (right side pill)
     if (self.itemAmount or 1) > 1 then
         self:AddTopInfo(tostring(self.itemAmount) .. "x")
@@ -301,10 +311,6 @@ function PANEL:Paint(w, h)
     local itemName = tostring(item.Name or BRICKS_SERVER.Func.L("unknown") or "Unknown")
     local rarityName = tostring(item.Rarity or "")
 
-    local statTrakSummary = BRICKS_SERVER.UNBOXING.Func.GetStatTrakSummary(LocalPlayer(), self.globalKey)
-    if (statTrakSummary and statTrakSummary.TierName and statTrakSummary.Score) then
-        itemName = string.format("%s | %s", tostring(statTrakSummary.TierName), itemName)
-    end
     local rarityColor = BRICKS_SERVER.Func.GetRarityColor(self.rarityInfo or rarityName) or Color(255,255,255)
 
     if IsValid(self.previewPanel) then
