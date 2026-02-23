@@ -7,6 +7,19 @@
 
 BRICKS_SERVER.DEVCONFIG.UnboxingFeaturedAmount = 3
 
+local function BRS_AddWeaponToXeninInventory( ply, weaponClass, amount )
+    if( CLIENT or not IsValid( ply ) or not isstring( weaponClass ) or weaponClass == "" ) then return false end
+    if( not XeninInventory or not ply.XeninInventory ) then return false end
+
+    local inv = ply:XeninInventory()
+    if( not inv or not inv.AddV2 ) then return false end
+
+    return inv:AddV2( weaponClass, "spawned_weapon", math.max( 1, amount or 1 ), {
+        Clip1 = 0,
+        Clip2 = 0
+    } ) == true
+end
+
 BRICKS_SERVER.DEVCONFIG.UnboxingItemTypes = {
     ["Currency"] = {
         Name = "Currency",
@@ -41,6 +54,10 @@ BRICKS_SERVER.DEVCONFIG.UnboxingItemTypes = {
             end }
         },
         UseFunction = function( ply, reqInfo )
+            if( BRS_AddWeaponToXeninInventory( ply, reqInfo[1] or "", 1 ) ) then
+                return "Weapon added to Xenin inventory!"
+            end
+
             ply:Give( reqInfo[1] or "" )
             ply:SelectWeapon( reqInfo[1] or "" )
             
