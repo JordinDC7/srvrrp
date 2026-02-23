@@ -247,3 +247,30 @@ If you want immediate execution, start with:
 - 116 Server Performance Observatory
 
 This set creates a visible quality leap while laying foundations for everything else.
+
+
+## Current Execution Snapshot (Now / Next / Later)
+
+### Tasks I am actively working on now
+- **001 Unified UI Design System** (foundational component tokens + shared styles)
+- **017 UI Performance Budget System** (profiling hooks + panel budget guardrails)
+- **025 UI Telemetry Heatmaps** (instrumentation plan for menu interaction hotspots)
+- **116 Server Performance Observatory** (baseline runtime observability architecture)
+- **118 Net Message Budgeting Framework** (feature-level net usage budgets and review checklist)
+
+### Next tasks queued (immediate todo after current block)
+- **002 Reactive HUD Framework**
+- **003 Onboarding Story UI**
+- **012 Advanced Inventory VGUI**
+- **018 Multi-Panel Dashboard Home**
+- **123 Canary Rollouts + Feature Flags**
+
+### Remaining major work after the next queue
+- Complete the rest of **Q1 foundation scope** and then move into the published quarter plan:
+  - **Q2:** Clan/Gang systems depth (026-035, 037-042, 045, 046, 049)
+  - **Q3:** Economy + unboxing leadership (071-083, 085, 087-090, 094)
+  - **Q4:** Live Ops + retention moat (096-104, 108, 111-115, 124-126, 130)
+
+### Operating notes
+- Prioritize tasks with highest retention lift and lowest exploit/performance risk using the documented priority formula.
+- Keep rollout strategy incremental: instrument first, ship behind flags where possible, validate with in-game telemetry before expanding scope.
