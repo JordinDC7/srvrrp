@@ -6,6 +6,10 @@ local monitorEnabled = CreateConVar("srvrrp_perf_monitor_enabled", "1", FCVAR_AR
 local monitorInterval = CreateConVar("srvrrp_perf_monitor_interval", "30", FCVAR_ARCHIVE, "Seconds between heartbeat snapshots.", 5, 300)
 local warningFrameTimeMs = CreateConVar("srvrrp_perf_warn_frametime_ms", "35", FCVAR_ARCHIVE, "Warn when average frame time exceeds this value in ms.", 5, 200)
 local warningEntityCount = CreateConVar("srvrrp_perf_warn_entity_count", "2200", FCVAR_ARCHIVE, "Warn when entity count exceeds this value.", 100, 10000)
+local persistSnapshots = CreateConVar("srvrrp_perf_persist_snapshots", "1", FCVAR_ARCHIVE, "Persist recent performance snapshots to data/srvrrp/perf_snapshots.json.")
+local maxSnapshots = CreateConVar("srvrrp_perf_max_snapshots", "120", FCVAR_ARCHIVE, "Maximum persisted snapshots.", 20, 2000)
+local netMonitorEnabled = CreateConVar("srvrrp_perf_net_monitor_enabled", "1", FCVAR_ARCHIVE, "Track net.Receive handler runtime stats.")
+local timerMonitorEnabled = CreateConVar("srvrrp_perf_timer_monitor_enabled", "1", FCVAR_ARCHIVE, "Track timer callback runtime stats.")
 
 local propGuardEnabled = CreateConVar("srvrrp_prop_guard_enabled", "1", FCVAR_ARCHIVE, "Limit prop spawn bursts per player.")
 local propGuardWindow = CreateConVar("srvrrp_prop_guard_window", "2", FCVAR_ARCHIVE, "Seconds in rate-limit window.", 1, 30)
@@ -32,11 +36,157 @@ local propSpawnState = {}
 local trackedRagdolls = {}
 local netBudgets = {}
 local netUsage = {}
+local netWindow = {}
+local timerWindow = {}
+local snapshotHistory = {}
+local snapshotPath = "srvrrp/perf_snapshots.json"
 local uiTelemetry = {
     startedAt = CurTime(),
     totals = {},
     byPlayer = {},
 }
+
+local originalNetReceive = net.Receive
+local originalTimerCreate = timer.Create
+
+local function loadSnapshotHistory()
+    if not file.Exists(snapshotPath, "DATA") then
+        return
+    end
+
+    local raw = file.Read(snapshotPath, "DATA")
+    if raw == nil or raw == "" then
+        return
+    end
+
+    local decoded = util.JSONToTable(raw)
+    if istable(decoded) then
+        snapshotHistory = decoded
+    end
+end
+
+local function persistSnapshotHistory()
+    if not persistSnapshots:GetBool() then
+        return
+    end
+
+    file.CreateDir("srvrrp")
+    file.Write(snapshotPath, util.TableToJSON(snapshotHistory, false) or "[]")
+end
+
+local function resetMonitoringWindows()
+    netWindow = {}
+    timerWindow = {}
+end
+
+local function topRuntimeSummary(window, keyLabel)
+    local rows = {}
+    for key, state in pairs(window) do
+        rows[#rows + 1] = {
+            key = key,
+            calls = state.calls or 0,
+            bits = state.bits or 0,
+            totalRuntimeMs = state.totalRuntimeMs or 0,
+            maxRuntimeMs = state.maxRuntimeMs or 0,
+        }
+    end
+
+    table.sort(rows, function(a, b)
+        if a.totalRuntimeMs == b.totalRuntimeMs then
+            return a.calls > b.calls
+        end
+
+        return a.totalRuntimeMs > b.totalRuntimeMs
+    end)
+
+    local top = {}
+    for i = 1, math.min(5, #rows) do
+        local row = rows[i]
+        top[#top + 1] = string.format(
+            "%s=%s calls=%d bits=%d total=%.2fms max=%.2fms",
+            keyLabel,
+            row.key,
+            row.calls,
+            row.bits,
+            row.totalRuntimeMs,
+            row.maxRuntimeMs
+        )
+    end
+
+    if #top == 0 then
+        return "none"
+    end
+
+    return table.concat(top, " | ")
+end
+
+net.Receive = function(messageName, callback)
+    if type(callback) ~= "function" then
+        return originalNetReceive(messageName, callback)
+    end
+
+    return originalNetReceive(messageName, function(len, ply)
+        if not netMonitorEnabled:GetBool() then
+            return callback(len, ply)
+        end
+
+        local runtimeStart = SysTime()
+        callback(len, ply)
+        local elapsedMs = (SysTime() - runtimeStart) * 1000
+
+        local state = netWindow[messageName]
+        if not state then
+            state = {
+                calls = 0,
+                bits = 0,
+                totalRuntimeMs = 0,
+                maxRuntimeMs = 0,
+            }
+            netWindow[messageName] = state
+        end
+
+        state.calls = state.calls + 1
+        state.bits = state.bits + math.max(0, tonumber(len) or 0)
+        state.totalRuntimeMs = state.totalRuntimeMs + elapsedMs
+        if elapsedMs > state.maxRuntimeMs then
+            state.maxRuntimeMs = elapsedMs
+        end
+    end)
+end
+
+timer.Create = function(name, delay, repetitions, callback)
+    if type(callback) ~= "function" then
+        return originalTimerCreate(name, delay, repetitions, callback)
+    end
+
+    local timerName = tostring(name or "anonymous")
+    return originalTimerCreate(name, delay, repetitions, function(...)
+        if not timerMonitorEnabled:GetBool() then
+            return callback(...)
+        end
+
+        local runtimeStart = SysTime()
+        callback(...)
+        local elapsedMs = (SysTime() - runtimeStart) * 1000
+
+        local state = timerWindow[timerName]
+        if not state then
+            state = {
+                calls = 0,
+                bits = 0,
+                totalRuntimeMs = 0,
+                maxRuntimeMs = 0,
+            }
+            timerWindow[timerName] = state
+        end
+
+        state.calls = state.calls + 1
+        state.totalRuntimeMs = state.totalRuntimeMs + elapsedMs
+        if elapsedMs > state.maxRuntimeMs then
+            state.maxRuntimeMs = elapsedMs
+        end
+    end)
+end
 
 local function registerNetBudget(messageName, perMinute, description)
     if messageName == nil or messageName == "" then
@@ -160,11 +310,14 @@ local function buildSnapshot()
     sample.snapshots = sample.snapshots + 1
 
     return {
+        timestamp = os.time(),
         averageFrameMs = averageMs,
         peakFrameMs = sample.peakFrameMs,
         playerCount = playerCount,
         entityCount = entityCount,
         topClasses = table.concat(topSummary, ", "),
+        topNet = topRuntimeSummary(netWindow, "channel"),
+        topTimers = topRuntimeSummary(timerWindow, "timer"),
         snapshots = sample.snapshots,
     }
 end
@@ -183,6 +336,9 @@ local function printSnapshot(prefix)
         snapshot.topClasses
     ))
 
+    print(string.format("[%s] %s net=[%s]", addonTag, prefix, snapshot.topNet))
+    print(string.format("[%s] %s timers=[%s]", addonTag, prefix, snapshot.topTimers))
+
     if snapshot.averageFrameMs >= warningFrameTimeMs:GetFloat() then
         print(string.format("[%s][WARN] Average frame time high: %.2fms", addonTag, snapshot.averageFrameMs))
     end
@@ -198,6 +354,17 @@ local function printSnapshot(prefix)
             print(string.format("[%s][NET] %s usage=%d/%d", addonTag, messageName, count, budget.perMinute))
         end
     end
+
+    snapshot.reason = prefix
+    snapshotHistory[#snapshotHistory + 1] = snapshot
+
+    local keep = math.max(20, maxSnapshots:GetInt())
+    while #snapshotHistory > keep do
+        table.remove(snapshotHistory, 1)
+    end
+
+    persistSnapshotHistory()
+    resetMonitoringWindows()
 end
 
 local function scheduleMonitorTimer()
@@ -246,6 +413,29 @@ concommand.Add("srvrrp_net_budget_snapshot", function(ply)
         print(string.format("[%s][NET] %s=%d/%d (%s)", addonTag, messageName, count, budget.perMinute, budget.description))
     end
 end, nil, "Prints net message budget usage for tracked SRVRRP channels.")
+
+concommand.Add("srvrrp_perf_dump_history", function(ply)
+    if IsValid(ply) and not ply:IsAdmin() then
+        ply:ChatPrint("Admin only.")
+        return
+    end
+
+    print(string.format("[%s] Snapshot history path=data/%s count=%d", addonTag, snapshotPath, #snapshotHistory))
+
+    local startIdx = math.max(1, #snapshotHistory - 4)
+    for i = startIdx, #snapshotHistory do
+        local entry = snapshotHistory[i]
+        print(string.format(
+            "[%s] #%d reason=%s avg=%.2fms players=%d entities=%d",
+            addonTag,
+            i,
+            entry.reason or "unknown",
+            tonumber(entry.averageFrameMs) or 0,
+            tonumber(entry.playerCount) or 0,
+            tonumber(entry.entityCount) or 0
+        ))
+    end
+end, nil, "Prints recent persisted performance snapshot metadata.")
 
 hook.Add("PlayerSpawnProp", addonTag .. "_prop_guard", function(ply)
     if not propGuardEnabled:GetBool() then
@@ -386,6 +576,7 @@ timer.Create(addonTag .. "_ui_telemetry_heartbeat", 120, 0, function()
     end
 end)
 
+loadSnapshotHistory()
 scheduleMonitorTimer()
 scheduleRagdollTimer()
 
