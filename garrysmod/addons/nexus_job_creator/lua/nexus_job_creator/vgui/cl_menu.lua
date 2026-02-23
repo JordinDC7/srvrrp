@@ -87,13 +87,29 @@ function PANEL:CreateHeader()
     self.Header.BuyCredits:SetText(Nexus.JobCreator:GetPhrase("Buy Credits"))
     self.Header.BuyCredits:SetFont(Nexus:GetFont({size = 20}))
     self.Header.BuyCredits.DoClick = function()
-        local shopURL = tostring(Nexus:GetValue("nexus-jobcreator-shopURL") or "")
-        if shopURL == "" then
-            shopURL = "https://smgrpdonate.shop/"
-        end
+        Nexus.JobCreator:OpenShopURL()
+    end
 
-        gui.OpenURL(shopURL)
-        Nexus.JobCreator:CreateNotification(Nexus.JobCreator:GetPhrase("Opening Shop"), 3)
+    self.Header.Community = self.Header:Add("Nexus:V2:Button")
+    self.Header.Community:Dock(RIGHT)
+    self.Header.Community:DockMargin(0, 0, self.margin, 0)
+    self.Header.Community:SetSize(Nexus:Scale(160), self.Header.YourJobs:GetTall())
+    self.Header.Community:SetSecondary()
+    self.Header.Community:SetText(Nexus.JobCreator:GetPhrase("Open Community"))
+    self.Header.Community:SetFont(Nexus:GetFont({size = 18}))
+    self.Header.Community.DoClick = function()
+        Nexus.JobCreator:OpenConfiguredURL("nexus-jobcreator-communityURL", "https://discord.gg/physgun")
+    end
+
+    self.Header.Guide = self.Header:Add("Nexus:V2:Button")
+    self.Header.Guide:Dock(RIGHT)
+    self.Header.Guide:DockMargin(0, 0, self.margin, 0)
+    self.Header.Guide:SetSize(Nexus:Scale(150), self.Header.YourJobs:GetTall())
+    self.Header.Guide:SetSecondary()
+    self.Header.Guide:SetText(Nexus.JobCreator:GetPhrase("Open Rules"))
+    self.Header.Guide:SetFont(Nexus:GetFont({size = 18}))
+    self.Header.Guide.DoClick = function()
+        Nexus.JobCreator:OpenConfiguredURL("nexus-jobcreator-guideURL", "https://smgrpdonate.shop/pages/custom-jobs-guide")
     end
 
     self.Header.Language = self.Header:Add("Nexus:V2:Button")
@@ -139,7 +155,9 @@ function PANEL:Paint(w, h)
     surface.SetDrawColor(1, 1, 15)
     surface.DrawRect(0, 0, w, h)
 
-    draw.SimpleText(Nexus.JobCreator:FormatPrice(Nexus.JobCreator:GetTotalMoney(LocalPlayer())), Nexus:GetFont(30), self.Header:GetX(), self.Header:GetY() + self.Header:GetTall() + Nexus:Scale(10), Nexus:GetColor("orange"))
+    local balanceY = self.Header:GetY() + self.Header:GetTall() + Nexus:Scale(10)
+    draw.SimpleText(Nexus.JobCreator:GetPhrase("Your Balance")..": "..Nexus.JobCreator:FormatPrice(Nexus.JobCreator:GetTotalMoney(LocalPlayer())), Nexus:GetFont(30), self.Header:GetX(), balanceY, Nexus:GetColor("orange"))
+    draw.SimpleText(Nexus.JobCreator:GetPhrase("Server Advantage")..": lower credit totals + premium style progression", Nexus:GetFont(20), self.Header:GetX(), balanceY + Nexus:Scale(32), Nexus:GetColor("primary-text"))
     if Nexus.JobCreator.Notification and CurTime() < Nexus.JobCreator.Notification.EndTime then
         local font = Nexus:GetFont(20)
 

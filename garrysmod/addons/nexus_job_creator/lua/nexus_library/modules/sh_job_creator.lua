@@ -77,6 +77,12 @@ Nexus:AddLanguages("Nexus_JobCreator", "en", {
     ["Your Balance"] = "Your Balance",
     ["Buy Credits"] = "Buy Credits",
     ["Opening Shop"] = "Opening premium credit shop...",
+    ["Need More Credits"] = "Need more credits?",
+    ["Not Afford Shop"] = "You need %s more credits. Click to buy credits.",
+    ["Server Advantage"] = "Nexus Elite Perks",
+    ["Open Rules"] = "Build Guide",
+    ["Open Community"] = "Community",
+    ["Open Shop"] = "Credit Shop",
     ["Options Multiplier"] = "Options Multiplier",
 
     [":MySQL Details"] = "MySQL Details",
@@ -111,6 +117,8 @@ Nexus:AddLanguages("Nexus_JobCreator", "en", {
     [":Refund %"] = "The % refund if players can refund their job (0-100)",
     [":NPC Model"] = "NPC Model",
     [":Shop URL"] = "Shop URL",
+    [":Community URL"] = "Community URL",
+    [":Guide URL"] = "Guide URL",
     [":Admins"] = "Admin ranks who can edit/disable/validate players jobs",
 })
 
@@ -248,6 +256,28 @@ Nexus.Builder:Start()
         onChange = function(value) end,
     })
 
+    :AddTextEntry({
+        id = "nexus-jobcreator-communityURL",
+        defaultValue = "https://discord.gg/physgun",
+
+        label = {":Community URL", "Nexus_JobCreator"},
+        placeholder = "https://discord.gg/yourcommunity",
+        isNumeric = false,
+
+        onChange = function(value) end,
+    })
+
+    :AddTextEntry({
+        id = "nexus-jobcreator-guideURL",
+        defaultValue = "https://smgrpdonate.shop/pages/custom-jobs-guide",
+
+        label = {":Guide URL", "Nexus_JobCreator"},
+        placeholder = "https://example.com/custom-jobs-guide",
+        isNumeric = false,
+
+        onChange = function(value) end,
+    })
+
     :AddButtons({
         id = "nexus-jobcreator-selectedcurrency",
         defaultValue = "Prometheus",
@@ -322,7 +352,7 @@ Nexus.Builder:Start()
 
     :AddTextEntry({
         id = "nexus-jobcreator-price-baseCost",
-        defaultValue = 1000,
+        defaultValue = 450,
 
         label = {":Base Cost", "Nexus_JobCreator"},
         placeholder = "1000",
@@ -345,7 +375,7 @@ Nexus.Builder:Start()
 
     :AddTextEntry({
         id = "nexus-jobcreator-price-health",
-        defaultValue = 10,
+        defaultValue = 5,
 
         label = {":Price Health", "Nexus_JobCreator"},
         placeholder = "10",
@@ -378,7 +408,7 @@ Nexus.Builder:Start()
 
     :AddTextEntry({
         id = "nexus-jobcreator-price-armor",
-        defaultValue = 10,
+        defaultValue = 5,
 
         label = {":Price Armor", "Nexus_JobCreator"},
         placeholder = "10",
@@ -400,7 +430,7 @@ Nexus.Builder:Start()
 
     :AddTextEntry({
         id = "nexus-jobcreator-price-Salary",
-        defaultValue = 10,
+        defaultValue = 3,
 
         label = {":Price Salary", "Nexus_JobCreator"},
         placeholder = "10",
@@ -422,7 +452,7 @@ Nexus.Builder:Start()
 
     :AddTextEntry({
         id = "nexus-jobcreator-price-GunLicense",
-        defaultValue = 10,
+        defaultValue = 75,
 
         label = {":Price GunLicense", "Nexus_JobCreator"},
         placeholder = "10",
@@ -494,7 +524,7 @@ Nexus.Builder:Start()
 
     :AddTextEntry({
         id = "nexus-jobcreator-price-perMB",
-        defaultValue = 10,
+        defaultValue = 30,
 
         label = {":Price MB", "Nexus_JobCreator"},
         placeholder = "10",
@@ -516,7 +546,7 @@ Nexus.Builder:Start()
 
     :AddTextEntry({
         id = "nexus-jobcreator-price-player",
-        defaultValue = 100,
+        defaultValue = 85,
 
         label = {":Extra Player", "Nexus_JobCreator"},
         placeholder = "100",
