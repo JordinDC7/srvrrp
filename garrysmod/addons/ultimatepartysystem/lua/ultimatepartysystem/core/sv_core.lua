@@ -465,7 +465,15 @@ hook.Add("PlayerShouldTakeDamage", "ultimatepartysystem.core.friendlyfire", func
     if(!attacker:UPSIsInParty()) then return end
     if(attacker == victim) then return end 
 
-    return victim:UPSGetPartyID() != attacker:UPSGetPartyID()
+    local victimPartyID = victim:UPSGetPartyID()
+    local attackerPartyID = attacker:UPSGetPartyID()
+
+    -- Fail open if party metadata is missing/corrupted so we don't accidentally disable PvP server-wide.
+    if(!isstring(victimPartyID) or victimPartyID == "" or !isstring(attackerPartyID) or attackerPartyID == "") then
+        return true
+    end
+
+    return victimPartyID != attackerPartyID
 end)
 
 -- Party Chat
