@@ -88,7 +88,14 @@ end
 -- FillPanel(globalKey, amount, actionsOrClickFunc)
 -- ---------------------------------------------------------
 function PANEL:FillPanel(globalKey, amount, actionsOrClickFunc)
-    self.globalKey = globalKey
+    local suppliedItemTable
+    if istable(globalKey) then
+        self.globalKey = globalKey[1]
+        suppliedItemTable = globalKey[2]
+    else
+        self.globalKey = globalKey
+    end
+
     self.itemAmount = tonumber(amount) or 1
     self.actions = nil
     self.clickFunc = nil
@@ -99,8 +106,8 @@ function PANEL:FillPanel(globalKey, amount, actionsOrClickFunc)
         self.clickFunc = actionsOrClickFunc
     end
 
-    local configItemTable = BRICKS_SERVER.UNBOXING.Func.GetItemFromGlobalKey(globalKey)
-    self.configItem = configItemTable
+    local configItemTable = BRICKS_SERVER.UNBOXING.Func.GetItemFromGlobalKey(self.globalKey)
+    self.configItem = configItemTable or suppliedItemTable
 
     if self.configItem then
         self.rarityInfo, self.rarityKey = BRICKS_SERVER.Func.GetRarityInfo(self.configItem.Rarity or "")
