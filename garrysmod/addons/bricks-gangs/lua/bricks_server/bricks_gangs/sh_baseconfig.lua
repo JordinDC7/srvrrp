@@ -265,7 +265,20 @@ BRICKS_SERVER.BASECONFIG.GANGS.Achievements = {
     [34] = { Name = "Fortified Reserve", Description = "Store at least 300 items in gang storage.", Icon = "storage_64.png", Category = "Endgame Logistics", Type = "Storage", ReqInfo = { 300 }, Rewards = { ["GangBalance"] = { 220000 }, ["GangExperience"] = { 9000 } } },
     [35] = { Name = "Siege Logistics", Description = "Store at least 380 items in gang storage.", Icon = "storage_64.png", Category = "Endgame Logistics", Type = "Storage", ReqInfo = { 380 }, Rewards = { ["GangBalance"] = { 325000 }, ["GangExperience"] = { 12500 } } },
 
-    [36] = { Name = "Legion Command", Description = "Reach 56 gang members and run a full roster.", Icon = "members_upgrade.png", Category = "Endgame Roster", Type = "Members", ReqInfo = { 56 }, Rewards = { ["GangBalance"] = { 280000 }, ["GangExperience"] = { 12000 } } }
+    [36] = { Name = "Legion Command", Description = "Reach 56 gang members and run a full roster.", Icon = "members_upgrade.png", Category = "Endgame Roster", Type = "Members", ReqInfo = { 56 }, Rewards = { ["GangBalance"] = { 280000 }, ["GangExperience"] = { 12000 } } },
+
+    [37] = { Name = "Dominion Treasury", Description = "Reach a gang balance of $30,000,000.", Icon = "balance.png", Category = "Legacy Economy", Type = "Balance", ReqInfo = { 30000000 }, Rewards = { ["GangBalance"] = { 700000 }, ["GangExperience"] = { 18000 } } },
+    [38] = { Name = "Untouchable Vault", Description = "Reach a gang balance of $45,000,000.", Icon = "balance.png", Category = "Legacy Economy", Type = "Balance", ReqInfo = { 45000000 }, Rewards = { ["GangBalance"] = { 950000 }, ["GangExperience"] = { 24000 } } },
+
+    [39] = { Name = "Logistics Superchain", Description = "Store at least 460 items in gang storage.", Icon = "storage_64.png", Category = "Legacy Logistics", Type = "Storage", ReqInfo = { 460 }, Rewards = { ["GangBalance"] = { 400000 }, ["GangExperience"] = { 14500 } } },
+    [40] = { Name = "War Reserve Grid", Description = "Store at least 560 items in gang storage.", Icon = "storage_64.png", Category = "Legacy Logistics", Type = "Storage", ReqInfo = { 560 }, Rewards = { ["GangBalance"] = { 580000 }, ["GangExperience"] = { 19500 } } },
+
+    [41] = { Name = "Citywide Command", Description = "Reach gang level 205.", Icon = "levelling.png", Category = "Legacy Progression", Type = "Level", ReqInfo = { 205 }, Rewards = { ["GangBalance"] = { 420000 }, ["GangExperience"] = { 16000 } } },
+    [42] = { Name = "National Syndicate", Description = "Reach gang level 215.", Icon = "levelling.png", Category = "Legacy Progression", Type = "Level", ReqInfo = { 215 }, Rewards = { ["GangBalance"] = { 650000 }, ["GangExperience"] = { 22000 } } },
+
+    [43] = { Name = "Overcap Command", Description = "Maintain 56 members and max out recruitment.", Icon = "members_upgrade.png", Category = "Legacy Roster", Type = "Members", ReqInfo = { 56 }, Rewards = { ["GangBalance"] = { 350000 }, ["GangExperience"] = { 15000 } } },
+    [44] = { Name = "Veteran Organization", Description = "Reach gang level 220, the max rank.", Icon = "levelling.png", Category = "Legacy Progression", Type = "Level", ReqInfo = { 220 }, Rewards = { ["GangBalance"] = { 900000 }, ["GangExperience"] = { 28000 } } },
+    [45] = { Name = "Empire Benchmark", Description = "Reach a gang balance of $60,000,000.", Icon = "balance.png", Category = "Legacy Economy", Type = "Balance", ReqInfo = { 60000000 }, Rewards = { ["GangBalance"] = { 1250000 }, ["GangExperience"] = { 32000 } } }
 }
 
 BRICKS_SERVER.BASECONFIG.GANGS.Leaderboards = {
