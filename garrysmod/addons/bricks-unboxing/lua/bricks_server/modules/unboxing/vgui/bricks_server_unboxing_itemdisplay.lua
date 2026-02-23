@@ -45,10 +45,33 @@ local function BRS_UNBOXING_DrawFallbackIcon( w, h, text )
     end
 end
 
+local function BRS_UNBOXING_ResolveItemModel( itemType, itemTable )
+    local itemModel = itemTable.Model
+
+    if( itemType == "CASE" ) then
+        itemModel = (BRICKS_SERVER.DEVCONFIG.UnboxingCaseModels[itemTable.Model] or {}).Model
+    elseif( itemType == "KEY" ) then
+        itemModel = (BRICKS_SERVER.DEVCONFIG.UnboxingKeyModels[itemTable.Model] or BRICKS_SERVER.DEVCONFIG.UnboxingKeyModels[1]).Model
+    end
+
+    if( (not isstring( itemModel ) or itemModel == "" or not util.IsValidModel( itemModel )) and itemType == "ITEM" ) then
+        itemModel = BRS_UNBOXING_GetWeaponModelFromClass( (itemTable.ReqInfo or {})[1] ) or itemModel
+    end
+
+    if( isstring( itemModel ) and itemModel ~= "" and util.IsValidModel( itemModel ) ) then
+        return itemModel
+    end
+
+    return nil
+end
+
 function PANEL:SetItemData( type, itemTable, iconAdjust )
     self:Clear()
+
+    local resolvedModel = BRS_UNBOXING_ResolveItemModel( type, itemTable )
+    local shouldUseIcon = itemTable.Icon and (type != "ITEM" or not resolvedModel)
     
-    if( itemTable.Icon ) then
+    if( shouldUseIcon ) then
         local iconMat
         local iconRequestedAt = CurTime()
         local iconLoadFailed = false
@@ -85,19 +108,7 @@ function PANEL:SetItemData( type, itemTable, iconAdjust )
             end
         end
     else
-        local itemModel = itemTable.Model
-        if( type == "CASE" ) then
-            itemModel = (BRICKS_SERVER.DEVCONFIG.UnboxingCaseModels[itemTable.Model] or {}).Model
-        elseif( type == "KEY" ) then
-            itemModel = (BRICKS_SERVER.DEVCONFIG.UnboxingKeyModels[itemTable.Model] or BRICKS_SERVER.DEVCONFIG.UnboxingKeyModels[1]).Model
-        end
-
-        if( (not isstring( itemModel ) or itemModel == "" or not util.IsValidModel( itemModel )) and type == "ITEM" ) then
-            itemModel = BRS_UNBOXING_GetWeaponModelFromClass( (itemTable.ReqInfo or {})[1] ) or itemModel
-        end
-
-        local useModel = isstring( itemModel ) and itemModel ~= "" and util.IsValidModel( itemModel )
-        if( not useModel ) then
+        if( not resolvedModel ) then
             self.itemModel = vgui.Create( "DPanel", self )
             self.itemModel:Dock( FILL )
             self.itemModel.Paint = function( self2, w, h )
@@ -109,7 +120,7 @@ function PANEL:SetItemData( type, itemTable, iconAdjust )
 
         self.itemModel = vgui.Create( "DModelPanel", self )
         self.itemModel:Dock( FILL )
-        self.itemModel:SetModel( itemModel or "error.mdl" )
+        self.itemModel:SetModel( resolvedModel or "error.mdl" )
         self.itemModel:SetCursor( "none" )
         self.itemModel:SetPaintBackground( false )
         function self.itemModel:LayoutEntity( Entity ) return end
