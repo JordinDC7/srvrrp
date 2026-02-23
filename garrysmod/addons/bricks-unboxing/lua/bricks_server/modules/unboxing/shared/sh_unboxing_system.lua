@@ -72,6 +72,12 @@ function playerMeta:GetUnboxingStat( stat )
 end
 
 function BRICKS_SERVER.UNBOXING.Func.GetItemFromGlobalKey( globalKey )
+    if( istable( globalKey ) ) then
+        globalKey = globalKey[1]
+    end
+
+    if( not isstring( globalKey ) ) then return nil, nil, false, false, false end
+
 	local isItem, isCase, isKey = string.StartWith( globalKey, "ITEM_" ), string.StartWith( globalKey, "CASE_" ), string.StartWith( globalKey, "KEY_" )
 	local configItemTable, itemKey
 
