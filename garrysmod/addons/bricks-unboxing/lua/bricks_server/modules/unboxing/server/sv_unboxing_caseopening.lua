@@ -21,6 +21,39 @@ local function brsUnboxingGetTierFloorConfig( statTrakConfig, configItemTable )
 	return nil
 end
 
+
+local function brsUnboxingResolveConditionTier( wearValue )
+	local conditionTiers = (BRICKS_SERVER.UNBOXING.Func.GetStatTrakConfig().ConditionTiers or {})
+	for _, tierInfo in ipairs( conditionTiers ) do
+		if( wearValue <= (tonumber( tierInfo.MaxWear ) or 1) ) then
+			return tierInfo.Name or "Battle-Scarred", tierInfo.Tag or "BS"
+		end
+	end
+
+	return "Battle-Scarred", "BS"
+end
+
+local function brsUnboxingBuildConditionData( caseKey, caseConfig )
+	local statCfg = BRICKS_SERVER.UNBOXING.Func.GetStatTrakConfig()
+	local caseFamily = string.lower( tostring( BRICKS_SERVER.UNBOXING.Func.GetCaseFamily( caseKey, caseConfig ) ) )
+	local bandCfg = statCfg.ConditionBandsByCaseFamily or {}
+	local selectedBand = bandCfg[caseFamily] or bandCfg.default or { MinWear = 0.08, MaxWear = 0.8 }
+
+	local minWear = math.Clamp( tonumber( selectedBand.MinWear ) or 0.08, 0, 1 )
+	local maxWear = math.Clamp( tonumber( selectedBand.MaxWear ) or 0.80, 0, 1 )
+	if( maxWear < minWear ) then minWear, maxWear = maxWear, minWear end
+
+	local wearValue = math.Round( math.Rand( minWear, maxWear ), 4 )
+	local tierName, tierTag = brsUnboxingResolveConditionTier( wearValue )
+
+	return {
+		Wear = wearValue,
+		TierName = tierName,
+		TierTag = tierTag,
+		CaseFamily = caseFamily
+	}
+end
+
 local function brsUnboxingApplyTier( statTrakConfig, rollData )
 	for _, tierInfo in ipairs( statTrakConfig.TierBreakpoints or {} ) do
 		if( rollData.Score >= (tonumber( tierInfo.MinScore ) or 0) ) then
@@ -33,13 +66,14 @@ local function brsUnboxingApplyTier( statTrakConfig, rollData )
 end
 
 -- Builds one randomized StatTrak roll for eligible unboxed items.
-local function brsUnboxingBuildStatTrakRoll( configItemTable )
+local function brsUnboxingBuildStatTrakRoll( caseKey, caseConfig, configItemTable )
 	local statTrakConfig = BRICKS_SERVER.UNBOXING.Func.GetStatTrakConfig()
 	if( not BRICKS_SERVER.UNBOXING.Func.IsStatTrakEligibleItem( configItemTable ) ) then return nil end
 
 	local stats = statTrakConfig.Stats or {}
 	if( table.Count( stats ) <= 0 ) then return nil end
 
+	local conditionData = brsUnboxingBuildConditionData( caseKey, caseConfig )
 	local rollData = {
 		Stats = {},
 		Score = 0,
@@ -49,6 +83,7 @@ local function brsUnboxingBuildStatTrakRoll( configItemTable )
 		IsGodRoll = false,
 		IsJackpot = false,
 		RollFlavor = "",
+		Condition = conditionData,
 		Created = os.time()
 	}
 
@@ -162,11 +197,11 @@ local function brsUnboxingStoreStatTrakRoll( ply, globalKey, rollData )
 end
 
 -- Public helper used by all case-open paths to apply StatTrak rolls.
-function BRICKS_SERVER.UNBOXING.Func.TryRollAndStoreStatTrak( ply, globalKey )
+function BRICKS_SERVER.UNBOXING.Func.TryRollAndStoreStatTrak( ply, globalKey, caseKey, caseConfig )
 	local configItemTable = BRICKS_SERVER.UNBOXING.Func.GetItemFromGlobalKey( globalKey )
 	if( not BRICKS_SERVER.UNBOXING.Func.IsStatTrakEligibleItem( configItemTable ) ) then return nil end
 
-	local rollData = brsUnboxingBuildStatTrakRoll( configItemTable )
+	local rollData = brsUnboxingBuildStatTrakRoll( caseKey, caseConfig, configItemTable )
 	if( not rollData ) then return nil end
 
 	brsUnboxingStoreStatTrakRoll( ply, globalKey, rollData )
@@ -263,7 +298,7 @@ local function caseOpen( ply, caseKey )
 
 	local totalChanceWeighted = 0
 	for itemGlobalKey, itemChanceTable in pairs( configItemTable.Items ) do
-		local itemChance = BRICKS_SERVER.UNBOXING.Func.ResolveDropWeight( caseKey, itemGlobalKey, tonumber( (itemChanceTable or {})[1] ) or 0 )
+		local itemChance = BRICKS_SERVER.UNBOXING.Func.ResolveDropWeight( caseKey, itemGlobalKey, tonumber( (itemChanceTable or {})[1] ) or 0, caseFamily )
 		local itemConfig = BRICKS_SERVER.UNBOXING.Func.GetItemFromGlobalKey( itemGlobalKey )
 		if( itemConfig and BRICKS_SERVER.UNBOXING.Func.IsApexRarity( itemConfig.Rarity ) ) then
 			itemChance = itemChance * pityMultiplier
@@ -277,7 +312,7 @@ local function caseOpen( ply, caseKey )
 		currentChance = 0
 
 		for k, v in pairs( configItemTable.Items ) do
-			local itemChance = BRICKS_SERVER.UNBOXING.Func.ResolveDropWeight( caseKey, k, tonumber( v[1] ) or 0 )
+			local itemChance = BRICKS_SERVER.UNBOXING.Func.ResolveDropWeight( caseKey, k, tonumber( v[1] ) or 0, caseFamily )
 			local itemConfig = BRICKS_SERVER.UNBOXING.Func.GetItemFromGlobalKey( k )
 			if( itemConfig and BRICKS_SERVER.UNBOXING.Func.IsApexRarity( itemConfig.Rarity ) ) then
 				itemChance = itemChance * pityMultiplier
@@ -329,6 +364,9 @@ local function caseOpen( ply, caseKey )
 	BRICKS_SERVER.UNBOXING.Func.SetTopTierState( ply, state )
 	BRICKS_SERVER.UNBOXING.Func.SendProgressState( ply, { PityFamily = caseFamily, PityDepth = state.Pity[caseFamily] } )
 
+	BRICKS_SERVER.UNBOXING.Func.RecordSupplyDrop( caseKey, caseFamily, winningItemKey )
+	local supplyMultiplier, supplyInWindow, supplySoftCap = BRICKS_SERVER.UNBOXING.Func.GetSupplyBalancingMultiplier( caseKey, caseFamily, winningItemKey )
+
 	BRICKS_SERVER.UNBOXING.Func.LogTelemetry( "unbox_open_resolved", {
 		SteamID64 = ply:SteamID64(),
 		CaseFamily = caseFamily,
@@ -337,6 +375,9 @@ local function caseOpen( ply, caseKey )
 		PityAfter = state.Pity[caseFamily],
 		Season = (BRICKS_SERVER.UNBOXING.Func.GetSeasonState() or {}).SeasonKey,
 		DropWeightHotfix = BRICKS_SERVER.UNBOXING.Func.GetDropWeightMultiplier( caseKey, winningItemKey ),
+		SupplyDropMultiplier = supplyMultiplier,
+		SupplyDropsInWindow = supplyInWindow,
+		SupplySoftCap = supplySoftCap,
 		SessionLengthBucket = "0-15m",
 		Gang = false
 	} )
@@ -365,7 +406,7 @@ net.Receive( "BRS.Net.UnboxCase", function( len, ply )
 		
 		local duplicate = (ply:GetUnboxingInventory()[winningItemKey] or 0) > 0
 		ply:AddUnboxingInventoryItem( winningItemKey )
-		BRICKS_SERVER.UNBOXING.Func.TryRollAndStoreStatTrak( ply, winningItemKey )
+		BRICKS_SERVER.UNBOXING.Func.TryRollAndStoreStatTrak( ply, winningItemKey, caseKey, BRICKS_SERVER.CONFIG.UNBOXING.Cases[caseKey] )
 
 		if( duplicate and string.StartWith( winningItemKey, "ITEM_" ) ) then
 			local fragmentGain = BRICKS_SERVER.UNBOXING.Func.GetDuplicateFragmentValue( winningItemKey )
@@ -449,20 +490,22 @@ net.Receive( "BRS.Net.UnboxingOpenAll", function( len, ply )
 
 	ply:RemoveUnboxingInventoryItem( globalKey, openAmount )
 
+	local caseFamily = BRICKS_SERVER.UNBOXING.Func.GetCaseFamily( caseKey, configItemTable )
 	local totalChance = 0
 	for itemGlobalKey, chanceInfo in pairs( configItemTable.Items ) do
-		totalChance = totalChance + BRICKS_SERVER.UNBOXING.Func.ResolveDropWeight( caseKey, itemGlobalKey, (chanceInfo or {})[1] )
+		totalChance = totalChance + BRICKS_SERVER.UNBOXING.Func.ResolveDropWeight( caseKey, itemGlobalKey, (chanceInfo or {})[1], caseFamily )
 	end
 
 	local itemsToGive = {}
 	for i = 1, openAmount do
 		local winningChance, currentChance = math.Rand( 0, 100 ), 0
 		for k, v in pairs( configItemTable.Items ) do
-			local resolvedWeight = BRICKS_SERVER.UNBOXING.Func.ResolveDropWeight( caseKey, k, v[1] )
+			local resolvedWeight = BRICKS_SERVER.UNBOXING.Func.ResolveDropWeight( caseKey, k, v[1], caseFamily )
 			local actualChance = (resolvedWeight/math.max( totalChance, 1))*100
 	
 			if( winningChance > currentChance and winningChance <= currentChance+actualChance ) then
 				itemsToGive[k] = (itemsToGive[k] or 0)+1
+				BRICKS_SERVER.UNBOXING.Func.RecordSupplyDrop( caseKey, caseFamily, k )
 				break
 			end
 	
@@ -480,7 +523,7 @@ net.Receive( "BRS.Net.UnboxingOpenAll", function( len, ply )
 
 	for globalKey, amount in pairs( itemsToGive ) do
 		for i = 1, amount do
-			BRICKS_SERVER.UNBOXING.Func.TryRollAndStoreStatTrak( ply, globalKey )
+			BRICKS_SERVER.UNBOXING.Func.TryRollAndStoreStatTrak( ply, globalKey, caseKey, configItemTable )
 		end
 	end
 

@@ -65,6 +65,38 @@ BRICKS_SERVER.UNBOXING.LUACFG.StatTrak = {
         ControlMoveSpreadScale = { MinScale = 1.30, MaxScale = 0.67 },
         HandlingFireDelayScale = { MinScale = 1.18, MaxScale = 0.84 },
         MobilitySpreadScale = { MinScale = 1.28, MaxScale = 0.76 }
+    },
+    -- Weapon condition tiers with family-specific float bands to keep collector depth without flooding perfect states.
+    ConditionTiers = {
+        { Name = "Factory New", Tag = "FN", MaxWear = 0.07 },
+        { Name = "Minimal Wear", Tag = "MW", MaxWear = 0.15 },
+        { Name = "Field-Tested", Tag = "FT", MaxWear = 0.38 },
+        { Name = "Well-Worn", Tag = "WW", MaxWear = 0.45 },
+        { Name = "Battle-Scarred", Tag = "BS", MaxWear = 1.00 }
+    },
+    ConditionBandsByCaseFamily = {
+        ["common"] = { MinWear = 0.24, MaxWear = 0.95 },
+        ["uncommon"] = { MinWear = 0.18, MaxWear = 0.82 },
+        ["rare"] = { MinWear = 0.10, MaxWear = 0.62 },
+        ["epic"] = { MinWear = 0.06, MaxWear = 0.45 },
+        ["legendary"] = { MinWear = 0.03, MaxWear = 0.30 },
+        ["glitched"] = { MinWear = 0.00, MaxWear = 0.22 },
+        ["mythical"] = { MinWear = 0.00, MaxWear = 0.18 },
+        ["default"] = { MinWear = 0.08, MaxWear = 0.80 }
+    },
+    Progression = {
+        Enabled = true,
+        XP = {
+            ShotXP = 1,
+            HitXP = 4,
+            KillXP = 18
+        },
+        Milestones = {
+            { XP = 250, Unlock = "sticker_slot_1", Label = "Sticker Slot I" },
+            { XP = 700, Unlock = "sticker_slot_2", Label = "Sticker Slot II" },
+            { XP = 1400, Unlock = "charm_slot", Label = "Charm Socket" },
+            { XP = 2600, Unlock = "kill_banner", Label = "Kill Banner" }
+        }
     }
 }
 
@@ -115,7 +147,15 @@ BRICKS_SERVER.UNBOXING.LUACFG.TopTier = {
     DynamicDropNudges = {
         Enabled = true,
         MaxNudgeMultiplier = 1.08,
-        MinNudgeMultiplier = 0.92
+        MinNudgeMultiplier = 0.92,
+        SupplyBalancing = {
+            Enabled = true,
+            WindowSeconds = 900,
+            SoftCapPerItem = 12,
+            PenaltyExponent = 0.70,
+            MaxPenalty = 0.35,
+            CaseFamilyIsolation = true
+        }
     },
     LiveOps = {
         KillSwitchEnabled = false,
