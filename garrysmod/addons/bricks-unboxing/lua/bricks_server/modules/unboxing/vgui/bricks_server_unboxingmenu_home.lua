@@ -25,6 +25,10 @@ function PANEL:FillPanel()
         Title = BRICKS_SERVER.Func.L("unboxingItemsPurchased"),
         Value = function() return LocalPlayer():GetUnboxingStat("items") end
     }
+    statistics[4] = {
+        Title = "Fragments",
+        Value = function() return (BRS_UNBOXING_PROGRESS or {}).Fragments or 0 end
+    }
 
     local topBack = vgui.Create("DPanel", self)
     topBack:Dock(TOP)
@@ -66,6 +70,24 @@ function PANEL:FillPanel()
         statisticGradient:SetCornerRadius(8)
         statisticGradient:SetRoundedBoxDimensions(false, -10, false, 20)
         statisticGradient:StartAnim()
+    end
+
+    local progressionBar = vgui.Create("DPanel", self)
+    progressionBar:Dock(TOP)
+    progressionBar:DockMargin(0, 25, 0, 0)
+    progressionBar:SetTall(95)
+    progressionBar.Paint = function(self2, w, h)
+        draw.RoundedBox(8, 0, 0, w, h, BRICKS_SERVER.Func.GetTheme(2))
+
+        local progress = BRS_UNBOXING_PROGRESS or {}
+        local masteryXP = tonumber(progress.MasteryXP) or 0
+        local pityDepth = 0
+        for _, value in pairs(progress.Pity or {}) do
+            pityDepth = math.max(pityDepth, tonumber(value) or 0)
+        end
+
+        draw.SimpleText("MASTERY XP: " .. string.Comma(masteryXP), "BRICKS_SERVER_Font23", 20, 20, BRICKS_SERVER.Func.GetTheme(6))
+        draw.SimpleText("HIGHEST PITY DEPTH: " .. string.Comma(pityDepth), "BRICKS_SERVER_Font20", 20, 52, BRICKS_SERVER.Func.GetTheme(6, 75))
     end
 
     local bottomBack = vgui.Create("DPanel", self)

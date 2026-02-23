@@ -202,6 +202,190 @@ net.Receive( "BRS.Net.RequestUnboxingLeaderboardStats", function( len, ply )
 	end )
 end )
 
+util.AddNetworkString( "BRS.Net.UnboxingProgressState" )
+util.AddNetworkString( "BRS.Net.UnboxingCraftItem" )
+util.AddNetworkString( "BRS.Net.UnboxingCraftItemReturn" )
+util.AddNetworkString( "BRS.Net.UnboxingBatchConvertCommons" )
+util.AddNetworkString( "BRS.Net.UnboxingSetHypeFeedMuted" )
+
+local function brsGetTopTierConfig()
+	return BRICKS_SERVER.UNBOXING.LUACFG.TopTier or {}
+end
+
+function BRICKS_SERVER.UNBOXING.Func.GetCaseFamily( caseKey, caseConfig )
+	local resolvedConfig = caseConfig or BRICKS_SERVER.CONFIG.UNBOXING.Cases[caseKey or 0] or {}
+
+	return tostring( resolvedConfig.CaseFamily or resolvedConfig.Rarity or ("case_" .. tostring( caseKey or "unknown" )) )
+end
+
+function BRICKS_SERVER.UNBOXING.Func.IsApexRarity( rarity )
+	return (brsGetTopTierConfig().ApexRarities or {})[tostring( rarity or "")] == true
+end
+
+function BRICKS_SERVER.UNBOXING.Func.GetTopTierState( ply )
+	if( not IsValid( ply ) ) then return {} end
+
+	local inventoryData = ply:GetUnboxingInventoryData()
+	inventoryData.__TopTier = inventoryData.__TopTier or {}
+	inventoryData.__TopTier.Pity = inventoryData.__TopTier.Pity or {}
+	inventoryData.__TopTier.Fragments = tonumber( inventoryData.__TopTier.Fragments ) or 0
+	inventoryData.__TopTier.MasteryXP = tonumber( inventoryData.__TopTier.MasteryXP ) or 0
+	inventoryData.__TopTier.Collection = inventoryData.__TopTier.Collection or {}
+	inventoryData.__TopTier.Daily = inventoryData.__TopTier.Daily or { Opened = 0, Date = os.date( "%Y-%m-%d" ) }
+	inventoryData.__TopTier.HypeFeedMuted = inventoryData.__TopTier.HypeFeedMuted == true
+	inventoryData.__TopTier.GangObjectives = inventoryData.__TopTier.GangObjectives or { Week = os.date( "%Y-%W" ), Progress = 0, Claimed = false }
+
+	return inventoryData.__TopTier
+end
+
+function BRICKS_SERVER.UNBOXING.Func.SetTopTierState( ply, state )
+	if( not IsValid( ply ) or not istable( state ) ) then return end
+
+	local inventoryData = ply:GetUnboxingInventoryData()
+	inventoryData.__TopTier = state
+	ply:SetUnboxingInventoryData( inventoryData )
+end
+
+function BRICKS_SERVER.UNBOXING.Func.LogTelemetry( eventName, payload )
+	local entry = {
+		Time = os.time(),
+		Event = tostring( eventName or "unbox_unknown" ),
+		Payload = payload or {}
+	}
+
+	file.Append( "bricks_server/unboxing_telemetry.jsonl", util.TableToJSON( entry ) .. "\n" )
+end
+
+function BRICKS_SERVER.UNBOXING.Func.SendProgressState( ply, progressionDelta )
+	if( not IsValid( ply ) ) then return end
+
+	local state = BRICKS_SERVER.UNBOXING.Func.GetTopTierState( ply )
+	net.Start( "BRS.Net.UnboxingProgressState" )
+		net.WriteTable( {
+			Fragments = state.Fragments,
+			Pity = state.Pity,
+			MasteryXP = state.MasteryXP,
+			Collection = state.Collection,
+			Daily = state.Daily,
+			GangObjectives = state.GangObjectives,
+			HypeFeedMuted = state.HypeFeedMuted,
+			Delta = progressionDelta or {}
+		} )
+	net.Send( ply )
+end
+
+function BRICKS_SERVER.UNBOXING.Func.AddFragments( ply, amount, reason, metadata )
+	local addAmount = math.max( 0, math.floor( tonumber( amount ) or 0 ) )
+	if( addAmount <= 0 ) then return 0 end
+
+	local state = BRICKS_SERVER.UNBOXING.Func.GetTopTierState( ply )
+	state.Fragments = state.Fragments + addAmount
+	BRICKS_SERVER.UNBOXING.Func.SetTopTierState( ply, state )
+
+	BRICKS_SERVER.UNBOXING.Func.LogTelemetry( "unbox_fragment_delta", {
+		SteamID64 = ply:SteamID64(),
+		Delta = addAmount,
+		Reason = reason,
+		Metadata = metadata
+	} )
+
+	BRICKS_SERVER.UNBOXING.Func.SendProgressState( ply, { Fragments = addAmount } )
+	return addAmount
+end
+
+function BRICKS_SERVER.UNBOXING.Func.AddMasteryXP( ply, amount, metadata )
+	local addAmount = math.max( 0, math.floor( tonumber( amount ) or 0 ) )
+	if( addAmount <= 0 ) then return end
+
+	local state = BRICKS_SERVER.UNBOXING.Func.GetTopTierState( ply )
+	state.MasteryXP = state.MasteryXP + addAmount
+	BRICKS_SERVER.UNBOXING.Func.SetTopTierState( ply, state )
+
+	BRICKS_SERVER.UNBOXING.Func.LogTelemetry( "unbox_mastery_xp", {
+		SteamID64 = ply:SteamID64(),
+		Delta = addAmount,
+		Metadata = metadata
+	} )
+
+	BRICKS_SERVER.UNBOXING.Func.SendProgressState( ply, { MasteryXP = addAmount } )
+end
+
+function BRICKS_SERVER.UNBOXING.Func.GetDuplicateFragmentValue( globalKey )
+	local rarity = (BRICKS_SERVER.UNBOXING.Func.GetItemFromGlobalKey( globalKey ) or {}).Rarity
+	return (brsGetTopTierConfig().DuplicateFragmentValues or {})[tostring( rarity or "")] or (brsGetTopTierConfig().DuplicateFragmentFallback or 1)
+end
+
+net.Receive( "BRS.Net.UnboxingCraftItem", function( len, ply )
+	local recipeKey = net.ReadString()
+	local recipe = (brsGetTopTierConfig().CraftingRecipes or {})[recipeKey or ""]
+	if( not recipe or not recipe.GlobalKey ) then return end
+
+	local cost = math.max( 1, math.floor( tonumber( recipe.FragmentCost ) or 0 ) )
+	local state = BRICKS_SERVER.UNBOXING.Func.GetTopTierState( ply )
+	if( state.Fragments < cost ) then
+		net.Start( "BRS.Net.UnboxingCraftItemReturn" )
+			net.WriteBool( false )
+			net.WriteString( "Not enough fragments." )
+		net.Send( ply )
+		return
+	end
+
+	state.Fragments = state.Fragments - cost
+	BRICKS_SERVER.UNBOXING.Func.SetTopTierState( ply, state )
+	ply:AddUnboxingInventoryItem( recipe.GlobalKey, recipe.Amount or 1 )
+
+	BRICKS_SERVER.UNBOXING.Func.LogTelemetry( "unbox_fragment_crafted", {
+		SteamID64 = ply:SteamID64(),
+		Recipe = recipeKey,
+		GlobalKey = recipe.GlobalKey,
+		Cost = cost
+	} )
+
+	BRICKS_SERVER.UNBOXING.Func.SendProgressState( ply, { Fragments = -cost, Crafted = recipe.GlobalKey } )
+
+	net.Start( "BRS.Net.UnboxingCraftItemReturn" )
+		net.WriteBool( true )
+		net.WriteString( recipe.GlobalKey )
+	net.Send( ply )
+end )
+
+net.Receive( "BRS.Net.UnboxingBatchConvertCommons", function( len, ply )
+	local inventory = ply:GetUnboxingInventory()
+	local totalFragments, removeList = 0, {}
+
+	for globalKey, amount in pairs( inventory ) do
+		if( not string.StartWith( globalKey, "ITEM_" ) or amount <= 0 ) then continue end
+
+		local itemConfig = BRICKS_SERVER.UNBOXING.Func.GetItemFromGlobalKey( globalKey )
+		if( not itemConfig or itemConfig.Rarity != "Common" ) then continue end
+
+		local fragmentValue = BRICKS_SERVER.UNBOXING.Func.GetDuplicateFragmentValue( globalKey )
+		totalFragments = totalFragments + (fragmentValue * amount)
+		table.insert( removeList, globalKey )
+		table.insert( removeList, amount )
+	end
+
+	if( #removeList <= 0 or totalFragments <= 0 ) then return end
+
+	ply:RemoveUnboxingInventoryItem( unpack( removeList ) )
+	BRICKS_SERVER.UNBOXING.Func.AddFragments( ply, totalFragments, "batch_convert_commons" )
+end )
+
+net.Receive( "BRS.Net.UnboxingSetHypeFeedMuted", function( len, ply )
+	local shouldMute = net.ReadBool()
+	local state = BRICKS_SERVER.UNBOXING.Func.GetTopTierState( ply )
+	state.HypeFeedMuted = shouldMute
+	BRICKS_SERVER.UNBOXING.Func.SetTopTierState( ply, state )
+	BRICKS_SERVER.UNBOXING.Func.SendProgressState( ply )
+end )
+
+hook.Add( "PlayerInitialSpawn", "BricksServerHooks_PlayerInitialSpawn_UnboxingProgressState", function( ply )
+	timer.Simple( 6, function()
+		if( not IsValid( ply ) ) then return end
+		BRICKS_SERVER.UNBOXING.Func.SendProgressState( ply )
+	end )
+end )
+
 -- Currencies --
 function BRICKS_SERVER.UNBOXING.Func.AddCurrency( ply, amount, currency )
 	if( currency and BRICKS_SERVER.DEVCONFIG.Currencies[currency] ) then

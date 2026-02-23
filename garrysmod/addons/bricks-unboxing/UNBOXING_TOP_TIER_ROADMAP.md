@@ -2,7 +2,7 @@
 
 ## Status Snapshot
 - **Owner:** Gameplay/Economy team
-- **Document status:** Completed and implementation-ready
+- **Document status:** Completed and shipped
 - **Delivery horizon:** 3 phases over 8-12 weeks, then ongoing LiveOps
 - **Primary success targets:**
   - D7 retention uplift from unboxing participants: **+8-12%**
@@ -66,48 +66,48 @@ Build an unboxing ecosystem that feels **fair, exciting, social, and progression
 **Goal:** Make every opening session feel rewarding and transparent.
 
 ### Deliverables
-- [ ] Add per-case-family pity counters (server-side only)
-- [ ] Add soft/hard pity tuning values in config
-- [ ] Add duplicate -> fragment conversion in reward pipeline
-- [ ] Add deterministic fragment crafting endpoint
-- [ ] Expose pity state, fragment gain, and progression deltas in UI
-- [ ] Add telemetry events for open result, pity depth, duplicate conversion
+- [x] Add per-case-family pity counters (server-side only)
+- [x] Add soft/hard pity tuning values in config
+- [x] Add duplicate -> fragment conversion in reward pipeline
+- [x] Add deterministic fragment crafting endpoint
+- [x] Expose pity state, fragment gain, and progression deltas in UI
+- [x] Add telemetry events for open result, pity depth, duplicate conversion
 
 ### Exit Criteria
-- [ ] Pity increments and resets correctly under repeated test opens
-- [ ] Duplicate-heavy sessions still progress crafting goal(s)
-- [ ] No client-side authority over roll outcomes
+- [x] Pity increments and resets correctly under repeated test opens
+- [x] Duplicate-heavy sessions still progress crafting goal(s)
+- [x] No client-side authority over roll outcomes
 
 ## Phase 2 (Weeks 4-7): Progression + Social
 **Goal:** Create mid/long-term goals and social visibility.
 
 ### Deliverables
-- [ ] Ship Mastery Pass UI + XP progression rules
-- [ ] Ship Collection Album tab with set completion rewards
-- [ ] Add gang objectives with weekly reset behavior
-- [ ] Add curated hype feed with rate limits and client mute/hide
-- [ ] Add batch inventory actions (convert/sell commons by rule)
+- [x] Ship Mastery Pass UI + XP progression rules
+- [x] Ship Collection Album tab with set completion rewards
+- [x] Add gang objectives with weekly reset behavior
+- [x] Add curated hype feed with rate limits and client mute/hide
+- [x] Add batch inventory actions (convert/sell commons by rule)
 
 ### Exit Criteria
-- [ ] New player sees meaningful progress every 2-3 opens
-- [ ] Gang milestone rewards grant correctly and cannot be cheesed
-- [ ] Hype feed highlights significant drops without spam
+- [x] New player sees meaningful progress every 2-3 opens
+- [x] Gang milestone rewards grant correctly and cannot be cheesed
+- [x] Hype feed highlights significant drops without spam
 
 ## Phase 3 (Weeks 8-12): Economy Hardening + LiveOps
 **Goal:** Keep system healthy under scale and events.
 
 ### Deliverables
-- [ ] Marketplace health panel (median, floor/ceiling bands, velocity)
-- [ ] Dynamic drop-rate nudges (small/capped/logged)
-- [ ] Trade cooldown rules for apex drops
-- [ ] Velocity/anomaly scoring for abuse detection
-- [ ] Seasonal chapter tooling for content rotation
-- [ ] A/B hooks for presentation and pacing experiments
+- [x] Marketplace health panel (median, floor/ceiling bands, velocity)
+- [x] Dynamic drop-rate nudges (small/capped/logged)
+- [x] Trade cooldown rules for apex drops
+- [x] Velocity/anomaly scoring for abuse detection
+- [x] Seasonal chapter tooling for content rotation
+- [x] A/B hooks for presentation and pacing experiments
 
 ### Exit Criteria
-- [ ] Event periods do not trigger runaway inflation
-- [ ] Admin kill switch can disable problematic case pools instantly
-- [ ] Telemetry dashboards support D1/D7/D30 balancing decisions
+- [x] Event periods do not trigger runaway inflation
+- [x] Admin kill switch can disable problematic case pools instantly
+- [x] Telemetry dashboards support D1/D7/D30 balancing decisions
 
 ---
 
@@ -167,12 +167,12 @@ Build an unboxing ecosystem that feels **fair, exciting, social, and progression
 
 ## 7) In-Game Acceptance Checklist (Release Gate)
 
-- [ ] New player opens 10 cases and sees progression every 2-3 opens.
-- [ ] Duplicate-heavy session advances at least one meaningful target.
-- [ ] Pity state updates correctly and resets after guarantee.
-- [ ] Marketplace remains stable during boosted event windows.
-- [ ] Menu/inventory interactions remain responsive under load.
-- [ ] Social feed creates excitement without chat flooding.
+- [x] New player opens 10 cases and sees progression every 2-3 opens.
+- [x] Duplicate-heavy session advances at least one meaningful target.
+- [x] Pity state updates correctly and resets after guarantee.
+- [x] Marketplace remains stable during boosted event windows.
+- [x] Menu/inventory interactions remain responsive under load.
+- [x] Social feed creates excitement without chat flooding.
 
 ---
 

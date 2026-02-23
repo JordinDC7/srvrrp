@@ -45,6 +45,8 @@ net.Receive( "BRS.Net.UnboxCaseAlert", function()
 
 	local rarityInfo, rarityKey = BRICKS_SERVER.Func.GetRarityInfo( configItemTable.Rarity or "" )
 	local rarityColor = BRICKS_SERVER.Func.GetRarityColor( rarityInfo )
+
+	if( (BRS_UNBOXING_PROGRESS or {}).HypeFeedMuted ) then return end
 	
 	chat.AddText( Color( 26, 188, 156 ), BRICKS_SERVER.Func.L( "unboxingChatTag" ) .. " ", ply, Color( 255, 255, 255 ), BRICKS_SERVER.Func.L( "unboxingUnboxedX" ), rarityColor, "'" .. configItemTable.Name .. "'" )
 

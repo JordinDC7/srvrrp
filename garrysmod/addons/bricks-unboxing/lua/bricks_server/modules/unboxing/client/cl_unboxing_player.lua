@@ -13,6 +13,7 @@ net.Receive( "BRS.Net.SetUnboxingInventoryData", function()
 end )
 
 BRS_UNBOXING_STATS = BRS_UNBOXING_STATS or {}
+BRS_UNBOXING_PROGRESS = BRS_UNBOXING_PROGRESS or {}
 net.Receive( "BRS.Net.SetUnboxingStats", function()
 	BRS_UNBOXING_STATS = net.ReadTable() or {}
 end )
@@ -30,4 +31,9 @@ net.Receive( "BRS.Net.SendUnboxingItemNotification", function()
 	local items = net.ReadTable()
 
 	BRICKS_SERVER.Func.CreateUnboxingItemNotification( reason, unpack( items ) )
+end )
+
+net.Receive( "BRS.Net.UnboxingProgressState", function()
+	BRS_UNBOXING_PROGRESS = net.ReadTable() or {}
+	hook.Run( "BRS.Hooks.UnboxingProgressStateUpdated", BRS_UNBOXING_PROGRESS )
 end )
