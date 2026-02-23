@@ -55,7 +55,7 @@ local function addPrometheusBalance(ply, amount)
 end
 
 currency.Format = function(amount)
-    return string.Comma(math.max(math.Round(tonumber(amount) or 0), 0)) .. " crypto"
+    return string.Comma(math.max(math.Round(tonumber(amount) or 0), 0)) .. " premium credits"
 end
 
 currency.CanAfford = function(ply, amount)
@@ -79,14 +79,6 @@ end
 
 currency.GetTotalMoney = function(ply)
     local amount = getPrometheusBalance(ply)
-
-    if amount <= 0 and SERVER and IsValid(ply) then
-        if Nexus and isfunction(Nexus.Debug) then
-            Nexus:Debug("[Nexus Job Creator] Prometheus returned no balance for " .. ply:SteamID64())
-        else
-            print("[Nexus Job Creator] Prometheus returned no balance for " .. ply:SteamID64())
-        end
-    end
 
     return amount
 end

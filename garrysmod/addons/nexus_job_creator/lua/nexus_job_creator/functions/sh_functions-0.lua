@@ -29,13 +29,6 @@ function Nexus.JobCreator:CalculatePrice(data)
 
     price = price + table.Count(data.Players) * Nexus:GetValue("nexus-jobcreator-price-player")
 
-    -- Scale the final price based on how many custom jobs the owner already has.
-    -- This creates a predictable premium curve where each new job slot costs more.
-    local ownedJobsCount = tonumber(data.OwnedJobsCount) or 0
-    local ownedJobMultiplier = tonumber(Nexus:GetValue("nexus-jobcreator-price-ownedJobMultiplier")) or 0
-    if ownedJobsCount > 0 and ownedJobMultiplier > 0 then
-        price = price * (1 + (ownedJobsCount * (ownedJobMultiplier / 100)))
-    end
 
     return math.Round(price)
 end
