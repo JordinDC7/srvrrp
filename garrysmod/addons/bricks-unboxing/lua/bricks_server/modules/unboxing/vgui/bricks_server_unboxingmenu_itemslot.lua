@@ -99,7 +99,29 @@ function PANEL:FillPanel(globalKey, amount, actionsOrClickFunc)
         self:AddTopInfo(tostring(self.itemAmount) .. "x")
     end
 
+    -- Ensure every slot has a concrete model/icon panel so previews render reliably.
+    self:RefreshItemPreviewPanel()
+
     return self
+end
+
+-- Creates or refreshes the embedded preview panel used to display item models/icons.
+function PANEL:RefreshItemPreviewPanel()
+    if IsValid(self.previewPanel) then
+        self.previewPanel:Remove()
+    end
+
+    local itemTable = self.configItem or {}
+    local globalKey = tostring(self.globalKey or "")
+    local displayType = string.StartWith(globalKey, "CASE_") and "CASE" or (string.StartWith(globalKey, "KEY_") and "KEY" or "ITEM")
+
+    self.previewPanel = vgui.Create("bricks_server_unboxing_itemdisplay", self)
+    self.previewPanel:SetMouseInputEnabled(false)
+    self.previewPanel:SetKeyboardInputEnabled(false)
+    self.previewPanel:SetIconSizeAdjust(0.75)
+    self.previewPanel:SetItemData(displayType, itemTable)
+
+    self:InvalidateLayout(true)
 end
 
 -- ---------------------------------------------------------
@@ -266,7 +288,7 @@ function PANEL:Paint(w, h)
     end
 
     -- -----------------------------------------------------
-    -- Item display region
+    -- Item display region (background + child preview panel)
     -- -----------------------------------------------------
     local contentTop = topStripH + 6
     local bottomPad = 32
@@ -280,27 +302,9 @@ function PANEL:Paint(w, h)
     local rarityName = tostring(item.Rarity or "")
     local rarityColor = BRICKS_SERVER.Func.GetRarityColor(self.rarityInfo or rarityName) or Color(255,255,255)
 
-    -- Try to draw a model/material icon if a helper exists, otherwise draw fallback text
-    -- (Keeps this file compatible without depending on private internal draw funcs)
-    local drewPreview = false
-    if BRICKS_SERVER and BRICKS_SERVER.UNBOXING and BRICKS_SERVER.UNBOXING.Func then
-        local f = BRICKS_SERVER.UNBOXING.Func
-        if isfunction(f.DrawItemPreview) then
-            local ok = pcall(function()
-                f.DrawItemPreview(item, 5, contentTop, w - 10, contentH, self.hoverAnim or 0)
-            end)
-            drewPreview = ok
-        end
-    end
-
-    if not drewPreview then
-        -- Fallback icon region (simple text/icon placeholder)
-        local cx, cy = w / 2, contentTop + (contentH / 2)
-        surface.SetDrawColor(255, 255, 255, 12)
-        draw.NoTexture()
-        BRICKS_SERVER.Func.DrawCircle(cx, cy - 4, math.min(w, contentH) * 0.22, Color(255,255,255,12))
-
-        draw.SimpleText("ITEM", "BRICKS_SERVER_Font20", cx, cy - 6, alphaColor(txtCol, 60), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+    if IsValid(self.previewPanel) then
+        self.previewPanel:SetPos(5, contentTop)
+        self.previewPanel:SetSize(w - 10, contentH)
     end
 
     -- -----------------------------------------------------
@@ -328,6 +332,12 @@ function PANEL:Paint(w, h)
     surface.DrawRect(1, 1, w - 2, 1)
 
     return true
+end
+
+function PANEL:OnRemove()
+    if IsValid(self.previewPanel) then
+        self.previewPanel:Remove()
+    end
 end
 
 vgui.Register("bricks_server_unboxingmenu_itemslot", PANEL, "DButton")
