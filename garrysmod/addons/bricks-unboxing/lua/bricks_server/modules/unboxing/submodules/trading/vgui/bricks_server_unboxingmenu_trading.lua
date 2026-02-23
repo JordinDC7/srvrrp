@@ -1,5 +1,15 @@
 local PANEL = {}
 
+local function BRS_UNBOXING_SendTradeNotification( message )
+    if( BRICKS_SERVER and BRICKS_SERVER.Func and isfunction( BRICKS_SERVER.Func.SendTopNotification ) ) then
+        BRICKS_SERVER.Func.SendTopNotification( message )
+        return
+    end
+
+    notification.AddLegacy( tostring( message or "" ), NOTIFY_ERROR, 3 )
+    surface.PlaySound( "buttons/button10.wav" )
+end
+
 local function BRS_UNBOXING_GetTradeRollChoices( globalKey )
     local choices = {}
 
@@ -928,7 +938,7 @@ function PANEL:OpenTradeRollSelector( globalKey, maxSelect, onConfirm )
         end
 
         if( #selectedIDs > maxSelect ) then
-            BRICKS_SERVER.Func.SendTopNotification( BRICKS_SERVER.Func.L( "unboxingInvalidAmount" ) )
+            BRS_UNBOXING_SendTradeNotification( BRICKS_SERVER.Func.L( "unboxingInvalidAmount" ) )
             return
         end
 
