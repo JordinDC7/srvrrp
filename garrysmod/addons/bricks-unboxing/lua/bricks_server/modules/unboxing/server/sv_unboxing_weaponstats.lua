@@ -187,7 +187,7 @@ hook.Add( "EntityTakeDamage", "BricksServerHooks_EntityTakeDamage_UnboxingStatTr
         end
     end
 
-    local damageScale = math.Clamp( tonumber( statScalars.DamageScale ) or 1, 0.05, 5 )
+    local damageScale = math.Clamp( tonumber( statScalars.DamageScale ) or 1, 0.5, 5 )
     dmgInfo:ScaleDamage( damageScale )
 end )
 
