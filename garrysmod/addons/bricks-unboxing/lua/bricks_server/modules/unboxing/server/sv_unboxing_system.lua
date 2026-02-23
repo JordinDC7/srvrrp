@@ -110,6 +110,25 @@ end )
 
 util.AddNetworkString( "BRS.Net.PurchaseShopUnboxingItems" )
 util.AddNetworkString( "BRS.Net.PurchaseShopUnboxingItemsReturn" )
+util.AddNetworkString( "BRS.Net.UnboxingPremiumRedirect" )
+-- Handles optional premium-credit checkout redirects for insufficient funds.
+local function brsHandlePremiumRedirect( ply, currency )
+    local redirectConfig = BRICKS_SERVER.UNBOXING.LUACFG.PremiumCreditRedirect or {}
+
+    if( not redirectConfig.Enabled or not isstring( redirectConfig.URL ) or redirectConfig.URL == "" ) then return false end
+    if( currency ~= (redirectConfig.Currency or "ps2_premium_points") ) then return false end
+
+    BRICKS_SERVER.Func.SendNotification( ply, 1, 7, BRICKS_SERVER.Func.L( "unboxingCantAffordItems" ) )
+
+    net.Start( "BRS.Net.UnboxingPremiumRedirect" )
+        net.WriteString( redirectConfig.URL )
+    net.Send( ply )
+
+    BRICKS_SERVER.Func.BRS_MSGN( "unboxing", "Premium redirect triggered for " .. (ply:SteamID64() or "unknown") )
+
+    return true
+end
+
 net.Receive( "BRS.Net.PurchaseShopUnboxingItems", function( len, ply )
 	local itemCount = net.ReadUInt( 8 )
 	if( not itemCount or itemCount < 1 ) then return end
@@ -145,7 +164,10 @@ net.Receive( "BRS.Net.PurchaseShopUnboxingItems", function( len, ply )
 	 
 	for k, v in pairs( totalCosts ) do
 		if( not BRICKS_SERVER.UNBOXING.Func.CanAffordCurrency( ply, v, k ) ) then
+			if( brsHandlePremiumRedirect( ply, k ) ) then return end
+
 			BRICKS_SERVER.Func.SendNotification( ply, 1, 5, BRICKS_SERVER.Func.L( "unboxingCantAffordItems" ) )
+			BRICKS_SERVER.Func.BRS_MSGN( "unboxing", "Store purchase denied (insufficient currency) for " .. (ply:SteamID64() or "unknown") .. " on " .. tostring( k ) )
 			return
 		end
 	end

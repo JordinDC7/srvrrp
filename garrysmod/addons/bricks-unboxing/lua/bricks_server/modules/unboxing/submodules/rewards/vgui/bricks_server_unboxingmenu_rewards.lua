@@ -85,8 +85,6 @@ function PANEL:Refresh()
     contentPanel:SetTall( math.max( self.panelTall-50-self.topHeaderH-self.bottomBar:GetTall(), (mostItems*(slotTall+10))+10 ) )
     contentPanel.Paint = function( self, w, h ) end 
 
-    local daysInMonth = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 }   
-
     local dateTable = os.date( "*t" )
     local weekDay =  (dateTable.wday-1 >= 1 and dateTable.wday-1) or 7
 
@@ -98,17 +96,18 @@ function PANEL:Refresh()
         if( i == weekDay ) then
             isClaimed = todayClaimed
         elseif( i < weekDay ) then
-            local month = dateTable.month
-            local day = dateTable.day-(weekDay-i)
+            local checkTime = os.time( {
+                year = dateTable.year,
+                month = dateTable.month,
+                day = dateTable.day-(weekDay-i),
+                hour = 12,
+                min = 0,
+                sec = 0
+            } )
+            local checkDate = os.date( "*t", checkTime )
+            local monthTable = ((claimedTable[checkDate.year] or {})[checkDate.month] or {})
 
-            if( day <= 0 ) then
-                month = dateTable.month-1
-                day = (daysInMonth[month] or 0)-day
-            end
-
-            local monthTable = (claimedTable[dateTable.year] or {})[month] or {}
-
-            isClaimed = monthTable[day]
+            isClaimed = monthTable[checkDate.day] == true
         end
 
         local rewardEntry = vgui.Create( "DPanel", contentPanel )

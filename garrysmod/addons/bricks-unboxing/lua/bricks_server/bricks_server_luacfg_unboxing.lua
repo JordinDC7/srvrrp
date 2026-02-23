@@ -12,6 +12,13 @@ BRICKS_SERVER.UNBOXING.LUACFG.MenuCommands = {
 BRICKS_SERVER.UNBOXING.LUACFG.DefaultCurrency =  "darkrp_money" -- Options: darkrp_money, brcs_credits, mtokens, ps2_points, ps2_premium_points
 BRICKS_SERVER.UNBOXING.LUACFG.TTT =  false -- Whether or not TTT is being used
 
+-- Optional premium-credit redirect flow used when a store checkout fails for premium currency.
+BRICKS_SERVER.UNBOXING.LUACFG.PremiumCreditRedirect = {
+    Enabled = false,
+    Currency = "ps2_premium_points",
+    URL = ""
+}
+
 -- MUTINY-inspired stat tracking rolls applied to unboxed weapons.
 BRICKS_SERVER.UNBOXING.LUACFG.StatTrak = {
     Enabled = true,
