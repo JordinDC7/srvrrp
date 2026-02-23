@@ -620,7 +620,7 @@ function BRICKS_SERVER.UNBOXING.Func.TrackStatTrakMilestone( ply, globalKey, sta
 	ply:SetUnboxingInventoryData( inventoryData )
 end
 
-function BRICKS_SERVER.UNBOXING.Func.RecordStatTrakTransfer( fromPly, toPly, globalKey, amount )
+function BRICKS_SERVER.UNBOXING.Func.RecordStatTrakTransfer( fromPly, toPly, globalKey, amount, selectedRollIDs )
 	if( not IsValid( fromPly ) or not IsValid( toPly ) ) then return end
 	if( not globalKey or not string.StartWith( globalKey, "ITEM_" ) ) then return end
 	if( (tonumber( amount ) or 0) <= 0 ) then return end
@@ -629,14 +629,73 @@ function BRICKS_SERVER.UNBOXING.Func.RecordStatTrakTransfer( fromPly, toPly, glo
 	local statTrak = ((fromData[globalKey] or {}).StatTrak or nil)
 	if( not istable( statTrak ) ) then return end
 
+	local rolls = BRICKS_SERVER.UNBOXING.Func.GetStatTrakRolls( fromPly, globalKey )
+	local selectedLookup = {}
+	if( istable( selectedRollIDs ) ) then
+		for _, boosterID in ipairs( selectedRollIDs ) do
+			local normalized = tostring( boosterID or "" )
+			if( normalized != "" ) then
+				selectedLookup[normalized] = true
+			end
+		end
+	end
+
+	local transferRolls = {}
+	for _, rollData in ipairs( rolls ) do
+		local boosterID = tostring( rollData.BoosterID or "" )
+		if( boosterID != "" and selectedLookup[boosterID] ) then
+			table.insert( transferRolls, table.Copy( rollData ) )
+		end
+	end
+
+	local maxTransfer = math.floor( tonumber( amount ) or 1 )
+	if( #transferRolls < maxTransfer ) then
+		for _, rollData in ipairs( rolls ) do
+			if( #transferRolls >= maxTransfer ) then break end
+
+			local boosterID = tostring( rollData.BoosterID or "" )
+			local exists = false
+			for _, existing in ipairs( transferRolls ) do
+				if( tostring( existing.BoosterID or "" ) == boosterID ) then
+					exists = true
+					break
+				end
+			end
+
+			if( not exists ) then
+				table.insert( transferRolls, table.Copy( rollData ) )
+			end
+		end
+	end
+
 	statTrak.Provenance = statTrak.Provenance or { Transfers = {}, Milestones = {} }
 	statTrak.Provenance.Transfers = statTrak.Provenance.Transfers or {}
 	table.insert( statTrak.Provenance.Transfers, {
 		Time = os.time(),
 		From = fromPly:SteamID64(),
 		To = toPly:SteamID64(),
-		Amount = math.floor( tonumber( amount ) or 1 )
+		Amount = maxTransfer,
+		Rolls = table.Copy( transferRolls )
 	} )
+
+	local transferredLookup = {}
+	for _, rollData in ipairs( transferRolls ) do
+		local boosterID = tostring( rollData.BoosterID or "" )
+		if( boosterID != "" ) then
+			transferredLookup[boosterID] = true
+		end
+	end
+
+	local remainingRolls = {}
+	for _, rollData in ipairs( rolls ) do
+		local boosterID = tostring( rollData.BoosterID or "" )
+		if( boosterID == "" or not transferredLookup[boosterID] ) then
+			table.insert( remainingRolls, table.Copy( rollData ) )
+		end
+	end
+
+	statTrak.Rolls = remainingRolls
+	statTrak.BestRoll = table.Copy( remainingRolls[1] or transferRolls[1] or statTrak.BestRoll )
 
 	fromData[globalKey] = fromData[globalKey] or {}
 	fromData[globalKey].StatTrak = statTrak
@@ -645,13 +704,18 @@ function BRICKS_SERVER.UNBOXING.Func.RecordStatTrakTransfer( fromPly, toPly, glo
 	local toData = toPly:GetUnboxingInventoryData()
 	toData[globalKey] = toData[globalKey] or {}
 	toData[globalKey].StatTrak = table.Copy( statTrak )
+	if( #transferRolls > 0 ) then
+		toData[globalKey].StatTrak.Rolls = table.Copy( transferRolls )
+		toData[globalKey].StatTrak.BestRoll = table.Copy( transferRolls[1] )
+	end
 	toPly:SetUnboxingInventoryData( toData )
 
 	BRICKS_SERVER.UNBOXING.Func.LogTelemetry( "stattrak_transfer", {
 		Item = globalKey,
 		From = fromPly:SteamID64(),
 		To = toPly:SteamID64(),
-		Amount = math.floor( tonumber( amount ) or 1 )
+		Amount = maxTransfer,
+		RollIDs = table.Copy( selectedRollIDs or {} )
 	} )
 end
 

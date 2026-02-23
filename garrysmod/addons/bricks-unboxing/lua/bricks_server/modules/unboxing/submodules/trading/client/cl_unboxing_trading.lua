@@ -48,6 +48,8 @@ net.Receive( "BRS.Net.AcceptUnboxingTradeReturn", function()
         Active = true,
         ReceiverItems = {},
         SenderItems = {},
+        ReceiverItemRolls = {},
+        SenderItemRolls = {},
         ReceiverCurrencies = {},
         SenderCurrencies = {},
         ChatTable = {}
@@ -87,18 +89,24 @@ net.Receive( "BRS.Net.UnboxingActiveTradeAddItemReturn", function()
     local partnerMadeChange = net.ReadBool()
     local globalKey = net.ReadString()
     local itemAmount = net.ReadUInt( 16 )
+    local selectedRollIDs = net.ReadTable() or {}
 
     local senderSteamID64 = (partnerIsSender and partnerSteamID64) or LocalPlayer():SteamID64()
     local receiverSteamID64 = (partnerIsSender and LocalPlayer():SteamID64()) or partnerSteamID64
 
     if( BRICKS_SERVER.TEMP.UnboxingTrades[receiverSteamID64] and BRICKS_SERVER.TEMP.UnboxingTrades[receiverSteamID64][senderSteamID64] ) then
+        BRICKS_SERVER.TEMP.UnboxingTrades[receiverSteamID64][senderSteamID64].SenderItemRolls = BRICKS_SERVER.TEMP.UnboxingTrades[receiverSteamID64][senderSteamID64].SenderItemRolls or {}
+        BRICKS_SERVER.TEMP.UnboxingTrades[receiverSteamID64][senderSteamID64].ReceiverItemRolls = BRICKS_SERVER.TEMP.UnboxingTrades[receiverSteamID64][senderSteamID64].ReceiverItemRolls or {}
+
         local oldAmount = 0
         if( (partnerIsSender and partnerMadeChange) or (not partnerIsSender and not partnerMadeChange) ) then
             oldAmount = BRICKS_SERVER.TEMP.UnboxingTrades[receiverSteamID64][senderSteamID64].SenderItems[globalKey] or 0
             BRICKS_SERVER.TEMP.UnboxingTrades[receiverSteamID64][senderSteamID64].SenderItems[globalKey] = (itemAmount > 0 and itemAmount) or nil
+            BRICKS_SERVER.TEMP.UnboxingTrades[receiverSteamID64][senderSteamID64].SenderItemRolls[globalKey] = (#selectedRollIDs > 0 and selectedRollIDs) or nil
         else
             oldAmount = BRICKS_SERVER.TEMP.UnboxingTrades[receiverSteamID64][senderSteamID64].ReceiverItems[globalKey] or 0
             BRICKS_SERVER.TEMP.UnboxingTrades[receiverSteamID64][senderSteamID64].ReceiverItems[globalKey] = (itemAmount > 0 and itemAmount) or nil
+            BRICKS_SERVER.TEMP.UnboxingTrades[receiverSteamID64][senderSteamID64].ReceiverItemRolls[globalKey] = (#selectedRollIDs > 0 and selectedRollIDs) or nil
         end
 
         hook.Run( "BRS.Hooks.UpdateUnboxingTradeItems", partnerMadeChange )
