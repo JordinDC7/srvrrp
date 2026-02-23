@@ -1,19 +1,68 @@
-﻿# Never deploy workflow files
+# -----------------------------
+# Git / repo tooling
+# -----------------------------
+.git-backup*
 .github/
-# Ignore large game binary files and cache
-# VPKs
-garrysmod/*.vpk
-*.vpk
-# Source engine BSP maps
-*.bsp
-# GMA addon caches
-*.gma
-# Cache directories
+
+# OS / editor junk
+.DS_Store
+Thumbs.db
+*.tmp
+*.bak
+*.swp
+
+# -----------------------------
+# Garry's Mod / Source runtime + cache
+# -----------------------------
+
+# GMod runtime/generated caches
 garrysmod/cache/
-garrysmod/cache/*
-# Workshop / srcds caches
+garrysmod/download/
+garrysmod/downloads/
+garrysmod/logs/
+garrysmod/html/
+garrysmod/temp/
+
+# Common transient runtime files
+garrysmod/*.log
+garrysmod/clientside_errors.txt
+garrysmod/GameState.txt
+garrysmod/stats.txt
+garrysmod/steam.inf
+garrysmod/sv.db
+
+# Workshop / srcds caches (generic)
 cache/
 cache/*
-# Other large assets
+
+# -----------------------------
+# Large game binaries / assets
+# -----------------------------
+
+# Valve Pak files (VPK)
+garrysmod/*.vpk
+*.vpk
+
+# Source engine maps
+*.bsp
+
+# Garry's Mod addon package cache/files
+*.gma
+
+# Other large binary assets (if not intentionally versioned)
 *.vtt
-# Ignore submodule git backups\n*.git-backup*\n
+
+# -----------------------------
+# Data policy (recommended)
+# -----------------------------
+# Ignore all data by default, then whitelist specific addon data folders if needed.
+# Uncomment these if you want "deny by default" for data:
+# garrysmod/data/**
+# !garrysmod/data/
+# !garrysmod/data/myaddon/
+# !garrysmod/data/myaddon/**
+
+# -----------------------------
+# Keep placeholders if needed
+# -----------------------------
+!.gitkeep
