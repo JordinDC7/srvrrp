@@ -132,7 +132,9 @@ function PANEL:FillPanel( globalKey, rankingMode, rollIndex )
     infoLabel:DockMargin( 10, 10, 10, 0 )
     infoLabel:SetWrap( true )
     infoLabel:SetAutoStretchVertical( true )
-    infoLabel:SetFont( "BRICKS_SERVER_Font16" )
+    -- BRICKS_SERVER_Font16 is never defined in the shared Bricks font set and
+    -- spams SetFontInternal errors in client console. Use an existing size.
+    infoLabel:SetFont( "BRICKS_SERVER_Font17" )
     infoLabel:SetTextColor( BRICKS_SERVER.Func.GetTheme( 6 ) )
     infoLabel:SetText( string.format(
         "Forge Tier: %s (%s)\nRoll Flavor: %s\nJackpot: %s\nBooster ID: %s\nUUID: %s\nUnboxed by: %s\nUnboxer SteamID64: %s\nUnboxed at: %s",
