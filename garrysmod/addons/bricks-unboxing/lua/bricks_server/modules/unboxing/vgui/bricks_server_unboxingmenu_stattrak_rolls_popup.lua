@@ -106,10 +106,14 @@ function PANEL:CreatePopout()
                 column.Header:SetTextColor( BRICKS_SERVER.Func.GetTheme( 6 ) )
                 column.Header.Paint = function( self3, ww, hh )
                     local isSorted = false
-                    if( isfunction( self3.GetSelected ) ) then
-                        isSorted = self3:GetSelected()
-                    elseif( isfunction( self3.IsDown ) ) then
-                        isSorted = self3:IsDown()
+                    local getSelected = self3.GetSelected
+                    if( type( getSelected ) == "function" ) then
+                        isSorted = getSelected( self3 )
+                    else
+                        local isDown = self3.IsDown
+                        if( type( isDown ) == "function" ) then
+                            isSorted = isDown( self3 )
+                        end
                     end
 
                     draw.RoundedBox( 0, 0, 0, ww, hh, BRICKS_SERVER.Func.GetTheme( isSorted and 0 or 1, isSorted and 190 or 170 ) )
