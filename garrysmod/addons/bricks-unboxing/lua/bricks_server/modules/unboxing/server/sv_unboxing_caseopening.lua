@@ -7,6 +7,30 @@ local function brsUnboxingRollBiasedStat( minValue, maxValue, curve )
 	return math.Round( minValue+(span*sample) )
 end
 
+local function brsUnboxingPickWeightedItem( weightedItems )
+	if( not istable( weightedItems ) or #weightedItems <= 0 ) then return nil end
+
+	local totalWeight = 0
+	for _, entry in ipairs( weightedItems ) do
+		totalWeight = totalWeight + math.max( 0, tonumber( entry.Weight ) or 0 )
+	end
+
+	if( totalWeight <= 0 ) then
+		return weightedItems[math.random( 1, #weightedItems )].Key
+	end
+
+	local winner = math.Rand( 0, totalWeight )
+	local cursor = 0
+	for _, entry in ipairs( weightedItems ) do
+		cursor = cursor + math.max( 0, tonumber( entry.Weight ) or 0 )
+		if( winner <= cursor ) then
+			return entry.Key
+		end
+	end
+
+	return weightedItems[#weightedItems].Key
+end
+
 local function brsUnboxingGetTierFloorConfig( statTrakConfig, configItemTable )
 	if( not istable( statTrakConfig ) or not istable( configItemTable ) ) then return nil end
 
@@ -268,6 +292,7 @@ local function caseOpen( ply, caseKey )
 
 		if( not keyRemovedSuccess ) then
 			BRICKS_SERVER.Func.SendNotification( ply, 1, 5, BRICKS_SERVER.Func.L( "unboxingNoKeyFound" ) )
+			return false
 		end
 	end
 
@@ -280,7 +305,6 @@ local function caseOpen( ply, caseKey )
 	local state = BRICKS_SERVER.UNBOXING.Func.GetTopTierState( ply )
 	state.Pity[caseFamily] = tonumber( state.Pity[caseFamily] ) or 0
 
-	local winningChance, currentChance = math.Rand( 0, 100 ), 0
 	local winningItemKey
 	local pityBefore = state.Pity[caseFamily]
 
@@ -305,7 +329,7 @@ local function caseOpen( ply, caseKey )
 		pityMultiplier = 1+((pityBefore-softPityThreshold+1)*softPityBoost)
 	end
 
-	local totalChanceWeighted = 0
+	local weightedDropPool = {}
 	for itemGlobalKey, itemChanceTable in pairs( configItemTable.Items ) do
 		local itemChance = BRICKS_SERVER.UNBOXING.Func.ResolveDropWeight( caseKey, itemGlobalKey, tonumber( (itemChanceTable or {})[1] ) or 0, caseFamily, ply )
 		local itemConfig = BRICKS_SERVER.UNBOXING.Func.GetItemFromGlobalKey( itemGlobalKey )
@@ -313,29 +337,14 @@ local function caseOpen( ply, caseKey )
 			itemChance = itemChance * pityMultiplier
 		end
 
-		totalChanceWeighted = totalChanceWeighted + itemChance
+		table.insert( weightedDropPool, {
+			Key = itemGlobalKey,
+			Weight = itemChance
+		} )
 	end
 
 	if( not winningItemKey ) then
-		winningChance = math.Rand( 0, 100 )
-		currentChance = 0
-
-		for k, v in pairs( configItemTable.Items ) do
-			local itemChance = BRICKS_SERVER.UNBOXING.Func.ResolveDropWeight( caseKey, k, tonumber( v[1] ) or 0, caseFamily, ply )
-			local itemConfig = BRICKS_SERVER.UNBOXING.Func.GetItemFromGlobalKey( k )
-			if( itemConfig and BRICKS_SERVER.UNBOXING.Func.IsApexRarity( itemConfig.Rarity ) ) then
-				itemChance = itemChance * pityMultiplier
-			end
-
-			local actualChance = (itemChance/math.max( totalChanceWeighted, 1))*100
-
-			if( winningChance > currentChance and winningChance <= currentChance+actualChance ) then
-				winningItemKey = k
-				break
-			end
-
-			currentChance = currentChance+actualChance
-		end
+		winningItemKey = brsUnboxingPickWeightedItem( weightedDropPool )
 	end
 
 	local duplicateProtection = ((BRICKS_SERVER.UNBOXING.LUACFG.TopTier or {}).DuplicateProtection or {})
@@ -349,18 +358,7 @@ local function caseOpen( ply, caseKey )
 			local rerolls = math.max( 0, tonumber( duplicateProtection.MaxRerolls ) or 3 )
 			if( recent and (now-(tonumber( recent.Time ) or 0)) <= window ) then
 				for _ = 1, rerolls do
-					local candidate = nil
-					local roll = math.Rand( 0, 100 )
-					local acc = 0
-					for k, v in pairs( configItemTable.Items ) do
-						local weight = BRICKS_SERVER.UNBOXING.Func.ResolveDropWeight( caseKey, k, tonumber( v[1] ) or 0, caseFamily, ply )
-						local actualChance = (weight/math.max( totalChanceWeighted, 1))*100
-						if( roll > acc and roll <= acc+actualChance ) then
-							candidate = k
-							break
-						end
-						acc = acc+actualChance
-					end
+					local candidate = brsUnboxingPickWeightedItem( weightedDropPool )
 					if( candidate and candidate != winningItemKey ) then
 						winningItemKey = candidate
 						break
@@ -539,25 +537,20 @@ net.Receive( "BRS.Net.UnboxingOpenAll", function( len, ply )
 	ply:RemoveUnboxingInventoryItem( globalKey, openAmount )
 
 	local caseFamily = BRICKS_SERVER.UNBOXING.Func.GetCaseFamily( caseKey, configItemTable )
-	local totalChance = 0
+	local weightedDropPool = {}
 	for itemGlobalKey, chanceInfo in pairs( configItemTable.Items ) do
-		totalChance = totalChance + BRICKS_SERVER.UNBOXING.Func.ResolveDropWeight( caseKey, itemGlobalKey, (chanceInfo or {})[1], caseFamily, ply )
+		table.insert( weightedDropPool, {
+			Key = itemGlobalKey,
+			Weight = BRICKS_SERVER.UNBOXING.Func.ResolveDropWeight( caseKey, itemGlobalKey, (chanceInfo or {})[1], caseFamily, ply )
+		} )
 	end
 
 	local itemsToGive = {}
 	for i = 1, openAmount do
-		local winningChance, currentChance = math.Rand( 0, 100 ), 0
-		for k, v in pairs( configItemTable.Items ) do
-			local resolvedWeight = BRICKS_SERVER.UNBOXING.Func.ResolveDropWeight( caseKey, k, v[1], caseFamily, ply )
-			local actualChance = (resolvedWeight/math.max( totalChance, 1))*100
-	
-			if( winningChance > currentChance and winningChance <= currentChance+actualChance ) then
-				itemsToGive[k] = (itemsToGive[k] or 0)+1
-				BRICKS_SERVER.UNBOXING.Func.RecordSupplyDrop( caseKey, caseFamily, k )
-				break
-			end
-	
-			currentChance = currentChance+actualChance
+		local wonGlobalKey = brsUnboxingPickWeightedItem( weightedDropPool )
+		if( wonGlobalKey ) then
+			itemsToGive[wonGlobalKey] = (itemsToGive[wonGlobalKey] or 0)+1
+			BRICKS_SERVER.UNBOXING.Func.RecordSupplyDrop( caseKey, caseFamily, wonGlobalKey )
 		end
 	end
 
