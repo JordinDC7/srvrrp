@@ -1,7 +1,7 @@
 local PANEL = {}
 
 function PANEL:Init()
-    self:SetHeader( string.upper( BRICKS_SERVER.Func.L( "unboxingMenu" ) ) )
+    self:SetHeader( "ELITE ARSENAL // " .. string.upper( BRICKS_SERVER.Func.L( "unboxingMenu" ) ) )
     self:SetSize( ScrW()*0.6, ScrH()*0.65 )
     self:Center()
     self.removeOnClose = false
@@ -63,13 +63,15 @@ function PANEL:Refresh()
     avatarBack:DockMargin( 10, 10, 0, 10 )
     avatarBack:SetTall( height )
     avatarBack.Paint = function( self2, w, h )
-        surface.SetDrawColor( BRICKS_SERVER.Func.GetTheme( 2 ) )
+        draw.RoundedBox( 8, 0, 0, w, h, BRICKS_SERVER.Func.GetTheme( 2 ) )
+        draw.RoundedBoxEx( 8, 0, 0, 6, h, BRICKS_SERVER.Func.GetTheme( 3 ), true, false, true, false )
+
+        surface.SetDrawColor( BRICKS_SERVER.Func.GetTheme( 1 ) )
         draw.NoTexture()
         BRICKS_SERVER.Func.DrawCircle( (h-avatarBackSize)/2+(avatarBackSize/2), h/2, avatarBackSize/2, 45 )
 
         draw.SimpleText( LocalPlayer():Nick(), "BRICKS_SERVER_Font23", textStartPos, h/2+2, BRICKS_SERVER.Func.GetTheme( 6 ), 0, TEXT_ALIGN_BOTTOM )
-
-        draw.SimpleText( rankName, "BRICKS_SERVER_Font20", textStartPos, h/2-2, ((group or {})[3] or BRICKS_SERVER.Func.GetTheme( 5 )), 0, 0 )
+        draw.SimpleText( "Operator Rank: " .. tostring(rankName or "Rookie"), "BRICKS_SERVER_Font17", textStartPos, h/2-2, ((group or {})[3] or BRICKS_SERVER.Func.GetTheme( 5 )), 0, 0 )
     end
 
     local distance = 2

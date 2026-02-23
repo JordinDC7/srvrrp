@@ -49,8 +49,8 @@ BRICKS_SERVER.UNBOXING.LUACFG.StatTrak = {
         ["Rare"] = { Min = 34, Max = 82, BiasCurve = 0.97, HardCap = 88, JackpotChance = 0.0030, Flavor = "Refined" },
         ["Epic"] = { Min = 40, Max = 87, BiasCurve = 0.92, HardCap = 91, JackpotChance = 0.0045, Flavor = "Combat" },
         ["Legendary"] = { Min = 48, Max = 90, BiasCurve = 0.88, HardCap = 93, JackpotChance = 0.0075, Flavor = "Prototype" },
-        ["Glitched"] = { Min = 43, Max = 84, BiasCurve = 1.12, HardCap = 90, JackpotChance = 0.0125, Flavor = "Unstable" },
-        ["Mythical"] = { Min = 46, Max = 86, BiasCurve = 1.08, HardCap = 92, JackpotChance = 0.0175, Flavor = "Anomalous" }
+        ["Glitched"] = { Min = 44, Max = 82, BiasCurve = 1.16, HardCap = 89, JackpotChance = 0.0040, Flavor = "Unstable" },
+        ["Mythical"] = { Min = 48, Max = 83, BiasCurve = 1.20, HardCap = 88, JackpotChance = 0.0025, Flavor = "Anomalous" }
     },
     -- Higher-tier weapons get better minimum stats than all lower tiers.
     HighTierMinimums = {

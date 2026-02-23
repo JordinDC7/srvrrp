@@ -75,7 +75,7 @@ function PANEL:FillPanel()
     local progressionBar = vgui.Create("DPanel", self)
     progressionBar:Dock(TOP)
     progressionBar:DockMargin(0, 25, 0, 0)
-    progressionBar:SetTall(95)
+    progressionBar:SetTall(126)
     progressionBar.Paint = function(self2, w, h)
         draw.RoundedBox(8, 0, 0, w, h, BRICKS_SERVER.Func.GetTheme(2))
 
@@ -86,12 +86,31 @@ function PANEL:FillPanel()
             pityDepth = math.max(pityDepth, tonumber(value) or 0)
         end
 
-        draw.SimpleText("CS STYLE FLOW: OPEN → BOOSTERS → RANK", "BRICKS_SERVER_Font18", 20, 10, BRICKS_SERVER.Func.GetTheme(6, 120))
-        draw.SimpleText("MASTERY XP: " .. string.Comma(masteryXP), "BRICKS_SERVER_Font23", 20, 34, BRICKS_SERVER.Func.GetTheme(6))
-        draw.SimpleText("PITY TRACK: " .. string.Comma(pityDepth), "BRICKS_SERVER_Font20", 20, 62, BRICKS_SERVER.Func.GetTheme(6, 75))
+        draw.SimpleText("ELITE UNBOXING FLOW: PICK CASE → OPEN → CLAIM", "BRICKS_SERVER_Font18", 20, 10, BRICKS_SERVER.Func.GetTheme(6, 120))
+        draw.SimpleText("MASTERY XP: " .. string.Comma(masteryXP), "BRICKS_SERVER_Font23", 20, 32, BRICKS_SERVER.Func.GetTheme(6))
+        draw.SimpleText("PITY TRACK: " .. string.Comma(pityDepth), "BRICKS_SERVER_Font20", 20, 58, BRICKS_SERVER.Func.GetTheme(6, 75))
 
-        draw.SimpleText("Tip: Inventory > Weapon Stats / Weapon Rank", "BRICKS_SERVER_Font17", w - 20, 34, BRICKS_SERVER.Func.GetTheme(6, 90), TEXT_ALIGN_RIGHT)
-        draw.SimpleText("Edit drops + boosters in config menu.", "BRICKS_SERVER_Font17", w - 20, 58, BRICKS_SERVER.Func.GetTheme(6, 65), TEXT_ALIGN_RIGHT)
+        draw.SimpleText("Tip: Inventory > Weapon Stats / Weapon Rank", "BRICKS_SERVER_Font17", w - 20, 32, BRICKS_SERVER.Func.GetTheme(6, 90), TEXT_ALIGN_RIGHT)
+        draw.SimpleText("Simple now, deeper systems can be added later.", "BRICKS_SERVER_Font17", w - 20, 54, BRICKS_SERVER.Func.GetTheme(6, 65), TEXT_ALIGN_RIGHT)
+
+        local rarityOrder = { "Common", "Uncommon", "Rare", "Epic", "Legendary", "Glitched", "Mythical" }
+        local startX = 20
+        local pillY = 84
+        local pillH = 24
+
+        surface.SetFont("BRICKS_SERVER_Font17")
+        for _, rarityName in ipairs(rarityOrder) do
+            local rarityColor = BRICKS_SERVER.Func.GetRarityColor(rarityName) or BRICKS_SERVER.Func.GetTheme(5)
+            local tw = surface.GetTextSize(rarityName)
+            local pillW = tw + 22
+
+            draw.RoundedBox(6, startX, pillY, pillW, pillH, BRICKS_SERVER.Func.GetTheme(3))
+            draw.RoundedBox(6, startX, pillY, 5, pillH, rarityColor)
+            draw.SimpleText(rarityName, "BRICKS_SERVER_Font17", startX + (pillW / 2) + 3, pillY + (pillH / 2), BRICKS_SERVER.Func.GetTheme(6, 210), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+
+            startX = startX + pillW + 8
+            if startX > (w - 100) then break end
+        end
     end
 
     local bottomBack = vgui.Create("DPanel", self)
