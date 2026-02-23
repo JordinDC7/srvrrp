@@ -99,6 +99,11 @@ function PANEL:CreatePopout()
     self.emptyLabel:SetText( "No rolls found for this item yet." )
     self.emptyLabel:SetVisible( false )
 
+    self.fallbackScroll = vgui.Create( "bricks_server_scrollpanel_bar", self.tableArea )
+    self.fallbackScroll:Dock( FILL )
+    self.fallbackScroll:DockMargin( 0, 6, 0, 0 )
+    self.fallbackScroll:SetVisible( false )
+
     self.list.OnRowSelected = function( _, _, row )
         local rollIndex = row.RollIndex
         if( not rollIndex ) then return end
@@ -122,6 +127,112 @@ function PANEL:CreatePopout()
     self.closeButton.DoClick = self.popoutPanel.ClosePopout
 end
 
+function PANEL:BuildDuplicateRows( searchText )
+    local inventory = (IsValid( LocalPlayer() ) and LocalPlayer():GetUnboxingInventory()) or {}
+    local rows, rarityTotals = {}, {}
+
+    for globalKey, amount in pairs( inventory ) do
+        local owned = tonumber( amount ) or 0
+        if( owned < 2 or not string.StartWith( tostring( globalKey ), "ITEM_" ) ) then continue end
+
+        local configItem = BRICKS_SERVER.UNBOXING.Func.GetItemFromGlobalKey( globalKey )
+        if( not configItem ) then continue end
+
+        local itemName = tostring( configItem.Name or globalKey )
+        local rarity = tostring( configItem.Rarity or "Unknown" )
+        local dupes = math.max( 0, owned-1 )
+        local haystack = string.lower( itemName .. " " .. rarity .. " " .. owned .. " " .. dupes )
+        if( searchText != "" and not string.find( haystack, searchText, 1, true ) ) then continue end
+
+        rarityTotals[rarity] = rarityTotals[rarity] or { Owned = 0, Dupes = 0 }
+        rarityTotals[rarity].Owned = rarityTotals[rarity].Owned + owned
+        rarityTotals[rarity].Dupes = rarityTotals[rarity].Dupes + dupes
+
+        table.insert( rows, {
+            Name = itemName,
+            Rarity = rarity,
+            Owned = owned,
+            Dupes = dupes
+        } )
+    end
+
+    table.sort( rows, function( a, b )
+        if( a.Dupes == b.Dupes ) then
+            return a.Name < b.Name
+        end
+
+        return a.Dupes > b.Dupes
+    end )
+
+    return rows, rarityTotals
+end
+
+function PANEL:ShowDuplicateFallback( searchText )
+    if( not IsValid( self.fallbackScroll ) ) then return end
+
+    self.fallbackScroll:Clear()
+
+    local rows, rarityTotals = self:BuildDuplicateRows( searchText )
+
+    local header = vgui.Create( "DLabel", self.fallbackScroll )
+    header:Dock( TOP )
+    header:DockMargin( 10, 0, 10, 4 )
+    header:SetFont( "BRICKS_SERVER_Font20" )
+    header:SetTextColor( BRICKS_SERVER.Func.GetTheme( 6 ) )
+    header:SetText( "No roll history found. Showing duplicate item stats instead:" )
+
+    local rarityRows = {}
+    for rarity, totals in pairs( rarityTotals ) do
+        table.insert( rarityRows, { Rarity = rarity, Totals = totals } )
+    end
+
+    table.sort( rarityRows, function( a, b )
+        if( a.Totals.Dupes == b.Totals.Dupes ) then
+            return a.Rarity < b.Rarity
+        end
+
+        return a.Totals.Dupes > b.Totals.Dupes
+    end )
+
+    for _, row in ipairs( rarityRows ) do
+        local line = vgui.Create( "DLabel", self.fallbackScroll )
+        line:Dock( TOP )
+        line:DockMargin( 10, 0, 10, 2 )
+        line:SetFont( "BRICKS_SERVER_Font18" )
+        line:SetTextColor( BRICKS_SERVER.Func.GetTheme( 6 ) )
+        line:SetText( string.format( "• %s: %d owned, %d duplicates", row.Rarity, row.Totals.Owned, row.Totals.Dupes ) )
+    end
+
+    if( #rows <= 0 ) then
+        local none = vgui.Create( "DLabel", self.fallbackScroll )
+        none:Dock( TOP )
+        none:DockMargin( 10, 6, 10, 0 )
+        none:SetFont( "BRICKS_SERVER_Font18" )
+        none:SetTextColor( BRICKS_SERVER.Func.GetTheme( 6, 120 ) )
+        none:SetText( "No duplicate items matched your search." )
+        return
+    end
+
+    local title = vgui.Create( "DLabel", self.fallbackScroll )
+    title:Dock( TOP )
+    title:DockMargin( 10, 10, 10, 4 )
+    title:SetFont( "BRICKS_SERVER_Font19" )
+    title:SetTextColor( BRICKS_SERVER.Func.GetTheme( 6 ) )
+    title:SetText( "Duplicate Weapons:" )
+
+    for _, row in ipairs( rows ) do
+        local entry = vgui.Create( "DPanel", self.fallbackScroll )
+        entry:Dock( TOP )
+        entry:DockMargin( 8, 0, 8, 4 )
+        entry:SetTall( 30 )
+        entry.Paint = function( self2, w, h )
+            draw.RoundedBox( 4, 0, 0, w, h, BRICKS_SERVER.Func.GetTheme( 1, 190 ) )
+            draw.SimpleText( string.format( "%s [%s]", row.Name, row.Rarity ), "BRICKS_SERVER_Font18", 10, h / 2, BRICKS_SERVER.Func.GetTheme( 6 ), 0, TEXT_ALIGN_CENTER )
+            draw.SimpleText( string.format( "Owned: %d  |  Duplicates: %d", row.Owned, row.Dupes ), "BRICKS_SERVER_Font18", w - 10, h / 2, BRICKS_SERVER.Func.GetTheme( 6, 210 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )
+        end
+    end
+end
+
 function PANEL:FillPanel( globalKey )
     self.globalKey = globalKey
     self.rolls = BRICKS_SERVER.UNBOXING.Func.GetStatTrakRolls( LocalPlayer(), globalKey ) or {}
@@ -135,6 +246,14 @@ function PANEL:RefreshRows()
 
     if( IsValid( self.emptyLabel ) ) then
         self.emptyLabel:SetVisible( false )
+    end
+
+    if( IsValid( self.list ) ) then
+        self.list:SetVisible( true )
+    end
+
+    if( IsValid( self.fallbackScroll ) ) then
+        self.fallbackScroll:SetVisible( false )
     end
 
     local rows = {}
@@ -183,6 +302,16 @@ function PANEL:RefreshRows()
 
     if( #rows == 0 and IsValid( self.emptyLabel ) ) then
         self.emptyLabel:SetVisible( true )
+
+        if( IsValid( self.list ) ) then
+            self.list:SetVisible( false )
+        end
+
+        if( IsValid( self.fallbackScroll ) ) then
+            self.fallbackScroll:SetVisible( true )
+            self:ShowDuplicateFallback( searchText )
+        end
+
         return
     end
 
