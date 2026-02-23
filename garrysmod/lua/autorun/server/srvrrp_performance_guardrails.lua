@@ -15,6 +15,10 @@ local ragdollCleanupEnabled = CreateConVar("srvrrp_ragdoll_cleanup_enabled", "0"
 local ragdollCleanupAge = CreateConVar("srvrrp_ragdoll_cleanup_age", "180", FCVAR_ARCHIVE, "Ragdoll max age in seconds before cleanup.", 30, 3600)
 local ragdollCleanupInterval = CreateConVar("srvrrp_ragdoll_cleanup_interval", "30", FCVAR_ARCHIVE, "Seconds between ragdoll cleanup passes.", 5, 300)
 
+local netBudgetEnabled = CreateConVar("srvrrp_net_budget_enabled", "1", FCVAR_ARCHIVE, "Enable net message budgeting diagnostics.")
+local netBudgetWarnRatio = CreateConVar("srvrrp_net_budget_warn_ratio", "0.85", FCVAR_ARCHIVE, "Warn when a message reaches this ratio of its budget.", 0.5, 1)
+local telemetryEnabled = CreateConVar("srvrrp_ui_telemetry_enabled", "1", FCVAR_ARCHIVE, "Enable SRVRRP UI telemetry aggregation.")
+
 local sample = {
     frameTime = {},
     frameIdx = 1,
@@ -26,6 +30,68 @@ local sample = {
 local propSpawnState = {}
 
 local trackedRagdolls = {}
+local netBudgets = {}
+local netUsage = {}
+local uiTelemetry = {
+    startedAt = CurTime(),
+    totals = {},
+    byPlayer = {},
+}
+
+local function registerNetBudget(messageName, perMinute, description)
+    if messageName == nil or messageName == "" then
+        return
+    end
+
+    netBudgets[messageName] = {
+        perMinute = math.max(1, tonumber(perMinute) or 1),
+        description = description or "",
+    }
+end
+
+function SRVRRP_RegisterNetBudget(messageName, perMinute, description)
+    registerNetBudget(messageName, perMinute, description)
+end
+
+function SRVRRP_TrackNetMessage(messageName, recipientCount)
+    if not netBudgetEnabled:GetBool() then
+        return
+    end
+
+    local budget = netBudgets[messageName]
+    if not budget then
+        return
+    end
+
+    local now = CurTime()
+    local state = netUsage[messageName]
+    if not state then
+        state = {
+            windowStart = now,
+            count = 0,
+            warns = 0,
+        }
+        netUsage[messageName] = state
+    end
+
+    if now - state.windowStart >= 60 then
+        state.windowStart = now
+        state.count = 0
+        state.warns = 0
+    end
+
+    state.count = state.count + math.max(1, tonumber(recipientCount) or 1)
+
+    local warnThreshold = budget.perMinute * netBudgetWarnRatio:GetFloat()
+    if state.count >= warnThreshold and state.warns < 2 then
+        state.warns = state.warns + 1
+        print(string.format("[%s][NET][WARN] %s reached %d/%d recipients per minute (%s)", addonTag, messageName, state.count, budget.perMinute, budget.description))
+    end
+end
+
+registerNetBudget("srvrrp_mega_update_open_hub", 150, "Hub open signal")
+registerNetBudget("srvrrp_mega_update_tip", 220, "Spawn and briefing hints")
+registerNetBudget("srvrrp_mega_update_daily_brief", 160, "Daily brief payload")
 
 local function addFrameSample()
     local frameMs = FrameTime() * 1000
@@ -124,6 +190,14 @@ local function printSnapshot(prefix)
     if snapshot.entityCount >= warningEntityCount:GetInt() then
         print(string.format("[%s][WARN] Entity count high: %d", addonTag, snapshot.entityCount))
     end
+
+    if netBudgetEnabled:GetBool() then
+        for messageName, budget in pairs(netBudgets) do
+            local state = netUsage[messageName]
+            local count = state and state.count or 0
+            print(string.format("[%s][NET] %s usage=%d/%d", addonTag, messageName, count, budget.perMinute))
+        end
+    end
 end
 
 local function scheduleMonitorTimer()
@@ -158,6 +232,20 @@ concommand.Add("srvrrp_perf_snapshot", function(ply)
 
     printSnapshot("manual")
 end, nil, "Prints a single lightweight performance snapshot.")
+
+concommand.Add("srvrrp_net_budget_snapshot", function(ply)
+    if IsValid(ply) and not ply:IsAdmin() then
+        ply:ChatPrint("Admin only.")
+        return
+    end
+
+    print(string.format("[%s] Net budget snapshot", addonTag))
+    for messageName, budget in pairs(netBudgets) do
+        local state = netUsage[messageName]
+        local count = state and state.count or 0
+        print(string.format("[%s][NET] %s=%d/%d (%s)", addonTag, messageName, count, budget.perMinute, budget.description))
+    end
+end, nil, "Prints net message budget usage for tracked SRVRRP channels.")
 
 hook.Add("PlayerSpawnProp", addonTag .. "_prop_guard", function(ply)
     if not propGuardEnabled:GetBool() then
@@ -242,6 +330,61 @@ end
 cvars.AddChangeCallback("srvrrp_ragdoll_cleanup_interval", function()
     scheduleRagdollTimer()
 end, addonTag .. "_ragdoll_interval")
+
+util.AddNetworkString("srvrrp_ui_telemetry_event")
+
+net.Receive("srvrrp_ui_telemetry_event", function(_, ply)
+    if not telemetryEnabled:GetBool() then
+        return
+    end
+
+    if not IsValid(ply) then
+        return
+    end
+
+    local eventKey = string.sub(string.lower(net.ReadString() or ""), 1, 48)
+    if eventKey == "" then
+        return
+    end
+
+    uiTelemetry.totals[eventKey] = (uiTelemetry.totals[eventKey] or 0) + 1
+
+    local sid = ply:SteamID64() or ply:SteamID() or "unknown"
+    local pState = uiTelemetry.byPlayer[sid]
+    if not pState then
+        pState = {}
+        uiTelemetry.byPlayer[sid] = pState
+    end
+
+    pState[eventKey] = (pState[eventKey] or 0) + 1
+end)
+
+timer.Create(addonTag .. "_ui_telemetry_heartbeat", 120, 0, function()
+    if not telemetryEnabled:GetBool() then
+        return
+    end
+
+    local rows = {}
+    for eventKey, count in pairs(uiTelemetry.totals) do
+        rows[#rows + 1] = {
+            eventKey = eventKey,
+            count = count,
+        }
+    end
+
+    table.sort(rows, function(a, b)
+        return a.count > b.count
+    end)
+
+    local top = {}
+    for i = 1, math.min(5, #rows) do
+        top[#top + 1] = string.format("%s=%d", rows[i].eventKey, rows[i].count)
+    end
+
+    if #top > 0 then
+        print(string.format("[%s][UI] top events since boot: %s", addonTag, table.concat(top, ", ")))
+    end
+end)
 
 scheduleMonitorTimer()
 scheduleRagdollTimer()

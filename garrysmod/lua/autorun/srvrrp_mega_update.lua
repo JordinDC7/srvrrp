@@ -5,6 +5,12 @@ if SERVER then
   util.AddNetworkString("srvrrp_mega_update_tip")
   util.AddNetworkString("srvrrp_mega_update_daily_brief")
 
+  local function trackNetBudget(messageName, recipients)
+    if SRVRRP_TrackNetMessage then
+      SRVRRP_TrackNetMessage(messageName, recipients or 1)
+    end
+  end
+
   local commandCooldowns = {}
   local spawnTipPool = {
     "Pro tip: Use /hub to quickly jump into inventory, gangs, and party systems.",
@@ -40,6 +46,7 @@ if SERVER then
     if not IsValid(ply) then return end
     net.Start("srvrrp_mega_update_open_hub")
     net.Send(ply)
+    trackNetBudget("srvrrp_mega_update_open_hub", 1)
   end
 
   local function sendDailyBrief(ply)
@@ -48,6 +55,7 @@ if SERVER then
     net.Start("srvrrp_mega_update_daily_brief")
     net.WriteString(dailyBriefPool[idx])
     net.Send(ply)
+    trackNetBudget("srvrrp_mega_update_daily_brief", 1)
   end
 
   hook.Add("PlayerDisconnected", "srvrrp_mega_update_cleanup_cooldowns", function(ply)
@@ -102,6 +110,7 @@ if SERVER then
       net.Start("srvrrp_mega_update_tip")
       net.WriteString("Use /hub for the new quick-access launcher and system tips.")
       net.Send(ply)
+      trackNetBudget("srvrrp_mega_update_tip", 1)
     end)
 
     timer.Simple(16, function()
@@ -110,6 +119,7 @@ if SERVER then
       net.Start("srvrrp_mega_update_tip")
       net.WriteString(spawnTipPool[tipIdx])
       net.Send(ply)
+      trackNetBudget("srvrrp_mega_update_tip", 1)
     end)
 
     timer.Simple(24, function()
@@ -220,7 +230,16 @@ local tips = {
   "Casino and scratchcards are best used as burst-risk spending, not primary income.",
 }
 
+local function sendTelemetry(eventKey)
+  if not eventKey or eventKey == "" then return end
+  net.Start("srvrrp_ui_telemetry_event")
+  net.WriteString(eventKey)
+  net.SendToServer()
+end
+
 local function createHub()
+  sendTelemetry("hub_open")
+
   if IsValid(SRVRRP_MegaHub) then
     SRVRRP_MegaHub:Remove()
   end
@@ -268,6 +287,9 @@ local function createHub()
 
   local function refreshFilter()
     local needle = string.Trim(string.lower(search:GetValue() or ""))
+    if needle ~= "" then
+      sendTelemetry("hub_search")
+    end
     for _, entry in ipairs(buttons) do
       local hay = string.lower(entry.info.name .. " " .. entry.info.desc)
       local visible = needle == "" or string.find(hay, needle, 1, true) ~= nil
@@ -293,6 +315,7 @@ local function createHub()
     end
     b.DoClick = function()
       runCommand(info.kind, info.value)
+      sendTelemetry("hub_action_" .. string.lower(string.gsub(info.name, "[^%w]+", "_")))
       surface.PlaySound("buttons/button15.wav")
     end
 
