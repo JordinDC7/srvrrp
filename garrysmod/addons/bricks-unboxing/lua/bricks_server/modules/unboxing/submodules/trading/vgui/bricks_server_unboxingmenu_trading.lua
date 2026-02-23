@@ -246,102 +246,34 @@ function PANEL:RefreshPlayers()
         playerBack.button:SetSize( self.slotWide, self.slotTall )
         playerBack.button:SetText( "" )
         playerBack.button.Paint = function( self2, w, h ) end
-        playerBack.button.DoClick = function( self2 )
-            if( IsValid( self2.popoutPanel ) ) then 
-                self2.popoutPanel:MakePopup()
-                return 
-            end
-
-            local actions = {}
-
+        playerBack.button.DoClick = function()
             if( BRICKS_SERVER.TEMP.UnboxingTrades[victimSteamID64] and BRICKS_SERVER.TEMP.UnboxingTrades[victimSteamID64][localPlayerSteamID64] ) then
-                table.insert( actions, { BRICKS_SERVER.Func.L( "unboxingCancelTrade" ), function()
-                    net.Start( "BRS.Net.CancelUnboxingTrade" )
-                        net.WriteString( victimSteamID64 )
-                    net.SendToServer()
-                end } )
+                net.Start( "BRS.Net.CancelUnboxingTrade" )
+                    net.WriteString( victimSteamID64 )
+                net.SendToServer()
             elseif( BRICKS_SERVER.TEMP.UnboxingTrades[localPlayerSteamID64] and BRICKS_SERVER.TEMP.UnboxingTrades[localPlayerSteamID64][victimSteamID64] ) then
-                table.insert( actions, { BRICKS_SERVER.Func.L( "unboxingAcceptTrade" ), function()
-                    net.Start( "BRS.Net.AcceptUnboxingTrade" )
-                        net.WriteString( victimSteamID64 )
-                    net.SendToServer()
-                end } )
+                net.Start( "BRS.Net.AcceptUnboxingTrade" )
+                    net.WriteString( victimSteamID64 )
+                net.SendToServer()
             else
-                table.insert( actions, { BRICKS_SERVER.Func.L( "unboxingSendTrade" ), function()
-                    net.Start( "BRS.Net.SendUnboxingTrade" )
-                        net.WriteString( v:SteamID64() )
-                    net.SendToServer()
-                end } )
-            end
-
-            self2.popoutPanel = vgui.Create( "DPanel" )
-            self2.popoutPanel:SetSize( ScrW()*0.1, ScrH()*0.2 )
-            self2.popoutPanel:SetPos( playerBackX+playerBackW+5, playerBackY )
-            self2.popoutPanel:MakePopup()
-            self2.popoutPanel.Paint = function( self2, w, h ) 
-                local x, y = self2:LocalToScreen( 0, 0 )
-
-                BRICKS_SERVER.BSHADOWS.BeginShadow()
-                draw.RoundedBox( 8, x, y, w, h, BRICKS_SERVER.Func.GetTheme( 3 ) )	
-                BRICKS_SERVER.BSHADOWS.EndShadow(2, 2, 1, 255, 0, 0, false )
-            end
-            self2.popoutPanel.Think = function( self3 )
-                if( not IsValid( self2 ) or not self:GetParent():GetParent():GetParent():GetParent():IsVisible() or not self3:IsMouseInputEnabled() ) then
-                    self3:Remove()
-                end
-            end
-
-            local avatarBackSize, avatarTopSpacing = 100, 25
-
-            local popoutContent = vgui.Create( "DPanel", self2.popoutPanel )
-            popoutContent:SetSize( self2.popoutPanel:GetWide(), self2.popoutPanel:GetTall() )
-            popoutContent.Paint = function( self2, w, h ) 
-                surface.SetDrawColor( BRICKS_SERVER.Func.GetTheme( 2 ) )
-                draw.NoTexture()
-                BRICKS_SERVER.Func.DrawCircle( w/2, avatarTopSpacing+(avatarBackSize/2), avatarBackSize/2, 45 )
-
-                local textYPos = avatarTopSpacing+avatarBackSize+25
-                draw.SimpleText( ((IsValid( v ) and v:Nick()) or BRICKS_SERVER.Func.L( "unknown" )), "BRICKS_SERVER_Font23", w/2, textYPos+2, BRICKS_SERVER.Func.GetTheme( 6 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM )
-
-                local teamNum = IsValid( v ) and v:Team() or 0
-                draw.SimpleText( (team.GetName( teamNum ) or BRICKS_SERVER.Func.L( "none" )), "BRICKS_SERVER_Font20", w/2, textYPos-2, (team.GetColor( teamNum ) or BRICKS_SERVER.Func.GetTheme( 6 )), TEXT_ALIGN_CENTER, 0 )
-            end
-
-            local distance = 2
-            local avatarIcon = vgui.Create( "bricks_server_circle_avatar", popoutContent )
-            avatarIcon:SetPos( (popoutContent:GetWide()/2)-(avatarBackSize/2)+distance, avatarTopSpacing+distance )
-            avatarIcon:SetSize( avatarBackSize-(2*distance), avatarBackSize-(2*distance) )
-            avatarIcon:SetPlayer( v, 64 )
-
-            for k, v in ipairs( actions ) do
-                local actionButton = vgui.Create( "DButton", popoutContent )
-                actionButton:Dock( BOTTOM )
-                actionButton:DockMargin( 10, 5, 10, 10 )
-                actionButton:SetTall( 35 )
-                actionButton:SetText( "" )
-                local alpha = 0
-                actionButton.Paint = function( self2, w, h )
-                    draw.RoundedBox( 8, 0, 0, w, h, BRICKS_SERVER.Func.GetTheme( 2 ) )
-            
-                    if( not self2:IsDown() and self2:IsHovered() ) then
-                        alpha = math.Clamp( alpha+10, 0, 200 )
-                    else
-                        alpha = math.Clamp( alpha-10, 0, 200 )
-                    end
-        
-                    surface.SetAlphaMultiplier( alpha/255 )
-                    draw.RoundedBox( 8, 0, 0, w, h, BRICKS_SERVER.Func.GetTheme( 1 ) )
-                    surface.SetAlphaMultiplier( 1 )
-        
-                    BRICKS_SERVER.Func.DrawClickCircle( self2, w, h, BRICKS_SERVER.Func.GetTheme( 1 ) )
-        
-                    draw.SimpleText( v[1], "BRICKS_SERVER_Font20", w/2, h/2-1, BRICKS_SERVER.Func.GetTheme( 6 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
-                end
-                actionButton.DoClick = function()
-                    v[2]()
-                end
+                net.Start( "BRS.Net.SendUnboxingTrade" )
+                    net.WriteString( victimSteamID64 )
+                net.SendToServer()
             end
         end
+
+        playerBack.button.DoRightClick = function( self2 )
+            self2:DoClick()
+        end
+
+        local actionText = BRICKS_SERVER.Func.L( "unboxingSendTrade" )
+        if( BRICKS_SERVER.TEMP.UnboxingTrades[victimSteamID64] and BRICKS_SERVER.TEMP.UnboxingTrades[victimSteamID64][localPlayerSteamID64] ) then
+            actionText = BRICKS_SERVER.Func.L( "unboxingCancelTrade" )
+        elseif( BRICKS_SERVER.TEMP.UnboxingTrades[localPlayerSteamID64] and BRICKS_SERVER.TEMP.UnboxingTrades[localPlayerSteamID64][victimSteamID64] ) then
+            actionText = BRICKS_SERVER.Func.L( "unboxingAcceptTrade" )
+        end
+
+        playerBack.button:SetTooltip( actionText )
     end
 
     if( playerCount <= 0 ) then

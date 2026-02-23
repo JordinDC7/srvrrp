@@ -397,5 +397,10 @@ BRICKS_SERVER.Func.AddLanguageStrings( "polish", {
     ["unboxingSkins"] = "Skiny",
   
     ["unboxingPlyDead"] = "Nie możesz położyć skrzynek, gdy jesteś martwy!",
-  
-  } )
+    ["unboxingTradeCooldown"] = "You need to wait %d seconds before sending another trade request.",
+    ["ok"] = "OK",
+    ["cancel"] = "Cancel",
+    ["none"] = "None",
+    ["invalidType"] = "Invalid type.",
+    ["unboxingInvalidAmount"] = "Invalid amount."
+} )
