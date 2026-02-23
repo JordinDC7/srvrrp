@@ -317,14 +317,24 @@ local function brsGetSocketModifierScalars( itemData )
 end
 
 local function brsApplySocketModifier( scalar, statKey, modifierScalars )
+    local baseScalar = tonumber( scalar ) or 1
     local bonus = tonumber( (modifierScalars or {})[statKey] ) or 0
     if( bonus == 0 ) then return scalar end
 
-    if( statKey == "DamageScale" ) then
-        return scalar*(1+bonus)
+    -- Keep runtime stat scalars in a sane range even if persisted socket data was tampered/corrupted.
+    local function brsClampScalar( value, minValue, maxValue )
+        value = tonumber( value ) or 1
+        if( value < minValue ) then return minValue end
+        if( value > maxValue ) then return maxValue end
+
+        return value
     end
 
-    return scalar*(1-bonus)
+    if( statKey == "DamageScale" ) then
+        return brsClampScalar( baseScalar*(1+bonus), 0.05, 5 )
+    end
+
+    return brsClampScalar( baseScalar*(1-bonus), 0.05, 5 )
 end
 
 -- Reads equipped weapon stat metadata and returns effective gameplay scalars.

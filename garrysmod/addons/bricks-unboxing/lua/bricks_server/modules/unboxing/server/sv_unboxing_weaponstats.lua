@@ -187,7 +187,8 @@ hook.Add( "EntityTakeDamage", "BricksServerHooks_EntityTakeDamage_UnboxingStatTr
         end
     end
 
-    dmgInfo:ScaleDamage( tonumber( statScalars.DamageScale ) or 1 )
+    local damageScale = math.Clamp( tonumber( statScalars.DamageScale ) or 1, 0.05, 5 )
+    dmgInfo:ScaleDamage( damageScale )
 end )
 
 hook.Add( "OnNPCKilled", "BricksServerHooks_OnNPCKilled_UnboxingStatTrak", function( npc, attacker, inflictor )
