@@ -119,7 +119,7 @@ function PANEL:FillPanel( globalKey, rankingMode, rollIndex )
         local title = vgui.Create( "DLabel", parentPanel )
         title:Dock( TOP )
         title:DockMargin( 10, 10, 10, 10 )
-        title:SetText( "Booster Rankings" )
+        title:SetText( "Weapon Ranking" )
         title:SetFont( "BRICKS_SERVER_Font22" )
         title:SetTextColor( Color( 72, 255, 72 ) )
 
@@ -128,10 +128,17 @@ function PANEL:FillPanel( globalKey, rankingMode, rollIndex )
             local line = vgui.Create( "DLabel", parentPanel )
             line:Dock( TOP )
             line:DockMargin( 10, 3, 10, 0 )
-            line:SetText( string.format( "%s: Rank %d/%d | Percentile %.2f%%", row.Label:upper(), data.Rank or 1, data.Total or 1, data.Percentile or 100 ) )
+            line:SetText( string.format( "%s: #%d/%d | Top %.2f%%", row.Label:upper(), data.Rank or 1, data.Total or 1, data.Percentile or 100 ) )
             line:SetFont( "BRICKS_SERVER_Font18" )
             line:SetTextColor( row.Color )
         end
+
+        local scoreLine = vgui.Create( "DLabel", parentPanel )
+        scoreLine:Dock( TOP )
+        scoreLine:DockMargin( 10, 10, 10, 0 )
+        scoreLine:SetText( string.format( "Overall Booster Score: %.2f (%s)", tonumber( summary.Score ) or 0, tostring( summary.TierName or "Unranked" ) ) )
+        scoreLine:SetFont( "BRICKS_SERVER_Font18" )
+        scoreLine:SetTextColor( BRICKS_SERVER.Func.GetTheme( 6 ) )
 
         return
     end

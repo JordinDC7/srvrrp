@@ -171,13 +171,14 @@ function PANEL:FillInventory()
         if (not configItemTable) then continue end
 
         local actions = {}
+        local statTrakSummary = nil
 
         if (isItem) then
             local devConfigItemTable = BRICKS_SERVER.DEVCONFIG.UnboxingItemTypes[configItemTable.Type] or {}
-            local statTrakSummary = BRICKS_SERVER.UNBOXING.Func.GetStatTrakSummary(LocalPlayer(), globalKey)
+            statTrakSummary = BRICKS_SERVER.UNBOXING.Func.GetStatTrakSummary(LocalPlayer(), globalKey)
 
             if (statTrakSummary) then
-                table.insert(actions, { "Inspect Best", function()
+                table.insert(actions, { "Weapon Stats", function()
                     self.popoutPanel = vgui.Create("bricks_server_unboxingmenu_stattrak_popup", self)
                     self.popoutPanel:SetPos(0, 0)
                     self.popoutPanel:SetSize(self.panelWide, ScrH() * 0.65 - 40)
@@ -185,7 +186,7 @@ function PANEL:FillInventory()
                     self.popoutPanel:FillPanel(globalKey, false)
                 end })
 
-                table.insert(actions, { "Ranking", function()
+                table.insert(actions, { "Weapon Rank", function()
                     self.popoutPanel = vgui.Create("bricks_server_unboxingmenu_stattrak_popup", self)
                     self.popoutPanel:SetPos(0, 0)
                     self.popoutPanel:SetSize(self.panelWide, ScrH() * 0.65 - 40)
@@ -194,7 +195,7 @@ function PANEL:FillInventory()
                 end })
 
                 if ((tonumber(itemAmount) or 1) > 1) then
-                    table.insert(actions, { "View All Rolls", function()
+                    table.insert(actions, { "All Booster Rolls", function()
                         self.popoutPanel = vgui.Create("bricks_server_unboxingmenu_stattrak_rolls_popup", self)
                         self.popoutPanel:SetPos(0, 0)
                         self.popoutPanel:SetSize(self.panelWide, ScrH() * 0.65 - 40)
@@ -267,6 +268,13 @@ function PANEL:FillInventory()
         end
 
         self:AddSlot(globalKey, (itemAmount or 1), actions)
+
+        if (isItem and statTrakSummary) then
+            local slot = self.grid:GetChildren()[#self.grid:GetChildren()]
+            if (IsValid(slot)) then
+                slot:AddTopInfo(string.format("BOOST %.2f", tonumber(statTrakSummary.Score) or 0), BRICKS_SERVER.Func.GetTheme(3), BRICKS_SERVER.Func.GetTheme(6), true)
+            end
+        end
     end
 end
 
