@@ -14,9 +14,7 @@ function PANEL:Init()
 
     hook.Add( "BRS.Hooks.RefreshGang", self, function(  self, valuesChanged, refreshGang )
         if( IsValid( self ) ) then
-            if( not valuesChanged or valuesChanged["Roles"] or valuesChanged["Members"] or valuesChanged["Icon"] or valuesChanged["Owner"] ) then
-                self:RefreshGang()
-            end
+            self:RefreshGang()
         else
             hook.Remove( "BRS.Hooks.RefreshGang", self )
         end
