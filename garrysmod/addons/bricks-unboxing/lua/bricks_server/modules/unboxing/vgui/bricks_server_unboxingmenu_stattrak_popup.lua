@@ -30,6 +30,13 @@ local function BRS_UC_GetDisplayName( itemName, rarityName )
     return cleanName
 end
 
+local function BRS_UC_GetFontHeight( fontName )
+    surface.SetFont( fontName )
+    local _, h = surface.GetTextSize( "W" )
+
+    return math.max( h, 18 )
+end
+
 function PANEL:Init()
 end
 
@@ -198,7 +205,9 @@ function PANEL:FillPanel( globalKey, rankingMode, rollIndex )
         local infoLine = vgui.Create( "DLabel", parentPanel )
         infoLine:Dock( TOP )
         infoLine:DockMargin( 10, i == 1 and 10 or 2, 10, 0 )
-        infoLine:SetTall( 18 )
+        infoLine:SetWrap( true )
+        infoLine:SetAutoStretchVertical( true )
+        infoLine:SetTall( BRS_UC_GetFontHeight( "BRICKS_SERVER_Font17" ) + 4 )
         infoLine:SetFont( "BRICKS_SERVER_Font17" )
         infoLine:SetTextColor( BRICKS_SERVER.Func.GetTheme( 6 ) )
         infoLine:SetText( text )
