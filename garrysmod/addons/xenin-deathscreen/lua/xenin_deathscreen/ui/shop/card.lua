@@ -28,8 +28,6 @@ function PANEL:HandleData(tbl)
     currency = currency.currencies[tbl.currency]
   end
 
-  print(currency, tbl.currency, tbl.price)
-
   local panel = self:Add("DButton")
   panel:Dock(FILL)
   panel:SetText("")
