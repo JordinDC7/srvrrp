@@ -14,7 +14,14 @@ SRVRRP_GROWTH.Config = SRVRRP_GROWTH.Config or {
         ["XeninF4:Networking"] = 120,
         ["BricksServerNet"] = 180,
         ["zclib_NET"] = 240,
-        ["BRS.Net.Commands"] = 120
+        ["BRS.Net.Commands"] = 120,
+        ["srvrrp_mega_update_open_hub"] = 180,
+        ["srvrrp_mega_update_tip"] = 240,
+        ["srvrrp_mega_update_daily_brief"] = 160,
+        ["srvrrp_ui_telemetry_event"] = 300,
+        ["DarkRP_Chat"] = 240,
+        ["DarkRPVarChanged"] = 360,
+        ["FAdmin_PlayerChat"] = 240
     },
     ReportInterval = 60,
     SlowTickMsThreshold = 30,
