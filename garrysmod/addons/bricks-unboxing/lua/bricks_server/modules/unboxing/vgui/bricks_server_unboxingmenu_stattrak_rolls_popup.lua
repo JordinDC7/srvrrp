@@ -63,6 +63,8 @@ function PANEL:CreatePopout()
     self.list = vgui.Create( "DListView", self.scroll )
     self.list:Dock( FILL )
     self.list:SetMultiSelect( false )
+    self.list:SetHeaderHeight( 24 )
+    self.list:SetDataHeight( 24 )
     self.list:AddColumn( "#" )
     self.list:AddColumn( "Tier" )
     self.list:AddColumn( "Score" )
@@ -80,6 +82,10 @@ function PANEL:CreatePopout()
         for i, column in ipairs( self.list.Columns or {} ) do
             if( fixedWidths[i] ) then
                 column:SetFixedWidth( fixedWidths[i] )
+            end
+
+            if( IsValid( column.Header ) ) then
+                column.Header:SetTall( 24 )
             end
         end
     end )
