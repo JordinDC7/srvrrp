@@ -230,7 +230,7 @@ function PANEL:Paint(w, h)
     local borderGlow = 12 + (18 * self.hoverAnim)
     local blurLayers = math.floor((tonumber(self.hoverAnim) or 0) * 2)
     if blurLayers > 0 and BRICKS_SERVER and BRICKS_SERVER.Func and isfunction(BRICKS_SERVER.Func.DrawBlur) then
-        BRICKS_SERVER.Func.DrawBlur(self, blurLayers)
+        BRICKS_SERVER.Func.DrawBlur(self, blurLayers, blurLayers)
     end
     surface.SetDrawColor(alphaColor(rarityColor, borderGlow))
     surface.DrawOutlinedRect(0, 0, w, h, 1)
