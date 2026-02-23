@@ -1,5 +1,19 @@
 local PANEL = {}
 
+local function FormatTimeRemaining(secondsLeft)
+    secondsLeft = math.max(0, tonumber(secondsLeft) or 0)
+
+    local days = math.floor(secondsLeft / 86400)
+    local hours = math.floor((secondsLeft % 86400) / 3600)
+
+    if days > 0 then
+        return string.Comma(days) .. "d " .. string.format("%02dh", hours)
+    end
+
+    local minutes = math.floor((secondsLeft % 3600) / 60)
+    return string.format("%02dh %02dm", hours, minutes)
+end
+
 function PANEL:Init()
     self.panelTall = ScrH() * 0.65 - 40
     self:DockMargin(25, 25, 25, 25)
@@ -106,10 +120,15 @@ function PANEL:FillPanel()
         local opensLeft = hardCap > 0 and math.max(0, hardCap - highestPity) or 0
         local pityPercent = hardCap > 0 and math.Clamp(highestPity / hardCap, 0, 1) or 0
 
-        draw.SimpleText("ELITE UNBOXING FLOW: PICK CASE → OPEN → CLAIM", "BRICKS_SERVER_Font18", 20, 10, BRICKS_SERVER.Func.GetTheme(6, 120))
-        draw.SimpleText("MASTERY XP: " .. string.Comma(masteryXP), "BRICKS_SERVER_Font23", 20, 32, BRICKS_SERVER.Func.GetTheme(6))
+        draw.SimpleText("UNBOXING PROGRESSION", "BRICKS_SERVER_Font23", 20, 10, BRICKS_SERVER.Func.GetTheme(6, 220))
+        draw.SimpleText("Your pity track increases each time you open a case in the same family.", "BRICKS_SERVER_Font18", 20, 35, BRICKS_SERVER.Func.GetTheme(6, 120))
 
-        local pityHeader = "PITY TRACK (" .. string.upper(highestFamily) .. "): " .. string.Comma(highestPity) .. "/" .. string.Comma(hardCap)
+        local pityHeader = "TRACKED FAMILY: " .. string.upper(highestFamily)
+        if hardCap > 0 then
+            pityHeader = pityHeader .. "  •  " .. string.Comma(highestPity) .. "/" .. string.Comma(hardCap)
+        else
+            pityHeader = pityHeader .. "  •  " .. string.Comma(highestPity) .. " opens"
+        end
         draw.SimpleText(pityHeader, "BRICKS_SERVER_Font20", 20, 58, BRICKS_SERVER.Func.GetTheme(6, 220))
 
         local barX, barY = 20, 84
@@ -119,6 +138,10 @@ function PANEL:FillPanel()
         local fillW = math.floor((barW - 4) * pityPercent)
         draw.RoundedBox(6, barX + 2, barY + 2, fillW, barH - 4, Color(235, 76, 76))
 
+        if hardCap > 0 then
+            draw.SimpleText(math.floor(pityPercent * 100) .. "%", "BRICKS_SERVER_Font17", barX + barW - 6, barY + (barH / 2), BRICKS_SERVER.Func.GetTheme(6, 180), TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER)
+        end
+
         if softStart > 0 and hardCap > 0 then
             local softX = barX + math.floor((barW - 1) * math.Clamp(softStart / hardCap, 0, 1))
             surface.SetDrawColor(255, 255, 255, 140)
@@ -126,20 +149,24 @@ function PANEL:FillPanel()
             draw.SimpleText("SOFT PITY", "BRICKS_SERVER_Font15", softX, barY - 4, BRICKS_SERVER.Func.GetTheme(6, 170), TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
         end
 
-        draw.SimpleText("Apex guaranteed at " .. string.Comma(hardCap) .. ". " .. string.Comma(opensLeft) .. " opens remaining.", "BRICKS_SERVER_Font17", 20, 104, BRICKS_SERVER.Func.GetTheme(6, 180))
+        if hardCap > 0 then
+            draw.SimpleText("Apex guarantee at " .. string.Comma(hardCap) .. " opens. " .. string.Comma(opensLeft) .. " opens remaining.", "BRICKS_SERVER_Font17", 20, 104, BRICKS_SERVER.Func.GetTheme(6, 180))
+        else
+            draw.SimpleText("No hard pity cap configured on this server.", "BRICKS_SERVER_Font17", 20, 104, BRICKS_SERVER.Func.GetTheme(6, 180))
+        end
         draw.SimpleText("Season: " .. seasonName, "BRICKS_SERVER_Font17", 20, 124, BRICKS_SERVER.Func.GetTheme(6, 150))
 
         local seasonCountdown = "Season window is open-ended"
         if seasonEnds > 0 and seasonEnds >= nowUnix then
-            local secondsLeft = seasonEnds-nowUnix
-            local daysLeft = math.max(0, math.floor(secondsLeft/86400))
-            seasonCountdown = "Season ends in " .. string.Comma(daysLeft) .. "d"
+            local secondsLeft = seasonEnds - nowUnix
+            seasonCountdown = "Season ends in " .. FormatTimeRemaining(secondsLeft)
         end
 
         draw.SimpleText(seasonCountdown, "BRICKS_SERVER_Font17", 20, 142, BRICKS_SERVER.Func.GetTheme(6, 120))
-        draw.SimpleText("Legendary / Glitched / Mythical are apex tiers.", "BRICKS_SERVER_Font17", 20, 160, BRICKS_SERVER.Func.GetTheme(6, 100))
+        draw.SimpleText("Apex tiers include Legendary, Glitched, and Mythical rewards.", "BRICKS_SERVER_Font17", 20, 160, BRICKS_SERVER.Func.GetTheme(6, 100))
 
-        draw.SimpleText("Tip: Open the same case family to push this track faster.", "BRICKS_SERVER_Font17", w - 20, 36, BRICKS_SERVER.Func.GetTheme(6, 90), TEXT_ALIGN_RIGHT)
+        draw.SimpleText("Tip: Focus one case family to reach apex pity faster.", "BRICKS_SERVER_Font17", w - 20, 36, BRICKS_SERVER.Func.GetTheme(6, 90), TEXT_ALIGN_RIGHT)
+        draw.SimpleText("Mastery XP: " .. string.Comma(masteryXP), "BRICKS_SERVER_Font17", w - 20, 58, BRICKS_SERVER.Func.GetTheme(6, 165), TEXT_ALIGN_RIGHT)
 
         local trackedFamilies = {}
         for familyName, pityValue in pairs(pityByFamily) do
@@ -147,7 +174,7 @@ function PANEL:FillPanel()
         end
         table.sort(trackedFamilies, function(a, b) return a.Value > b.Value end)
 
-        local familyText = "Family tracks: "
+        local familyText = "Top family tracks: "
         if #trackedFamilies <= 0 then
             familyText = familyText .. "none yet"
         else
@@ -160,7 +187,7 @@ function PANEL:FillPanel()
                 end
             end
         end
-        draw.SimpleText(familyText, "BRICKS_SERVER_Font17", w - 20, 58, BRICKS_SERVER.Func.GetTheme(6, 120), TEXT_ALIGN_RIGHT)
+        draw.SimpleText(familyText, "BRICKS_SERVER_Font17", w - 20, 78, BRICKS_SERVER.Func.GetTheme(6, 120), TEXT_ALIGN_RIGHT)
 
         local rarityOrder = { "Legendary", "Glitched", "Mythical" }
         local startX = w - 20
