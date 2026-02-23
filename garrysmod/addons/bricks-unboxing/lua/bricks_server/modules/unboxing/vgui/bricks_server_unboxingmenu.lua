@@ -325,10 +325,10 @@ function PANEL:Refresh()
 
     self:AddQuickNavigation( wrapper, pages )
 
-    local statusStrip = vgui.Create( "DPanel", self.sheet.Navigation )
+    local statusStrip = vgui.Create( "DPanel", wrapper )
     statusStrip:Dock( BOTTOM )
-    statusStrip:DockMargin( 10, 8, 10, 10 )
-    statusStrip:SetTall( 62 )
+    statusStrip:DockMargin( 16, 8, 16, 10 )
+    statusStrip:SetTall( 28 )
     statusStrip.Paint = function( self2, w, h )
         draw.RoundedBox( 8, 0, 0, w, h, BRICKS_SERVER.Func.GetTheme( 2, 220 ) )
 
@@ -338,15 +338,13 @@ function PANEL:Refresh()
             { "Rewards", BRICKS_SERVER.Func.IsSubModuleEnabled( "unboxing", "rewards" ) }
         }
 
-        local x, y = 10, 12
+        local x, y = 10, h/2
         for _, indicator in ipairs( indicators ) do
             local dotColor = indicator[2] and BRICKS_SERVER.DEVCONFIG.BaseThemes.Green or BRICKS_SERVER.DEVCONFIG.BaseThemes.Red
-            draw.RoundedBox( 4, x, y, 8, 8, dotColor )
-            draw.SimpleText( indicator[1], "BRICKS_SERVER_Font17", x+14, y+4, BRICKS_SERVER.Func.GetTheme( 6, indicator[2] and 200 or 110 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
+            draw.RoundedBox( 4, x, y-4, 8, 8, dotColor )
+            draw.SimpleText( indicator[1], "BRICKS_SERVER_Font17", x+14, y, BRICKS_SERVER.Func.GetTheme( 6, indicator[2] and 200 or 110 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
             x = x + 72
         end
-
-        draw.SimpleText( "Tip: use top tabs to switch fast", "BRICKS_SERVER_Font17", 10, h-10, BRICKS_SERVER.Func.GetTheme( 6, 110 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM )
     end
 
     hook.Add( "BRS.Hooks.OpenUnboxingTradePage", self, function()
