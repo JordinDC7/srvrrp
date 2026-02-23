@@ -113,3 +113,24 @@ hook.Add("EntityFireBullets", "SrvRRP.M9K.MuzzleBulletSource", function(entity, 
     data.Src = src
     data.Dir = direction:GetNormalized()
 end)
+
+hook.Add("EntityTakeDamage", "SrvRRP.M9K.ZeroDamageFallback", function(target, dmgInfo)
+    if not cvEnabled:GetBool() then return end
+    if not IsValid(target) then return end
+    if not IsValid(dmgInfo) or dmgInfo:GetDamage() > 0 then return end
+    if not dmgInfo:IsDamageType(DMG_BULLET) then return end
+
+    local attacker = dmgInfo:GetAttacker()
+    if not IsValid(attacker) or not attacker:IsPlayer() then return end
+
+    local weapon = attacker:GetActiveWeapon()
+    if not IsValid(weapon) or not isM9KWeapon(weapon) then return end
+
+    local primary = weapon.Primary
+    local fallbackDamage = istable(primary) and (primary.Damage or primary._srvrrp_original_Damage) or nil
+    if not isnumber(fallbackDamage) then
+        fallbackDamage = 1
+    end
+
+    dmgInfo:SetDamage(math.max(1, fallbackDamage))
+end)
