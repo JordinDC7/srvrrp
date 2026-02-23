@@ -5,6 +5,8 @@ function PANEL:Init()
 end
 
 function PANEL:FillPanel()
+    self:Clear()
+
     self.panelTall = ScrH() * 0.65 - 40
 
     self.topBar = vgui.Create("DPanel", self)
@@ -526,7 +528,25 @@ function PANEL:FillPanel()
         -- optional background pass for depth
     end
 
-    self.scrollPanelWide = self.panelWide - 50 - 20
+    self.scrollPanelWide = math.max( 1, (self.panelWide or self:GetWide()) - 50 - 20 )
+
+    self.OnSizeChanged = function()
+        if timer.Exists("BRS_UNBOXING_STORE_RESIZE_" .. tostring(self)) then
+            timer.Remove("BRS_UNBOXING_STORE_RESIZE_" .. tostring(self))
+        end
+
+        timer.Create("BRS_UNBOXING_STORE_RESIZE_" .. tostring(self), 0, 1, function()
+            if (not IsValid(self)) then return end
+
+            self.scrollPanelWide = math.max( 1, (self.panelWide or self:GetWide()) - 50 - 20 )
+
+            if (IsValid(self.searchBar)) then
+                self.searchBar:SetWide(math.Clamp(ScrW() * 0.2, 220, 420))
+            end
+
+            self:RefreshStore()
+        end)
+    end
 
     self:RefreshStore()
 end

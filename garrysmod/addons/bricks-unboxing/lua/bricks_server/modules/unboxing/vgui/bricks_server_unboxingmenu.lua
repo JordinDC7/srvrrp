@@ -27,16 +27,67 @@ function PANEL:Init()
     self.mainPanel:Dock( FILL )
     self.mainPanel.Paint = function( self2, w, h ) end
 
-    self.pageWide = ScrW()*0.6-BRICKS_SERVER.DEVCONFIG.MainNavWidth
+    self.baseWidth = ScrW()*0.6
+    self.baseHeight = ScrH()*0.65
+    self.configExtraWidth = 200
+
+    self:SetResponsiveSize( self.baseWidth, self.baseHeight )
 
     self:Refresh()
 end
 
+function PANEL:SetResponsiveSize( wide, tall )
+    self.baseWidth = wide or self.baseWidth or (ScrW()*0.6)
+    self.baseHeight = tall or self.baseHeight or (ScrH()*0.65)
+
+    self.pageWide = math.max( 1, self.baseWidth-BRICKS_SERVER.DEVCONFIG.MainNavWidth )
+end
+
+function PANEL:GetTargetSize( isConfig )
+    local baseW, baseH = self.baseWidth or (ScrW()*0.6), self.baseHeight or (ScrH()*0.65)
+    if( isConfig ) then
+        return baseW+(self.configExtraWidth or 200), baseH
+    end
+
+    return baseW, baseH
+end
+
+function PANEL:ApplyCurrentPageSize( animate )
+    local activeSheet = IsValid( self.sheet ) and self.sheet:GetActiveSheet()
+    local activeButton = IsValid( activeSheet ) and activeSheet.Tab
+    local activeLabel = IsValid( activeButton ) and activeButton.label
+    local isConfig = (activeLabel == BRICKS_SERVER.Func.L( "config" ))
+
+    local targetW, targetH = self:GetTargetSize( isConfig )
+    if( self:GetWide() == targetW and self:GetTall() == targetH ) then return end
+
+    if( animate ) then
+        self:SizeTo( targetW, targetH, 0.2 )
+    else
+        self:SetSize( targetW, targetH )
+        self:Center()
+    end
+end
+
+function PANEL:UpdatePageWidths()
+    local navigationWide = IsValid( self.sheet ) and IsValid( self.sheet.Navigation ) and self.sheet.Navigation:GetWide() or BRICKS_SERVER.DEVCONFIG.MainNavWidth
+    local activePageWide = math.max( 1, self:GetWide()-navigationWide )
+
+    for _, sheet in pairs( IsValid( self.sheet ) and (self.sheet.Items or {}) or {} ) do
+        local panel = IsValid( sheet.Panel ) and sheet.Panel
+        if( not panel ) then continue end
+
+        panel.panelWide = activePageWide
+
+        if( panel.FillInventory ) then
+            panel:CalculateGrid()
+            panel:FillInventory()
+        end
+    end
+end
+
 function PANEL:Refresh()
     self.mainPanel:Clear()
-
-    local originalW, originalH = ScrW()*0.6, ScrH()*0.65 
-    local newW = originalW+200
 
     self.sheet = vgui.Create( "bricks_server_colsheet", self.mainPanel )
     self.sheet:Dock( FILL )
@@ -44,11 +95,13 @@ function PANEL:Refresh()
     self.sheet.OnSheetChange = function( activeButton )
         hook.Run( "BRS.Hooks.UnboxingSwitchpage", activeButton.label )
 
-        if( activeButton.label == BRICKS_SERVER.Func.L( "config" ) and (self:GetWide() != newW or self:GetTall() != originalH) ) then
-            self:SizeTo( newW, originalH, 0.2 )
-        elseif( activeButton.label != BRICKS_SERVER.Func.L( "config" ) and (self:GetWide() != originalW or self:GetTall() != originalH) ) then
-            self:SizeTo( originalW, originalH, 0.2 )
-        end
+        self:ApplyCurrentPageSize( true )
+
+        timer.Simple( 0, function()
+            if( IsValid( self ) ) then
+                self:UpdatePageWidths()
+            end
+        end )
     end
 
     local group = BRICKS_SERVER.Func.GetGroup( LocalPlayer() )
@@ -112,7 +165,7 @@ function PANEL:Refresh()
         table.insert( pages, { BRICKS_SERVER.Func.L( "config" ), "bricks_server_config", "admin_24.png", BRICKS_SERVER.Func.GetTheme( 4 ), BRICKS_SERVER.Func.GetTheme( 5 ) } )
     end
 
-    for k, v in pairs( pages ) do
+    for _, v in ipairs( pages ) do
         local page = vgui.Create( v[2], self.sheet )
         page:Dock( FILL )
         page.panelWide = self.pageWide
@@ -136,6 +189,17 @@ function PANEL:Refresh()
 
     hook.Add( "BRS.Hooks.OpenUnboxingTradePage", self, function()
         self.sheet:SetActiveSheet( BRICKS_SERVER.Func.L( "unboxingTrading" ) )
+    end )
+
+    self.OnSizeChanged = function()
+        self:UpdatePageWidths()
+    end
+
+    timer.Simple( 0, function()
+        if( IsValid( self ) ) then
+            self:ApplyCurrentPageSize( false )
+            self:UpdatePageWidths()
+        end
     end )
 end
 
