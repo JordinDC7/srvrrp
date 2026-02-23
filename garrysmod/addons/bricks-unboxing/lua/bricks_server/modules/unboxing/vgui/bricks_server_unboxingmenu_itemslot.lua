@@ -88,7 +88,15 @@ end
 -- FillPanel(globalKey, amount, actionsOrClickFunc)
 -- ---------------------------------------------------------
 function PANEL:FillPanel(globalKey, amount, actionsOrClickFunc)
-    self.globalKey = globalKey
+    local resolvedGlobalKey = globalKey
+    local resolvedItemTable = nil
+
+    if istable(globalKey) then
+        resolvedGlobalKey = globalKey[1] or globalKey.GlobalKey
+        resolvedItemTable = globalKey[2] or globalKey.ItemTable
+    end
+
+    self.globalKey = resolvedGlobalKey
     self.itemAmount = tonumber(amount) or 1
     self.actions = nil
     self.clickFunc = nil
@@ -99,7 +107,7 @@ function PANEL:FillPanel(globalKey, amount, actionsOrClickFunc)
         self.clickFunc = actionsOrClickFunc
     end
 
-    local configItemTable = BRICKS_SERVER.UNBOXING.Func.GetItemFromGlobalKey(globalKey)
+    local configItemTable = resolvedItemTable or BRICKS_SERVER.UNBOXING.Func.GetItemFromGlobalKey(resolvedGlobalKey)
     self.configItem = configItemTable
 
     if self.configItem then
@@ -108,7 +116,7 @@ function PANEL:FillPanel(globalKey, amount, actionsOrClickFunc)
         self.rarityInfo, self.rarityKey = BRICKS_SERVER.Func.GetRarityInfo("")
     end
 
-    local statTrakSummary = BRICKS_SERVER.UNBOXING.Func.GetStatTrakSummary(LocalPlayer(), globalKey)
+    local statTrakSummary = BRICKS_SERVER.UNBOXING.Func.GetStatTrakSummary(LocalPlayer(), resolvedGlobalKey)
     if ((self.itemAmount or 1) <= 1 and statTrakSummary and statTrakSummary.TierTag and statTrakSummary.Score) then
         self:AddTopInfo(
             string.format("%s %.2f", tostring(statTrakSummary.TierTag), tonumber(statTrakSummary.Score) or 0),
