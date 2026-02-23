@@ -78,6 +78,20 @@ function PANEL:GetOptionsMultiplier(data)
     return optionMultiplier
 end
 
+
+function PANEL:GetFinalCost(data)
+    if data.id and Nexus:GetValue("nexus-jobcreator-canEdit") == "Yes" and data.InitialData then
+        local finalTotal = Nexus.JobCreator:CalculatePrice(data) - Nexus.JobCreator:CalculatePrice(data.InitialData)
+        if finalTotal < 0 and Nexus:GetValue("nexus-jobcreator-canRefund") ~= "Yes" then
+            return 0
+        end
+
+        return finalTotal
+    end
+
+    return Nexus.JobCreator:CalculatePrice(data)
+end
+
 function PANEL:SetData(data)
     self.Data = data
 
@@ -178,6 +192,25 @@ function PANEL:SetData(data)
         button:SetWide(Nexus:Scale(150))
         button:SetText(self.Data.id and Nexus.JobCreator:GetPhrase("Edit") or Nexus.JobCreator:GetPhrase("Purchase"))
         button.DoClick = function()
+            local finalCost = self:GetFinalCost(data)
+            if finalCost > 0 then
+                local playerBalance = Nexus.JobCreator:GetTotalMoney(LocalPlayer())
+                if playerBalance < finalCost then
+                    local missingCredits = math.max(finalCost - playerBalance, 0)
+                    local description = string.format(Nexus.JobCreator:GetPhrase("Not Afford Shop"), Nexus.JobCreator:FormatPrice(missingCredits))
+                    Derma_Query(
+                        description,
+                        Nexus.JobCreator:GetPhrase("Need More Credits"),
+                        Nexus.JobCreator:GetPhrase("Open Shop"),
+                        function()
+                            Nexus.JobCreator:OpenShopURL()
+                        end,
+                        Nexus.JobCreator:GetPhrase("No")
+                    )
+                    return
+                end
+            end
+
             if self.Data.id then
                 net.Start("Nexus:JobCreator:EditJob")
                 net.WriteUInt(self.Data.id, 32)
@@ -190,6 +223,17 @@ function PANEL:SetData(data)
             Nexus.JobCreator:NetworkJobContents(data)
             net.SendToServer()
         end
+    end
+
+
+    local shopButton = panel:Add("Nexus:V2:Button")
+    shopButton:Dock(LEFT)
+    shopButton:DockMargin(self.margin, 0, 0, 0)
+    shopButton:SetWide(Nexus:Scale(170))
+    shopButton:SetText(Nexus.JobCreator:GetPhrase("Open Shop"))
+    shopButton:SetSecondary()
+    shopButton.DoClick = function()
+        Nexus.JobCreator:OpenShopURL()
     end
 
     if self.Data.id then

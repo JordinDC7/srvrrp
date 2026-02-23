@@ -31,6 +31,28 @@ function Nexus.JobCreator:OpenAdminPage()
     self.AdminPage:MakePopup()
 end
 
+
+function Nexus.JobCreator:OpenConfiguredURL(configKey, fallbackURL, notificationPhrase)
+    local targetURL = tostring(Nexus:GetValue(configKey) or "")
+    if targetURL == "" then
+        targetURL = fallbackURL or ""
+    end
+
+    if targetURL == "" then
+        return
+    end
+
+    gui.OpenURL(targetURL)
+
+    if notificationPhrase and notificationPhrase ~= "" then
+        Nexus.JobCreator:CreateNotification(Nexus.JobCreator:GetPhrase(notificationPhrase), 3)
+    end
+end
+
+function Nexus.JobCreator:OpenShopURL()
+    Nexus.JobCreator:OpenConfiguredURL("nexus-jobcreator-shopURL", "https://smgrpdonate.shop/", "Opening Shop")
+end
+
 function Nexus.JobCreator:CreateNotification(str, length)
     surface.PlaySound("buttons/button14.wav")
 
