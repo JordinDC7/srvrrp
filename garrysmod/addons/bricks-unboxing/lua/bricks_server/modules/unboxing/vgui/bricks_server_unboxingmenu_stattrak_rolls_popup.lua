@@ -1,5 +1,15 @@
 local PANEL = {}
 
+local function brsGetAverageBoostPercent( stats )
+    local dmg = tonumber( (stats or {}).DMG ) or 0
+    local acc = tonumber( (stats or {}).ACC ) or 0
+    local ctrl = tonumber( (stats or {}).CTRL ) or 0
+    local hnd = tonumber( (stats or {}).HND ) or 0
+    local mov = tonumber( (stats or {}).MOV ) or 0
+
+    return math.Round( (dmg+acc+ctrl+hnd+mov)/5, 2 )
+end
+
 
 function PANEL:Init()
 end
@@ -70,19 +80,22 @@ function PANEL:CreatePopout()
         draw.RoundedBox( 8, 0, 0, w, h, BRICKS_SERVER.Func.GetTheme( 2, 245 ) )
     end
     self.list:AddColumn( "#" )
+    self.list:AddColumn( "Item" )
+    self.list:AddColumn( "Owned" )
     self.list:AddColumn( "Tier" )
+    self.list:AddColumn( "Avg Boost %" )
     self.list:AddColumn( "Score" )
     self.list:AddColumn( "DMG" )
     self.list:AddColumn( "ACC" )
     self.list:AddColumn( "CTRL" )
     self.list:AddColumn( "HND" )
     self.list:AddColumn( "MOV" )
-    self.list:AddColumn( "Roll Time" )
+    self.list:AddColumn( "Updated" )
 
     timer.Simple( 0, function()
         if( not IsValid( self.list ) ) then return end
 
-        local fixedWidths = { 40, 70, 70, 52, 52, 58, 52, 52, 150 }
+        local fixedWidths = { 32, 180, 54, 62, 80, 64, 50, 50, 52, 50, 50, 128 }
         for i, column in ipairs( self.list.Columns or {} ) do
             if( fixedWidths[i] ) then
                 column:SetFixedWidth( fixedWidths[i] )
@@ -113,7 +126,7 @@ function PANEL:CreatePopout()
     self.emptyLabel:DockMargin( 6, 6, 6, 0 )
     self.emptyLabel:SetFont( "BRICKS_SERVER_Font19" )
     self.emptyLabel:SetTextColor( BRICKS_SERVER.Func.GetTheme( 6, 120 ) )
-    self.emptyLabel:SetText( "No rolls found for this item yet." )
+    self.emptyLabel:SetText( "No similar rolled weapons found in your inventory yet." )
     self.emptyLabel:SetVisible( false )
 
     self.fallbackScroll = vgui.Create( "bricks_server_scrollpanel_bar", self.tableArea )
@@ -253,6 +266,11 @@ end
 function PANEL:FillPanel( globalKey )
     self.globalKey = globalKey
     self.rolls = BRICKS_SERVER.UNBOXING.Func.GetStatTrakRolls( LocalPlayer(), globalKey ) or {}
+
+    local configItem = BRICKS_SERVER.UNBOXING.Func.GetItemFromGlobalKey( globalKey )
+    self.currentItemName = tostring( (configItem or {}).Name or globalKey )
+    self.weaponClass = tostring( ((configItem or {}).ReqInfo or {})[1] or "" )
+
     self:RefreshRows()
 end
 
@@ -274,22 +292,67 @@ function PANEL:RefreshRows()
     end
 
     local rows = {}
-    for idx, roll in ipairs( self.rolls or {} ) do
-        local stats = roll.Stats or {}
-        table.insert( rows, {
-            Index = idx,
-            Tier = tostring( roll.TierTag or "RAW" ),
-            Score = tonumber( roll.Score ) or 0,
-            Time = tonumber( roll.Created ) or 0,
-            Stamp = os.date( "%d/%m/%Y %H:%M:%S", tonumber( roll.Created ) or os.time() ),
-            Stats = {
-                DMG = tonumber( stats.DMG ) or 0,
-                ACC = tonumber( stats.ACC ) or 0,
-                CTRL = tonumber( stats.CTRL ) or 0,
-                HND = tonumber( stats.HND ) or 0,
-                MOV = tonumber( stats.MOV ) or 0
-            }
-        } )
+
+    local inventory = (IsValid( LocalPlayer() ) and LocalPlayer():GetUnboxingInventory()) or {}
+
+    if( self.weaponClass != "" ) then
+        for itemGlobalKey, amount in pairs( inventory ) do
+            if( not string.StartWith( tostring( itemGlobalKey ), "ITEM_" ) ) then continue end
+            if( (tonumber( amount ) or 0) <= 0 ) then continue end
+
+            local configItem = BRICKS_SERVER.UNBOXING.Func.GetItemFromGlobalKey( itemGlobalKey )
+            if( not configItem ) then continue end
+            if( configItem.Type != "Weapon" and configItem.Type != "PermWeapon" ) then continue end
+            if( tostring( (configItem.ReqInfo or {})[1] or "" ) != self.weaponClass ) then continue end
+
+
+            local roll = BRICKS_SERVER.UNBOXING.Func.GetStatTrakSummary( LocalPlayer(), itemGlobalKey )
+            if( not roll ) then continue end
+
+            local stats = roll.Stats or {}
+            table.insert( rows, {
+                Index = #rows+1,
+                ItemName = tostring( configItem.Name or itemGlobalKey ),
+                Owned = tonumber( amount ) or 1,
+                Tier = tostring( roll.TierTag or "RAW" ),
+                AvgBoost = brsGetAverageBoostPercent( stats ),
+                Score = tonumber( roll.Score ) or 0,
+                Time = tonumber( roll.Created ) or 0,
+                Stamp = os.date( "%d/%m/%Y %H:%M:%S", tonumber( roll.Created ) or os.time() ),
+                RollIndex = nil,
+                Stats = {
+                    DMG = tonumber( stats.DMG ) or 0,
+                    ACC = tonumber( stats.ACC ) or 0,
+                    CTRL = tonumber( stats.CTRL ) or 0,
+                    HND = tonumber( stats.HND ) or 0,
+                    MOV = tonumber( stats.MOV ) or 0
+                }
+            } )
+        end
+    end
+
+    if( #rows == 0 ) then
+        for idx, roll in ipairs( self.rolls or {} ) do
+            local stats = roll.Stats or {}
+            table.insert( rows, {
+                Index = #rows+1,
+                ItemName = self.currentItemName,
+                Owned = tonumber( inventory[self.globalKey] ) or 1,
+                Tier = tostring( roll.TierTag or "RAW" ),
+                AvgBoost = brsGetAverageBoostPercent( stats ),
+                Score = tonumber( roll.Score ) or 0,
+                Time = tonumber( roll.Created ) or 0,
+                Stamp = os.date( "%d/%m/%Y %H:%M:%S", tonumber( roll.Created ) or os.time() ),
+                RollIndex = idx,
+                Stats = {
+                    DMG = tonumber( stats.DMG ) or 0,
+                    ACC = tonumber( stats.ACC ) or 0,
+                    CTRL = tonumber( stats.CTRL ) or 0,
+                    HND = tonumber( stats.HND ) or 0,
+                    MOV = tonumber( stats.MOV ) or 0
+                }
+            } )
+        end
     end
 
     local searchText = string.lower( string.Trim( tostring( IsValid( self.searchBar ) and self.searchBar:GetValue() or "" ) ) )
@@ -297,7 +360,7 @@ function PANEL:RefreshRows()
         local filtered = {}
 
         for _, row in ipairs( rows ) do
-            local haystack = string.lower( string.format( "%s %.2f %d %d %d %d %d", row.Tier, row.Score, row.Stats.DMG, row.Stats.ACC, row.Stats.CTRL, row.Stats.HND, row.Stats.MOV ) )
+            local haystack = string.lower( string.format( "%s %s %.2f %.2f %d %d %d %d %d", row.ItemName, row.Tier, row.AvgBoost or 0, row.Score, row.Stats.DMG, row.Stats.ACC, row.Stats.CTRL, row.Stats.HND, row.Stats.MOV ) )
             if( string.find( haystack, searchText, 1, true ) ) then
                 table.insert( filtered, row )
             end
@@ -335,7 +398,10 @@ function PANEL:RefreshRows()
     for _, row in ipairs( rows ) do
         local line = self.list:AddLine(
             row.Index,
+            row.ItemName,
+            row.Owned,
             row.Tier,
+            string.format( "%.2f%%", row.AvgBoost or 0 ),
             string.format( "%.2f", row.Score ),
             row.Stats.DMG,
             row.Stats.ACC,
@@ -363,7 +429,7 @@ function PANEL:RefreshRows()
             end
         end
 
-        line.RollIndex = row.Index
+        line.RollIndex = row.RollIndex
     end
 end
 

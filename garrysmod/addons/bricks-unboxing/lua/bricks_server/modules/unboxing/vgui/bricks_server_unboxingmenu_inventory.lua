@@ -213,7 +213,7 @@ function PANEL:FillInventory()
                 end })
 
                 if ((tonumber(itemAmount) or 1) > 1) then
-                    table.insert(actions, { "All Booster Rolls", function()
+                    table.insert(actions, { "Booster Roll Inventory", function()
                         self.popoutPanel = vgui.Create("bricks_server_unboxingmenu_stattrak_rolls_popup", self)
                         self.popoutPanel:SetPos(0, 0)
                         self.popoutPanel:SetSize(self.panelWide, ScrH() * 0.65 - 40)
