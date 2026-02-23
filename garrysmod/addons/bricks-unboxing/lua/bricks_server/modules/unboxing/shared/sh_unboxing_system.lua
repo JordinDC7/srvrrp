@@ -134,6 +134,7 @@ function BRICKS_SERVER.UNBOXING.Func.BuildStatTrakBoosterID( globalKey, rollData
         tostring( (rollData.Stats or {}).ACC or 0 ),
         tostring( (rollData.Stats or {}).CTRL or 0 ),
         tostring( (rollData.Stats or {}).HND or 0 ),
+        tostring( (rollData.Stats or {}).MOV or 0 ),
         tostring( rollData.Created or os.time() )
     )
 
@@ -144,12 +145,13 @@ end
 function BRICKS_SERVER.UNBOXING.Func.GetStatTrakRankings( ply, weaponClass, currentStats )
     if( not IsValid( ply ) or not weaponClass or not istable( currentStats ) ) then return {} end
 
-    local statKeys = { "DMG", "ACC", "CTRL", "HND" }
+    local statKeys = { "DMG", "ACC", "CTRL", "HND", "MOV" }
     local compared = {
         DMG = {},
         ACC = {},
         CTRL = {},
-        HND = {}
+        HND = {},
+        MOV = {}
     }
 
     local inventory = ply:GetUnboxingInventory()
@@ -244,6 +246,7 @@ function BRICKS_SERVER.UNBOXING.Func.GetEquippedWeaponStatScalars( ply, weaponCl
             AccuracySpreadScale = BRICKS_SERVER.UNBOXING.Func.GetStatTrakStatScalar( "AccuracySpreadScale", stats.ACC ),
             ControlMoveSpreadScale = BRICKS_SERVER.UNBOXING.Func.GetStatTrakStatScalar( "ControlMoveSpreadScale", stats.CTRL ),
             HandlingFireDelayScale = BRICKS_SERVER.UNBOXING.Func.GetStatTrakStatScalar( "HandlingFireDelayScale", stats.HND ),
+            MobilitySpreadScale = BRICKS_SERVER.UNBOXING.Func.GetStatTrakStatScalar( "MobilitySpreadScale", stats.MOV ),
             Roll = roll,
             GlobalKey = globalKey
         }

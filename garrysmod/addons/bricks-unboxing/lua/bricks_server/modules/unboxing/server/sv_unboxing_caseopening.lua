@@ -1,4 +1,23 @@
 
+local function brsUnboxingRollBiasedStat( minValue, maxValue, curve )
+	local span = math.max( 0, maxValue-minValue )
+	if( span <= 0 ) then return minValue end
+
+	local sample = math.pow( math.Rand( 0, 1 ), tonumber( curve ) or 1 )
+	return math.Round( minValue+(span*sample) )
+end
+
+local function brsUnboxingApplyTier( statTrakConfig, rollData )
+	for _, tierInfo in ipairs( statTrakConfig.TierBreakpoints or {} ) do
+		if( rollData.Score >= (tonumber( tierInfo.MinScore ) or 0) ) then
+			rollData.TierName = tierInfo.Name or rollData.TierName
+			rollData.TierTag = tierInfo.Tag or rollData.TierTag
+			rollData.TierColor = tierInfo.Color or rollData.TierColor
+			break
+		end
+	end
+end
+
 -- Builds one randomized StatTrak roll for eligible unboxed items.
 local function brsUnboxingBuildStatTrakRoll( configItemTable )
 	local statTrakConfig = BRICKS_SERVER.UNBOXING.Func.GetStatTrakConfig()
@@ -11,14 +30,16 @@ local function brsUnboxingBuildStatTrakRoll( configItemTable )
 		Stats = {},
 		Score = 0,
 		TierName = "",
-		TierTag = "STD",
+		TierTag = "RAW",
 		TierColor = Color( 164, 164, 164 ),
 		IsGodRoll = false,
+		IsJackpot = false,
+		RollFlavor = "",
 		Created = os.time()
 	}
 
-	local rarityRanges = statTrakConfig.RarityRollRanges or {}
-	local rarityRange = rarityRanges[configItemTable.Rarity or ""] or {}
+	local rarityRange = (statTrakConfig.RarityRollRanges or {})[configItemTable.Rarity or ""] or {}
+	rollData.RollFlavor = tostring( rarityRange.Flavor or "Field" )
 
 	local weightedScore, totalWeight = 0, 0
 	for _, statInfo in ipairs( stats ) do
@@ -28,19 +49,11 @@ local function brsUnboxingBuildStatTrakRoll( configItemTable )
 			minValue, maxValue = maxValue, minValue
 		end
 
-		if( isnumber( rarityRange.Min ) ) then
-			minValue = math.max( minValue, rarityRange.Min )
-		end
+		if( isnumber( rarityRange.Min ) ) then minValue = math.max( minValue, rarityRange.Min ) end
+		if( isnumber( rarityRange.Max ) ) then maxValue = math.min( maxValue, rarityRange.Max ) end
+		if( minValue > maxValue ) then minValue, maxValue = maxValue, minValue end
 
-		if( isnumber( rarityRange.Max ) ) then
-			maxValue = math.min( maxValue, rarityRange.Max )
-		end
-
-		if( minValue > maxValue ) then
-			minValue, maxValue = maxValue, minValue
-		end
-
-		local statRoll = math.random( minValue, maxValue )
+		local statRoll = brsUnboxingRollBiasedStat( minValue, maxValue, rarityRange.BiasCurve )
 		rollData.Stats[statInfo.Key or "STAT"] = statRoll
 
 		local weight = tonumber( statInfo.Weight ) or 1
@@ -48,18 +61,44 @@ local function brsUnboxingBuildStatTrakRoll( configItemTable )
 		totalWeight = totalWeight + weight
 	end
 
-	rollData.Score = math.Round( weightedScore/math.max( totalWeight, 1 ), 2 )
-
-	for _, tierInfo in ipairs( statTrakConfig.TierBreakpoints or {} ) do
-		if( rollData.Score >= (tonumber( tierInfo.MinScore ) or 0) ) then
-			rollData.TierName = tierInfo.Name or rollData.TierName
-			rollData.TierTag = tierInfo.Tag or rollData.TierTag
-			rollData.TierColor = tierInfo.Color or rollData.TierColor
-			break
+	local hardCap = tonumber( rarityRange.HardCap )
+	if( hardCap and hardCap > 0 ) then
+		for statKey, statValue in pairs( rollData.Stats ) do
+			rollData.Stats[statKey] = math.min( statValue, hardCap )
 		end
 	end
 
-	rollData.IsGodRoll = rollData.Score >= (tonumber( statTrakConfig.GodRollScore ) or 94)
+	local jackpotChance = tonumber( rarityRange.JackpotChance ) or 0
+	if( jackpotChance > 0 and math.Rand( 0, 1 ) <= jackpotChance ) then
+		rollData.IsJackpot = true
+		local jackpotBoostCfg = statTrakConfig.JackpotBoost or {}
+		local boostMin = tonumber( jackpotBoostCfg.Min ) or 8
+		local boostMax = tonumber( jackpotBoostCfg.Max ) or 24
+		if( boostMax < boostMin ) then boostMin, boostMax = boostMax, boostMin end
+
+		for statKey, statValue in pairs( rollData.Stats ) do
+			rollData.Stats[statKey] = math.Clamp( statValue+math.random( boostMin, boostMax ), 1, 100 )
+		end
+
+		rollData.RollFlavor = "Ascendant " .. rollData.RollFlavor
+	end
+
+	weightedScore, totalWeight = 0, 0
+	for _, statInfo in ipairs( stats ) do
+		local statRoll = tonumber( rollData.Stats[statInfo.Key or "STAT"] ) or 0
+		local weight = tonumber( statInfo.Weight ) or 1
+		weightedScore = weightedScore + (statRoll*weight)
+		totalWeight = totalWeight + weight
+	end
+
+	rollData.Score = math.Round( weightedScore/math.max( totalWeight, 1 ), 2 )
+	brsUnboxingApplyTier( statTrakConfig, rollData )
+
+	rollData.IsGodRoll = rollData.Score >= (tonumber( statTrakConfig.GodRollScore ) or 97)
+	if( rollData.IsJackpot and rollData.Score < (tonumber( statTrakConfig.GodRollScore ) or 97) ) then
+		rollData.Score = math.min( 99.99, rollData.Score+5 )
+		brsUnboxingApplyTier( statTrakConfig, rollData )
+	end
 
 	return rollData
 end

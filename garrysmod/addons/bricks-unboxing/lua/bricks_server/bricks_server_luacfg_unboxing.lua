@@ -19,41 +19,45 @@ BRICKS_SERVER.UNBOXING.LUACFG.PremiumCreditRedirect = {
     URL = ""
 }
 
--- MUTINY-inspired stat tracking rolls applied to unboxed weapons.
+-- Elite Arsenal roll engine for unboxed weapons. Keeps top-end chase drops rare while still rewarding progression.
 BRICKS_SERVER.UNBOXING.LUACFG.StatTrak = {
     Enabled = true,
     EligibleItemTypes = {
         ["Weapon"] = true,
         ["PermWeapon"] = true
     },
-    GodRollScore = 94,
+    GodRollScore = 97,
     TierBreakpoints = {
-        { Name = "God Roll", MinScore = 94, Tag = "GOD", Color = Color( 255, 215, 64 ) },
-        { Name = "Mythic", MinScore = 88, Tag = "MYTH", Color = Color( 217, 110, 255 ) },
-        { Name = "Elite", MinScore = 80, Tag = "ELITE", Color = Color( 77, 192, 255 ) },
-        { Name = "Refined", MinScore = 70, Tag = "REF", Color = Color( 96, 212, 112 ) },
-        { Name = "Standard", MinScore = 0, Tag = "STD", Color = Color( 164, 164, 164 ) }
+        { Name = "Ascendant", MinScore = 97, Tag = "ASC", Color = Color( 255, 90, 90 ) },
+        { Name = "Elite Class", MinScore = 90, Tag = "ELT", Color = Color( 100, 220, 255 ) },
+        { Name = "Prime", MinScore = 82, Tag = "PRM", Color = Color( 120, 235, 130 ) },
+        { Name = "Forged", MinScore = 72, Tag = "FRG", Color = Color( 208, 210, 212 ) },
+        { Name = "Raw", MinScore = 0, Tag = "RAW", Color = Color( 164, 164, 164 ) }
     },
     Stats = {
-        { Key = "DMG", Min = 1, Max = 100, Weight = 0.35 },
-        { Key = "ACC", Min = 1, Max = 100, Weight = 0.25 },
-        { Key = "CTRL", Min = 1, Max = 100, Weight = 0.2 },
-        { Key = "HND", Min = 1, Max = 100, Weight = 0.2 }
+        { Key = "DMG", Min = 1, Max = 100, Weight = 0.30 },
+        { Key = "ACC", Min = 1, Max = 100, Weight = 0.23 },
+        { Key = "CTRL", Min = 1, Max = 100, Weight = 0.19 },
+        { Key = "HND", Min = 1, Max = 100, Weight = 0.16 },
+        { Key = "MOV", Min = 1, Max = 100, Weight = 0.12 }
     },
-    -- Rarity controls the quality floor/ceiling for rolled stats.
+    -- Rarity quality lanes (high-tier cases can still low roll, while jackpot procs create chase drops).
     RarityRollRanges = {
-        ["Common"] = { Min = 15, Max = 62 },
-        ["Uncommon"] = { Min = 25, Max = 72 },
-        ["Rare"] = { Min = 38, Max = 84 },
-        ["Epic"] = { Min = 48, Max = 92 },
-        ["Legendary"] = { Min = 58, Max = 97 },
-        ["Glitched"] = { Min = 70, Max = 100 }
+        ["Common"] = { Min = 20, Max = 64, BiasCurve = 1.10, HardCap = 72, JackpotChance = 0.0005, Flavor = "Field" },
+        ["Uncommon"] = { Min = 26, Max = 72, BiasCurve = 1.03, HardCap = 80, JackpotChance = 0.0015, Flavor = "Standard" },
+        ["Rare"] = { Min = 34, Max = 82, BiasCurve = 0.97, HardCap = 88, JackpotChance = 0.0030, Flavor = "Refined" },
+        ["Epic"] = { Min = 40, Max = 87, BiasCurve = 0.92, HardCap = 91, JackpotChance = 0.0045, Flavor = "Combat" },
+        ["Legendary"] = { Min = 48, Max = 90, BiasCurve = 0.88, HardCap = 93, JackpotChance = 0.0075, Flavor = "Prototype" },
+        ["Glitched"] = { Min = 43, Max = 84, BiasCurve = 1.12, HardCap = 90, JackpotChance = 0.0125, Flavor = "Unstable" },
+        ["Mythical"] = { Min = 46, Max = 86, BiasCurve = 1.08, HardCap = 92, JackpotChance = 0.0175, Flavor = "Anomalous" }
     },
+    JackpotBoost = { Min = 8, Max = 24 },
     -- Gameplay effect ranges (1-100 stat values are remapped between MinScale and MaxScale).
     StatEffects = {
-        DamageScale = { MinScale = 0.82, MaxScale = 1.32 },
-        AccuracySpreadScale = { MinScale = 1.28, MaxScale = 0.72 },
-        ControlMoveSpreadScale = { MinScale = 1.35, MaxScale = 0.65 },
-        HandlingFireDelayScale = { MinScale = 1.22, MaxScale = 0.82 }
+        DamageScale = { MinScale = 0.86, MaxScale = 1.28 },
+        AccuracySpreadScale = { MinScale = 1.26, MaxScale = 0.74 },
+        ControlMoveSpreadScale = { MinScale = 1.30, MaxScale = 0.67 },
+        HandlingFireDelayScale = { MinScale = 1.18, MaxScale = 0.84 },
+        MobilitySpreadScale = { MinScale = 1.28, MaxScale = 0.76 }
     }
 }
