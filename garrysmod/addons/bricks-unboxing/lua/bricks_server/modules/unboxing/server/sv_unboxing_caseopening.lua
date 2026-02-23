@@ -307,7 +307,7 @@ local function caseOpen( ply, caseKey )
 
 	local totalChanceWeighted = 0
 	for itemGlobalKey, itemChanceTable in pairs( configItemTable.Items ) do
-		local itemChance = BRICKS_SERVER.UNBOXING.Func.ResolveDropWeight( caseKey, itemGlobalKey, tonumber( (itemChanceTable or {})[1] ) or 0, caseFamily )
+		local itemChance = BRICKS_SERVER.UNBOXING.Func.ResolveDropWeight( caseKey, itemGlobalKey, tonumber( (itemChanceTable or {})[1] ) or 0, caseFamily, ply )
 		local itemConfig = BRICKS_SERVER.UNBOXING.Func.GetItemFromGlobalKey( itemGlobalKey )
 		if( itemConfig and BRICKS_SERVER.UNBOXING.Func.IsApexRarity( itemConfig.Rarity ) ) then
 			itemChance = itemChance * pityMultiplier
@@ -321,7 +321,7 @@ local function caseOpen( ply, caseKey )
 		currentChance = 0
 
 		for k, v in pairs( configItemTable.Items ) do
-			local itemChance = BRICKS_SERVER.UNBOXING.Func.ResolveDropWeight( caseKey, k, tonumber( v[1] ) or 0, caseFamily )
+			local itemChance = BRICKS_SERVER.UNBOXING.Func.ResolveDropWeight( caseKey, k, tonumber( v[1] ) or 0, caseFamily, ply )
 			local itemConfig = BRICKS_SERVER.UNBOXING.Func.GetItemFromGlobalKey( k )
 			if( itemConfig and BRICKS_SERVER.UNBOXING.Func.IsApexRarity( itemConfig.Rarity ) ) then
 				itemChance = itemChance * pityMultiplier
@@ -335,6 +335,38 @@ local function caseOpen( ply, caseKey )
 			end
 
 			currentChance = currentChance+actualChance
+		end
+	end
+
+	local duplicateProtection = ((BRICKS_SERVER.UNBOXING.LUACFG.TopTier or {}).DuplicateProtection or {})
+	if( duplicateProtection.Enabled ) then
+		local winningConfig = BRICKS_SERVER.UNBOXING.Func.GetItemFromGlobalKey( winningItemKey )
+		if( winningConfig and BRICKS_SERVER.UNBOXING.Func.IsApexRarity( winningConfig.Rarity ) ) then
+			state.RecentApexDrops = state.RecentApexDrops or {}
+			local now = os.time()
+			local window = math.max( 30, tonumber( duplicateProtection.WindowSeconds ) or 180 )
+			local recent = state.RecentApexDrops[winningItemKey]
+			local rerolls = math.max( 0, tonumber( duplicateProtection.MaxRerolls ) or 3 )
+			if( recent and (now-(tonumber( recent.Time ) or 0)) <= window ) then
+				for _ = 1, rerolls do
+					local candidate = nil
+					local roll = math.Rand( 0, 100 )
+					local acc = 0
+					for k, v in pairs( configItemTable.Items ) do
+						local weight = BRICKS_SERVER.UNBOXING.Func.ResolveDropWeight( caseKey, k, tonumber( v[1] ) or 0, caseFamily, ply )
+						local actualChance = (weight/math.max( totalChanceWeighted, 1))*100
+						if( roll > acc and roll <= acc+actualChance ) then
+							candidate = k
+							break
+						end
+						acc = acc+actualChance
+					end
+					if( candidate and candidate != winningItemKey ) then
+						winningItemKey = candidate
+						break
+					end
+				end
+			end
 		end
 	end
 
@@ -370,6 +402,10 @@ local function caseOpen( ply, caseKey )
 	end
 	state.Daily.Opened = (tonumber( state.Daily.Opened ) or 0) + 1
 
+	local wonCfgForRecent = BRICKS_SERVER.UNBOXING.Func.GetItemFromGlobalKey( winningItemKey )
+	if( wonCfgForRecent and BRICKS_SERVER.UNBOXING.Func.IsApexRarity( wonCfgForRecent.Rarity ) ) then
+		state.RecentApexDrops[winningItemKey] = { Time = os.time() }
+	end
 	BRICKS_SERVER.UNBOXING.Func.SetTopTierState( ply, state )
 	BRICKS_SERVER.UNBOXING.Func.SendProgressState( ply, { PityFamily = caseFamily, PityDepth = state.Pity[caseFamily] } )
 
@@ -428,6 +464,9 @@ net.Receive( "BRS.Net.UnboxCase", function( len, ply )
 		end
 
 		BRICKS_SERVER.UNBOXING.Func.AddMasteryXP( ply, ((BRICKS_SERVER.UNBOXING.LUACFG.TopTier or {}).MasteryXPPerOpen or 10), { Item = winningItemKey } )
+		BRICKS_SERVER.UNBOXING.Func.AddCaseOpenHistory( ply, caseKey, winningItemKey )
+		BRICKS_SERVER.UNBOXING.Func.ProgressRetentionMission( ply, "open_cases", 1 )
+		BRICKS_SERVER.UNBOXING.Func.UpdateCollectionBooks( ply )
 
 		local configItemTable = BRICKS_SERVER.UNBOXING.Func.GetItemFromGlobalKey( winningItemKey )
 		if( configItemTable and configItemTable.Rarity and BRICKS_SERVER.UNBOXING.Func.IsApexRarity( configItemTable.Rarity ) ) then
@@ -502,14 +541,14 @@ net.Receive( "BRS.Net.UnboxingOpenAll", function( len, ply )
 	local caseFamily = BRICKS_SERVER.UNBOXING.Func.GetCaseFamily( caseKey, configItemTable )
 	local totalChance = 0
 	for itemGlobalKey, chanceInfo in pairs( configItemTable.Items ) do
-		totalChance = totalChance + BRICKS_SERVER.UNBOXING.Func.ResolveDropWeight( caseKey, itemGlobalKey, (chanceInfo or {})[1], caseFamily )
+		totalChance = totalChance + BRICKS_SERVER.UNBOXING.Func.ResolveDropWeight( caseKey, itemGlobalKey, (chanceInfo or {})[1], caseFamily, ply )
 	end
 
 	local itemsToGive = {}
 	for i = 1, openAmount do
 		local winningChance, currentChance = math.Rand( 0, 100 ), 0
 		for k, v in pairs( configItemTable.Items ) do
-			local resolvedWeight = BRICKS_SERVER.UNBOXING.Func.ResolveDropWeight( caseKey, k, v[1], caseFamily )
+			local resolvedWeight = BRICKS_SERVER.UNBOXING.Func.ResolveDropWeight( caseKey, k, v[1], caseFamily, ply )
 			local actualChance = (resolvedWeight/math.max( totalChance, 1))*100
 	
 			if( winningChance > currentChance and winningChance <= currentChance+actualChance ) then
@@ -529,10 +568,13 @@ net.Receive( "BRS.Net.UnboxingOpenAll", function( len, ply )
 	end
 
 	ply:AddUnboxingInventoryItem( unpack( formattedItems ) )
+	BRICKS_SERVER.UNBOXING.Func.ProgressRetentionMission( ply, "open_cases", openAmount )
+	BRICKS_SERVER.UNBOXING.Func.UpdateCollectionBooks( ply )
 
 	for globalKey, amount in pairs( itemsToGive ) do
 		for i = 1, amount do
 			BRICKS_SERVER.UNBOXING.Func.TryRollAndStoreStatTrak( ply, globalKey, caseKey, configItemTable )
+			BRICKS_SERVER.UNBOXING.Func.AddCaseOpenHistory( ply, caseKey, globalKey )
 		end
 	end
 

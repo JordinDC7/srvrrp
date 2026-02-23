@@ -155,6 +155,56 @@ BRICKS_SERVER.UNBOXING.LUACFG.StatTrak = {
 -- Top-tier roadmap systems (pity, crafting, seasonal/liveops control surface).
 BRICKS_SERVER.UNBOXING.LUACFG.TopTier = {
     MasteryXPPerOpen = 10,
+    DuplicateProtection = {
+        Enabled = true,
+        WindowSeconds = 180,
+        MaxRerolls = 3
+    },
+    SmartBundles = {
+        Enabled = true,
+        Rewards = {
+            mission_starter = {
+                Name = "Mission Starter Bundle",
+                Items = {
+                    ["CASE_1"] = 1,
+                    ["KEY_1"] = 1
+                },
+                MasteryXP = 75
+            }
+        }
+    },
+    CollectionBooks = {
+        ["urban_arsenal"] = {
+            Name = "Urban Arsenal",
+            Flair = "urban_arsenal_flair",
+            Badge = "Urban Curator",
+            RequiredItems = {
+                ["ITEM_1"] = true,
+                ["ITEM_2"] = true,
+                ["ITEM_3"] = true
+            }
+        }
+    },
+    RetentionMissions = {
+        Enabled = true,
+        WeeklyResetWeek = os.date( "%Y-%W" ),
+        Missions = {
+            {
+                ID = "open_cases_weekly",
+                Name = "Open 10 cases",
+                Type = "open_cases",
+                Goal = 10,
+                BundleReward = "mission_starter"
+            },
+            {
+                ID = "unboxed_kills",
+                Name = "Get 20 kills with unboxed gear",
+                Type = "unboxed_kills",
+                Goal = 20,
+                BundleReward = "mission_starter"
+            }
+        }
+    },
     ApexRarities = {
         ["Legendary"] = true,
         ["Glitched"] = true,
@@ -251,6 +301,29 @@ BRICKS_SERVER.UNBOXING.LUACFG.TopTier = {
         Experiments = {
             PresentationVariantA = true,
             PaceVariantB = false
+        },
+        EventMutations = {
+            DoubleStatTrakWeekend = {
+                Enabled = false,
+                Weekdays = {
+                    [1] = true,
+                    [7] = true
+                }
+            },
+            ThemedDropTable = {
+                Enabled = false,
+                FamilyMultipliers = {
+                    ["blacksite"] = 1.15,
+                    ["anomaly"] = 1.2
+                }
+            },
+            FactionCaseBonus = {
+                Enabled = false,
+                FactionMultipliers = {
+                    ["combine"] = 1.08,
+                    ["resistance"] = 1.08
+                }
+            }
         }
     }
 }

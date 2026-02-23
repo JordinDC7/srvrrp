@@ -64,3 +64,32 @@ net.Receive( "BRS.Net.SendUnboxingAdminPlayerData", function()
 
     hook.Run( "BRS.Hooks.UnboxingAdminPlayerData", steamID64, playerData )
 end )
+
+concommand.Add( "unboxing_admin_market_health", function()
+    if( not BRICKS_SERVER.Func.HasAdminAccess( LocalPlayer() ) ) then return end
+
+    net.Start( "BRS.Net.RequestUnboxingMarketHealth" )
+    net.SendToServer()
+end )
+
+concommand.Add( "unboxing_request_odds_history", function( _, _, args )
+    local caseKey = tonumber( args[1] or 0 ) or 0
+
+    net.Start( "BRS.Net.RequestUnboxingOddsHistory" )
+        net.WriteUInt( math.max( 0, caseKey ), 16 )
+    net.SendToServer()
+end )
+
+concommand.Add( "unboxing_request_missions", function()
+    net.Start( "BRS.Net.RequestUnboxingMissionState" )
+    net.SendToServer()
+end )
+
+concommand.Add( "unboxing_claim_mission", function( _, _, args )
+    local missionID = tostring( args[1] or "" )
+    if( missionID == "" ) then return end
+
+    net.Start( "BRS.Net.ClaimUnboxingMissionReward" )
+        net.WriteString( missionID )
+    net.SendToServer()
+end )

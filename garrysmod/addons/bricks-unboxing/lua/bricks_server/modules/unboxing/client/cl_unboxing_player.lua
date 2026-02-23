@@ -37,3 +37,22 @@ net.Receive( "BRS.Net.UnboxingProgressState", function()
 	BRS_UNBOXING_PROGRESS = net.ReadTable() or {}
 	hook.Run( "BRS.Hooks.UnboxingProgressStateUpdated", BRS_UNBOXING_PROGRESS )
 end )
+
+
+BRS_UNBOXING_MARKET_HEALTH = BRS_UNBOXING_MARKET_HEALTH or {}
+net.Receive( "BRS.Net.SendUnboxingMarketHealth", function()
+	BRS_UNBOXING_MARKET_HEALTH = net.ReadTable() or {}
+	hook.Run( "BRS.Hooks.UnboxingMarketHealthUpdated", BRS_UNBOXING_MARKET_HEALTH )
+end )
+
+BRS_UNBOXING_ODDS_HISTORY = BRS_UNBOXING_ODDS_HISTORY or {}
+net.Receive( "BRS.Net.SendUnboxingOddsHistory", function()
+	BRS_UNBOXING_ODDS_HISTORY = net.ReadTable() or {}
+	hook.Run( "BRS.Hooks.UnboxingOddsHistoryUpdated", BRS_UNBOXING_ODDS_HISTORY )
+end )
+
+BRS_UNBOXING_MISSION_STATE = BRS_UNBOXING_MISSION_STATE or {}
+net.Receive( "BRS.Net.SendUnboxingMissionState", function()
+	BRS_UNBOXING_MISSION_STATE = net.ReadTable() or {}
+	hook.Run( "BRS.Hooks.UnboxingMissionStateUpdated", BRS_UNBOXING_MISSION_STATE )
+end )
