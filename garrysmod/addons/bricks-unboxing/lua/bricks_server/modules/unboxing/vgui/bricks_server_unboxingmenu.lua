@@ -53,8 +53,7 @@ function PANEL:GetTargetSize( isConfig )
 end
 
 function PANEL:ApplyCurrentPageSize( animate )
-    local activeSheet = IsValid( self.sheet ) and self.sheet:GetActiveSheet()
-    local activeButton = IsValid( activeSheet ) and activeSheet.Tab
+    local activeButton = IsValid( self.sheet ) and self.sheet:GetActiveButton()
     local activeLabel = IsValid( activeButton ) and activeButton.label
     local isConfig = (activeLabel == BRICKS_SERVER.Func.L( "config" ))
 
