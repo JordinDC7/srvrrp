@@ -25,14 +25,15 @@ function PANEL:Init()
 
     self.mainPanel = vgui.Create( "DPanel", self )
     self.mainPanel:Dock( FILL )
-    self.mainPanel.Paint = function( self2, w, h ) end
+    self.mainPanel.Paint = function() end
 
     self.baseWidth = ScrW()*0.6
     self.baseHeight = ScrH()*0.65
     self.configExtraWidth = 200
+    self.currentSearchText = ""
+    self.quickButtonHeight = 36
 
     self:SetResponsiveSize( self.baseWidth, self.baseHeight )
-
     self:Refresh()
 end
 
@@ -50,6 +51,52 @@ function PANEL:GetTargetSize( isConfig )
     end
 
     return baseW, baseH
+end
+
+function PANEL:GetSheetLabel( sheet )
+    if( not sheet ) then return "" end
+
+    if( isstring( sheet.label ) ) then return sheet.label end
+    if( isstring( sheet.Name ) ) then return sheet.Name end
+    if( IsValid( sheet.Tab ) and isstring( sheet.Tab.label ) ) then return sheet.Tab.label end
+
+    return ""
+end
+
+function PANEL:GetSheetButton( sheet )
+    if( not sheet ) then return nil end
+
+    if( IsValid( sheet.Tab ) ) then return sheet.Tab end
+    if( IsValid( sheet.Button ) ) then return sheet.Button end
+
+    return nil
+end
+
+function PANEL:GetSheetByLabel( label )
+    local sheetItems = IsValid( self.sheet ) and (self.sheet.Items or {}) or {}
+    for _, sheetData in pairs( sheetItems ) do
+        local sheetLabel = self:GetSheetLabel( sheetData )
+        if( sheetLabel == label ) then
+            return sheetData
+        end
+    end
+end
+
+function PANEL:SetActiveSheetByLabel( label )
+    if( not IsValid( self.sheet ) or not label ) then return end
+
+    local sheetData = self:GetSheetByLabel( label )
+    if( not sheetData ) then return end
+
+    local button = self:GetSheetButton( sheetData )
+    if( IsValid( button ) and self.sheet.SetActiveButton ) then
+        self.sheet:SetActiveButton( button )
+        return
+    end
+
+    if( self.sheet.SetActiveSheet ) then
+        self.sheet:SetActiveSheet( label )
+    end
 end
 
 function PANEL:ApplyCurrentPageSize( animate )
@@ -95,21 +142,142 @@ function PANEL:UpdatePageWidths()
     end
 end
 
+function PANEL:FilterNavigation( searchText )
+    if( not IsValid( self.sheet ) ) then return end
+
+    self.currentSearchText = string.Trim( string.lower( tostring( searchText or "" ) ) )
+
+    local activeButton = self.sheet.GetActiveButton and self.sheet:GetActiveButton()
+    local activeIsVisible = true
+
+    for _, sheetData in pairs( self.sheet.Items or {} ) do
+        local label = string.lower( self:GetSheetLabel( sheetData ) )
+        local button = self:GetSheetButton( sheetData )
+        local isVisible = (self.currentSearchText == "" or string.find( label, self.currentSearchText, 1, true ) ~= nil)
+
+        if( IsValid( button ) ) then
+            button:SetVisible( isVisible )
+            button:SetTall( isVisible and 44 or 0 )
+            if( button.DockMargin ) then
+                button:DockMargin( 8, 0, 8, isVisible and 6 or 0 )
+            end
+        end
+
+        if( button == activeButton and not isVisible ) then
+            activeIsVisible = false
+        end
+    end
+
+    if( not activeIsVisible ) then
+        for _, sheetData in pairs( self.sheet.Items or {} ) do
+            local button = self:GetSheetButton( sheetData )
+            if( IsValid( button ) and button:IsVisible() ) then
+                self:SetActiveSheetByLabel( self:GetSheetLabel( sheetData ) )
+                break
+            end
+        end
+    end
+
+    if( IsValid( self.sheet.Navigation ) and self.sheet.Navigation.InvalidateLayout ) then
+        self.sheet.Navigation:InvalidateLayout( true )
+    end
+end
+
+function PANEL:AddQuickNavigation( parent, pages )
+    local quickPanel = vgui.Create( "DPanel", parent )
+    quickPanel:Dock( TOP )
+    quickPanel:SetTall( self.quickButtonHeight )
+    quickPanel:DockMargin( 16, 10, 16, 0 )
+    quickPanel.Paint = function( self2, w, h )
+        draw.RoundedBox( 8, 0, 0, w, h, BRICKS_SERVER.Func.GetTheme( 3, 140 ) )
+        surface.SetDrawColor( BRICKS_SERVER.Func.GetTheme( 6, 15 ) )
+        surface.DrawOutlinedRect( 0, 0, w, h )
+    end
+
+    local quickTargets = {
+        BRICKS_SERVER.Func.L( "unboxingHome" ),
+        BRICKS_SERVER.Func.L( "unboxingStore" ),
+        BRICKS_SERVER.Func.L( "unboxingInventory" ),
+        BRICKS_SERVER.Func.L( "unboxingTrading" )
+    }
+
+    local validTargets = {}
+    local pageLookup = {}
+    for _, page in ipairs( pages or {} ) do
+        pageLookup[page[1]] = true
+    end
+
+    for _, target in ipairs( quickTargets ) do
+        if( pageLookup[target] ) then
+            table.insert( validTargets, target )
+        end
+    end
+
+    local spacing = 6
+    local buttonW = math.floor( (quickPanel:GetWide() - ((#validTargets+1)*spacing)) / math.max( #validTargets, 1 ) )
+
+    local recalcLayout = function()
+        if( not IsValid( quickPanel ) ) then return end
+
+        buttonW = math.floor( (quickPanel:GetWide() - ((#validTargets+1)*spacing)) / math.max( #validTargets, 1 ) )
+        local x = spacing
+        for _, child in ipairs( quickPanel:GetChildren() ) do
+            child:SetPos( x, 4 )
+            child:SetSize( buttonW, quickPanel:GetTall()-8 )
+            x = x + buttonW + spacing
+        end
+    end
+
+    for _, target in ipairs( validTargets ) do
+        local quickButton = vgui.Create( "DButton", quickPanel )
+        quickButton:SetText( "" )
+        quickButton.targetLabel = target
+        quickButton.DoClick = function()
+            self:SetActiveSheetByLabel( target )
+        end
+        quickButton.Paint = function( self2, w, h )
+            local isActive = false
+            local activeButton = IsValid( self.sheet ) and self.sheet.GetActiveButton and self.sheet:GetActiveButton()
+            if( IsValid( activeButton ) and activeButton.label == self2.targetLabel ) then
+                isActive = true
+            end
+
+            local bg = isActive and BRICKS_SERVER.Func.GetTheme( 5, 95 ) or BRICKS_SERVER.Func.GetTheme( 2, 175 )
+            if( self2:IsHovered() and not isActive ) then
+                bg = BRICKS_SERVER.Func.GetTheme( 2, 225 )
+            end
+
+            draw.RoundedBox( 8, 0, 0, w, h, bg )
+            draw.SimpleText( self2.targetLabel, "BRICKS_SERVER_Font18", w/2, h/2, BRICKS_SERVER.Func.GetTheme( 6 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+        end
+    end
+
+    quickPanel.OnSizeChanged = recalcLayout
+    timer.Simple( 0, recalcLayout )
+end
+
 function PANEL:Refresh()
     self.mainPanel:Clear()
 
-    self.sheet = vgui.Create( "bricks_server_colsheet", self.mainPanel )
-    self.sheet:Dock( FILL )
-    self.sheet.Paint = function( self2, w, h )
+    local wrapper = vgui.Create( "DPanel", self.mainPanel )
+    wrapper:Dock( FILL )
+    wrapper.Paint = function( self2, w, h )
         draw.RoundedBox( 0, 0, 0, w, h, BRICKS_SERVER.Func.GetTheme( 1 ) )
+        surface.SetDrawColor( BRICKS_SERVER.Func.GetTheme( 6, 8 ) )
+        surface.DrawOutlinedRect( 0, 0, w, h, 1 )
     end
 
-    self.sheet.Navigation:SetWide( BRICKS_SERVER.DEVCONFIG.MainNavWidth )
+    self.sheet = vgui.Create( "bricks_server_colsheet", wrapper )
+    self.sheet:Dock( FILL )
+
+    self.sheet.Navigation:SetWide( BRICKS_SERVER.DEVCONFIG.MainNavWidth+28 )
     self.sheet.Navigation.Paint = function( self2, w, h )
         draw.RoundedBox( 0, 0, 0, w, h, BRICKS_SERVER.Func.GetTheme( 3 ) )
 
-        surface.SetDrawColor( BRICKS_SERVER.Func.GetTheme( 6, 8 ) )
+        surface.SetDrawColor( BRICKS_SERVER.Func.GetTheme( 6, 10 ) )
         surface.DrawRect( w-2, 0, 2, h )
+
+        draw.RoundedBox( 0, 0, 0, w, 3, BRICKS_SERVER.Func.GetTheme( 5, 140 ) )
     end
 
     self.sheet.OnSheetChange = function( activeButton )
@@ -127,32 +295,40 @@ function PANEL:Refresh()
     local group = BRICKS_SERVER.Func.GetGroup( LocalPlayer() )
     local rankName = group and group[1] or BRICKS_SERVER.Func.GetAdminGroup( LocalPlayer() )
 
-    local height = 55
-    local avatarBackSize = height
-    local textStartPos = 65
-    
-    local avatarBack = vgui.Create( "DPanel", self.sheet.Navigation )
-    avatarBack:Dock( TOP )
-    avatarBack:DockMargin( 10, 10, 0, 10 )
-    avatarBack:SetTall( height )
-    avatarBack.Paint = function( self2, w, h )
-        draw.RoundedBox( 8, 0, 0, w, h, BRICKS_SERVER.Func.GetTheme( 2 ) )
-        draw.RoundedBoxEx( 8, 0, 0, 6, h, BRICKS_SERVER.Func.GetTheme( 3 ), true, false, true, false )
-
-        surface.SetDrawColor( BRICKS_SERVER.Func.GetTheme( 1 ) )
-        draw.NoTexture()
-        BRICKS_SERVER.Func.DrawCircle( (h-avatarBackSize)/2+(avatarBackSize/2), h/2, avatarBackSize/2, 45 )
-
-        draw.SimpleText( LocalPlayer():Nick(), "BRICKS_SERVER_Font23", textStartPos, h/2+2, BRICKS_SERVER.Func.GetTheme( 6 ), 0, TEXT_ALIGN_BOTTOM )
-        draw.SimpleText( "Operator Rank: " .. tostring(rankName or "Rookie"), "BRICKS_SERVER_Font17", textStartPos, h/2-2, ((group or {})[3] or BRICKS_SERVER.Func.GetTheme( 5 )), 0, 0 )
+    local profileCard = vgui.Create( "DPanel", self.sheet.Navigation )
+    profileCard:Dock( TOP )
+    profileCard:DockMargin( 10, 10, 10, 8 )
+    profileCard:SetTall( 74 )
+    profileCard.Paint = function( self2, w, h )
+        draw.RoundedBox( 10, 0, 0, w, h, BRICKS_SERVER.Func.GetTheme( 2 ) )
+        draw.RoundedBoxEx( 10, 0, 0, 5, h, BRICKS_SERVER.Func.GetTheme( 5, 180 ), true, false, true, false )
+        draw.SimpleText( LocalPlayer():Nick(), "BRICKS_SERVER_Font23", 64, h/2+3, BRICKS_SERVER.Func.GetTheme( 6 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM )
+        draw.SimpleText( "Operator Rank: " .. tostring( rankName or "Rookie" ), "BRICKS_SERVER_Font17", 64, h/2-2, ((group or {})[3] or BRICKS_SERVER.Func.GetTheme( 5 )), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP )
     end
 
-    local distance = 2
-
-    local avatarIcon = vgui.Create( "bricks_server_circle_avatar" , avatarBack )
-    avatarIcon:SetPos( (height-avatarBackSize)/2+distance, (height-avatarBackSize)/2+distance )
-    avatarIcon:SetSize( avatarBackSize-(2*distance), avatarBackSize-(2*distance) )
+    local avatarIcon = vgui.Create( "bricks_server_circle_avatar", profileCard )
+    avatarIcon:SetPos( 12, 12 )
+    avatarIcon:SetSize( 50, 50 )
     avatarIcon:SetPlayer( LocalPlayer(), 64 )
+
+    local searchBar = vgui.Create( "DTextEntry", self.sheet.Navigation )
+    searchBar:Dock( TOP )
+    searchBar:SetTall( 34 )
+    searchBar:DockMargin( 10, 0, 10, 8 )
+    searchBar:SetPlaceholderText( "Search pages..." )
+    searchBar:SetUpdateOnType( true )
+    searchBar:SetFont( "BRICKS_SERVER_Font17" )
+    searchBar.Paint = function( self2, w, h )
+        draw.RoundedBox( 6, 0, 0, w, h, BRICKS_SERVER.Func.GetTheme( 2 ) )
+        self2:DrawTextEntryText( BRICKS_SERVER.Func.GetTheme( 6 ), BRICKS_SERVER.Func.GetTheme( 5 ), BRICKS_SERVER.Func.GetTheme( 6 ) )
+
+        if( self2:GetValue() == "" and not self2:HasFocus() ) then
+            draw.SimpleText( "Search pages...", "BRICKS_SERVER_Font17", 10, h/2, BRICKS_SERVER.Func.GetTheme( 6, 85 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
+        end
+    end
+    searchBar.OnValueChange = function( _, value )
+        self:FilterNavigation( value )
+    end
 
     local pages = {}
     table.insert( pages, { BRICKS_SERVER.Func.L( "unboxingHome" ), "bricks_server_unboxingmenu_home", "unboxing_home.png" } )
@@ -194,12 +370,12 @@ function PANEL:Refresh()
             if( not v[6] ) then
                 self.sheet:AddSheet( v[1], page, function()
                     if( v[7] ) then v[7]( page ) end
-                    page:FillPanel() 
+                    page:FillPanel()
                 end, v[3], v[4], v[5] )
             else
                 self.sheet:AddSheet( v[1], page, { function()
                     if( v[7] ) then v[7]( page ) end
-                    page:FillPanel() 
+                    page:FillPanel()
                 end, function() v[6]( page ) end }, v[3], v[4], v[5] )
             end
         else
@@ -207,8 +383,34 @@ function PANEL:Refresh()
         end
     end
 
+    self:AddQuickNavigation( wrapper, pages )
+
+    local statusStrip = vgui.Create( "DPanel", self.sheet.Navigation )
+    statusStrip:Dock( BOTTOM )
+    statusStrip:DockMargin( 10, 8, 10, 10 )
+    statusStrip:SetTall( 62 )
+    statusStrip.Paint = function( self2, w, h )
+        draw.RoundedBox( 8, 0, 0, w, h, BRICKS_SERVER.Func.GetTheme( 2, 220 ) )
+
+        local indicators = {
+            { "Trading", BRICKS_SERVER.Func.IsSubModuleEnabled( "unboxing", "trading" ) },
+            { "Market", BRICKS_SERVER.Func.IsSubModuleEnabled( "unboxing", "marketplace" ) },
+            { "Rewards", BRICKS_SERVER.Func.IsSubModuleEnabled( "unboxing", "rewards" ) }
+        }
+
+        local x, y = 10, 12
+        for _, indicator in ipairs( indicators ) do
+            local dotColor = indicator[2] and BRICKS_SERVER.DEVCONFIG.BaseThemes.Green or BRICKS_SERVER.DEVCONFIG.BaseThemes.Red
+            draw.RoundedBox( 4, x, y, 8, 8, dotColor )
+            draw.SimpleText( indicator[1], "BRICKS_SERVER_Font17", x+14, y+4, BRICKS_SERVER.Func.GetTheme( 6, indicator[2] and 200 or 110 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
+            x = x + 72
+        end
+
+        draw.SimpleText( "Tip: use search to jump fast", "BRICKS_SERVER_Font17", 10, h-10, BRICKS_SERVER.Func.GetTheme( 6, 110 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM )
+    end
+
     hook.Add( "BRS.Hooks.OpenUnboxingTradePage", self, function()
-        self.sheet:SetActiveSheet( BRICKS_SERVER.Func.L( "unboxingTrading" ) )
+        self:SetActiveSheetByLabel( BRICKS_SERVER.Func.L( "unboxingTrading" ) )
     end )
 
     self.OnSizeChanged = function()
@@ -219,6 +421,7 @@ function PANEL:Refresh()
         if( IsValid( self ) ) then
             self:ApplyCurrentPageSize( false )
             self:UpdatePageWidths()
+            self:FilterNavigation( self.currentSearchText )
         end
     end )
 end
