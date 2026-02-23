@@ -400,7 +400,7 @@ function BRICKS_SERVER.UNBOXING.Func.GetCaseSeasonAvailability( caseKey, caseCon
 	local seasonState = BRICKS_SERVER.UNBOXING.Func.GetSeasonState()
 	local activeSeason = seasonState.ActiveSeason
 	if( not activeSeason ) then
-		return false, "no_active_season", nil
+		return true, "no_active_season", nil
 	end
 
 	local featuredFamilies = activeSeason.FeaturedFamilies or {}
@@ -413,7 +413,7 @@ function BRICKS_SERVER.UNBOXING.Func.GetCaseSeasonAvailability( caseKey, caseCon
 		return true, "legacy_vault", activeSeason
 	end
 
-	return false, "out_of_rotation", activeSeason
+	return true, "out_of_rotation", activeSeason
 end
 
 function BRICKS_SERVER.UNBOXING.Func.GetCaseFamily( caseKey, caseConfig )
