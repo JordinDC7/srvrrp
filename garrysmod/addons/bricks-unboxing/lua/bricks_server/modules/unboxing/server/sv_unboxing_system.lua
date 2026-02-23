@@ -244,10 +244,84 @@ function BRICKS_SERVER.UNBOXING.Func.GetDropWeightMultiplier( caseKey, itemGloba
 	return math.Clamp( multiplier, minM, maxM )
 end
 
-function BRICKS_SERVER.UNBOXING.Func.ResolveDropWeight( caseKey, itemGlobalKey, baseWeight )
+function BRICKS_SERVER.UNBOXING.Func.ResolveDropWeight( caseKey, itemGlobalKey, baseWeight, caseFamily )
 	local resolved = math.max( 0, tonumber( baseWeight ) or 0 )
-	return resolved * BRICKS_SERVER.UNBOXING.Func.GetDropWeightMultiplier( caseKey, itemGlobalKey )
+	local liveOpsMultiplier = BRICKS_SERVER.UNBOXING.Func.GetDropWeightMultiplier( caseKey, itemGlobalKey )
+	local supplyMultiplier = BRICKS_SERVER.UNBOXING.Func.GetSupplyBalancingMultiplier( caseKey, caseFamily, itemGlobalKey )
+	return resolved * liveOpsMultiplier * supplyMultiplier
 end
+
+
+local function brsGetSupplyRuntime()
+	local runtime = brsGetLiveOpsRuntime()
+	runtime.SupplyWindows = runtime.SupplyWindows or {}
+
+	return runtime.SupplyWindows
+end
+
+local function brsBuildSupplyWindowKey( caseKey, caseFamily, itemGlobalKey )
+	local cfg = ((brsGetTopTierConfig().DynamicDropNudges or {}).SupplyBalancing or {})
+	if( cfg.CaseFamilyIsolation ) then
+		return tostring( caseFamily or "unknown" ) .. "|" .. tostring( itemGlobalKey or "" )
+	end
+
+	return tostring( caseKey or "" ) .. "|" .. tostring( itemGlobalKey or "" )
+end
+
+local function brsTrimSupplyRuntimeWindow( windowData, now, windowSeconds )
+	if( not istable( windowData ) ) then return 0 end
+
+	windowData.Drops = windowData.Drops or {}
+	local kept = {}
+	local total = 0
+	for _, ts in ipairs( windowData.Drops ) do
+		if( (now-ts) <= windowSeconds ) then
+			table.insert( kept, ts )
+			total = total + 1
+		end
+	end
+
+	windowData.Drops = kept
+	return total
+end
+
+function BRICKS_SERVER.UNBOXING.Func.GetSupplyBalancingMultiplier( caseKey, caseFamily, itemGlobalKey )
+	local cfg = ((brsGetTopTierConfig().DynamicDropNudges or {}).SupplyBalancing or {})
+	if( not cfg.Enabled ) then return 1, 0, 0 end
+
+	local key = brsBuildSupplyWindowKey( caseKey, caseFamily, itemGlobalKey )
+	local runtime = brsGetSupplyRuntime()
+	local now = os.time()
+	local windowSeconds = math.max( 60, tonumber( cfg.WindowSeconds ) or 900 )
+	local softCap = math.max( 1, tonumber( cfg.SoftCapPerItem ) or 12 )
+	local maxPenalty = math.Clamp( tonumber( cfg.MaxPenalty ) or 0.35, 0, 0.95 )
+	local exponent = math.max( 0.1, tonumber( cfg.PenaltyExponent ) or 0.7 )
+
+	runtime[key] = runtime[key] or { Drops = {} }
+	local inWindow = brsTrimSupplyRuntimeWindow( runtime[key], now, windowSeconds )
+	if( inWindow <= softCap ) then
+		return 1, inWindow, softCap
+	end
+
+	local overflowRatio = (inWindow-softCap)/softCap
+	local penalty = math.Clamp( math.pow( overflowRatio, exponent ), 0, maxPenalty )
+	return 1-penalty, inWindow, softCap
+end
+
+function BRICKS_SERVER.UNBOXING.Func.RecordSupplyDrop( caseKey, caseFamily, itemGlobalKey )
+	local cfg = ((brsGetTopTierConfig().DynamicDropNudges or {}).SupplyBalancing or {})
+	if( not cfg.Enabled ) then return end
+
+	local key = brsBuildSupplyWindowKey( caseKey, caseFamily, itemGlobalKey )
+	local runtime = brsGetSupplyRuntime()
+	local now = os.time()
+	local windowSeconds = math.max( 60, tonumber( cfg.WindowSeconds ) or 900 )
+
+	runtime[key] = runtime[key] or { Drops = {} }
+	brsTrimSupplyRuntimeWindow( runtime[key], now, windowSeconds )
+	table.insert( runtime[key].Drops, now )
+end
+
 
 function BRICKS_SERVER.UNBOXING.Func.SetDropWeightHotfix( actorPly, caseKey, itemGlobalKey, multiplier, reason )
 	local runtime = brsGetLiveOpsRuntime()
@@ -348,6 +422,77 @@ function BRICKS_SERVER.UNBOXING.Func.GetCaseFamily( caseKey, caseConfig )
 	return tostring( resolvedConfig.CaseFamily or resolvedConfig.Rarity or ("case_" .. tostring( caseKey or "unknown" )) )
 end
 
+
+function BRICKS_SERVER.UNBOXING.Func.GetWeaponProgressionState( ply, globalKey )
+	if( not IsValid( ply ) or not globalKey ) then return nil end
+
+	local inventoryData = ply:GetUnboxingInventoryData()
+	inventoryData[globalKey] = inventoryData[globalKey] or {}
+	inventoryData[globalKey].StatTrak = inventoryData[globalKey].StatTrak or {}
+
+	local statTrak = inventoryData[globalKey].StatTrak
+	statTrak.Progression = statTrak.Progression or {
+		XP = 0,
+		Shots = 0,
+		Hits = 0,
+		Kills = 0,
+		Unlocks = {}
+	}
+
+	statTrak.Progression.XP = tonumber( statTrak.Progression.XP ) or 0
+	statTrak.Progression.Shots = tonumber( statTrak.Progression.Shots ) or 0
+	statTrak.Progression.Hits = tonumber( statTrak.Progression.Hits ) or 0
+	statTrak.Progression.Kills = tonumber( statTrak.Progression.Kills ) or 0
+	statTrak.Progression.Unlocks = statTrak.Progression.Unlocks or {}
+
+	return statTrak.Progression
+end
+
+function BRICKS_SERVER.UNBOXING.Func.AddWeaponProgressionXP( ply, globalKey, amount, progressType )
+	if( not IsValid( ply ) or not globalKey ) then return end
+
+	local statCfg = BRICKS_SERVER.UNBOXING.Func.GetStatTrakConfig()
+	local progressionCfg = statCfg.Progression or {}
+	if( not progressionCfg.Enabled ) then return end
+
+	local addAmount = math.max( 0, math.floor( tonumber( amount ) or 0 ) )
+	if( addAmount <= 0 ) then return end
+
+	local progression = BRICKS_SERVER.UNBOXING.Func.GetWeaponProgressionState( ply, globalKey )
+	if( not progression ) then return end
+
+	progression.XP = progression.XP + addAmount
+	if( progressType == "shot" ) then
+		progression.Shots = progression.Shots + 1
+	elseif( progressType == "hit" ) then
+		progression.Hits = progression.Hits + 1
+	elseif( progressType == "kill" ) then
+		progression.Kills = progression.Kills + 1
+	end
+
+	local unlocked = {}
+	for _, milestone in ipairs( progressionCfg.Milestones or {} ) do
+		local key = tostring( milestone.Unlock or "" )
+		if( key != "" and progression.XP >= (tonumber( milestone.XP ) or 0) and not progression.Unlocks[key] ) then
+			progression.Unlocks[key] = true
+			table.insert( unlocked, key )
+		end
+	end
+
+	local inventoryData = ply:GetUnboxingInventoryData()
+	inventoryData[globalKey].StatTrak.Progression = progression
+	ply:SetUnboxingInventoryData( inventoryData )
+
+	if( #unlocked > 0 ) then
+		BRICKS_SERVER.UNBOXING.Func.LogTelemetry( "unbox_weapon_progression_unlock", {
+			SteamID64 = ply:SteamID64(),
+			Item = globalKey,
+			XP = progression.XP,
+			Unlocks = unlocked
+		} )
+	end
+end
+
 function BRICKS_SERVER.UNBOXING.Func.IsApexRarity( rarity )
 	return (brsGetTopTierConfig().ApexRarities or {})[tostring( rarity or "")] == true
 end
@@ -412,7 +557,8 @@ function BRICKS_SERVER.UNBOXING.Func.SendProgressState( ply, progressionDelta )
 				Now = seasonState.Now
 			},
 			LiveOps = {
-				HotfixCaseCount = table.Count( BRICKS_SERVER.UNBOXING.Func.GetDropWeightHotfixes() )
+				HotfixCaseCount = table.Count( BRICKS_SERVER.UNBOXING.Func.GetDropWeightHotfixes() ),
+				SupplyWindowCount = table.Count( brsGetSupplyRuntime() )
 			},
 			Delta = progressionDelta or {}
 		} )
