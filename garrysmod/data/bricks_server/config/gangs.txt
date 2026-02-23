@@ -1,1 +1,831 @@
-{"Max Level":100,"Upgrades":{"Weapon_2":{"SortValue":101,"ReqInfo":["ls_sniper"],"Icon":"https://i.imgur.com/mPSQunx.png","Key":"Weapon_2","Type":"Weapon","Price":15000,"Name":"Permanent Sniper","Description":"All members spawn with a sniper!"},"Salary":{"SortValue":1,"Icon":"salary_upgrade.png","Description":"Gives a higher salary.","Key":"Salary","Tiers":[{"ReqInfo":[75],"Price":5000},{"ReqInfo":[150],"Price":10000},{"ReqInfo":[250],"Price":25000}],"Name":"Increased Salary","Default":[0]},"StorageSlots":{"SortValue":1,"Icon":"storage_64.png","Description":"Amount of storage slots.","Key":"StorageSlots","Tiers":[{"ReqInfo":[20],"Price":5000},{"ReqInfo":[40],"Price":25000}],"Name":"Storage Slots","Default":[10]},"Armor":{"SortValue":1,"Icon":"armor_upgrade.png","Description":"Gives extra armor on spawn.","Key":"Armor","Tiers":[{"ReqInfo":[10],"Price":5000},{"ReqInfo":[25],"Price":10000},{"ReqInfo":[50],"Price":25000}],"Name":"Increased Armor","Default":[0]},"Weapon_1":{"SortValue":101,"ReqInfo":["weapon_ak472"],"Icon":"https://i.imgur.com/iDezZ62.png","Key":"Weapon_1","Type":"Weapon","Price":5000,"Name":"Permanent AK47","Description":"All members spawn with an AK47!"},"MaxMembers":{"SortValue":1,"Icon":"members_upgrade.png","Description":"Maximum allowed members.","Key":"MaxMembers","Tiers":[{"ReqInfo":[8],"Price":5000},{"ReqInfo":[16],"Price":25000}],"Name":"Max Members","Default":[4]},"MaxBalance":{"SortValue":1,"Icon":"balance.png","Description":"Maximum allowed balance.","Key":"MaxBalance","Tiers":[{"ReqInfo":[25000],"Price":5000},{"ReqInfo":[100000],"Price":25000}],"Name":"Max Balance","Default":[10000]},"Health":{"SortValue":1,"Icon":"health_upgrade.png","Description":"Gives extra health on spawn.","Key":"Health","Tiers":[{"ReqInfo":[25],"Price":5000},{"ReqInfo":[50],"Price":10000},{"ReqInfo":[75],"Price":25000},{"ReqInfo":[100],"Price":50000}],"Name":"Increased Health","Default":[0]}},"Gang Display Distance":10000,"Territory Capture Distance":20000,"Disable Gang Chat":false,"Gang Display Limit":10,"Leaderboard Refresh Time":300,"Territory UnCapture Time":10,"Max Storage Item Stack":10,"Achievements":[{"Type":"Members","ReqInfo":[4],"Icon":"members_upgrade.png","Name":"Members 1","Category":"Members Achievements","Rewards":{"GangBalance":[500],"GangExperience":[100]},"Key":1,"Description":"Reach a member count of 4."},{"Type":"Members","ReqInfo":[8],"Icon":"members_upgrade.png","Name":"Members 2","Category":"Members Achievements","Rewards":{"GangBalance":[1000],"GangExperience":[200]},"Key":2,"Description":"Reach a member count of 8."},{"Type":"Members","ReqInfo":[16],"Icon":"members_upgrade.png","Name":"Members 3","Category":"Members Achievements","Rewards":{"GangBalance":[2000],"GangExperience":[400]},"Key":3,"Description":"Reach a member count of 16."},{"Type":"Balance","ReqInfo":[10000],"Icon":"balance.png","Name":"Balance 1","Category":"Balance Achievements","Rewards":{"GangBalance":[500],"GangExperience":[100]},"Key":4,"Description":"Reach a gang balance of $10,000."},{"Type":"Balance","ReqInfo":[25000],"Icon":"balance.png","Name":"Balance 2","Category":"Balance Achievements","Rewards":{"GangBalance":[1000],"GangExperience":[200]},"Key":5,"Description":"Reach a gang balance of $25,000."},{"Type":"Balance","ReqInfo":[100000],"Icon":"balance.png","Name":"Balance 3","Category":"Balance Achievements","Rewards":{"GangBalance":[2000],"GangExperience":[400]},"Key":6,"Description":"Reach a gang balance of $100,000."},{"Type":"Storage","ReqInfo":[5],"Icon":"inventory_64.png","Name":"Storage 1","Category":"Storage Achievements","Rewards":{"GangBalance":[500],"GangExperience":[100]},"Key":7,"Description":"Have at least 5 items in storage."},{"Type":"Storage","ReqInfo":[15],"Icon":"inventory_64.png","Name":"Storage 2","Category":"Storage Achievements","Rewards":{"GangBalance":[1000],"GangExperience":[200]},"Key":8,"Description":"Have at least 15 items in storage."},{"Type":"Storage","ReqInfo":[35],"Icon":"inventory_64.png","Name":"Storage 3","Category":"Storage Achievements","Rewards":{"GangBalance":[2000],"GangExperience":[400]},"Key":9,"Description":"Have at least 35 items in storage."},{"Type":"Level","ReqInfo":[10],"Icon":"levelling.png","Name":"Level 10","Category":"Level Achievements","Rewards":{"GangBalance":[500],"GangExperience":[100]},"Key":10,"Description":"Reach a gang level of 10."},{"Type":"Level","ReqInfo":[25],"Icon":"levelling.png","Name":"Level 25","Category":"Level Achievements","Rewards":{"GangBalance":[1000],"GangExperience":[200]},"Key":11,"Description":"Reach a gang level of 25."}],"Territories":[{"Color":{"r":201,"b":70,"a":255,"g":70},"Rewards":{"GangBalance":[15000],"GangExperience":[500]},"Name":"Car Park","RewardTime":300},{"Color":{"r":201,"b":70,"a":255,"g":70},"Rewards":{"GangBalance":[75000],"GangExperience":[2500]},"Name":"Main Street","RewardTime":300},{"Color":{"r":201,"b":70,"a":255,"g":70},"Rewards":{"GangBalance":[25000],"GangExperience":[850]},"Name":"Beach","RewardTime":300},{"Color":{"r":201,"b":70,"a":255,"g":70},"Rewards":{"GangBalance":[20000],"GangExperience":[700]},"Name":"OutLands","RewardTime":300},{"Color":{"r":201,"b":70,"a":255,"g":70},"Rewards":{"GangBalance":[30000],"GangExperience":[1000]},"Name":"Park","RewardTime":300},{"Color":{"r":201,"b":70,"a":255,"g":70},"Rewards":{"GangBalance":[40000],"GangExperience":[1400]},"Name":"Neighborhood","RewardTime":300},{"Color":{"r":201,"b":70,"a":255,"g":70},"Rewards":{"GangBalance":[50000],"GangExperience":[1700]},"Name":"Industrial","RewardTime":300},{"Color":{"r":201,"b":70,"a":255,"g":70},"Rewards":{"GangBalance":[22500],"GangExperience":[700]},"Name":"Suburbs","RewardTime":300}],"Creation Fee":1500,"Original EXP Required":100,"EXP Required Increase":1.25,"Leaderboards":[{"Type":"Experience","Name":"Most Experience","Color":{"r":22,"b":133,"a":255,"g":160}},{"Type":"Members","Name":"Most Members","Color":{"r":41,"b":185,"a":255,"g":128}},{"Type":"Balance","Name":"Highest Balance","Color":{"r":39,"b":96,"a":255,"g":174}},{"Type":"StorageItems","Name":"Most Items","Color":{"r":231,"b":60,"a":255,"g":76}}],"Minimum Deposit":1000,"Territory Capture Time":10,"Minimum Withdraw":1000,"Gang Friendly Fire":true}
+{
+  "Max Level": 100,
+  "Upgrades": {
+    "MaxMembers": {
+      "SortValue": 1,
+      "Icon": "members_upgrade.png",
+      "Description": "Increase the gang roster cap for bigger operations.",
+      "Key": "MaxMembers",
+      "Name": "Recruitment Network",
+      "Default": [
+        4
+      ],
+      "Tiers": [
+        {
+          "Price": 15000,
+          "ReqInfo": [
+            6
+          ],
+          "Level": 3
+        },
+        {
+          "Price": 35000,
+          "ReqInfo": [
+            8
+          ],
+          "Level": 8
+        },
+        {
+          "Price": 75000,
+          "ReqInfo": [
+            12
+          ],
+          "Level": 15
+        },
+        {
+          "Price": 140000,
+          "ReqInfo": [
+            16
+          ],
+          "Level": 25
+        },
+        {
+          "Price": 220000,
+          "ReqInfo": [
+            20
+          ],
+          "Level": 40
+        },
+        {
+          "Price": 325000,
+          "ReqInfo": [
+            24
+          ],
+          "Level": 55
+        }
+      ]
+    },
+    "MaxBalance": {
+      "SortValue": 2,
+      "Icon": "balance.png",
+      "Description": "Raise treasury cap to support late-game spending.",
+      "Key": "MaxBalance",
+      "Name": "Treasury Expansion",
+      "Default": [
+        25000
+      ],
+      "Tiers": [
+        {
+          "Price": 20000,
+          "ReqInfo": [
+            100000
+          ],
+          "Level": 5
+        },
+        {
+          "Price": 50000,
+          "ReqInfo": [
+            250000
+          ],
+          "Level": 12
+        },
+        {
+          "Price": 110000,
+          "ReqInfo": [
+            500000
+          ],
+          "Level": 22
+        },
+        {
+          "Price": 225000,
+          "ReqInfo": [
+            1000000
+          ],
+          "Level": 35
+        },
+        {
+          "Price": 425000,
+          "ReqInfo": [
+            2000000
+          ],
+          "Level": 50
+        },
+        {
+          "Price": 700000,
+          "ReqInfo": [
+            4000000
+          ],
+          "Level": 70
+        }
+      ]
+    },
+    "StorageSlots": {
+      "SortValue": 3,
+      "Icon": "storage_64.png",
+      "Description": "Expand gang storage capacity for long-term stockpiles.",
+      "Key": "StorageSlots",
+      "Name": "Blacksite Storage",
+      "Default": [
+        12
+      ],
+      "Tiers": [
+        {
+          "Price": 12000,
+          "ReqInfo": [
+            16
+          ],
+          "Level": 4
+        },
+        {
+          "Price": 28000,
+          "ReqInfo": [
+            24
+          ],
+          "Level": 10
+        },
+        {
+          "Price": 60000,
+          "ReqInfo": [
+            32
+          ],
+          "Level": 18
+        },
+        {
+          "Price": 110000,
+          "ReqInfo": [
+            48
+          ],
+          "Level": 30
+        },
+        {
+          "Price": 210000,
+          "ReqInfo": [
+            64
+          ],
+          "Level": 48
+        }
+      ]
+    },
+    "Health": {
+      "SortValue": 4,
+      "Icon": "health_upgrade.png",
+      "Description": "Permanent bonus health for all gang members on spawn.",
+      "Key": "Health",
+      "Name": "Combat Conditioning",
+      "Default": [
+        0
+      ],
+      "Tiers": [
+        {
+          "Price": 18000,
+          "ReqInfo": [
+            10
+          ],
+          "Level": 6
+        },
+        {
+          "Price": 38000,
+          "ReqInfo": [
+            20
+          ],
+          "Level": 14
+        },
+        {
+          "Price": 80000,
+          "ReqInfo": [
+            30
+          ],
+          "Level": 24
+        },
+        {
+          "Price": 145000,
+          "ReqInfo": [
+            40
+          ],
+          "Level": 36
+        },
+        {
+          "Price": 240000,
+          "ReqInfo": [
+            55
+          ],
+          "Level": 52
+        },
+        {
+          "Price": 390000,
+          "ReqInfo": [
+            70
+          ],
+          "Level": 72
+        }
+      ]
+    },
+    "Armor": {
+      "SortValue": 5,
+      "Icon": "armor_upgrade.png",
+      "Description": "Permanent spawn armor to improve survivability in fights.",
+      "Key": "Armor",
+      "Name": "Ballistics Program",
+      "Default": [
+        0
+      ],
+      "Tiers": [
+        {
+          "Price": 16000,
+          "ReqInfo": [
+            10
+          ],
+          "Level": 6
+        },
+        {
+          "Price": 34000,
+          "ReqInfo": [
+            20
+          ],
+          "Level": 14
+        },
+        {
+          "Price": 70000,
+          "ReqInfo": [
+            30
+          ],
+          "Level": 24
+        },
+        {
+          "Price": 125000,
+          "ReqInfo": [
+            40
+          ],
+          "Level": 36
+        },
+        {
+          "Price": 205000,
+          "ReqInfo": [
+            50
+          ],
+          "Level": 50
+        },
+        {
+          "Price": 325000,
+          "ReqInfo": [
+            60
+          ],
+          "Level": 68
+        }
+      ]
+    },
+    "Salary": {
+      "SortValue": 6,
+      "Icon": "salary_upgrade.png",
+      "Description": "Increase paycheck income for every member.",
+      "Key": "Salary",
+      "Name": "Payroll Syndicate",
+      "Default": [
+        0
+      ],
+      "Tiers": [
+        {
+          "Price": 22000,
+          "ReqInfo": [
+            25
+          ],
+          "Level": 8
+        },
+        {
+          "Price": 52000,
+          "ReqInfo": [
+            50
+          ],
+          "Level": 18
+        },
+        {
+          "Price": 110000,
+          "ReqInfo": [
+            80
+          ],
+          "Level": 32
+        },
+        {
+          "Price": 210000,
+          "ReqInfo": [
+            120
+          ],
+          "Level": 48
+        },
+        {
+          "Price": 360000,
+          "ReqInfo": [
+            175
+          ],
+          "Level": 66
+        }
+      ]
+    },
+    "Weapon_1": {
+      "SortValue": 101,
+      "ReqInfo": [
+        "weapon_ak472"
+      ],
+      "Icon": "https://i.imgur.com/iDezZ62.png",
+      "Key": "Weapon_1",
+      "Type": "Weapon",
+      "Price": 50000,
+      "Level": 20,
+      "Name": "Armory Unlock: AK47",
+      "Description": "Members spawn with an AK47 for coordinated pushes."
+    },
+    "Weapon_2": {
+      "SortValue": 102,
+      "ReqInfo": [
+        "ls_sniper"
+      ],
+      "Icon": "https://i.imgur.com/mPSQunx.png",
+      "Key": "Weapon_2",
+      "Type": "Weapon",
+      "Price": 140000,
+      "Level": 45,
+      "Name": "Armory Unlock: Sniper",
+      "Description": "Members spawn with a sniper for long-range control."
+    },
+    "Weapon_3": {
+      "SortValue": 103,
+      "ReqInfo": [
+        "weapon_smg1"
+      ],
+      "Icon": "https://i.imgur.com/iDezZ62.png",
+      "Key": "Weapon_3",
+      "Type": "Weapon",
+      "Price": 30000,
+      "Level": 14,
+      "Name": "Armory Unlock: SMG",
+      "Description": "Members spawn with an SMG for mobile skirmishes."
+    },
+    "Weapon_4": {
+      "SortValue": 104,
+      "ReqInfo": [
+        "weapon_shotgun"
+      ],
+      "Icon": "https://i.imgur.com/mPSQunx.png",
+      "Key": "Weapon_4",
+      "Type": "Weapon",
+      "Price": 80000,
+      "Level": 32,
+      "Name": "Armory Unlock: Shotgun",
+      "Description": "Members spawn with a shotgun for close-quarters raids."
+    },
+    "Weapon_5": {
+      "SortValue": 105,
+      "ReqInfo": [
+        "weapon_pistol"
+      ],
+      "Icon": "https://i.imgur.com/iDezZ62.png",
+      "Key": "Weapon_5",
+      "Type": "Weapon",
+      "Price": 12000,
+      "Level": 5,
+      "Name": "Armory Unlock: Sidearm",
+      "Description": "Members spawn with a reliable sidearm backup."
+    }
+  },
+  "Gang Display Distance": 10000,
+  "Territory Capture Distance": 20000,
+  "Disable Gang Chat": false,
+  "Gang Display Limit": 10,
+  "Leaderboard Refresh Time": 300,
+  "Territory UnCapture Time": 10,
+  "Max Storage Item Stack": 10,
+  "Achievements": [
+    {
+      "Key": 1,
+      "Name": "Crew Assembled",
+      "Description": "Reach 6 members.",
+      "Category": "Members Achievements",
+      "Type": "Members",
+      "ReqInfo": [
+        6
+      ],
+      "Icon": "members_upgrade.png",
+      "Rewards": {
+        "GangBalance": [
+          2000
+        ],
+        "GangExperience": [
+          120
+        ]
+      }
+    },
+    {
+      "Key": 2,
+      "Name": "Growing Presence",
+      "Description": "Reach 12 members.",
+      "Category": "Members Achievements",
+      "Type": "Members",
+      "ReqInfo": [
+        12
+      ],
+      "Icon": "members_upgrade.png",
+      "Rewards": {
+        "GangBalance": [
+          5000
+        ],
+        "GangExperience": [
+          260
+        ]
+      }
+    },
+    {
+      "Key": 3,
+      "Name": "Citywide Network",
+      "Description": "Reach 20 members.",
+      "Category": "Members Achievements",
+      "Type": "Members",
+      "ReqInfo": [
+        20
+      ],
+      "Icon": "members_upgrade.png",
+      "Rewards": {
+        "GangBalance": [
+          12000
+        ],
+        "GangExperience": [
+          500
+        ]
+      }
+    },
+    {
+      "Key": 4,
+      "Name": "Cashflow I",
+      "Description": "Store $100,000 in gang balance.",
+      "Category": "Balance Achievements",
+      "Type": "Balance",
+      "ReqInfo": [
+        100000
+      ],
+      "Icon": "balance.png",
+      "Rewards": {
+        "GangBalance": [
+          2500
+        ],
+        "GangExperience": [
+          140
+        ]
+      }
+    },
+    {
+      "Key": 5,
+      "Name": "Cashflow II",
+      "Description": "Store $500,000 in gang balance.",
+      "Category": "Balance Achievements",
+      "Type": "Balance",
+      "ReqInfo": [
+        500000
+      ],
+      "Icon": "balance.png",
+      "Rewards": {
+        "GangBalance": [
+          8000
+        ],
+        "GangExperience": [
+          350
+        ]
+      }
+    },
+    {
+      "Key": 6,
+      "Name": "Cashflow III",
+      "Description": "Store $2,000,000 in gang balance.",
+      "Category": "Balance Achievements",
+      "Type": "Balance",
+      "ReqInfo": [
+        2000000
+      ],
+      "Icon": "balance.png",
+      "Rewards": {
+        "GangBalance": [
+          25000
+        ],
+        "GangExperience": [
+          700
+        ]
+      }
+    },
+    {
+      "Key": 7,
+      "Name": "Supply Closet",
+      "Description": "Store 20 total items.",
+      "Category": "Storage Achievements",
+      "Type": "Storage",
+      "ReqInfo": [
+        20
+      ],
+      "Icon": "inventory_64.png",
+      "Rewards": {
+        "GangBalance": [
+          2500
+        ],
+        "GangExperience": [
+          150
+        ]
+      }
+    },
+    {
+      "Key": 8,
+      "Name": "Warehouse",
+      "Description": "Store 60 total items.",
+      "Category": "Storage Achievements",
+      "Type": "Storage",
+      "ReqInfo": [
+        60
+      ],
+      "Icon": "inventory_64.png",
+      "Rewards": {
+        "GangBalance": [
+          7500
+        ],
+        "GangExperience": [
+          320
+        ]
+      }
+    },
+    {
+      "Key": 9,
+      "Name": "Arsenal Vault",
+      "Description": "Store 120 total items.",
+      "Category": "Storage Achievements",
+      "Type": "Storage",
+      "ReqInfo": [
+        120
+      ],
+      "Icon": "inventory_64.png",
+      "Rewards": {
+        "GangBalance": [
+          18000
+        ],
+        "GangExperience": [
+          650
+        ]
+      }
+    },
+    {
+      "Key": 10,
+      "Name": "Street Tier",
+      "Description": "Reach gang level 10.",
+      "Category": "Level Achievements",
+      "Type": "Level",
+      "ReqInfo": [
+        10
+      ],
+      "Icon": "levelling.png",
+      "Rewards": {
+        "GangBalance": [
+          4000
+        ],
+        "GangExperience": [
+          200
+        ]
+      }
+    },
+    {
+      "Key": 11,
+      "Name": "District Tier",
+      "Description": "Reach gang level 25.",
+      "Category": "Level Achievements",
+      "Type": "Level",
+      "ReqInfo": [
+        25
+      ],
+      "Icon": "levelling.png",
+      "Rewards": {
+        "GangBalance": [
+          12000
+        ],
+        "GangExperience": [
+          400
+        ]
+      }
+    },
+    {
+      "Key": 12,
+      "Name": "City Tier",
+      "Description": "Reach gang level 40.",
+      "Category": "Level Achievements",
+      "Type": "Level",
+      "ReqInfo": [
+        40
+      ],
+      "Icon": "levelling.png",
+      "Rewards": {
+        "GangBalance": [
+          25000
+        ],
+        "GangExperience": [
+          650
+        ]
+      }
+    },
+    {
+      "Key": 13,
+      "Name": "Empire Tier",
+      "Description": "Reach gang level 60.",
+      "Category": "Level Achievements",
+      "Type": "Level",
+      "ReqInfo": [
+        60
+      ],
+      "Icon": "levelling.png",
+      "Rewards": {
+        "GangBalance": [
+          60000
+        ],
+        "GangExperience": [
+          900
+        ]
+      }
+    }
+  ],
+  "Territories": [
+    {
+      "Name": "Car Park",
+      "Color": {
+        "r": 201,
+        "g": 70,
+        "b": 70,
+        "a": 255
+      },
+      "RewardTime": 600,
+      "Rewards": {
+        "GangBalance": [
+          8000
+        ],
+        "GangExperience": [
+          140
+        ]
+      }
+    },
+    {
+      "Name": "Main Street",
+      "Color": {
+        "r": 201,
+        "g": 70,
+        "b": 70,
+        "a": 255
+      },
+      "RewardTime": 900,
+      "Rewards": {
+        "GangBalance": [
+          18000
+        ],
+        "GangExperience": [
+          320
+        ]
+      }
+    },
+    {
+      "Name": "Beach",
+      "Color": {
+        "r": 201,
+        "g": 70,
+        "b": 70,
+        "a": 255
+      },
+      "RewardTime": 660,
+      "Rewards": {
+        "GangBalance": [
+          9500
+        ],
+        "GangExperience": [
+          170
+        ]
+      }
+    },
+    {
+      "Name": "OutLands",
+      "Color": {
+        "r": 201,
+        "g": 70,
+        "b": 70,
+        "a": 255
+      },
+      "RewardTime": 720,
+      "Rewards": {
+        "GangBalance": [
+          11000
+        ],
+        "GangExperience": [
+          190
+        ]
+      }
+    },
+    {
+      "Name": "Park",
+      "Color": {
+        "r": 201,
+        "g": 70,
+        "b": 70,
+        "a": 255
+      },
+      "RewardTime": 780,
+      "Rewards": {
+        "GangBalance": [
+          13000
+        ],
+        "GangExperience": [
+          220
+        ]
+      }
+    },
+    {
+      "Name": "Neighborhood",
+      "Color": {
+        "r": 201,
+        "g": 70,
+        "b": 70,
+        "a": 255
+      },
+      "RewardTime": 840,
+      "Rewards": {
+        "GangBalance": [
+          15000
+        ],
+        "GangExperience": [
+          260
+        ]
+      }
+    },
+    {
+      "Name": "Industrial",
+      "Color": {
+        "r": 201,
+        "g": 70,
+        "b": 70,
+        "a": 255
+      },
+      "RewardTime": 900,
+      "Rewards": {
+        "GangBalance": [
+          17000
+        ],
+        "GangExperience": [
+          300
+        ]
+      }
+    },
+    {
+      "Name": "Suburbs",
+      "Color": {
+        "r": 201,
+        "g": 70,
+        "b": 70,
+        "a": 255
+      },
+      "RewardTime": 720,
+      "Rewards": {
+        "GangBalance": [
+          12000
+        ],
+        "GangExperience": [
+          200
+        ]
+      }
+    }
+  ],
+  "Creation Fee": 7500,
+  "Original EXP Required": 125,
+  "EXP Required Increase": 1.25,
+  "Leaderboards": [
+    {
+      "Type": "Experience",
+      "Name": "Most Experience",
+      "Color": {
+        "r": 22,
+        "b": 133,
+        "a": 255,
+        "g": 160
+      }
+    },
+    {
+      "Type": "Members",
+      "Name": "Most Members",
+      "Color": {
+        "r": 41,
+        "b": 185,
+        "a": 255,
+        "g": 128
+      }
+    },
+    {
+      "Type": "Balance",
+      "Name": "Highest Balance",
+      "Color": {
+        "r": 39,
+        "b": 96,
+        "a": 255,
+        "g": 174
+      }
+    },
+    {
+      "Type": "StorageItems",
+      "Name": "Most Items",
+      "Color": {
+        "r": 231,
+        "b": 60,
+        "a": 255,
+        "g": 76
+      }
+    }
+  ],
+  "Minimum Deposit": 5000,
+  "Territory Capture Time": 10,
+  "Minimum Withdraw": 5000,
+  "Gang Friendly Fire": true
+}
