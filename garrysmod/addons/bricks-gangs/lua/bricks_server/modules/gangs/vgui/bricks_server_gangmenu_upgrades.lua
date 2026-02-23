@@ -5,8 +5,50 @@ function PANEL:Init()
 end
 
 function PANEL:FillPanel( gangTable )
+    local summaryBack = vgui.Create( "DPanel", self )
+    summaryBack:Dock( TOP )
+    summaryBack:DockMargin( 0, 0, 0, 8 )
+    summaryBack:SetTall( 70 )
+    summaryBack.Paint = function( self2, w, h )
+        local totalUpgrades, purchasedUpgrades = 0, 0
+
+        for upgradeKey, upgradeData in pairs( BRICKS_SERVER.CONFIG.GANGS.Upgrades or {} ) do
+            local upgradeDevConfig = BRICKS_SERVER.DEVCONFIG.GangUpgrades[upgradeData.Type or upgradeKey] or {}
+            local maxTiers = #(upgradeData.Tiers or {})
+
+            if( maxTiers <= 0 ) then continue end
+
+            totalUpgrades = totalUpgrades+maxTiers
+
+            if( not upgradeDevConfig.Unlimited ) then
+                purchasedUpgrades = purchasedUpgrades+math.min( (gangTable.Upgrades or {})[upgradeKey] or 0, maxTiers )
+            elseif( BRICKS_SERVER.Func.GangGetUpgradeBought( LocalPlayer():GetGangID(), upgradeKey ) ) then
+                purchasedUpgrades = purchasedUpgrades+1
+            end
+        end
+
+        local completionDecimal = 0
+        if( totalUpgrades > 0 ) then
+            completionDecimal = math.Clamp( purchasedUpgrades/totalUpgrades, 0, 1 )
+        end
+
+        draw.RoundedBox( 8, 0, 0, w, h, BRICKS_SERVER.Func.GetTheme( 2 ) )
+        BRICKS_SERVER.Func.DrawGradientRoundedBox( 8, 0, 0, w, h, 1, Color( 39, 128, 100, 75 ), Color( 208, 145, 41, 75 ) )
+
+        draw.SimpleText( "SRVRRP GANG UPGRADE TRACKER", "BRICKS_SERVER_Font20B", 18, 16, BRICKS_SERVER.Func.GetTheme( 6 ), 0, TEXT_ALIGN_CENTER )
+        draw.SimpleText( purchasedUpgrades .. "/" .. totalUpgrades .. " tiers unlocked", "BRICKS_SERVER_Font17", 18, 40, Color( 255, 255, 255, 175 ), 0, TEXT_ALIGN_CENTER )
+
+        local progressX, progressY, progressW, progressH = w*0.48, 23, w*0.48, 22
+        draw.RoundedBox( 6, progressX, progressY, progressW, progressH, BRICKS_SERVER.Func.GetTheme( 3 ) )
+        draw.RoundedBox( 6, progressX, progressY, progressW*completionDecimal, progressH, Color( 89, 184, 113 ) )
+        draw.SimpleText( math.floor( completionDecimal*100 ) .. "%", "BRICKS_SERVER_Font17", progressX+(progressW/2), progressY+(progressH/2), BRICKS_SERVER.Func.GetTheme( 6 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+    end
+
+    local upgradesScroll = vgui.Create( "bricks_server_scrollpanel", self )
+    upgradesScroll:Dock( FILL )
+
     function self.RefreshPanel()
-        self:Clear()
+        upgradesScroll:Clear()
 
         local sortedUpgrades = {}
         for k, v in pairs( BRICKS_SERVER.CONFIG.GANGS.Upgrades or {} ) do
@@ -36,7 +78,7 @@ function PANEL:FillPanel( gangTable )
                 upgrade = (BRICKS_SERVER.Func.GangGetUpgradeBought( LocalPlayer():GetGangID(), k ) and 1) or 0
             end
 
-            local upgradeBack = vgui.Create( "DPanel", self )
+            local upgradeBack = vgui.Create( "DPanel", upgradesScroll )
             upgradeBack:Dock( TOP )
             upgradeBack:DockMargin( 0, 0, 0, 5 )
             upgradeBack:SetTall( 80 )

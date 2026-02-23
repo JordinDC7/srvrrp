@@ -5,8 +5,49 @@ function PANEL:Init()
 end
 
 function PANEL:FillPanel( gangTable )
+    local summaryBack = vgui.Create( "DPanel", self )
+    summaryBack:Dock( TOP )
+    summaryBack:DockMargin( 0, 0, 0, 8 )
+    summaryBack:SetTall( 70 )
+
     local categoryList = vgui.Create( "bricks_server_dcategorylist", self )
     categoryList:Dock( FILL )
+
+    local function GetAchievementStats()
+        local totalAchievements = 0
+        local completedAchievements = 0
+
+        for achievementKey, achievementData in pairs( BRICKS_SERVER.CONFIG.GANGS.Achievements or {} ) do
+            if( not BRICKS_SERVER.DEVCONFIG.GangAchievements[achievementData.Type] ) then continue end
+
+            totalAchievements = totalAchievements+1
+
+            if( BRICKS_SERVER.Func.GangGetAchievementCompleted( LocalPlayer():GetGangID(), achievementKey ) ) then
+                completedAchievements = completedAchievements+1
+            end
+        end
+
+        return totalAchievements, completedAchievements
+    end
+
+    summaryBack.Paint = function( self2, w, h )
+        local totalAchievements, completedAchievements = GetAchievementStats()
+        local completionDecimal = 0
+        if( totalAchievements > 0 ) then
+            completionDecimal = math.Clamp( completedAchievements/totalAchievements, 0, 1 )
+        end
+
+        draw.RoundedBox( 8, 0, 0, w, h, BRICKS_SERVER.Func.GetTheme( 2 ) )
+        BRICKS_SERVER.Func.DrawGradientRoundedBox( 8, 0, 0, w, h, 2, Color( 100, 62, 146, 80 ), Color( 62, 111, 183, 80 ) )
+
+        draw.SimpleText( "SRVRRP ACHIEVEMENT TRACKER", "BRICKS_SERVER_Font20B", 18, 16, BRICKS_SERVER.Func.GetTheme( 6 ), 0, TEXT_ALIGN_CENTER )
+        draw.SimpleText( completedAchievements .. "/" .. totalAchievements .. " completed", "BRICKS_SERVER_Font17", 18, 40, Color( 255, 255, 255, 175 ), 0, TEXT_ALIGN_CENTER )
+
+        local progressX, progressY, progressW, progressH = w*0.48, 23, w*0.48, 22
+        draw.RoundedBox( 6, progressX, progressY, progressW, progressH, BRICKS_SERVER.Func.GetTheme( 3 ) )
+        draw.RoundedBox( 6, progressX, progressY, progressW*completionDecimal, progressH, Color( 147, 101, 216 ) )
+        draw.SimpleText( math.floor( completionDecimal*100 ) .. "%", "BRICKS_SERVER_Font17", progressX+(progressW/2), progressY+(progressH/2), BRICKS_SERVER.Func.GetTheme( 6 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+    end
 
     function self.RefreshPanel()
         categoryList:Clear()
@@ -14,7 +55,24 @@ function PANEL:FillPanel( gangTable )
         local categories = {}
         local slotTall, spacing = 80, 5
 
-        for k, v in pairs( BRICKS_SERVER.CONFIG.GANGS.Achievements or {} ) do
+        local sortedAchievements = {}
+        for achievementKey, achievementData in pairs( BRICKS_SERVER.CONFIG.GANGS.Achievements or {} ) do
+            table.insert( sortedAchievements, { Key = achievementKey, Data = achievementData } )
+        end
+
+        table.sort( sortedAchievements, function( a, b )
+            local aCompleted = BRICKS_SERVER.Func.GangGetAchievementCompleted( LocalPlayer():GetGangID(), a.Key ) and 1 or 0
+            local bCompleted = BRICKS_SERVER.Func.GangGetAchievementCompleted( LocalPlayer():GetGangID(), b.Key ) and 1 or 0
+
+            if( aCompleted ~= bCompleted ) then
+                return aCompleted < bCompleted
+            end
+
+            return a.Key < b.Key
+        end )
+
+        for _, achievementInfo in ipairs( sortedAchievements ) do
+            local k, v = achievementInfo.Key, achievementInfo.Data
             local categoryName = v.Category or BRICKS_SERVER.Func.L( "other" )
             if( not categories[categoryName] ) then
                 local categoryColor = BRICKS_SERVER.Func.GetTheme( 5 )
