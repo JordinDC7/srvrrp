@@ -1,0 +1,45 @@
+name: Deploy to Physgun via SFTP (on merge to main)
+
+on:
+  push:
+    branches: [main]
+
+concurrency:
+  group: physgun-prod-deploy
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Install lftp
+        run: sudo apt-get update && sudo apt-get install -y lftp
+
+      - name: Deploy to /garrysmod over SFTP
+        env:
+          HOST: ${{ secrets.SFTP_HOST }}
+          PORT: ${{ secrets.SFTP_PORT }}
+          USER: ${{ secrets.SFTP_USER }}
+          PASS: ${{ secrets.SFTP_PASS }}
+          REMOTE_DIR: ${{ secrets.SFTP_REMOTE_DIR }}
+        run: |
+          lftp -u "$USER","$PASS" sftp://$HOST:$PORT <<EOF
+          set sftp:auto-confirm yes
+          set cmd:fail-exit yes
+          set net:max-retries 2
+          set net:timeout 20
+
+          mirror -R --verbose \
+            --exclude-glob .git* \
+            --exclude-glob .github \
+            --exclude-glob *.log \
+            --exclude-glob cache \
+            --exclude-glob data \
+            ./garrysmod/ "$REMOTE_DIR"
+
+          bye
+          EOF
