@@ -207,6 +207,8 @@ util.AddNetworkString( "BRS.Net.UnboxingCraftItem" )
 util.AddNetworkString( "BRS.Net.UnboxingCraftItemReturn" )
 util.AddNetworkString( "BRS.Net.UnboxingBatchConvertCommons" )
 util.AddNetworkString( "BRS.Net.UnboxingSetHypeFeedMuted" )
+util.AddNetworkString( "BRS.Net.UnboxingStatTrakReroll" )
+util.AddNetworkString( "BRS.Net.UnboxingStatTrakRerollReturn" )
 
 local function brsGetTopTierConfig()
 	return BRICKS_SERVER.UNBOXING.LUACFG.TopTier or {}
@@ -493,6 +495,325 @@ function BRICKS_SERVER.UNBOXING.Func.AddWeaponProgressionXP( ply, globalKey, amo
 	end
 end
 
+
+function BRICKS_SERVER.UNBOXING.Func.GetStatTrakProfileState( ply, globalKey )
+	if( not IsValid( ply ) or not globalKey ) then return nil end
+
+	local inventoryData = ply:GetUnboxingInventoryData()
+	inventoryData[globalKey] = inventoryData[globalKey] or {}
+	inventoryData[globalKey].StatTrak = inventoryData[globalKey].StatTrak or {}
+
+	local statTrak = inventoryData[globalKey].StatTrak
+	statTrak.Profile = statTrak.Profile or {
+		kills = 0,
+		headshots = 0,
+		longest_streak = 0,
+		assists = 0,
+		objective_score = 0,
+		CurrentStreak = 0,
+		Prestige = { LastMilestone = 0, LastAnnounce = 0 },
+		LastKillAt = 0,
+		LastDeathAt = 0,
+		LastCombatByVictim = {},
+		Anomalies = 0
+	}
+
+	local profile = statTrak.Profile
+	profile.kills = tonumber( profile.kills ) or 0
+	profile.headshots = tonumber( profile.headshots ) or 0
+	profile.longest_streak = tonumber( profile.longest_streak ) or 0
+	profile.assists = tonumber( profile.assists ) or 0
+	profile.objective_score = tonumber( profile.objective_score ) or 0
+	profile.CurrentStreak = tonumber( profile.CurrentStreak ) or 0
+	profile.Prestige = profile.Prestige or { LastMilestone = 0, LastAnnounce = 0 }
+	profile.LastCombatByVictim = profile.LastCombatByVictim or {}
+	profile.Anomalies = tonumber( profile.Anomalies ) or 0
+
+	statTrak.Provenance = statTrak.Provenance or {
+		OriginalUnboxer = statTrak.UnboxedBySteamID64,
+		Transfers = {},
+		Milestones = {},
+		CreatedAt = statTrak.Created or os.time()
+	}
+
+	return profile
+end
+
+function BRICKS_SERVER.UNBOXING.Func.GetStatTrakLadderState( ply, globalKey )
+	if( not IsValid( ply ) or not globalKey ) then return nil end
+
+	local seasonState = BRICKS_SERVER.UNBOXING.Func.GetSeasonState()
+	local seasonKey = seasonState.SeasonKey or "offseason"
+	local inventoryData = ply:GetUnboxingInventoryData()
+	inventoryData[globalKey] = inventoryData[globalKey] or {}
+	inventoryData[globalKey].StatTrak = inventoryData[globalKey].StatTrak or {}
+
+	local ladders = inventoryData[globalKey].StatTrak.Ladders or {}
+	ladders[seasonKey] = ladders[seasonKey] or {
+		Season = seasonKey,
+		Points = 0,
+		Rewards = {}
+	}
+
+	inventoryData[globalKey].StatTrak.Ladders = ladders
+	return ladders[seasonKey], seasonKey
+end
+
+function BRICKS_SERVER.UNBOXING.Func.TrackStatTrakMilestone( ply, globalKey, statKey, value )
+	if( not IsValid( ply ) or not globalKey ) then return end
+
+	local profile = BRICKS_SERVER.UNBOXING.Func.GetStatTrakProfileState( ply, globalKey )
+	if( not profile ) then return end
+
+	local statCfg = BRICKS_SERVER.UNBOXING.Func.GetStatTrakConfig()
+	local milestones = statCfg.PrestigeMilestones or {}
+	local prestige = profile.Prestige or { LastMilestone = 0, LastAnnounce = 0 }
+	local newlyHit
+
+	for _, milestone in ipairs( milestones ) do
+		local milestoneVal = tonumber( milestone ) or 0
+		if( milestoneVal > (tonumber( prestige.LastMilestone ) or 0) and value >= milestoneVal ) then
+			newlyHit = milestoneVal
+		end
+	end
+
+	if( not newlyHit ) then return end
+
+	prestige.LastMilestone = newlyHit
+	profile.Prestige = prestige
+
+	local inventoryData = ply:GetUnboxingInventoryData()
+	local statTrak = (inventoryData[globalKey] or {}).StatTrak or {}
+	statTrak.Provenance = statTrak.Provenance or { Transfers = {}, Milestones = {} }
+	statTrak.Provenance.Milestones = statTrak.Provenance.Milestones or {}
+	table.insert( statTrak.Provenance.Milestones, {
+		Time = os.time(),
+		Stat = statKey,
+		Value = value,
+		Milestone = newlyHit
+	} )
+
+	local cooldown = math.max( 10, tonumber( statCfg.PrestigeCooldownSeconds ) or 90 )
+	local now = CurTime()
+	if( now >= ((prestige.LastAnnounce or 0)+cooldown) ) then
+		prestige.LastAnnounce = now
+		local itemName = (BRICKS_SERVER.UNBOXING.Func.GetItemFromGlobalKey( globalKey ) or {}).Name or globalKey
+		for _, target in ipairs( player.GetHumans() ) do
+			BRICKS_SERVER.Func.SendChatNotification( target, Color( 255, 200, 85 ), "[StatTrak Prestige]", Color( 255, 255, 255 ), string.format( "%s reached %s %d on %s!", ply:Nick(), statKey, newlyHit, itemName ) )
+		end
+	end
+
+	inventoryData[globalKey] = inventoryData[globalKey] or {}
+	inventoryData[globalKey].StatTrak = statTrak
+	inventoryData[globalKey].StatTrak.Profile = profile
+	ply:SetUnboxingInventoryData( inventoryData )
+end
+
+function BRICKS_SERVER.UNBOXING.Func.RecordStatTrakTransfer( fromPly, toPly, globalKey, amount )
+	if( not IsValid( fromPly ) or not IsValid( toPly ) ) then return end
+	if( not globalKey or not string.StartWith( globalKey, "ITEM_" ) ) then return end
+	if( (tonumber( amount ) or 0) <= 0 ) then return end
+
+	local fromData = fromPly:GetUnboxingInventoryData()
+	local statTrak = ((fromData[globalKey] or {}).StatTrak or nil)
+	if( not istable( statTrak ) ) then return end
+
+	statTrak.Provenance = statTrak.Provenance or { Transfers = {}, Milestones = {} }
+	statTrak.Provenance.Transfers = statTrak.Provenance.Transfers or {}
+	table.insert( statTrak.Provenance.Transfers, {
+		Time = os.time(),
+		From = fromPly:SteamID64(),
+		To = toPly:SteamID64(),
+		Amount = math.floor( tonumber( amount ) or 1 )
+	} )
+
+	fromData[globalKey] = fromData[globalKey] or {}
+	fromData[globalKey].StatTrak = statTrak
+	fromPly:SetUnboxingInventoryData( fromData )
+
+	local toData = toPly:GetUnboxingInventoryData()
+	toData[globalKey] = toData[globalKey] or {}
+	toData[globalKey].StatTrak = table.Copy( statTrak )
+	toPly:SetUnboxingInventoryData( toData )
+
+	BRICKS_SERVER.UNBOXING.Func.LogTelemetry( "stattrak_transfer", {
+		Item = globalKey,
+		From = fromPly:SteamID64(),
+		To = toPly:SteamID64(),
+		Amount = math.floor( tonumber( amount ) or 1 )
+	} )
+end
+
+function BRICKS_SERVER.UNBOXING.Func.FlagStatTrakAnomaly( ply, reason, context )
+	if( not IsValid( ply ) ) then return end
+
+	local payload = {
+		SteamID64 = ply:SteamID64(),
+		Reason = tostring( reason or "unknown" ),
+		Context = context or {}
+	}
+
+	BRICKS_SERVER.UNBOXING.Func.LogTelemetry( "stattrak_anomaly", payload )
+end
+
+function BRICKS_SERVER.UNBOXING.Func.RecordStatTrakCombatAssist( attacker, victim )
+	if( not IsValid( attacker ) or not IsValid( victim ) ) then return end
+
+	local wep = attacker:GetActiveWeapon()
+	if( not IsValid( wep ) ) then return end
+
+	local statScalars = BRICKS_SERVER.UNBOXING.Func.GetEquippedWeaponStatScalars( attacker, wep:GetClass() )
+	if( not statScalars or not statScalars.GlobalKey ) then return end
+
+	local profile = BRICKS_SERVER.UNBOXING.Func.GetStatTrakProfileState( attacker, statScalars.GlobalKey )
+	if( not profile ) then return end
+
+	profile.LastCombatByVictim[victim:SteamID64()] = CurTime()
+
+	local inventoryData = attacker:GetUnboxingInventoryData()
+	inventoryData[statScalars.GlobalKey].StatTrak.Profile = profile
+	attacker:SetUnboxingInventoryData( inventoryData )
+end
+
+function BRICKS_SERVER.UNBOXING.Func.RecordValidatedStatTrakKill( attacker, victim, statScalars, context )
+	if( not IsValid( attacker ) or not statScalars or not statScalars.GlobalKey ) then return end
+
+	local globalKey = statScalars.GlobalKey
+	local profile = BRICKS_SERVER.UNBOXING.Func.GetStatTrakProfileState( attacker, globalKey )
+	if( not profile ) then return end
+
+	profile.kills = profile.kills+1
+	profile.CurrentStreak = profile.CurrentStreak+1
+	profile.longest_streak = math.max( profile.longest_streak, profile.CurrentStreak )
+	profile.LastKillAt = CurTime()
+	if( (context or {}).IsHeadshot ) then
+		profile.headshots = profile.headshots+1
+	end
+
+	local statCfg = BRICKS_SERVER.UNBOXING.Func.GetStatTrakConfig()
+	local ladderCfg = statCfg.SeasonalLadders or {}
+	if( ladderCfg.Enabled ) then
+		local ladderState = BRICKS_SERVER.UNBOXING.Func.GetStatTrakLadderState( attacker, globalKey )
+		if( ladderState ) then
+			local pointsCfg = ladderCfg.LadderPoints or {}
+			ladderState.Points = (tonumber( ladderState.Points ) or 0)+(tonumber( pointsCfg.Kill ) or 0)
+			if( (context or {}).IsHeadshot ) then
+				ladderState.Points = ladderState.Points+(tonumber( pointsCfg.Headshot ) or 0)
+			end
+
+			for _, reward in ipairs( ladderCfg.CosmeticRewards or {} ) do
+				local rewardKey = tostring( reward.CosmeticID or "" )
+				local threshold = tonumber( reward.Points ) or 0
+				if( rewardKey != "" and ladderState.Points >= threshold and not ladderState.Rewards[rewardKey] ) then
+					ladderState.Rewards[rewardKey] = os.time()
+					BRICKS_SERVER.UNBOXING.Func.LogTelemetry( "stattrak_ladder_reward", {
+						SteamID64 = attacker:SteamID64(),
+						Item = globalKey,
+						Reward = rewardKey,
+						Points = ladderState.Points
+					} )
+				end
+			end
+		end
+	end
+
+	BRICKS_SERVER.UNBOXING.Func.TrackStatTrakMilestone( attacker, globalKey, "kills", profile.kills )
+
+	local inventoryData = attacker:GetUnboxingInventoryData()
+	inventoryData[globalKey].StatTrak.Profile = profile
+	attacker:SetUnboxingInventoryData( inventoryData )
+
+	BRICKS_SERVER.UNBOXING.Func.TryAwardSocketModifier( attacker, globalKey, profile )
+
+	if( IsValid( victim ) and victim:IsPlayer() ) then
+		for _, helper in ipairs( player.GetHumans() ) do
+			if( helper == attacker or helper == victim ) then continue end
+
+			local helperWep = helper:GetActiveWeapon()
+			if( not IsValid( helperWep ) ) then continue end
+
+			local helperScalars = BRICKS_SERVER.UNBOXING.Func.GetEquippedWeaponStatScalars( helper, helperWep:GetClass() )
+			if( not helperScalars or not helperScalars.GlobalKey ) then continue end
+
+			local helperProfile = BRICKS_SERVER.UNBOXING.Func.GetStatTrakProfileState( helper, helperScalars.GlobalKey )
+			if( not helperProfile ) then continue end
+
+			local assistWindow = math.max( 1, tonumber( statCfg.AssistWindowSeconds ) or 10 )
+			local lastHit = tonumber( (helperProfile.LastCombatByVictim or {})[victim:SteamID64()] ) or 0
+			if( CurTime()-lastHit > assistWindow ) then continue end
+
+			helperProfile.assists = helperProfile.assists+1
+			local helperData = helper:GetUnboxingInventoryData()
+			helperData[helperScalars.GlobalKey].StatTrak.Profile = helperProfile
+			helper:SetUnboxingInventoryData( helperData )
+
+			if( ladderCfg.Enabled ) then
+				local helperLadder = BRICKS_SERVER.UNBOXING.Func.GetStatTrakLadderState( helper, helperScalars.GlobalKey )
+				if( helperLadder ) then
+					helperLadder.Points = (tonumber( helperLadder.Points ) or 0)+(tonumber( (ladderCfg.LadderPoints or {}).Assist ) or 0)
+				end
+			end
+		end
+	end
+
+	BRICKS_SERVER.UNBOXING.Func.LogTelemetry( "stattrak_validated_kill", {
+		SteamID64 = attacker:SteamID64(),
+		Item = globalKey,
+		Victim = IsValid( victim ) and victim:SteamID64() or "npc",
+		Headshot = (context or {}).IsHeadshot == true,
+		Distance = tonumber( (context or {}).Distance ) or 0,
+		Kills = profile.kills
+	} )
+end
+
+function BRICKS_SERVER.UNBOXING.Func.TryAwardSocketModifier( ply, globalKey, profile )
+	if( not IsValid( ply ) or not globalKey ) then return end
+
+	local statCfg = BRICKS_SERVER.UNBOXING.Func.GetStatTrakConfig()
+	local socketCfg = statCfg.SocketedModifiers or {}
+	if( not socketCfg.Enabled ) then return end
+
+	local everyKills = math.max( 1, tonumber( socketCfg.EarnEveryKills ) or 40 )
+	local kills = tonumber( (profile or {}).kills ) or 0
+	if( kills <= 0 or (kills % everyKills) != 0 ) then return end
+
+	local inventoryData = ply:GetUnboxingInventoryData()
+	inventoryData[globalKey] = inventoryData[globalKey] or {}
+	inventoryData[globalKey].StatTrak = inventoryData[globalKey].StatTrak or {}
+	inventoryData[globalKey].StatTrak.SocketModifiers = inventoryData[globalKey].StatTrak.SocketModifiers or {}
+
+	local socketList = inventoryData[globalKey].StatTrak.SocketModifiers
+	local maxSockets = math.max( 1, tonumber( socketCfg.MaxSockets ) or 2 )
+	if( #socketList >= maxSockets ) then return end
+
+	local modifierPool = socketCfg.Modifiers or {}
+	if( #modifierPool <= 0 ) then return end
+
+	local statKey = tostring( modifierPool[math.random( 1, #modifierPool )] or "" )
+	if( statKey == "" ) then return end
+
+	local minBonus = tonumber( ((socketCfg.BonusRange or {}).Min) ) or 0.005
+	local maxBonus = tonumber( ((socketCfg.BonusRange or {}).Max) ) or 0.025
+	if( maxBonus < minBonus ) then minBonus, maxBonus = maxBonus, minBonus end
+
+	table.insert( socketList, {
+		StatKey = statKey,
+		Bonus = math.Round( math.Rand( minBonus, maxBonus ), 4 ),
+		EarnedAt = os.time(),
+		Source = "gameplay"
+	} )
+
+	inventoryData[globalKey].StatTrak.SocketModifiers = socketList
+	ply:SetUnboxingInventoryData( inventoryData )
+
+	BRICKS_SERVER.UNBOXING.Func.LogTelemetry( "stattrak_socket_awarded", {
+		SteamID64 = ply:SteamID64(),
+		Item = globalKey,
+		StatKey = statKey,
+		SocketCount = #socketList
+	} )
+end
+
 function BRICKS_SERVER.UNBOXING.Func.IsApexRarity( rarity )
 	return (brsGetTopTierConfig().ApexRarities or {})[tostring( rarity or "")] == true
 end
@@ -605,6 +926,103 @@ function BRICKS_SERVER.UNBOXING.Func.GetDuplicateFragmentValue( globalKey )
 	local rarity = (BRICKS_SERVER.UNBOXING.Func.GetItemFromGlobalKey( globalKey ) or {}).Rarity
 	return (brsGetTopTierConfig().DuplicateFragmentValues or {})[tostring( rarity or "")] or (brsGetTopTierConfig().DuplicateFragmentFallback or 1)
 end
+
+function BRICKS_SERVER.UNBOXING.Func.AddStatTrakObjectiveScore( ply, amount )
+	if( not IsValid( ply ) ) then return end
+
+	local addAmount = math.max( 0, math.floor( tonumber( amount ) or 0 ) )
+	if( addAmount <= 0 ) then return end
+
+	local wep = ply:GetActiveWeapon()
+	if( not IsValid( wep ) ) then return end
+
+	local statScalars = BRICKS_SERVER.UNBOXING.Func.GetEquippedWeaponStatScalars( ply, wep:GetClass() )
+	if( not statScalars or not statScalars.GlobalKey ) then return end
+
+	local profile = BRICKS_SERVER.UNBOXING.Func.GetStatTrakProfileState( ply, statScalars.GlobalKey )
+	if( not profile ) then return end
+
+	profile.objective_score = profile.objective_score+addAmount
+
+	local inventoryData = ply:GetUnboxingInventoryData()
+	inventoryData[statScalars.GlobalKey].StatTrak.Profile = profile
+	ply:SetUnboxingInventoryData( inventoryData )
+
+	local ladderCfg = (BRICKS_SERVER.UNBOXING.Func.GetStatTrakConfig().SeasonalLadders or {})
+	if( ladderCfg.Enabled ) then
+		local ladderState = BRICKS_SERVER.UNBOXING.Func.GetStatTrakLadderState( ply, statScalars.GlobalKey )
+		if( ladderState ) then
+			ladderState.Points = (tonumber( ladderState.Points ) or 0)+(addAmount*(tonumber( (ladderCfg.LadderPoints or {}).ObjectiveScore ) or 1))
+		end
+	end
+
+	BRICKS_SERVER.UNBOXING.Func.TrackStatTrakMilestone( ply, statScalars.GlobalKey, "objective_score", profile.objective_score )
+end
+
+net.Receive( "BRS.Net.UnboxingStatTrakReroll", function( len, ply )
+	local globalKey = net.ReadString()
+	local targetStat = string.upper( net.ReadString() or "" )
+	if( not globalKey or not string.StartWith( globalKey, "ITEM_" ) ) then return end
+
+	local itemCfg = BRICKS_SERVER.UNBOXING.Func.GetItemFromGlobalKey( globalKey )
+	if( not BRICKS_SERVER.UNBOXING.Func.IsStatTrakEligibleItem( itemCfg ) ) then return end
+
+	local statCfg = BRICKS_SERVER.UNBOXING.Func.GetStatTrakConfig()
+	local craftCfg = statCfg.Crafting or {}
+	if( not craftCfg.AllowTargetedReroll ) then return end
+
+	local state = BRICKS_SERVER.UNBOXING.Func.GetTopTierState( ply )
+	local cost = math.max( 1, math.floor( tonumber( craftCfg.RerollCostFragments ) or 35 ) )
+	if( state.Fragments < cost ) then
+		net.Start( "BRS.Net.UnboxingStatTrakRerollReturn" )
+			net.WriteBool( false )
+			net.WriteString( "Not enough fragments." )
+		net.Send( ply )
+		return
+	end
+
+	local inventoryData = ply:GetUnboxingInventoryData()
+	inventoryData[globalKey] = inventoryData[globalKey] or {}
+	inventoryData[globalKey].StatTrak = inventoryData[globalKey].StatTrak or {}
+
+	local roll = inventoryData[globalKey].StatTrak.BestRoll or inventoryData[globalKey].StatTrak.LastRoll
+	if( not istable( roll ) or not istable( roll.Stats ) or targetStat == "" or not roll.Stats[targetStat] ) then
+		return
+	end
+
+	roll.Stats[targetStat] = math.random( 1, 100 )
+	local scoreTotal, weightTotal = 0, 0
+	for _, statInfo in ipairs( statCfg.Stats or {} ) do
+		local key = tostring( statInfo.Key or "" )
+		if( key == "" ) then continue end
+		local weight = tonumber( statInfo.Weight ) or 1
+		scoreTotal = scoreTotal+((tonumber( roll.Stats[key] ) or 0)*weight)
+		weightTotal = weightTotal+weight
+	end
+	roll.Score = math.Round( scoreTotal/math.max( weightTotal, 1 ), 2 )
+	roll.RerolledAt = os.time()
+
+	inventoryData[globalKey].StatTrak.BestRoll = roll
+	inventoryData[globalKey].StatTrak.LastRoll = roll
+	state.Fragments = state.Fragments-cost
+	inventoryData.__TopTier = state
+	ply:SetUnboxingInventoryData( inventoryData )
+
+	BRICKS_SERVER.UNBOXING.Func.LogTelemetry( "stattrak_targeted_reroll", {
+		SteamID64 = ply:SteamID64(),
+		Item = globalKey,
+		Stat = targetStat,
+		Cost = cost,
+		NewScore = roll.Score
+	} )
+
+	net.Start( "BRS.Net.UnboxingStatTrakRerollReturn" )
+		net.WriteBool( true )
+		net.WriteString( targetStat )
+	net.Send( ply )
+
+	BRICKS_SERVER.UNBOXING.Func.SendProgressState( ply, { Fragments = -cost, Reroll = targetStat } )
+end )
 
 net.Receive( "BRS.Net.UnboxingCraftItem", function( len, ply )
 	local recipeKey = net.ReadString()

@@ -284,6 +284,33 @@ function BRICKS_SERVER.UNBOXING.Func.GetStatTrakStatScalar( statKey, statValue )
     return minScale+((maxScale-minScale)*normalized)
 end
 
+
+local function brsGetSocketModifierScalars( itemData )
+    local modifiers = ((itemData or {}).StatTrak or {}).SocketModifiers
+    if( not istable( modifiers ) ) then return {} end
+
+    local totals = {}
+    for _, modifier in ipairs( modifiers ) do
+        local key = tostring( (modifier or {}).StatKey or "" )
+        if( key == "" ) then continue end
+
+        totals[key] = (totals[key] or 0)+(tonumber( modifier.Bonus ) or 0)
+    end
+
+    return totals
+end
+
+local function brsApplySocketModifier( scalar, statKey, modifierScalars )
+    local bonus = tonumber( (modifierScalars or {})[statKey] ) or 0
+    if( bonus == 0 ) then return scalar end
+
+    if( statKey == "DamageScale" ) then
+        return scalar*(1+bonus)
+    end
+
+    return scalar*(1-bonus)
+end
+
 -- Reads equipped weapon stat metadata and returns effective gameplay scalars.
 function BRICKS_SERVER.UNBOXING.Func.GetEquippedWeaponStatScalars( ply, weaponClass )
     if( not IsValid( ply ) or not weaponClass ) then return nil end
@@ -304,14 +331,22 @@ function BRICKS_SERVER.UNBOXING.Func.GetEquippedWeaponStatScalars( ply, weaponCl
         local roll = BRICKS_SERVER.UNBOXING.Func.GetStatTrakSummary( ply, globalKey )
         local stats = (roll and roll.Stats) or {}
 
+        local socketScalars = brsGetSocketModifierScalars( itemData )
+        local damageScale = BRICKS_SERVER.UNBOXING.Func.GetStatTrakStatScalar( "DamageScale", stats.DMG )
+        local accuracyScale = BRICKS_SERVER.UNBOXING.Func.GetStatTrakStatScalar( "AccuracySpreadScale", stats.ACC )
+        local controlScale = BRICKS_SERVER.UNBOXING.Func.GetStatTrakStatScalar( "ControlMoveSpreadScale", stats.CTRL )
+        local handlingScale = BRICKS_SERVER.UNBOXING.Func.GetStatTrakStatScalar( "HandlingFireDelayScale", stats.HND )
+        local mobilityScale = BRICKS_SERVER.UNBOXING.Func.GetStatTrakStatScalar( "MobilitySpreadScale", stats.MOV )
+
         return {
-            DamageScale = BRICKS_SERVER.UNBOXING.Func.GetStatTrakStatScalar( "DamageScale", stats.DMG ),
-            AccuracySpreadScale = BRICKS_SERVER.UNBOXING.Func.GetStatTrakStatScalar( "AccuracySpreadScale", stats.ACC ),
-            ControlMoveSpreadScale = BRICKS_SERVER.UNBOXING.Func.GetStatTrakStatScalar( "ControlMoveSpreadScale", stats.CTRL ),
-            HandlingFireDelayScale = BRICKS_SERVER.UNBOXING.Func.GetStatTrakStatScalar( "HandlingFireDelayScale", stats.HND ),
-            MobilitySpreadScale = BRICKS_SERVER.UNBOXING.Func.GetStatTrakStatScalar( "MobilitySpreadScale", stats.MOV ),
+            DamageScale = brsApplySocketModifier( damageScale, "DamageScale", socketScalars ),
+            AccuracySpreadScale = brsApplySocketModifier( accuracyScale, "AccuracySpreadScale", socketScalars ),
+            ControlMoveSpreadScale = brsApplySocketModifier( controlScale, "ControlMoveSpreadScale", socketScalars ),
+            HandlingFireDelayScale = brsApplySocketModifier( handlingScale, "HandlingFireDelayScale", socketScalars ),
+            MobilitySpreadScale = brsApplySocketModifier( mobilityScale, "MobilitySpreadScale", socketScalars ),
             Roll = roll,
-            GlobalKey = globalKey
+            GlobalKey = globalKey,
+            SocketModifiers = ((itemData or {}).StatTrak or {}).SocketModifiers or {}
         }
     end
 
