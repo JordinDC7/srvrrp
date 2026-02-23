@@ -233,7 +233,7 @@ Nexus.Builder:Start()
 
     :AddButtons({
         id = "nexus-jobcreator-selectedcurrency",
-        defaultValue = "darkrp",
+        defaultValue = "Prometheus",
         showSelected = true,
         label = {":Selected Currency", "Nexus_JobCreator"},
 
@@ -313,6 +313,7 @@ Nexus.Builder:Start()
 
         onChange = function(value) end,
     })
+
 
     :AddTextEntry({
         id = "nexus-jobcreator-max-health",

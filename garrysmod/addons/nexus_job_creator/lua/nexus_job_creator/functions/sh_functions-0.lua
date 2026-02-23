@@ -29,6 +29,7 @@ function Nexus.JobCreator:CalculatePrice(data)
 
     price = price + table.Count(data.Players) * Nexus:GetValue("nexus-jobcreator-price-player")
 
+
     return math.Round(price)
 end
 
