@@ -7,6 +7,20 @@ local function brsUnboxingRollBiasedStat( minValue, maxValue, curve )
 	return math.Round( minValue+(span*sample) )
 end
 
+local function brsUnboxingGetTierFloorConfig( statTrakConfig, configItemTable )
+	if( not istable( statTrakConfig ) or not istable( configItemTable ) ) then return nil end
+
+	local rarity = tostring( configItemTable.Rarity or "" )
+	for _, tierFloor in ipairs( statTrakConfig.HighTierMinimums or {} ) do
+		local rarities = tierFloor.Rarities or {}
+		if( rarities[rarity] ) then
+			return tierFloor
+		end
+	end
+
+	return nil
+end
+
 local function brsUnboxingApplyTier( statTrakConfig, rollData )
 	for _, tierInfo in ipairs( statTrakConfig.TierBreakpoints or {} ) do
 		if( rollData.Score >= (tonumber( tierInfo.MinScore ) or 0) ) then
@@ -40,6 +54,7 @@ local function brsUnboxingBuildStatTrakRoll( configItemTable )
 
 	local rarityRange = (statTrakConfig.RarityRollRanges or {})[configItemTable.Rarity or ""] or {}
 	rollData.RollFlavor = tostring( rarityRange.Flavor or "Field" )
+	local tierFloorConfig = brsUnboxingGetTierFloorConfig( statTrakConfig, configItemTable )
 
 	local weightedScore, totalWeight = 0, 0
 	for _, statInfo in ipairs( stats ) do
@@ -66,6 +81,15 @@ local function brsUnboxingBuildStatTrakRoll( configItemTable )
 		for statKey, statValue in pairs( rollData.Stats ) do
 			rollData.Stats[statKey] = math.min( statValue, hardCap )
 		end
+	end
+
+	local absoluteStatFloor = tierFloorConfig and tonumber( tierFloorConfig.MinStat ) or nil
+	if( absoluteStatFloor and absoluteStatFloor > 0 ) then
+		for statKey, statValue in pairs( rollData.Stats ) do
+			rollData.Stats[statKey] = math.max( tonumber( statValue ) or 0, absoluteStatFloor )
+		end
+
+		rollData.RollFlavor = tostring( tierFloorConfig.Flavor or "Masterwork" )
 	end
 
 	local jackpotChance = tonumber( rarityRange.JackpotChance ) or 0
@@ -115,9 +139,19 @@ local function brsUnboxingStoreStatTrakRoll( ply, globalKey, rollData )
 	local inventoryDataTable = ply:GetUnboxingInventoryData()
 	inventoryDataTable[globalKey] = inventoryDataTable[globalKey] or {}
 	local currentStatTrak = inventoryDataTable[globalKey].StatTrak or {}
+	currentStatTrak.Rolls = currentStatTrak.Rolls or {}
 
 	currentStatTrak.RollCount = (tonumber( currentStatTrak.RollCount ) or 0)+1
 	currentStatTrak.LastRoll = rollData
+	table.insert( currentStatTrak.Rolls, 1, rollData )
+
+	local maxSavedRolls = tonumber( BRICKS_SERVER.UNBOXING.Func.GetStatTrakConfig().MaxSavedRolls ) or 250
+	if( maxSavedRolls < 1 ) then maxSavedRolls = 1 end
+	if( #currentStatTrak.Rolls > maxSavedRolls ) then
+		for i = #currentStatTrak.Rolls, maxSavedRolls+1, -1 do
+			currentStatTrak.Rolls[i] = nil
+		end
+	end
 
 	if( not currentStatTrak.BestRoll or (tonumber( rollData.Score ) or 0) > (tonumber( currentStatTrak.BestRoll.Score ) or 0) ) then
 		currentStatTrak.BestRoll = rollData

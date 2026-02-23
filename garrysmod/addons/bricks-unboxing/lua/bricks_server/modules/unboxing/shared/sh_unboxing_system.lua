@@ -123,6 +123,31 @@ function BRICKS_SERVER.UNBOXING.Func.GetStatTrakSummary( ply, globalKey )
     return statTrakData.BestRoll or statTrakData.LastRoll
 end
 
+-- Returns all persisted rolls for one inventory key (newest first in source order).
+function BRICKS_SERVER.UNBOXING.Func.GetStatTrakRolls( ply, globalKey )
+    if( not IsValid( ply ) or not globalKey ) then return {} end
+
+    local itemData = ply:GetUnboxingItemData( globalKey ) or {}
+    local statTrakData = itemData.StatTrak
+    if( not istable( statTrakData ) ) then return {} end
+
+    local rolls = statTrakData.Rolls
+    if( not istable( rolls ) ) then
+        local fallback = BRICKS_SERVER.UNBOXING.Func.GetStatTrakSummary( ply, globalKey )
+        return fallback and { fallback } or {}
+    end
+
+    return rolls
+end
+
+-- Returns one roll instance by list index, with sane fallback to summary.
+function BRICKS_SERVER.UNBOXING.Func.GetStatTrakRollByIndex( ply, globalKey, rollIndex )
+    local rolls = BRICKS_SERVER.UNBOXING.Func.GetStatTrakRolls( ply, globalKey )
+    local idx = math.max( 1, tonumber( rollIndex ) or 1 )
+
+    return rolls[idx] or BRICKS_SERVER.UNBOXING.Func.GetStatTrakSummary( ply, globalKey )
+end
+
 -- Builds a deterministic metadata id for one specific rolled item instance.
 function BRICKS_SERVER.UNBOXING.Func.BuildStatTrakBoosterID( globalKey, rollData )
     if( not globalKey or not istable( rollData ) ) then return "" end

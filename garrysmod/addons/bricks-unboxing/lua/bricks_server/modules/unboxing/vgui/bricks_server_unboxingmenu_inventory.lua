@@ -187,7 +187,7 @@ function PANEL:FillInventory()
             local statTrakSummary = BRICKS_SERVER.UNBOXING.Func.GetStatTrakSummary(LocalPlayer(), globalKey)
 
             if (statTrakSummary) then
-                table.insert(actions, { "Inspect", function()
+                table.insert(actions, { "Inspect Best", function()
                     self.popoutPanel = vgui.Create("bricks_server_unboxingmenu_stattrak_popup", self)
                     self.popoutPanel:SetPos(0, 0)
                     self.popoutPanel:SetSize(self.panelWide, ScrH() * 0.65 - 40)
@@ -202,6 +202,16 @@ function PANEL:FillInventory()
                     self.popoutPanel:CreatePopout()
                     self.popoutPanel:FillPanel(globalKey, true)
                 end })
+
+                if ((tonumber(itemAmount) or 1) > 1) then
+                    table.insert(actions, { "View All Rolls", function()
+                        self.popoutPanel = vgui.Create("bricks_server_unboxingmenu_stattrak_rolls_popup", self)
+                        self.popoutPanel:SetPos(0, 0)
+                        self.popoutPanel:SetSize(self.panelWide, ScrH() * 0.65 - 40)
+                        self.popoutPanel:CreatePopout()
+                        self.popoutPanel:FillPanel(globalKey)
+                    end })
+                end
             end
 
             if (devConfigItemTable.UseFunction) then

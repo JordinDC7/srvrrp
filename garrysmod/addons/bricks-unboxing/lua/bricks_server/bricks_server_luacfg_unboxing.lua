@@ -22,6 +22,7 @@ BRICKS_SERVER.UNBOXING.LUACFG.PremiumCreditRedirect = {
 -- Elite Arsenal roll engine for unboxed weapons. Keeps top-end chase drops rare while still rewarding progression.
 BRICKS_SERVER.UNBOXING.LUACFG.StatTrak = {
     Enabled = true,
+    MaxSavedRolls = 400,
     EligibleItemTypes = {
         ["Weapon"] = true,
         ["PermWeapon"] = true
@@ -50,6 +51,11 @@ BRICKS_SERVER.UNBOXING.LUACFG.StatTrak = {
         ["Legendary"] = { Min = 48, Max = 90, BiasCurve = 0.88, HardCap = 93, JackpotChance = 0.0075, Flavor = "Prototype" },
         ["Glitched"] = { Min = 43, Max = 84, BiasCurve = 1.12, HardCap = 90, JackpotChance = 0.0125, Flavor = "Unstable" },
         ["Mythical"] = { Min = 46, Max = 86, BiasCurve = 1.08, HardCap = 92, JackpotChance = 0.0175, Flavor = "Anomalous" }
+    },
+    -- Higher-tier weapons get better minimum stats than all lower tiers.
+    HighTierMinimums = {
+        { MinStat = 70, Flavor = "Masterwork", Rarities = { ["Legendary"] = true } },
+        { MinStat = 78, Flavor = "Prototype", Rarities = { ["Mythical"] = true, ["Glitched"] = true } }
     },
     JackpotBoost = { Min = 8, Max = 24 },
     -- Gameplay effect ranges (1-100 stat values are remapped between MinScale and MaxScale).
