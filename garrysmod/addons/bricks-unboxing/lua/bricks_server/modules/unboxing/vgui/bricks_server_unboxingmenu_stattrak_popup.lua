@@ -183,27 +183,26 @@ function PANEL:FillPanel( globalKey, rankingMode, rollIndex )
         end
     end
 
-    local infoLabel = vgui.Create( "DLabel", parentPanel )
-    infoLabel:Dock( TOP )
-    infoLabel:DockMargin( 10, 10, 10, 0 )
-    infoLabel:SetWrap( true )
-    infoLabel:SetAutoStretchVertical( true )
-    -- BRICKS_SERVER_Font16 is never defined in the shared Bricks font set and
-    -- spams SetFontInternal errors in client console. Use an existing size.
-    infoLabel:SetFont( "BRICKS_SERVER_Font17" )
-    infoLabel:SetTextColor( BRICKS_SERVER.Func.GetTheme( 6 ) )
-    infoLabel:SetText( string.format(
-        "Forge Tier: %s (%s)\nRoll Flavor: %s\nJackpot: %s\nBooster ID: %s\nUUID: %s\nUnboxed by: %s\nUnboxer SteamID64: %s\nUnboxed at: %s",
-        tostring( summary.TierName or "Raw" ),
-        tostring( summary.TierTag or "RAW" ),
-        tostring( summary.RollFlavor or "Field" ),
-        (summary.IsJackpot and "YES" or "No"),
-        tostring( summary.BoosterID or "N/A" ),
-        tostring( summary.UUID or "N/A" ),
-        tostring( summary.UnboxedBy or "Unknown" ),
-        tostring( summary.UnboxedBySteamID64 or "Unknown" ),
-        os.date( "%d/%m/%Y %H:%M:%S", tonumber( summary.Created ) or os.time() )
-    ) )
+    local infoRows = {
+        string.format( "Forge Tier: %s (%s)", tostring( summary.TierName or "Raw" ), tostring( summary.TierTag or "RAW" ) ),
+        string.format( "Roll Flavor: %s", tostring( summary.RollFlavor or "Field" ) ),
+        string.format( "Jackpot: %s", (summary.IsJackpot and "YES" or "No") ),
+        string.format( "Booster ID: %s", tostring( summary.BoosterID or "N/A" ) ),
+        string.format( "UUID: %s", tostring( summary.UUID or "N/A" ) ),
+        string.format( "Unboxed by: %s", tostring( summary.UnboxedBy or "Unknown" ) ),
+        string.format( "Unboxer SteamID64: %s", tostring( summary.UnboxedBySteamID64 or "Unknown" ) ),
+        string.format( "Unboxed at: %s", os.date( "%d/%m/%Y %H:%M:%S", tonumber( summary.Created ) or os.time() ) )
+    }
+
+    for i, text in ipairs( infoRows ) do
+        local infoLine = vgui.Create( "DLabel", parentPanel )
+        infoLine:Dock( TOP )
+        infoLine:DockMargin( 10, i == 1 and 10 or 2, 10, 0 )
+        infoLine:SetTall( 18 )
+        infoLine:SetFont( "BRICKS_SERVER_Font17" )
+        infoLine:SetTextColor( BRICKS_SERVER.Func.GetTheme( 6 ) )
+        infoLine:SetText( text )
+    end
 end
 
 vgui.Register( "bricks_server_unboxingmenu_stattrak_popup", PANEL, "DPanel" )
