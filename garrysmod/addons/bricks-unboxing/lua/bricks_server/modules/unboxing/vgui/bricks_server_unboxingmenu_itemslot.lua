@@ -1,8 +1,5 @@
 local PANEL = {}
 
--- ---------------------------------------------------------
--- Helpers
--- ---------------------------------------------------------
 local function BRS_UC_FitText(font, text, maxW)
     text = tostring(text or "")
     surface.SetFont(font)
@@ -65,9 +62,6 @@ local function BRS_UC_GetDisplayName(itemName, rarityName)
     return cleanName
 end
 
--- ---------------------------------------------------------
--- Panel lifecycle
--- ---------------------------------------------------------
 function PANEL:Init()
     self.themeNum = self.themeNum or 2
     self.hoverAnim = 0
@@ -83,10 +77,6 @@ function PANEL:Init()
     self:SetCursor("hand")
 end
 
--- ---------------------------------------------------------
--- API used by store/inventory/case views
--- FillPanel(globalKey, amount, actionsOrClickFunc)
--- ---------------------------------------------------------
 function PANEL:FillPanel(globalKey, amount, actionsOrClickFunc)
     local suppliedItemTable
     if istable(globalKey) then
@@ -128,18 +118,15 @@ function PANEL:FillPanel(globalKey, amount, actionsOrClickFunc)
         )
     end
 
-    -- Auto add stack count for inventory-like entries if >1 (right side pill)
     if (self.itemAmount or 1) > 1 then
         self:AddTopInfo(tostring(self.itemAmount) .. "x")
     end
 
-    -- Ensure every slot has a concrete model/icon panel so previews render reliably.
     self:RefreshItemPreviewPanel()
 
     return self
 end
 
--- Creates or refreshes the embedded preview panel used to display item models/icons.
 function PANEL:RefreshItemPreviewPanel()
     if IsValid(self.previewPanel) then
         self.previewPanel:Remove()
@@ -158,10 +145,6 @@ function PANEL:RefreshItemPreviewPanel()
     self:InvalidateLayout(true)
 end
 
--- ---------------------------------------------------------
--- Add top-left / top-right pill
--- prioritizeLeft=true draws on left side
--- ---------------------------------------------------------
 function PANEL:AddTopInfo(text, bgColor, textColor, prioritizeLeft)
     self.topInfo = self.topInfo or {}
 
@@ -175,9 +158,6 @@ function PANEL:AddTopInfo(text, bgColor, textColor, prioritizeLeft)
     return self
 end
 
--- ---------------------------------------------------------
--- Input
--- ---------------------------------------------------------
 function PANEL:DoClick()
     if isfunction(self.clickFunc) then
         self.clickFunc()
@@ -217,155 +197,107 @@ function PANEL:OnMousePressed(keyCode)
     self.BaseClass.OnMousePressed(self, keyCode)
 end
 
--- ---------------------------------------------------------
--- Paint
--- ---------------------------------------------------------
 function PANEL:Paint(w, h)
     local hovered = self:IsHovered()
-    self.hoverAnim = Lerp(FrameTime() * 10, self.hoverAnim, hovered and 1 or 0)
+    self.hoverAnim = Lerp(FrameTime() * 12, self.hoverAnim, hovered and 1 or 0)
 
     local baseBg = BRICKS_SERVER.Func.GetTheme(self.themeNum or 2)
     local innerBg = BRICKS_SERVER.Func.GetTheme(((self.themeNum or 2) == 1 and 2) or 1)
     local txtCol = BRICKS_SERVER.Func.GetTheme(6)
+    local item = self.configItem or {}
+    local rarityName = tostring(item.Rarity or "")
+    local rarityColor = BRICKS_SERVER.Func.GetRarityColor(self.rarityInfo or rarityName) or Color(255, 255, 255)
 
-    -- Card background
-    draw.RoundedBox(8, 0, 0, w, h, baseBg)
+    draw.RoundedBox(10, 0, 0, w, h, baseBg)
 
-    -- Soft hover brighten
+    local borderGlow = 12 + (18 * self.hoverAnim)
+    BRICKS_SERVER.Func.DrawBlur(self, self.hoverAnim * 2)
+    surface.SetDrawColor(alphaColor(rarityColor, borderGlow))
+    surface.DrawOutlinedRect(0, 0, w, h, 1)
+
     if self.hoverAnim > 0.001 then
-        surface.SetAlphaMultiplier(self.hoverAnim * (18 / 255))
-        draw.RoundedBox(8, 0, 0, w, h, Color(255, 255, 255))
-        surface.SetAlphaMultiplier(1)
+        draw.RoundedBox(10, 0, 0, w, h, alphaColor(rarityColor, 12 * self.hoverAnim))
     end
 
-    -- Top info strip area background (subtle)
-    local topStripH = 24
-    draw.RoundedBoxEx(8, 0, 0, w, topStripH, alphaColor(innerBg, 160), true, true, false, false)
+    local topStripH = 26
+    draw.RoundedBoxEx(10, 0, 0, w, topStripH, alphaColor(innerBg, 175), true, true, false, false)
 
-    -- -----------------------------------------------------
-    -- TOP INFO PILLS (responsive; prevents clipping/overlap)
-    -- -----------------------------------------------------
-    do
-        local infos = self.topInfo or {}
-        if #infos > 0 then
-            local pillH = 16
-            local topPad = 4
-            local sidePad = 5
-            local pillGap = 4
-            local pillFont = "BRICKS_SERVER_Font15"
+    local infos = self.topInfo or {}
+    if #infos > 0 then
+        local pillH = 16
+        local topPad = 5
+        local sidePad = 6
+        local pillGap = 4
+        local pillFont = "BRICKS_SERVER_Font15"
 
-            local leftX = sidePad
-            local rightX = w - sidePad
+        local leftX = sidePad
+        local rightX = w - sidePad
 
-            local leftPills = {}
-            local rightPills = {}
+        local leftPills = {}
+        local rightPills = {}
 
-            for _, info in ipairs(infos) do
-                if info.left then
-                    leftPills[#leftPills + 1] = info
-                else
-                    rightPills[#rightPills + 1] = info
-                end
+        for _, info in ipairs(infos) do
+            if info.left then
+                leftPills[#leftPills + 1] = info
+            else
+                rightPills[#rightPills + 1] = info
             end
+        end
 
-            local maxPillW = math.floor((w - (sidePad * 2) - pillGap) * 0.48)
+        local maxPillW = math.floor((w - (sidePad * 2) - pillGap) * 0.48)
 
-            -- Draw left pills first
-            for _, info in ipairs(leftPills) do
-                local remaining = (rightX - leftX) - pillGap
-                if remaining < 28 then break end
+        for _, info in ipairs(leftPills) do
+            local remaining = (rightX - leftX) - pillGap
+            if remaining < 28 then break end
 
-                local thisMax = math.min(maxPillW, remaining)
-                local pw = BRS_UC_DrawTopPill(
-                    leftX,
-                    topPad,
-                    pillH,
-                    info.text,
-                    info.bg,
-                    info.fg,
-                    pillFont,
-                    thisMax
-                )
+            local thisMax = math.min(maxPillW, remaining)
+            local pw = BRS_UC_DrawTopPill(leftX, topPad, pillH, info.text, info.bg, info.fg, pillFont, thisMax)
+            leftX = leftX + pw + pillGap
+        end
 
-                leftX = leftX + pw + pillGap
-            end
+        for _, info in ipairs(rightPills) do
+            local remaining = (rightX - leftX) - pillGap
+            if remaining < 28 then break end
 
-            -- Draw right pills from right inward
-            for _, info in ipairs(rightPills) do
-                local remaining = (rightX - leftX) - pillGap
-                if remaining < 28 then break end
+            local thisMax = math.min(maxPillW, remaining)
 
-                local thisMax = math.min(maxPillW, remaining)
+            surface.SetFont(pillFont)
+            local pad = 8
+            local fitted = BRS_UC_FitText(pillFont, tostring(info.text or ""), math.max(1, thisMax - (pad * 2)))
+            local tw = surface.GetTextSize(fitted)
+            local pw = math.Clamp(tw + (pad * 2), 28, thisMax)
 
-                surface.SetFont(pillFont)
-                local pad = 8
-                local fitted = BRS_UC_FitText(pillFont, tostring(info.text or ""), math.max(1, thisMax - (pad * 2)))
-                local tw = surface.GetTextSize(fitted)
-                local pw = math.Clamp(tw + (pad * 2), 28, thisMax)
-
-                rightX = rightX - pw
-
-                BRS_UC_DrawTopPill(
-                    rightX,
-                    topPad,
-                    pillH,
-                    info.text,
-                    info.bg,
-                    info.fg,
-                    pillFont,
-                    thisMax
-                )
-
-                rightX = rightX - pillGap
-            end
+            rightX = rightX - pw
+            BRS_UC_DrawTopPill(rightX, topPad, pillH, info.text, info.bg, info.fg, pillFont, thisMax)
+            rightX = rightX - pillGap
         end
     end
 
-    -- -----------------------------------------------------
-    -- Item display region (background + child preview panel)
-    -- -----------------------------------------------------
     local contentTop = topStripH + 6
-    local bottomPad = 32
+    local bottomPad = 34
     local contentH = math.max(20, h - contentTop - bottomPad)
 
-    -- Inner frame for icon/model area
-    draw.RoundedBox(6, 5, contentTop, w - 10, contentH, alphaColor(innerBg, 135))
-
-    local item = self.configItem or {}
-    local itemName = tostring(item.Name or BRICKS_SERVER.Func.L("unknown") or "Unknown")
-    local rarityName = tostring(item.Rarity or "")
-    local displayName = BRS_UC_GetDisplayName(itemName, rarityName)
-
-    local rarityColor = BRICKS_SERVER.Func.GetRarityColor(self.rarityInfo or rarityName) or Color(255,255,255)
+    draw.RoundedBox(8, 6, contentTop, w - 12, contentH, alphaColor(innerBg, 155))
+    draw.RoundedBox(8, 6, contentTop, w - 12, 4, alphaColor(rarityColor, 175))
 
     if IsValid(self.previewPanel) then
-        self.previewPanel:SetPos(5, contentTop)
-        self.previewPanel:SetSize(w - 10, contentH)
+        self.previewPanel:SetPos(6, contentTop)
+        self.previewPanel:SetSize(w - 12, contentH)
     end
 
-    -- -----------------------------------------------------
-    -- Bottom texts
-    -- -----------------------------------------------------
-    local nameY = h - 26
-    local rarityY = h - 11
+    local itemName = tostring(item.Name or BRICKS_SERVER.Func.L("unknown") or "Unknown")
+    local displayName = BRS_UC_GetDisplayName(itemName, rarityName)
+
     local textInset = 8
     local textW = w - (textInset * 2)
 
-    local nameFont = "BRICKS_SERVER_Font20"
-    local rarityFont = "BRICKS_SERVER_Font17"
+    local fitName = BRS_UC_FitText("BRICKS_SERVER_Font20", displayName, textW)
+    local fitRarity = BRS_UC_FitText("BRICKS_SERVER_Font17", rarityName, textW)
 
-    local fitName = BRS_UC_FitText(nameFont, displayName, textW)
-    local fitRarity = BRS_UC_FitText(rarityFont, rarityName, textW)
+    draw.SimpleText(fitName, "BRICKS_SERVER_Font20", w / 2, h - 26, alphaColor(txtCol, 210), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+    draw.SimpleText(fitRarity, "BRICKS_SERVER_Font17", w / 2, h - 11, alphaColor(rarityColor, 230), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
 
-    draw.SimpleText(fitName, nameFont, w / 2, nameY, alphaColor(txtCol, 185), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
-    draw.SimpleText(fitRarity, rarityFont, w / 2, rarityY, alphaColor(rarityColor, 220), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
-
-    -- Rarity accent bar at bottom
-    draw.RoundedBoxEx(4, 0, h - 6, w, 6, rarityColor, false, false, true, true)
-
-    -- subtle top edge
-    surface.SetDrawColor(255, 255, 255, 6)
-    surface.DrawRect(1, 1, w - 2, 1)
+    draw.RoundedBoxEx(6, 0, h - 6, w, 6, rarityColor, false, false, true, true)
 
     return true
 end

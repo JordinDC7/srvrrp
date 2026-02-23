@@ -105,7 +105,7 @@ BRICKS_SERVER.BASECONFIG.UNBOXING.Cases = {
         Name = "Common Case",
         Model = 1,
         Rarity = "Common",
-        Color = Color( 164, 164, 164 ),
+        Color = Color( 172, 180, 194 ),
         Keys = { [1] = true },
         Items = { 
             ["ITEM_1"] = { 50 },
@@ -119,7 +119,7 @@ BRICKS_SERVER.BASECONFIG.UNBOXING.Cases = {
         Name = "Uncommon Case",
         Model = 1,
         Rarity = "Uncommon",
-        Color = Color( 92, 217, 70 ),
+        Color = Color( 90, 198, 129 ),
         Keys = { [2] = true },
         Items = { 
             ["ITEM_1"] = { 45 },
@@ -133,7 +133,7 @@ BRICKS_SERVER.BASECONFIG.UNBOXING.Cases = {
         Name = "Rare Case",
         Model = 1,
         Rarity = "Rare",
-        Color = Color( 77, 192, 255 ),
+        Color = Color( 73, 157, 255 ),
         Keys = { [3] = true },
         Items = { 
             ["ITEM_1"] = { 5 },
@@ -149,7 +149,7 @@ BRICKS_SERVER.BASECONFIG.UNBOXING.Cases = {
         Name = "Epic Case",
         Model = 1,
         Rarity = "Epic",
-        Color = Color( 215, 43, 228 ),
+        Color = Color( 162, 96, 255 ),
         Keys = { [4] = true },
         Items = { 
             ["CASE_4"] = { 15 },
@@ -165,44 +165,49 @@ BRICKS_SERVER.BASECONFIG.UNBOXING.Cases = {
         Name = "Legendary Case",
         Model = 1,
         Rarity = "Legendary",
-        Color = Color( 250, 190, 38 ),
+        Color = Color( 255, 178, 46 ),
         Keys = { [5] = true },
         Items = { 
-            ["CASE_5"] = { 10 },
-            ["ITEM_2"] = { 5 },
-            ["ITEM_3"] = { 10 },
-            ["ITEM_4"] = { 25 },
-            ["ITEM_5"] = { 20 },
-            ["ITEM_6"] = { 20 },
-            ["KEY_5"] = { 10 }
+            ["CASE_5"] = { 20 },
+            ["ITEM_2"] = { 2 },
+            ["ITEM_3"] = { 4 },
+            ["ITEM_4"] = { 24 },
+            ["ITEM_5"] = { 18 },
+            ["ITEM_6"] = { 16 },
+            ["CASE_6"] = { 1 },
+            ["KEY_5"] = { 14 },
+            ["KEY_6"] = { 1 }
         }
     },
     [6] = {          
         Name = "Glitched Case",
         Model = 1,
         Rarity = "Glitched",
-        Color = Color( 0, 0, 0 ),
+        Color = Color( 255, 64, 122 ),
         Keys = { [6] = true },
         Items = { 
-            ["ITEM_5"] = { 35 },
-            ["ITEM_6"] = { 35 },
-            ["ITEM_7"] = { 10 },
-            ["ITEM_8"] = { 10 },
-            ["ITEM_9"] = { 10 }
+            ["ITEM_5"] = { 38 },
+            ["ITEM_6"] = { 38 },
+            ["ITEM_7"] = { 8 },
+            ["ITEM_8"] = { 7 },
+            ["ITEM_9"] = { 7 },
+            ["ITEM_10"] = { 2 }
         }
     },
     [7] = {
         Name = "Mythical Case",
         Model = 1,
         Rarity = "Mythical",
-        Color = Color( 255, 66, 244 ),
+        Color = Color( 138, 92, 255 ),
         Keys = { [7] = true },
         Items = {
-            ["ITEM_8"] = { 35 },
-            ["ITEM_9"] = { 30 },
-            ["ITEM_10"] = { 20 },
-            ["CASE_6"] = { 10 },
-            ["KEY_7"] = { 5 }
+            ["ITEM_8"] = { 34 },
+            ["ITEM_9"] = { 31 },
+            ["ITEM_10"] = { 16 },
+            ["CASE_6"] = { 15 },
+            ["CASE_7"] = { 1 },
+            ["KEY_6"] = { 1 },
+            ["KEY_7"] = { 2 }
         }
     }
 }
