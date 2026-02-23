@@ -91,6 +91,13 @@ BRICKS_SERVER.BASECONFIG.UNBOXING.Items = {
         Rarity = "Glitched",
         Type = "Weapon",
         ReqInfo = { "weapon_rpg" }
+    },
+    [10] = {
+        Name = "$5,000,000",
+        Model = "models/props/cs_assault/money.mdl",
+        Rarity = "Mythical",
+        Type = "Currency",
+        ReqInfo = { "darkrp_money", 5000000 }
     }
 }
 BRICKS_SERVER.BASECONFIG.UNBOXING.Cases = {
@@ -183,6 +190,20 @@ BRICKS_SERVER.BASECONFIG.UNBOXING.Cases = {
             ["ITEM_8"] = { 10 },
             ["ITEM_9"] = { 10 }
         }
+    },
+    [7] = {
+        Name = "Mythical Case",
+        Model = 1,
+        Rarity = "Mythical",
+        Color = Color( 255, 66, 244 ),
+        Keys = { [7] = true },
+        Items = {
+            ["ITEM_8"] = { 35 },
+            ["ITEM_9"] = { 30 },
+            ["ITEM_10"] = { 20 },
+            ["CASE_6"] = { 10 },
+            ["KEY_7"] = { 5 }
+        }
     }
 }
 BRICKS_SERVER.BASECONFIG.UNBOXING.Keys = {
@@ -221,6 +242,12 @@ BRICKS_SERVER.BASECONFIG.UNBOXING.Keys = {
         Model = 1,
         Rarity = "Glitched",
         Color = Color( 137, 134, 134 )
+    },
+    [7] = {
+        Name = "Mythical Key",
+        Model = 1,
+        Rarity = "Mythical",
+        Color = Color( 244, 121, 255 )
     }
 }
 BRICKS_SERVER.BASECONFIG.UNBOXING.Store = {
@@ -306,42 +333,56 @@ BRICKS_SERVER.BASECONFIG.UNBOXING.Store = {
             Group = "VIP++"
         },
         [11] = {
+            GlobalKey = "CASE_7",
+            Category = 2,
+            SortOrder = 0,
+            Price = 50000,
+            Group = "VIP++"
+        },
+        [12] = {
             GlobalKey = "KEY_1",
             Category = 3,
             SortOrder = 6,
             Price = 1000
         },
-        [12] = {
+        [13] = {
             GlobalKey = "KEY_2",
             Category = 3,
             SortOrder = 5,
             Price = 2500
         },
-        [13] = {
+        [14] = {
             GlobalKey = "KEY_3",
             Category = 3,
             SortOrder = 4,
             Price = 5000
         },
-        [14] = {
+        [15] = {
             GlobalKey = "KEY_4",
             Category = 3,
             SortOrder = 3,
             Price = 7500,
             Group = "VIP"
         },
-        [15] = {
+        [16] = {
             GlobalKey = "KEY_5",
             Category = 3,
             SortOrder = 2,
             Price = 12500,
             Group = "VIP++"
         },
-        [16] = {
+        [17] = {
             GlobalKey = "KEY_6",
             Category = 3,
             SortOrder = 1,
             Price = 25000,
+            Group = "VIP++"
+        },
+        [18] = {
+            GlobalKey = "KEY_7",
+            Category = 3,
+            SortOrder = 0,
+            Price = 50000,
             Group = "VIP++"
         }
     },
@@ -385,13 +426,18 @@ BRICKS_SERVER.BASECONFIG.UNBOXING.Rewards = {
     },
     [7] = {
         ["CASE_6"] = 1
+    },
+    [8] = {
+        ["CASE_7"] = 1,
+        ["KEY_7"] = 1
     }
 }
 BRICKS_SERVER.BASECONFIG.UNBOXING.NotificationRarities = {
     ["Rare"] = true,
     ["Epic"] = true,
     ["Legendary"] = true,
-    ["Glitched"] = true
+    ["Glitched"] = true,
+    ["Mythical"] = true
 }
 
 BRICKS_SERVER.BASECONFIG.UNBOXING.Drops = {}
