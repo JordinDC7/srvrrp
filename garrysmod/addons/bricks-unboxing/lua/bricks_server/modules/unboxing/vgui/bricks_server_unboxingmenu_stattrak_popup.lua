@@ -69,11 +69,11 @@ function PANEL:CreatePopout()
     end
 end
 
-function PANEL:FillPanel( globalKey, rankingMode )
+function PANEL:FillPanel( globalKey, rankingMode, rollIndex )
     local configItemTable = BRICKS_SERVER.UNBOXING.Func.GetItemFromGlobalKey( globalKey )
     if( not configItemTable ) then return end
 
-    local summary = BRICKS_SERVER.UNBOXING.Func.GetStatTrakSummary( LocalPlayer(), globalKey )
+    local summary = BRICKS_SERVER.UNBOXING.Func.GetStatTrakRollByIndex( LocalPlayer(), globalKey, rollIndex )
     if( not summary ) then return end
 
     self.globalKey = globalKey
