@@ -1,4 +1,4 @@
-name: Deploy to Physgun via SFTP (on merge to main)
+name: Deploy changed GMod files to Physgun (on merge to main)
 
 on:
   push:
@@ -9,37 +9,147 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  deploy:
+  deploy-changed:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repo
+      - name: Checkout repo (full history for diff)
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Install lftp
         run: sudo apt-get update && sudo apt-get install -y lftp
 
-      - name: Deploy to /garrysmod over SFTP
+      - name: Build changed file lists
+        id: changes
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          BEFORE="${{ github.event.before }}"
+          AFTER="${{ github.sha }}"
+
+          echo "Before: $BEFORE"
+          echo "After:  $AFTER"
+
+          # If this is somehow an initial push or missing before, fall back to last commit diff
+          if [ -z "$BEFORE" ] || [ "$BEFORE" = "0000000000000000000000000000000000000000" ]; then
+            BEFORE="$(git rev-parse HEAD~1 || true)"
+          fi
+
+          # Name-status gives us A/M/D/R etc.
+          git diff --name-status "$BEFORE" "$AFTER" > all_changes.txt || true
+
+          echo "=== Raw changes ==="
+          cat all_changes.txt || true
+
+          # Reset output files
+          : > upload_list.txt
+          : > delete_list.txt
+
+          # Parse changes and only keep garrysmod/ paths
+          while IFS=$'\t' read -r status p1 p2; do
+            [ -z "${status:-}" ] && continue
+
+            case "$status" in
+              A|M)
+                if [[ "$p1" == garrysmod/* ]] && [[ -f "$p1" ]]; then
+                  echo "$p1" >> upload_list.txt
+                fi
+                ;;
+              D)
+                if [[ "$p1" == garrysmod/* ]]; then
+                  echo "$p1" >> delete_list.txt
+                fi
+                ;;
+              R* )
+                # rename: p1=old path, p2=new path
+                if [[ "$p1" == garrysmod/* ]]; then
+                  echo "$p1" >> delete_list.txt
+                fi
+                if [[ "$p2" == garrysmod/* ]] && [[ -f "$p2" ]]; then
+                  echo "$p2" >> upload_list.txt
+                fi
+                ;;
+              * )
+                # ignore other statuses for now
+                ;;
+            esac
+          done < all_changes.txt
+
+          # Optional filters to avoid runtime junk even if committed by accident
+          grep -Ev '(^|/)(cache|data)(/|$)|\.log$' upload_list.txt > upload_list_filtered.txt || true
+          mv upload_list_filtered.txt upload_list.txt
+
+          # De-dupe
+          sort -u upload_list.txt -o upload_list.txt || true
+          sort -u delete_list.txt -o delete_list.txt || true
+
+          echo "=== Upload list ==="
+          cat upload_list.txt || true
+          echo "=== Delete list ==="
+          cat delete_list.txt || true
+
+          UPLOAD_COUNT=$(wc -l < upload_list.txt | tr -d ' ')
+          DELETE_COUNT=$(wc -l < delete_list.txt | tr -d ' ')
+          echo "upload_count=$UPLOAD_COUNT" >> "$GITHUB_OUTPUT"
+          echo "delete_count=$DELETE_COUNT" >> "$GITHUB_OUTPUT"
+
+      - name: Deploy changed files and deletes over SFTP
+        if: steps.changes.outputs.upload_count != '0' || steps.changes.outputs.delete_count != '0'
         env:
           HOST: ${{ secrets.SFTP_HOST }}
           PORT: ${{ secrets.SFTP_PORT }}
           USER: ${{ secrets.SFTP_USER }}
           PASS: ${{ secrets.SFTP_PASS }}
-          REMOTE_DIR: ${{ secrets.SFTP_REMOTE_DIR }}
+          REMOTE_DIR: ${{ secrets.SFTP_REMOTE_DIR }} # /garrysmod/
+        shell: bash
         run: |
-          lftp -u "$USER","$PASS" sftp://$HOST:$PORT <<EOF
-          set sftp:auto-confirm yes
-          set cmd:fail-exit yes
-          set net:max-retries 2
-          set net:timeout 20
+          set -euo pipefail
 
-          mirror -R --verbose \
-            --exclude-glob .git* \
-            --exclude-glob .github \
-            --exclude-glob *.log \
-            --exclude-glob cache \
-            --exclude-glob data \
-            ./garrysmod/ "$REMOTE_DIR"
+          # Build an lftp command script
+          {
+            echo "set sftp:auto-confirm yes"
+            echo "set cmd:fail-exit yes"
+            echo "open -u \"$USER\",\"$PASS\" sftp://$HOST:$PORT"
 
-          bye
-          EOF
+            # Deletes first (for renames/removed files)
+            if [ -s delete_list.txt ]; then
+              while IFS= read -r file; do
+                [ -z "$file" ] && continue
+                rel="${file#garrysmod/}"
+                # Skip dangerous empty paths
+                [ -z "$rel" ] && continue
+                # rm may fail if file already gone; ignore with 'glob -a' not needed
+                echo "rm \"$REMOTE_DIR$rel\""
+              done < delete_list.txt
+            fi
+
+            # Upload changed/new files
+            if [ -s upload_list.txt ]; then
+              while IFS= read -r file; do
+                [ -z "$file" ] && continue
+                rel="${file#garrysmod/}"
+                [ -z "$rel" ] && continue
+
+                remote_path="$REMOTE_DIR$rel"
+                remote_dir="$(dirname "$remote_path")"
+
+                # Ensure remote dir exists (mkdir -p)
+                echo "mkdir -p \"$remote_dir\""
+                echo "put \"$file\" -o \"$remote_path\""
+              done < upload_list.txt
+            fi
+
+            echo "bye"
+          } > lftp_commands.txt
+
+          echo "=== lftp commands preview ==="
+          sed 's/'"$PASS"'/********/g' lftp_commands.txt || true
+
+          lftp -f lftp_commands.txt
+
+      - name: No deploy needed
+        if: steps.changes.outputs.upload_count == '0' && steps.changes.outputs.delete_count == '0'
+        run: echo "No garrysmod file changes to deploy."
