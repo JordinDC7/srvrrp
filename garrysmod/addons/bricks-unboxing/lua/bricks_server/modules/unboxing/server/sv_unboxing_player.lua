@@ -1,5 +1,39 @@
 local playerMeta = FindMetaTable("Player")
 
+local BRS_UNBOXING_XENIN_ITEM = "brs_unboxing_item"
+
+local function brsSyncUnboxingInventoryToXenin( ply, inventoryTable )
+	if( not IsValid( ply ) or not ply.XeninInventory or not XeninInventory ) then return end
+
+	local invObj = ply:XeninInventory()
+	if( not invObj or not invObj.GetInventory ) then return end
+	if( not XeninInventory.GetItem or not XeninInventory:GetItem( BRS_UNBOXING_XENIN_ITEM ) ) then return end
+
+	for slotID, slotData in pairs( invObj:GetInventory() or {} ) do
+		if( not istable( slotData ) or not istable( slotData.data ) or slotData.data.BRSUnboxingMirror != true ) then continue end
+
+		invObj:Set( slotID, nil )
+		invObj:DeleteSlot( slotID )
+		invObj:NetworkSlot( slotID )
+	end
+
+	for globalKey, amount in pairs( inventoryTable or {} ) do
+		local normalizedAmount = math.floor( tonumber( amount ) or 0 )
+		if( normalizedAmount <= 0 ) then continue end
+
+		local configItemTable = BRICKS_SERVER.UNBOXING.Func.GetItemFromGlobalKey( globalKey )
+		if( not configItemTable ) then continue end
+
+		invObj:AddV2( BRS_UNBOXING_XENIN_ITEM, BRS_UNBOXING_XENIN_ITEM, normalizedAmount, {
+			BRSUnboxingMirror = true,
+			GlobalKey = globalKey,
+			Name = configItemTable.Name,
+			Model = configItemTable.Model,
+			Type = configItemTable.Type
+		} )
+	end
+end
+
 util.AddNetworkString( "BRS.Net.SetUnboxingInventory" )
 function playerMeta:SetUnboxingInventory( inventoryTable, nosave )
 	if( not inventoryTable ) then return end
@@ -13,6 +47,8 @@ function playerMeta:SetUnboxingInventory( inventoryTable, nosave )
 	if( not nosave ) then
 		BRICKS_SERVER.UNBOXING.Func.UpdateInventoryDB( self:SteamID64(), inventoryTable )
 	end
+
+	brsSyncUnboxingInventoryToXenin( self, inventoryTable )
 end
 
 util.AddNetworkString( "BRS.Net.SetUnboxingInventoryData" )
