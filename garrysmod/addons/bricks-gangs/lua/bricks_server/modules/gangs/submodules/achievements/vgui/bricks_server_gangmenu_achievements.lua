@@ -40,13 +40,13 @@ function PANEL:FillPanel( gangTable )
         draw.RoundedBox( 8, 0, 0, w, h, BRICKS_SERVER.Func.GetTheme( 2 ) )
         BRICKS_SERVER.Func.DrawGradientRoundedBox( 8, 0, 0, w, h, 2, Color( 100, 62, 146, 80 ), Color( 62, 111, 183, 80 ) )
 
-        draw.SimpleText( "SRVRRP ACHIEVEMENT TRACKER", "BRICKS_SERVER_Font20B", 18, 16, BRICKS_SERVER.Func.GetTheme( 6 ), 0, TEXT_ALIGN_CENTER )
-        draw.SimpleText( completedAchievements .. "/" .. totalAchievements .. " completed", "BRICKS_SERVER_Font17", 18, 40, Color( 255, 255, 255, 175 ), 0, TEXT_ALIGN_CENTER )
+        draw.SimpleText( "SRVRRP ACHIEVEMENT TRACKER", "BRICKS_SERVER_Font20B", 18, 14, BRICKS_SERVER.Func.GetTheme( 6 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP )
+        draw.SimpleText( completedAchievements .. "/" .. totalAchievements .. " completed", "BRICKS_SERVER_Font17", 18, 37, Color( 255, 255, 255, 175 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP )
 
         local progressX, progressY, progressW, progressH = w*0.48, 23, w*0.48, 22
         draw.RoundedBox( 6, progressX, progressY, progressW, progressH, BRICKS_SERVER.Func.GetTheme( 3 ) )
         draw.RoundedBox( 6, progressX, progressY, progressW*completionDecimal, progressH, Color( 147, 101, 216 ) )
-        draw.SimpleText( math.floor( completionDecimal*100 ) .. "%", "BRICKS_SERVER_Font17", progressX+(progressW/2), progressY+(progressH/2), BRICKS_SERVER.Func.GetTheme( 6 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+        draw.SimpleText( math.Round( completionDecimal*100 ) .. "%", "BRICKS_SERVER_Font17", progressX+(progressW/2), progressY+(progressH/2), BRICKS_SERVER.Func.GetTheme( 6 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
     end
 
     function self.RefreshPanel()
