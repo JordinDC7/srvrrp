@@ -143,12 +143,34 @@ function BRICKS_SERVER.UNBOXING.Func.GetStatTrakRolls( ply, globalKey )
         return fallback and { fallback } or {}
     end
 
-    return rolls
+    if( #rolls > 0 ) then
+        return rolls
+    end
+
+    local normalized = {}
+    for k, v in pairs( rolls ) do
+        local idx = tonumber( k )
+        if( idx and istable( v ) ) then
+            normalized[idx] = v
+        end
+    end
+
+    if( #normalized > 0 ) then
+        return normalized
+    end
+
+    local fallback = BRICKS_SERVER.UNBOXING.Func.GetStatTrakSummary( ply, globalKey )
+    return fallback and { fallback } or {}
 end
 
 -- Returns one roll instance by list index, with sane fallback to summary.
 function BRICKS_SERVER.UNBOXING.Func.GetStatTrakRollByIndex( ply, globalKey, rollIndex )
     local rolls = BRICKS_SERVER.UNBOXING.Func.GetStatTrakRolls( ply, globalKey )
+
+    if( istable( rolls[rollIndex] ) ) then
+        return rolls[rollIndex]
+    end
+
     local idx = math.max( 1, tonumber( rollIndex ) or 1 )
 
     return rolls[idx] or BRICKS_SERVER.UNBOXING.Func.GetStatTrakSummary( ply, globalKey )
