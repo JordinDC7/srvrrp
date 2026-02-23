@@ -35,13 +35,13 @@ function PANEL:FillPanel( gangTable )
         draw.RoundedBox( 8, 0, 0, w, h, BRICKS_SERVER.Func.GetTheme( 2 ) )
         BRICKS_SERVER.Func.DrawGradientRoundedBox( 8, 0, 0, w, h, 1, Color( 39, 128, 100, 75 ), Color( 208, 145, 41, 75 ) )
 
-        draw.SimpleText( "SRVRRP GANG UPGRADE TRACKER", "BRICKS_SERVER_Font20B", 18, 16, BRICKS_SERVER.Func.GetTheme( 6 ), 0, TEXT_ALIGN_CENTER )
-        draw.SimpleText( purchasedUpgrades .. "/" .. totalUpgrades .. " tiers unlocked", "BRICKS_SERVER_Font17", 18, 40, Color( 255, 255, 255, 175 ), 0, TEXT_ALIGN_CENTER )
+        draw.SimpleText( "SRVRRP GANG UPGRADE TRACKER", "BRICKS_SERVER_Font20B", 18, 14, BRICKS_SERVER.Func.GetTheme( 6 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP )
+        draw.SimpleText( purchasedUpgrades .. "/" .. totalUpgrades .. " tiers unlocked", "BRICKS_SERVER_Font17", 18, 37, Color( 255, 255, 255, 175 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP )
 
         local progressX, progressY, progressW, progressH = w*0.48, 23, w*0.48, 22
         draw.RoundedBox( 6, progressX, progressY, progressW, progressH, BRICKS_SERVER.Func.GetTheme( 3 ) )
         draw.RoundedBox( 6, progressX, progressY, progressW*completionDecimal, progressH, Color( 89, 184, 113 ) )
-        draw.SimpleText( math.floor( completionDecimal*100 ) .. "%", "BRICKS_SERVER_Font17", progressX+(progressW/2), progressY+(progressH/2), BRICKS_SERVER.Func.GetTheme( 6 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+        draw.SimpleText( math.Round( completionDecimal*100 ) .. "%", "BRICKS_SERVER_Font17", progressX+(progressW/2), progressY+(progressH/2), BRICKS_SERVER.Func.GetTheme( 6 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
     end
 
     local upgradesScroll = vgui.Create( "bricks_server_scrollpanel", self )
