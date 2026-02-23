@@ -66,6 +66,7 @@ function PANEL:FillPanel( gangTable )
     local sortChoice = "rank_low_to_high"
     sortBy:AddChoice( BRICKS_SERVER.Func.L( "gangHighestRank" ), "rank_low_to_high" )
     sortBy:AddChoice( BRICKS_SERVER.Func.L( "gangLowestRank" ), "rank_high_to_low" )
+    sortBy:AddChoice( "Online First", "online" )
     sortBy.OnSelect = function( self2, index, value, data )
         sortChoice = data
         self.RefreshPanel()
@@ -100,6 +101,24 @@ function PANEL:FillPanel( gangTable )
     searchBar = vgui.Create( "bricks_server_search", searchBarBack )
     searchBar:Dock( FILL )
 
+
+    local memberCount = table.Count( gangTable.Members or {} )
+    local onlineCount = 0
+    for steamID, _ in pairs( gangTable.Members or {} ) do
+        if( IsValid( player.GetBySteamID( steamID ) ) ) then
+            onlineCount = onlineCount+1
+        end
+    end
+
+    local statsBar = vgui.Create( "DPanel", self )
+    statsBar:Dock( TOP )
+    statsBar:DockMargin( 10, 0, 10, 5 )
+    statsBar:SetTall( 20 )
+    statsBar.Paint = function( self2, w, h )
+        draw.SimpleText( BRICKS_SERVER.Func.L( "gangMembers" ) .. ": " .. string.Comma( memberCount ), "BRICKS_SERVER_Font17", 0, h/2, BRICKS_SERVER.Func.GetTheme( 6 ), 0, 1 )
+        draw.SimpleText( "ONLINE: " .. string.Comma( onlineCount ), "BRICKS_SERVER_Font17", w, h/2, Color( 100, 220, 120 ), TEXT_ALIGN_RIGHT, 1 )
+    end
+
     local scrollPanel = vgui.Create( "bricks_server_scrollpanel", self )
     scrollPanel:Dock( FILL )
     scrollPanel:DockMargin( 10, 0, 10, 10 )
@@ -122,24 +141,48 @@ function PANEL:FillPanel( gangTable )
     function self.RefreshPanel()
         grid:Clear()
         grid.slots = 0
+        onlineCount = 0
 
         local showMembers = {}
         for k, v in pairs( gangTable.Members or {} ) do
-            if( (searchBar:GetValue() != "" and not string.find( string.lower( v[1] ), string.lower( searchBar:GetValue() ) )) ) then
-                continue
+            local searchValue = string.Trim( string.lower( searchBar:GetValue() or "" ) )
+            if( searchValue != "" ) then
+                local memberName = string.lower( v[1] or "" )
+                local memberSteamID = string.lower( k or "" )
+                if( not string.find( memberName, searchValue, 1, true ) and not string.find( memberSteamID, searchValue, 1, true ) ) then
+                    continue
+                end
             end
 
             local memberPly = player.GetBySteamID( k )
+            if( IsValid( memberPly ) ) then
+                onlineCount = onlineCount+1
+            end
 
-            local sortValue = v[2]+((not IsValid( memberPly ) and 100) or 0)
+            local onlineWeight = (IsValid( memberPly ) and 0) or 100
 
-            table.insert( showMembers, { sortValue, k } )
+            local sortValue = v[2]+onlineWeight
+            if( sortChoice == "online" ) then
+                sortValue = onlineWeight
+            end
+
+            table.insert( showMembers, { sortValue, k, v[2] } )
         end
         
         if( sortChoice and string.EndsWith( sortChoice, "high_to_low" ) ) then
             table.SortByMember( showMembers, 1, false )
         else
             table.SortByMember( showMembers, 1, true )
+        end
+
+        if( sortChoice == "online" ) then
+            table.sort( showMembers, function( a, b )
+                if( a[1] == b[1] ) then
+                    return a[3] < b[3]
+                end
+
+                return a[1] < b[1]
+            end )
         end
 
         for k, v in pairs( showMembers ) do
