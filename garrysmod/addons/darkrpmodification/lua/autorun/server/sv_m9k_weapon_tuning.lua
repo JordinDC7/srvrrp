@@ -4,7 +4,9 @@ local cvEnabled = CreateConVar("srvrrp_m9k_tuning_enabled", "1", FCVAR_ARCHIVE, 
 local cvDamageMult = CreateConVar("srvrrp_m9k_damage_mult", "1.08", FCVAR_ARCHIVE, "Damage multiplier applied to M9K weapons.")
 local cvSpreadMult = CreateConVar("srvrrp_m9k_spread_mult", "0.82", FCVAR_ARCHIVE, "Spread multiplier applied to M9K weapons (lower is more accurate).")
 local cvRecoilMult = CreateConVar("srvrrp_m9k_recoil_mult", "0.9", FCVAR_ARCHIVE, "Recoil multiplier applied to M9K weapons.")
-local cvMuzzleBullets = CreateConVar("srvrrp_m9k_muzzle_bullets", "1", FCVAR_ARCHIVE, "Fire M9K bullets from the weapon muzzle toward the crosshair.")
+-- Disabled by default: some M9K shotguns (notably SPAS-12 variants) can misbehave when
+-- their bullet source is forcibly overridden server-side.
+local cvMuzzleBullets = CreateConVar("srvrrp_m9k_muzzle_bullets", "0", FCVAR_ARCHIVE, "Fire M9K bullets from the weapon muzzle toward the crosshair.")
 
 local function isM9KWeapon(wep)
     if not IsValid(wep) and type(wep) ~= "table" then return false end
@@ -86,6 +88,7 @@ end, "SrvRRP.M9K.RecoilChanged")
 hook.Add("EntityFireBullets", "SrvRRP.M9K.MuzzleBulletSource", function(entity, data)
     if not cvEnabled:GetBool() or not cvMuzzleBullets:GetBool() then return end
     if not IsValid(entity) or not entity:IsPlayer() then return end
+    if not istable(data) then return end
 
     local weapon = entity:GetActiveWeapon()
     if not IsValid(weapon) or not isM9KWeapon(weapon) then return end
@@ -101,9 +104,12 @@ hook.Add("EntityFireBullets", "SrvRRP.M9K.MuzzleBulletSource", function(entity, 
     local targetTrace = entity:GetEyeTraceNoCursor()
     if not targetTrace or not targetTrace.HitPos then return end
 
-    local direction = (targetTrace.HitPos - attachment.Pos)
+    local src = attachment.Pos
+    if not isvector(src) then return end
+
+    local direction = (targetTrace.HitPos - src)
     if direction:LengthSqr() <= 0.01 then return end
 
-    data.Src = attachment.Pos
+    data.Src = src
     data.Dir = direction:GetNormalized()
 end)
