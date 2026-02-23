@@ -295,7 +295,7 @@ local function createHub()
       local visible = needle == "" or string.find(hay, needle, 1, true) ~= nil
       entry.btn:SetVisible(visible)
       entry.btn:SetTall(visible and 66 or 0)
-      entry.btn:SetDockMargin(0, 0, 0, visible and 8 or 0)
+      entry.btn:DockMargin(0, 0, 0, visible and 8 or 0)
     end
 
     list:InvalidateLayout(true)
