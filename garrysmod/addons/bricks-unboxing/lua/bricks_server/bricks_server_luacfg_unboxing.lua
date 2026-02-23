@@ -39,5 +39,21 @@ BRICKS_SERVER.UNBOXING.LUACFG.StatTrak = {
         { Key = "ACC", Min = 1, Max = 100, Weight = 0.25 },
         { Key = "CTRL", Min = 1, Max = 100, Weight = 0.2 },
         { Key = "HND", Min = 1, Max = 100, Weight = 0.2 }
+    },
+    -- Rarity controls the quality floor/ceiling for rolled stats.
+    RarityRollRanges = {
+        ["Common"] = { Min = 15, Max = 62 },
+        ["Uncommon"] = { Min = 25, Max = 72 },
+        ["Rare"] = { Min = 38, Max = 84 },
+        ["Epic"] = { Min = 48, Max = 92 },
+        ["Legendary"] = { Min = 58, Max = 97 },
+        ["Glitched"] = { Min = 70, Max = 100 }
+    },
+    -- Gameplay effect ranges (1-100 stat values are remapped between MinScale and MaxScale).
+    StatEffects = {
+        DamageScale = { MinScale = 0.82, MaxScale = 1.32 },
+        AccuracySpreadScale = { MinScale = 1.28, MaxScale = 0.72 },
+        ControlMoveSpreadScale = { MinScale = 1.35, MaxScale = 0.65 },
+        HandlingFireDelayScale = { MinScale = 1.22, MaxScale = 0.82 }
     }
 }

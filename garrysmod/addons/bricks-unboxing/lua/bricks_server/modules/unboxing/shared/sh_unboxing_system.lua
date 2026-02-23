@@ -122,6 +122,61 @@ function BRICKS_SERVER.UNBOXING.Func.GetStatTrakSummary( ply, globalKey )
 
     return statTrakData.BestRoll or statTrakData.LastRoll
 end
+
+local function brsClamp( value, minValue, maxValue )
+    if( value < minValue ) then return minValue end
+    if( value > maxValue ) then return maxValue end
+
+    return value
+end
+
+-- Maps a 1-100 roll into a gameplay scalar range.
+function BRICKS_SERVER.UNBOXING.Func.GetStatTrakStatScalar( statKey, statValue )
+    local statTrakConfig = BRICKS_SERVER.UNBOXING.Func.GetStatTrakConfig()
+    local effectConfig = (statTrakConfig.StatEffects or {})[statKey or ""]
+    if( not effectConfig ) then return 1 end
+
+    local minScale = tonumber( effectConfig.MinScale ) or 1
+    local maxScale = tonumber( effectConfig.MaxScale ) or 1
+    local normalized = brsClamp( (tonumber( statValue ) or 0), 1, 100 )
+    normalized = (normalized-1)/99
+
+    return minScale+((maxScale-minScale)*normalized)
+end
+
+-- Reads equipped weapon stat metadata and returns effective gameplay scalars.
+function BRICKS_SERVER.UNBOXING.Func.GetEquippedWeaponStatScalars( ply, weaponClass )
+    if( not IsValid( ply ) or not weaponClass ) then return nil end
+
+    local inventory = ply:GetUnboxingInventory()
+    local inventoryData = ply:GetUnboxingInventoryData()
+
+    for globalKey, itemData in pairs( inventoryData ) do
+        if( not inventory[globalKey] or not itemData.Equipped or not string.StartWith( globalKey, "ITEM_" ) ) then continue end
+
+        local configItemTable = BRICKS_SERVER.CONFIG.UNBOXING.Items[tonumber( string.Replace( globalKey, "ITEM_", "" ) )]
+        if( not configItemTable ) then continue end
+
+        local itemType = configItemTable.Type or ""
+        if( itemType != "Weapon" and itemType != "PermWeapon" ) then continue end
+        if( (configItemTable.ReqInfo or {})[1] != weaponClass ) then continue end
+
+        local roll = BRICKS_SERVER.UNBOXING.Func.GetStatTrakSummary( ply, globalKey )
+        local stats = (roll and roll.Stats) or {}
+
+        return {
+            DamageScale = BRICKS_SERVER.UNBOXING.Func.GetStatTrakStatScalar( "DamageScale", stats.DMG ),
+            AccuracySpreadScale = BRICKS_SERVER.UNBOXING.Func.GetStatTrakStatScalar( "AccuracySpreadScale", stats.ACC ),
+            ControlMoveSpreadScale = BRICKS_SERVER.UNBOXING.Func.GetStatTrakStatScalar( "ControlMoveSpreadScale", stats.CTRL ),
+            HandlingFireDelayScale = BRICKS_SERVER.UNBOXING.Func.GetStatTrakStatScalar( "HandlingFireDelayScale", stats.HND ),
+            Roll = roll,
+            GlobalKey = globalKey
+        }
+    end
+
+    return nil
+end
+
 function BRICKS_SERVER.UNBOXING.Func.UnpackItemsTable( itemsTable )
 	local unpackTable = {}
 
