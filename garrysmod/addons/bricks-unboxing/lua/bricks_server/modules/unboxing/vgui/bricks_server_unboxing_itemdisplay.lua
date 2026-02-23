@@ -5,6 +5,20 @@ function PANEL:Init()
 end
 
 local loadingIcon = Material( "materials/bricks_server/loading.png" )
+local fallbackIcon = Material( "icon16/picture.png", "smooth" )
+
+local function BRS_UNBOXING_DrawFallbackIcon( w, h, text )
+    surface.SetDrawColor( 255, 255, 255, 220 )
+    surface.SetMaterial( fallbackIcon )
+
+    local iconSize = math.min( math.max( h * 0.35, 16 ), 48 )
+    surface.DrawTexturedRect( (w/2)-(iconSize/2), (h/2)-(iconSize/2)-8, iconSize, iconSize )
+
+    if( h > 40 ) then
+        draw.SimpleText( text, "BRICKS_SERVER_Font18", w/2, (h/2)+(iconSize/2), BRICKS_SERVER.Func.GetTheme( 6, 180 ), TEXT_ALIGN_CENTER, 0 )
+    end
+end
+
 function PANEL:SetItemData( type, itemTable, iconAdjust )
     self:Clear()
     
@@ -37,6 +51,17 @@ function PANEL:SetItemData( type, itemTable, iconAdjust )
             itemModel = (BRICKS_SERVER.DEVCONFIG.UnboxingCaseModels[itemTable.Model] or {}).Model
         elseif( type == "KEY" ) then
             itemModel = (BRICKS_SERVER.DEVCONFIG.UnboxingKeyModels[itemTable.Model] or BRICKS_SERVER.DEVCONFIG.UnboxingKeyModels[1]).Model
+        end
+
+        local useModel = isstring( itemModel ) and itemModel ~= "" and util.IsValidModel( itemModel )
+        if( not useModel ) then
+            self.itemModel = vgui.Create( "DPanel", self )
+            self.itemModel:Dock( FILL )
+            self.itemModel.Paint = function( self2, w, h )
+                BRS_UNBOXING_DrawFallbackIcon( w, h, BRICKS_SERVER.Func.L( "unknown" ) )
+            end
+
+            return
         end
 
         self.itemModel = vgui.Create( "DModelPanel", self )
