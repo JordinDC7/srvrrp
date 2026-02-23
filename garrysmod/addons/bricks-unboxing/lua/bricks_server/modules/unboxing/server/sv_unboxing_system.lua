@@ -209,6 +209,13 @@ util.AddNetworkString( "BRS.Net.UnboxingBatchConvertCommons" )
 util.AddNetworkString( "BRS.Net.UnboxingSetHypeFeedMuted" )
 util.AddNetworkString( "BRS.Net.UnboxingStatTrakReroll" )
 util.AddNetworkString( "BRS.Net.UnboxingStatTrakRerollReturn" )
+util.AddNetworkString( "BRS.Net.RequestUnboxingMarketHealth" )
+util.AddNetworkString( "BRS.Net.SendUnboxingMarketHealth" )
+util.AddNetworkString( "BRS.Net.RequestUnboxingOddsHistory" )
+util.AddNetworkString( "BRS.Net.SendUnboxingOddsHistory" )
+util.AddNetworkString( "BRS.Net.RequestUnboxingMissionState" )
+util.AddNetworkString( "BRS.Net.SendUnboxingMissionState" )
+util.AddNetworkString( "BRS.Net.ClaimUnboxingMissionReward" )
 
 local function brsGetTopTierConfig()
 	return BRICKS_SERVER.UNBOXING.LUACFG.TopTier or {}
@@ -246,11 +253,12 @@ function BRICKS_SERVER.UNBOXING.Func.GetDropWeightMultiplier( caseKey, itemGloba
 	return math.Clamp( multiplier, minM, maxM )
 end
 
-function BRICKS_SERVER.UNBOXING.Func.ResolveDropWeight( caseKey, itemGlobalKey, baseWeight, caseFamily )
+function BRICKS_SERVER.UNBOXING.Func.ResolveDropWeight( caseKey, itemGlobalKey, baseWeight, caseFamily, ply )
 	local resolved = math.max( 0, tonumber( baseWeight ) or 0 )
 	local liveOpsMultiplier = BRICKS_SERVER.UNBOXING.Func.GetDropWeightMultiplier( caseKey, itemGlobalKey )
 	local supplyMultiplier = BRICKS_SERVER.UNBOXING.Func.GetSupplyBalancingMultiplier( caseKey, caseFamily, itemGlobalKey )
-	return resolved * liveOpsMultiplier * supplyMultiplier
+	local mutationMultiplier = BRICKS_SERVER.UNBOXING.Func.GetEventMutationMultiplier( ply, caseFamily )
+	return resolved * liveOpsMultiplier * supplyMultiplier * mutationMultiplier
 end
 
 
@@ -458,6 +466,9 @@ function BRICKS_SERVER.UNBOXING.Func.AddWeaponProgressionXP( ply, globalKey, amo
 	if( not progressionCfg.Enabled ) then return end
 
 	local addAmount = math.max( 0, math.floor( tonumber( amount ) or 0 ) )
+	if( BRICKS_SERVER.UNBOXING.Func.ShouldDoubleStatTrakXP() ) then
+		addAmount = addAmount*2
+	end
 	if( addAmount <= 0 ) then return end
 
 	local progression = BRICKS_SERVER.UNBOXING.Func.GetWeaponProgressionState( ply, globalKey )
@@ -718,6 +729,7 @@ function BRICKS_SERVER.UNBOXING.Func.RecordValidatedStatTrakKill( attacker, vict
 	end
 
 	BRICKS_SERVER.UNBOXING.Func.TrackStatTrakMilestone( attacker, globalKey, "kills", profile.kills )
+	BRICKS_SERVER.UNBOXING.Func.ProgressRetentionMission( attacker, "unboxed_kills", 1 )
 
 	local inventoryData = attacker:GetUnboxingInventoryData()
 	inventoryData[globalKey].StatTrak.Profile = profile
@@ -814,6 +826,258 @@ function BRICKS_SERVER.UNBOXING.Func.TryAwardSocketModifier( ply, globalKey, pro
 	} )
 end
 
+local function brsGetActiveEventMutations()
+	local topTier = brsGetTopTierConfig()
+	return ((topTier.LiveOps or {}).EventMutations or {})
+end
+
+function BRICKS_SERVER.UNBOXING.Func.GetEventMutationMultiplier( ply, caseFamily )
+	local events = brsGetActiveEventMutations()
+	local mult = 1
+
+	local themed = events.ThemedDropTable or {}
+	if( themed.Enabled ) then
+		mult = mult*(tonumber( (themed.FamilyMultipliers or {})[tostring( caseFamily or "")] ) or 1)
+	end
+
+	local faction = events.FactionCaseBonus or {}
+	if( faction.Enabled and IsValid( ply ) ) then
+		local teamName = string.lower( tostring( team.GetName( ply:Team() ) or "" ) )
+		mult = mult*(tonumber( (faction.FactionMultipliers or {})[teamName] ) or 1)
+	end
+
+	return math.max( 0.1, mult )
+end
+
+function BRICKS_SERVER.UNBOXING.Func.ShouldDoubleStatTrakXP()
+	local events = brsGetActiveEventMutations()
+	local weekend = events.DoubleStatTrakWeekend or {}
+	if( not weekend.Enabled ) then return false end
+
+	local weekday = tonumber( os.date( "%w" ) ) or 0
+	return (weekend.Weekdays or {})[weekday] == true
+end
+
+function BRICKS_SERVER.UNBOXING.Func.AddCaseOpenHistory( ply, caseKey, winningItemKey )
+	if( not IsValid( ply ) ) then return end
+
+	local state = BRICKS_SERVER.UNBOXING.Func.GetTopTierState( ply )
+	state.OpenHistory = state.OpenHistory or {}
+	local itemCfg = BRICKS_SERVER.UNBOXING.Func.GetItemFromGlobalKey( winningItemKey ) or {}
+
+	table.insert( state.OpenHistory, 1, {
+		Time = os.time(),
+		Case = caseKey,
+		Item = winningItemKey,
+		Rarity = tostring( itemCfg.Rarity or "Unknown" )
+	} )
+
+	for i = #state.OpenHistory, 101, -1 do
+		state.OpenHistory[i] = nil
+	end
+
+	BRICKS_SERVER.UNBOXING.Func.SetTopTierState( ply, state )
+end
+
+function BRICKS_SERVER.UNBOXING.Func.GetOddsHistoryPayload( ply, caseKey )
+	if( not IsValid( ply ) ) then return {} end
+
+	local state = BRICKS_SERVER.UNBOXING.Func.GetTopTierState( ply )
+	local history = state.OpenHistory or {}
+	local rarityCount = {}
+	local total = math.max( #history, 1 )
+
+	for _, entry in ipairs( history ) do
+		rarityCount[entry.Rarity or "Unknown"] = (rarityCount[entry.Rarity or "Unknown"] or 0)+1
+	end
+
+	local rarityDist = {}
+	for rarity, amount in pairs( rarityCount ) do
+		rarityDist[rarity] = math.Round( (amount/total)*100, 2 )
+	end
+
+	local luckScore = 0
+	for _, entry in ipairs( history ) do
+		local itemCfg = BRICKS_SERVER.UNBOXING.Func.GetItemFromGlobalKey( entry.Item ) or {}
+		if( BRICKS_SERVER.UNBOXING.Func.IsApexRarity( itemCfg.Rarity ) ) then
+			luckScore = luckScore + 3
+		elseif( tostring( itemCfg.Rarity or "" ) == "Epic" ) then
+			luckScore = luckScore + 1
+		end
+	end
+
+	local odds = {}
+	local caseCfg = BRICKS_SERVER.CONFIG.UNBOXING.Cases[tonumber( caseKey ) or 0]
+	if( caseCfg and caseCfg.Items ) then
+		local family = BRICKS_SERVER.UNBOXING.Func.GetCaseFamily( caseKey, caseCfg )
+		local totalWeight = 0
+		for gk, chance in pairs( caseCfg.Items ) do
+			totalWeight = totalWeight + BRICKS_SERVER.UNBOXING.Func.ResolveDropWeight( caseKey, gk, tonumber( (chance or {})[1] ) or 0, family )
+		end
+		for gk, chance in pairs( caseCfg.Items ) do
+			local weight = BRICKS_SERVER.UNBOXING.Func.ResolveDropWeight( caseKey, gk, tonumber( (chance or {})[1] ) or 0, family )
+			odds[gk] = math.Round( (weight/math.max( totalWeight, 1))*100, 4 )
+		end
+	end
+
+	return {
+		History = history,
+		RarityDistribution = rarityDist,
+		LuckTrend = math.Round( luckScore/math.max( #history, 1 ), 2 ),
+		Odds = odds
+	}
+end
+
+function BRICKS_SERVER.UNBOXING.Func.ProgressRetentionMission( ply, missionType, amount )
+	if( not IsValid( ply ) ) then return end
+	local cfg = (brsGetTopTierConfig().RetentionMissions or {})
+	if( not cfg.Enabled ) then return end
+
+	local state = BRICKS_SERVER.UNBOXING.Func.GetTopTierState( ply )
+	state.Missions = state.Missions or { Week = tostring( cfg.WeeklyResetWeek or os.date( "%Y-%W" ) ), Progress = {}, Claimed = {} }
+	local thisWeek = os.date( "%Y-%W" )
+	if( state.Missions.Week != thisWeek ) then
+		state.Missions = { Week = thisWeek, Progress = {}, Claimed = {} }
+	end
+
+	for _, mission in ipairs( cfg.Missions or {} ) do
+		if( tostring( mission.Type ) != tostring( missionType ) ) then continue end
+		local id = tostring( mission.ID or mission.Type )
+		state.Missions.Progress[id] = (tonumber( state.Missions.Progress[id] ) or 0) + math.max( 0, tonumber( amount ) or 1 )
+	end
+
+	BRICKS_SERVER.UNBOXING.Func.SetTopTierState( ply, state )
+end
+
+function BRICKS_SERVER.UNBOXING.Func.GetMissionStatePayload( ply )
+	local cfg = (brsGetTopTierConfig().RetentionMissions or {})
+	local state = BRICKS_SERVER.UNBOXING.Func.GetTopTierState( ply )
+	state.Missions = state.Missions or { Week = os.date( "%Y-%W" ), Progress = {}, Claimed = {} }
+
+	return {
+		Week = state.Missions.Week,
+		Progress = state.Missions.Progress,
+		Claimed = state.Missions.Claimed,
+		Missions = cfg.Missions or {}
+	}
+end
+
+function BRICKS_SERVER.UNBOXING.Func.GrantSmartBundle( ply, bundleID )
+	if( not IsValid( ply ) ) then return false, "invalid_player" end
+	local cfg = (brsGetTopTierConfig().SmartBundles or {})
+	if( not cfg.Enabled ) then return false, "disabled" end
+
+	local bundle = (cfg.Rewards or {})[tostring( bundleID or "")]
+	if( not istable( bundle ) ) then return false, "bundle_missing" end
+
+	local flattened = {}
+	for globalKey, amount in pairs( bundle.Items or {} ) do
+		table.insert( flattened, globalKey )
+		table.insert( flattened, math.max( 1, math.floor( tonumber( amount ) or 1 ) ) )
+	end
+	if( #flattened > 0 ) then
+		ply:AddUnboxingInventoryItem( unpack( flattened ) )
+	end
+
+	if( tonumber( bundle.MasteryXP ) and bundle.MasteryXP > 0 ) then
+		BRICKS_SERVER.UNBOXING.Func.AddMasteryXP( ply, bundle.MasteryXP, { Bundle = bundleID } )
+	end
+
+	BRICKS_SERVER.UNBOXING.Func.LogTelemetry( "unbox_bundle_reward", {
+		SteamID64 = ply:SteamID64(),
+		Bundle = bundleID
+	} )
+	return true
+end
+
+function BRICKS_SERVER.UNBOXING.Func.UpdateCollectionBooks( ply )
+	if( not IsValid( ply ) ) then return end
+	local books = (brsGetTopTierConfig().CollectionBooks or {})
+	if( table.Count( books ) <= 0 ) then return end
+
+	local inv = ply:GetUnboxingInventory()
+	local state = BRICKS_SERVER.UNBOXING.Func.GetTopTierState( ply )
+	state.CollectionBooks = state.CollectionBooks or {}
+
+	for id, book in pairs( books ) do
+		local completed = true
+		for itemKey, required in pairs( book.RequiredItems or {} ) do
+			if( required and (tonumber( inv[itemKey] ) or 0) <= 0 ) then
+				completed = false
+				break
+			end
+		end
+
+		if( completed and not state.CollectionBooks[id] ) then
+			state.CollectionBooks[id] = {
+				CompletedAt = os.time(),
+				Badge = book.Badge,
+				Flair = book.Flair
+			}
+			BRICKS_SERVER.UNBOXING.Func.LogTelemetry( "unbox_collection_completed", {
+				SteamID64 = ply:SteamID64(),
+				Book = id
+			} )
+		end
+	end
+
+	BRICKS_SERVER.UNBOXING.Func.SetTopTierState( ply, state )
+end
+
+function BRICKS_SERVER.UNBOXING.Func.GetMarketHealthSnapshot()
+	local health = {
+		OpenRates = {},
+		RarityCirculation = {},
+		PriceBands = { Low = 0, Mid = 0, High = 0 },
+		OutlierTrades = {}
+	}
+
+	for _, listing in pairs( BRICKS_SERVER.TEMP.UnboxingMarketplace or {} ) do
+		local bid = tonumber( listing.CurrentBid ) or tonumber( listing.StartBid ) or 0
+		if( bid < 10000 ) then
+			health.PriceBands.Low = health.PriceBands.Low + 1
+		elseif( bid < 50000 ) then
+			health.PriceBands.Mid = health.PriceBands.Mid + 1
+		else
+			health.PriceBands.High = health.PriceBands.High + 1
+		end
+
+		if( bid >= 100000 ) then
+			table.insert( health.OutlierTrades, {
+				MarketKey = listing.MarketKey,
+				Item = listing.ItemGlobalKey,
+				Price = bid
+			} )
+		end
+	end
+
+	local tele = file.Read( "bricks_server/unboxing_telemetry.jsonl", "DATA" ) or ""
+	for line in string.gmatch( tele, "[^\n]+" ) do
+		local row = util.JSONToTable( line ) or {}
+		if( row.Event == "unbox_open_resolved" ) then
+			local family = tostring( (row.Payload or {}).CaseFamily or "unknown" )
+			health.OpenRates[family] = (health.OpenRates[family] or 0)+1
+			local itemCfg = BRICKS_SERVER.UNBOXING.Func.GetItemFromGlobalKey( (row.Payload or {}).Drop ) or {}
+			local rarity = tostring( itemCfg.Rarity or "Unknown" )
+			health.RarityCirculation[rarity] = (health.RarityCirculation[rarity] or 0)+1
+		elseif( row.Event == "unbox_market_sold" and tonumber( ((row.Payload or {}).Price) or 0 ) >= 100000 ) then
+			table.insert( health.OutlierTrades, {
+				MarketKey = (row.Payload or {}).MarketKey,
+				Item = (row.Payload or {}).Item,
+				Price = (row.Payload or {}).Price,
+				Time = row.Time
+			} )
+		end
+	end
+
+	table.sort( health.OutlierTrades, function( a, b ) return (tonumber( a.Price ) or 0) > (tonumber( b.Price ) or 0) end )
+	for i = #health.OutlierTrades, 21, -1 do
+		health.OutlierTrades[i] = nil
+	end
+
+	return health
+end
+
 function BRICKS_SERVER.UNBOXING.Func.IsApexRarity( rarity )
 	return (brsGetTopTierConfig().ApexRarities or {})[tostring( rarity or "")] == true
 end
@@ -830,6 +1094,10 @@ function BRICKS_SERVER.UNBOXING.Func.GetTopTierState( ply )
 	inventoryData.__TopTier.Daily = inventoryData.__TopTier.Daily or { Opened = 0, Date = os.date( "%Y-%m-%d" ) }
 	inventoryData.__TopTier.HypeFeedMuted = inventoryData.__TopTier.HypeFeedMuted == true
 	inventoryData.__TopTier.GangObjectives = inventoryData.__TopTier.GangObjectives or { Week = os.date( "%Y-%W" ), Progress = 0, Claimed = false }
+	inventoryData.__TopTier.OpenHistory = inventoryData.__TopTier.OpenHistory or {}
+	inventoryData.__TopTier.CollectionBooks = inventoryData.__TopTier.CollectionBooks or {}
+	inventoryData.__TopTier.Missions = inventoryData.__TopTier.Missions or { Week = os.date( "%Y-%W" ), Progress = {}, Claimed = {} }
+	inventoryData.__TopTier.RecentApexDrops = inventoryData.__TopTier.RecentApexDrops or {}
 
 	return inventoryData.__TopTier
 end
@@ -1086,6 +1354,53 @@ net.Receive( "BRS.Net.UnboxingSetHypeFeedMuted", function( len, ply )
 	state.HypeFeedMuted = shouldMute
 	BRICKS_SERVER.UNBOXING.Func.SetTopTierState( ply, state )
 	BRICKS_SERVER.UNBOXING.Func.SendProgressState( ply )
+end )
+
+net.Receive( "BRS.Net.RequestUnboxingMarketHealth", function( _, ply )
+	if( not BRICKS_SERVER.Func.HasAdminAccess( ply ) ) then return end
+
+	net.Start( "BRS.Net.SendUnboxingMarketHealth" )
+		net.WriteTable( BRICKS_SERVER.UNBOXING.Func.GetMarketHealthSnapshot() )
+	net.Send( ply )
+end )
+
+net.Receive( "BRS.Net.RequestUnboxingOddsHistory", function( _, ply )
+	local caseKey = net.ReadUInt( 16 )
+
+	net.Start( "BRS.Net.SendUnboxingOddsHistory" )
+		net.WriteTable( BRICKS_SERVER.UNBOXING.Func.GetOddsHistoryPayload( ply, caseKey ) )
+	net.Send( ply )
+end )
+
+net.Receive( "BRS.Net.RequestUnboxingMissionState", function( _, ply )
+	net.Start( "BRS.Net.SendUnboxingMissionState" )
+		net.WriteTable( BRICKS_SERVER.UNBOXING.Func.GetMissionStatePayload( ply ) )
+	net.Send( ply )
+end )
+
+net.Receive( "BRS.Net.ClaimUnboxingMissionReward", function( _, ply )
+	local missionID = tostring( net.ReadString() or "" )
+	if( missionID == "" ) then return end
+
+	local cfg = (brsGetTopTierConfig().RetentionMissions or {})
+	local state = BRICKS_SERVER.UNBOXING.Func.GetTopTierState( ply )
+	state.Missions = state.Missions or { Week = os.date( "%Y-%W" ), Progress = {}, Claimed = {} }
+
+	for _, mission in ipairs( cfg.Missions or {} ) do
+		if( tostring( mission.ID ) != missionID ) then continue end
+		if( state.Missions.Claimed[missionID] ) then return end
+		if( (tonumber( state.Missions.Progress[missionID] ) or 0) < (tonumber( mission.Goal ) or 1) ) then return end
+
+		state.Missions.Claimed[missionID] = os.time()
+		BRICKS_SERVER.UNBOXING.Func.SetTopTierState( ply, state )
+		BRICKS_SERVER.UNBOXING.Func.GrantSmartBundle( ply, mission.BundleReward )
+		BRICKS_SERVER.UNBOXING.Func.LogTelemetry( "unbox_mission_reward_claimed", {
+			SteamID64 = ply:SteamID64(),
+			Mission = missionID,
+			Bundle = mission.BundleReward
+		} )
+		break
+	end
 end )
 
 hook.Add( "PlayerInitialSpawn", "BricksServerHooks_PlayerInitialSpawn_UnboxingProgressState", function( ply )
