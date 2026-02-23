@@ -54,6 +54,30 @@ function PANEL:AddPrice(name, value, pricePer, forceShow)
     priceLabel:SetTextColor(Nexus:GetColor("orange"))
 end
 
+function PANEL:GetOptionsMultiplier(data)
+    local optionCount = 0
+
+    if data.Health > 0 then optionCount = optionCount + 1 end
+    if data.Armor > 0 then optionCount = optionCount + 1 end
+    if data.Salary > 0 then optionCount = optionCount + 1 end
+    if data.GunLicense then optionCount = optionCount + 1 end
+    if data.ImportedModels.ModelID then optionCount = optionCount + 1 end
+
+    optionCount = optionCount + table.Count(data.SteamModels or {})
+    optionCount = optionCount + table.Count(data.SelectedGuns or {})
+    optionCount = optionCount + table.Count(data.Players or {})
+
+    local optionStep = math.max(tonumber(Nexus:GetValue("nexus-jobcreator-price-optionStep")) or 0, 0)
+    local maxMultiplier = math.max(tonumber(Nexus:GetValue("nexus-jobcreator-price-maxMultiplier")) or 1, 1)
+
+    local optionMultiplier = 1
+    if optionCount > 1 and optionStep > 0 then
+        optionMultiplier = math.min(1 + ((optionCount - 1) * optionStep), maxMultiplier)
+    end
+
+    return optionMultiplier
+end
+
 function PANEL:SetData(data)
     self.Data = data
 
@@ -132,6 +156,8 @@ function PANEL:SetData(data)
     else
         self:AddPrice(Nexus.JobCreator:GetPhrase("Total")..":", 1, Nexus.JobCreator:CalculatePrice(data))
     end
+
+    self:AddLabel(string.format("%s: x%.2f", Nexus.JobCreator:GetPhrase("Options Multiplier"), self:GetOptionsMultiplier(data)))
 
     self:AddPrice(Nexus.JobCreator:GetPhrase("Your Balance")..":", 1, Nexus.JobCreator:GetTotalMoney(LocalPlayer()))
 
