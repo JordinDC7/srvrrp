@@ -10,7 +10,8 @@ function PANEL:CreatePopout()
 
     self.popoutPanel = BRICKS_SERVER.Func.CreatePopoutPanel( self, self.panelWide, self.panelTall, self.popoutWide, self.popoutTall )
     self.popoutPanel.Paint = function( self2, w, h )
-        draw.RoundedBox( 8, 0, 0, w, h, BRICKS_SERVER.Func.GetTheme( 2 ) )
+        Derma_DrawBackgroundBlur( self2, SysTime() )
+        draw.RoundedBox( 8, 0, 0, w, h, BRICKS_SERVER.Func.GetTheme( 2, 245 ) )
     end
     self.popoutPanel.OnRemove = function()
         self:Remove()
@@ -72,6 +73,25 @@ function PANEL:CreatePopout()
     self.list:AddColumn( "MOV" )
     self.list:AddColumn( "Roll Time" )
 
+    timer.Simple( 0, function()
+        if( not IsValid( self.list ) ) then return end
+
+        local fixedWidths = { 40, 70, 70, 52, 52, 58, 52, 52, 150 }
+        for i, column in ipairs( self.list.Columns or {} ) do
+            if( fixedWidths[i] ) then
+                column:SetFixedWidth( fixedWidths[i] )
+            end
+        end
+    end )
+
+    self.emptyLabel = vgui.Create( "DLabel", self.scroll )
+    self.emptyLabel:Dock( TOP )
+    self.emptyLabel:DockMargin( 6, 6, 6, 0 )
+    self.emptyLabel:SetFont( "BRICKS_SERVER_Font19" )
+    self.emptyLabel:SetTextColor( BRICKS_SERVER.Func.GetTheme( 6, 120 ) )
+    self.emptyLabel:SetText( "No rolls found for this item yet." )
+    self.emptyLabel:SetVisible( false )
+
     self.list.OnRowSelected = function( _, _, row )
         local rollIndex = row.RollIndex
         if( not rollIndex ) then return end
@@ -106,6 +126,10 @@ function PANEL:RefreshRows()
 
     self.list:Clear()
 
+    if( IsValid( self.emptyLabel ) ) then
+        self.emptyLabel:SetVisible( false )
+    end
+
     local rows = {}
     for idx, roll in ipairs( self.rolls or {} ) do
         local stats = roll.Stats or {}
@@ -128,6 +152,7 @@ function PANEL:RefreshRows()
     local searchText = string.lower( string.Trim( tostring( IsValid( self.searchBar ) and self.searchBar:GetValue() or "" ) ) )
     if( searchText != "" ) then
         local filtered = {}
+
         for _, row in ipairs( rows ) do
             local haystack = string.lower( string.format( "%s %.2f %d %d %d %d %d", row.Tier, row.Score, row.Stats.DMG, row.Stats.ACC, row.Stats.CTRL, row.Stats.HND, row.Stats.MOV ) )
             if( string.find( haystack, searchText, 1, true ) ) then
@@ -148,6 +173,11 @@ function PANEL:RefreshRows()
 
         return a.Score > b.Score
     end )
+
+    if( #rows == 0 and IsValid( self.emptyLabel ) ) then
+        self.emptyLabel:SetVisible( true )
+        return
+    end
 
     for _, row in ipairs( rows ) do
         local line = self.list:AddLine(

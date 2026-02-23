@@ -8,6 +8,20 @@ local statRows = {
     { Key = "MOV", Label = "Mobility", Color = Color( 173, 118, 255 ) }
 }
 
+local function BRS_UC_GetDisplayName( itemName, rarityName )
+    local cleanName = string.Trim( tostring( itemName or "" ) )
+    local cleanRarity = string.Trim( tostring( rarityName or "" ) )
+    if( cleanName == "" or cleanRarity == "" ) then return cleanName end
+
+    local lowerName = string.lower( cleanName )
+    local lowerRarity = string.lower( cleanRarity )
+    if( string.StartWith( lowerName, lowerRarity .. " " ) ) then
+        return string.Trim( string.sub( cleanName, #cleanRarity+2 ) )
+    end
+
+    return cleanName
+end
+
 function PANEL:Init()
 end
 
@@ -17,7 +31,8 @@ function PANEL:CreatePopout()
 
     self.popoutPanel = BRICKS_SERVER.Func.CreatePopoutPanel( self, self.panelWide, self.panelTall, self.popoutWide, self.popoutTall )
     self.popoutPanel.Paint = function( self2, w, h )
-        draw.RoundedBox( 8, 0, 0, w, h, BRICKS_SERVER.Func.GetTheme( 2 ) )
+        Derma_DrawBackgroundBlur( self2, SysTime() )
+        draw.RoundedBox( 8, 0, 0, w, h, BRICKS_SERVER.Func.GetTheme( 2, 245 ) )
     end
     self.popoutPanel.OnRemove = function()
         self:Remove()
@@ -48,9 +63,9 @@ function PANEL:CreatePopout()
         surface.SetDrawColor( rarityColor )
         surface.DrawOutlinedRect( 3, 3, w - 6, h - 6, 2 )
 
-        draw.SimpleText( self.itemName or "Unknown", "BRICKS_SERVER_Font30", w / 2, 30, BRICKS_SERVER.Func.GetTheme( 6 ), TEXT_ALIGN_CENTER, 0 )
+        draw.SimpleText( self.displayName or self.itemName or "Unknown", "BRICKS_SERVER_Font30", w / 2, 30, BRICKS_SERVER.Func.GetTheme( 6 ), TEXT_ALIGN_CENTER, 0 )
         draw.SimpleText( self.rarityInfo or "", "BRICKS_SERVER_Font24", w / 2, 62, rarityColor, TEXT_ALIGN_CENTER, 0 )
-        if( self.rollTierName ) then
+        if( self.rollTierName and (tonumber( self.rollCount ) or 1) <= 1 ) then
             draw.SimpleText( string.format( "%s | Forge %.2f", tostring( self.rollTierName ), tonumber( self.rollScore ) or 0 ), "BRICKS_SERVER_Font18", w / 2, 86, BRICKS_SERVER.Func.GetTheme( 6 ), TEXT_ALIGN_CENTER, 0 )
         end
     end
@@ -63,10 +78,14 @@ function PANEL:CreatePopout()
     self.detailsBack = vgui.Create( "DPanel", self.card )
     self.detailsBack:Dock( BOTTOM )
     self.detailsBack:DockMargin( 10, 0, 10, 10 )
-    self.detailsBack:SetTall( 190 )
+    self.detailsBack:SetTall( 240 )
     self.detailsBack.Paint = function( self2, w, h )
         draw.RoundedBox( 6, 0, 0, w, h, BRICKS_SERVER.Func.GetTheme( 3, 120 ) )
     end
+
+    self.detailsScroll = vgui.Create( "bricks_server_scrollpanel_bar", self.detailsBack )
+    self.detailsScroll:Dock( FILL )
+    self.detailsScroll:DockMargin( 0, 0, 0, 0 )
 end
 
 function PANEL:FillPanel( globalKey, rankingMode, rollIndex )
@@ -79,20 +98,25 @@ function PANEL:FillPanel( globalKey, rankingMode, rollIndex )
     self.globalKey = globalKey
     self.itemName = configItemTable.Name or "Unknown"
     self.rarityInfo = configItemTable.Rarity or ""
+    self.displayName = BRS_UC_GetDisplayName( self.itemName, self.rarityInfo )
+    self.rollCount = tonumber( (LocalPlayer():GetUnboxingInventory() or {})[globalKey] ) or 1
 
     self.preview:SetItemData( "ITEM", configItemTable )
 
     self.rollTierName = summary.TierName
     self.rollScore = summary.Score
 
-    self.detailsBack:Clear()
+    if( IsValid( self.detailsScroll ) ) then
+        self.detailsScroll:Clear()
+    end
 
+    local parentPanel = IsValid( self.detailsScroll ) and self.detailsScroll or self.detailsBack
     local stats = summary.Stats or {}
 
     if( rankingMode ) then
         local rankings = BRICKS_SERVER.UNBOXING.Func.GetStatTrakRankings( LocalPlayer(), (configItemTable.ReqInfo or {})[1], stats )
 
-        local title = vgui.Create( "DLabel", self.detailsBack )
+        local title = vgui.Create( "DLabel", parentPanel )
         title:Dock( TOP )
         title:DockMargin( 10, 10, 10, 10 )
         title:SetText( "Booster Rankings" )
@@ -101,7 +125,7 @@ function PANEL:FillPanel( globalKey, rankingMode, rollIndex )
 
         for _, row in ipairs( statRows ) do
             local data = rankings[row.Key] or { Rank = 1, Percentile = 100, Total = 1 }
-            local line = vgui.Create( "DLabel", self.detailsBack )
+            local line = vgui.Create( "DLabel", parentPanel )
             line:Dock( TOP )
             line:DockMargin( 10, 3, 10, 0 )
             line:SetText( string.format( "%s: Rank %d/%d | Percentile %.2f%%", row.Label:upper(), data.Rank or 1, data.Total or 1, data.Percentile or 100 ) )
@@ -115,7 +139,7 @@ function PANEL:FillPanel( globalKey, rankingMode, rollIndex )
     for _, row in ipairs( statRows ) do
         local val = tonumber( stats[row.Key] ) or 0
 
-        local line = vgui.Create( "DPanel", self.detailsBack )
+        local line = vgui.Create( "DPanel", parentPanel )
         line:Dock( TOP )
         line:DockMargin( 8, 6, 8, 0 )
         line:SetTall( 24 )
@@ -127,7 +151,7 @@ function PANEL:FillPanel( globalKey, rankingMode, rollIndex )
         end
     end
 
-    local infoLabel = vgui.Create( "DLabel", self.detailsBack )
+    local infoLabel = vgui.Create( "DLabel", parentPanel )
     infoLabel:Dock( TOP )
     infoLabel:DockMargin( 10, 10, 10, 0 )
     infoLabel:SetWrap( true )

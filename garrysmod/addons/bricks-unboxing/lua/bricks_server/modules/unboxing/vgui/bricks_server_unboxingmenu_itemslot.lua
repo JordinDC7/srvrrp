@@ -51,6 +51,20 @@ local function alphaColor(col, a)
     return Color(col.r or 255, col.g or 255, col.b or 255, a or col.a or 255)
 end
 
+local function BRS_UC_GetDisplayName(itemName, rarityName)
+    local cleanName = string.Trim(tostring(itemName or ""))
+    local cleanRarity = string.Trim(tostring(rarityName or ""))
+    if (cleanName == "" or cleanRarity == "") then return cleanName end
+
+    local lowerName = string.lower(cleanName)
+    local lowerRarity = string.lower(cleanRarity)
+    if string.StartWith(lowerName, lowerRarity .. " ") then
+        return string.Trim(string.sub(cleanName, #cleanRarity + 2))
+    end
+
+    return cleanName
+end
+
 -- ---------------------------------------------------------
 -- Panel lifecycle
 -- ---------------------------------------------------------
@@ -95,7 +109,7 @@ function PANEL:FillPanel(globalKey, amount, actionsOrClickFunc)
     end
 
     local statTrakSummary = BRICKS_SERVER.UNBOXING.Func.GetStatTrakSummary(LocalPlayer(), globalKey)
-    if (statTrakSummary and statTrakSummary.TierTag and statTrakSummary.Score) then
+    if ((self.itemAmount or 1) <= 1 and statTrakSummary and statTrakSummary.TierTag and statTrakSummary.Score) then
         self:AddTopInfo(
             string.format("%s %.2f", tostring(statTrakSummary.TierTag), tonumber(statTrakSummary.Score) or 0),
             statTrakSummary.TierColor,
@@ -310,6 +324,7 @@ function PANEL:Paint(w, h)
     local item = self.configItem or {}
     local itemName = tostring(item.Name or BRICKS_SERVER.Func.L("unknown") or "Unknown")
     local rarityName = tostring(item.Rarity or "")
+    local displayName = BRS_UC_GetDisplayName(itemName, rarityName)
 
     local rarityColor = BRICKS_SERVER.Func.GetRarityColor(self.rarityInfo or rarityName) or Color(255,255,255)
 
@@ -329,7 +344,7 @@ function PANEL:Paint(w, h)
     local nameFont = "BRICKS_SERVER_Font20"
     local rarityFont = "BRICKS_SERVER_Font17"
 
-    local fitName = BRS_UC_FitText(nameFont, itemName, textW)
+    local fitName = BRS_UC_FitText(nameFont, displayName, textW)
     local fitRarity = BRS_UC_FitText(rarityFont, rarityName, textW)
 
     draw.SimpleText(fitName, nameFont, w / 2, nameY, alphaColor(txtCol, 185), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
