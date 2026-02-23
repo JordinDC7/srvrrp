@@ -7,7 +7,31 @@ end
 local loadingIcon = Material( "materials/bricks_server/loading.png" )
 local fallbackIcon = Material( "icon16/picture.png", "smooth" )
 
+local function BRS_UNBOXING_GetWeaponModelFromClass( weaponClass )
+    if( not isstring( weaponClass ) or weaponClass == "" ) then return nil end
+
+    local weaponData = weapons.GetStored( weaponClass )
+    if( not istable( weaponData ) ) then return nil end
+
+    local possibleModels = {
+        weaponData.WorldModel,
+        weaponData.ViewModel,
+        weaponData.WM,
+        weaponData.VM,
+        weaponData.Model
+    }
+
+    for _, mdl in ipairs( possibleModels ) do
+        if( isstring( mdl ) and mdl ~= "" and util.IsValidModel( mdl ) ) then
+            return mdl
+        end
+    end
+
+    return nil
+end
+
 local function BRS_UNBOXING_DrawFallbackIcon( w, h, text )
+    draw.RoundedBox( 6, 0, 0, w, h, BRICKS_SERVER.Func.GetTheme( 2, 215 ) )
     surface.SetDrawColor( 255, 255, 255, 220 )
     surface.SetMaterial( fallbackIcon )
 
@@ -53,6 +77,10 @@ function PANEL:SetItemData( type, itemTable, iconAdjust )
             itemModel = (BRICKS_SERVER.DEVCONFIG.UnboxingKeyModels[itemTable.Model] or BRICKS_SERVER.DEVCONFIG.UnboxingKeyModels[1]).Model
         end
 
+        if( (not isstring( itemModel ) or itemModel == "" or not util.IsValidModel( itemModel )) and type == "ITEM" ) then
+            itemModel = BRS_UNBOXING_GetWeaponModelFromClass( (itemTable.ReqInfo or {})[1] ) or itemModel
+        end
+
         local useModel = isstring( itemModel ) and itemModel ~= "" and util.IsValidModel( itemModel )
         if( not useModel ) then
             self.itemModel = vgui.Create( "DPanel", self )
@@ -74,7 +102,7 @@ function PANEL:SetItemData( type, itemTable, iconAdjust )
             render.ClearDepth()
         end
         function self.itemModel:Paint( w, h )
-            draw.RoundedBox( 0, 0, 0, w, h, BRICKS_SERVER.Func.GetTheme( 1, 0 ) )
+            draw.RoundedBox( 0, 0, 0, w, h, BRICKS_SERVER.Func.GetTheme( 2, 215 ) )
             self:DrawModel()
         end
     
