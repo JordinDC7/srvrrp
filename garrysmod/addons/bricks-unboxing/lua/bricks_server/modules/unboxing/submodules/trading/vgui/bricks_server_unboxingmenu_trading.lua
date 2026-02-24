@@ -486,7 +486,7 @@ function PANEL:OpenTrade( partnerSteamID64, partnerIsSender )
 
     self.bottomBar = vgui.Create( "DPanel", self.tradePanel )
     self.bottomBar:Dock( BOTTOM )
-    self.bottomBar:SetTall( 85 )
+    self.bottomBar:SetTall( 125 )
     local progressPercentW = newProgressPercentW
     self.bottomBar.Paint = function( self2, w, h ) 
         progressPercentW = Lerp( FrameTime()*20, progressPercentW, newProgressPercentW )
@@ -526,7 +526,57 @@ function PANEL:OpenTrade( partnerSteamID64, partnerIsSender )
             progressText = BRICKS_SERVER.Func.L( "unboxingPressAccept" )
         end
 
-        draw.SimpleText( progressText, "BRICKS_SERVER_Font21", w/2, 5, BRICKS_SERVER.Func.GetTheme( 6 ), TEXT_ALIGN_CENTER, 0 )
+        draw.SimpleText( progressText, "BRICKS_SERVER_Font21", w/2, 45, BRICKS_SERVER.Func.GetTheme( 6 ), TEXT_ALIGN_CENTER, 0 )
+    end
+
+    local actionRow = vgui.Create( "DPanel", self.bottomBar )
+    actionRow:Dock( TOP )
+    actionRow:DockMargin( 25, 10, 25, 0 )
+    actionRow:SetTall( 32 )
+    actionRow.Paint = function() end
+
+    local acceptAction = vgui.Create( "DButton", actionRow )
+    acceptAction:Dock( LEFT )
+    acceptAction:SetWide( 180 )
+    acceptAction:SetText( BRICKS_SERVER.Func.L( "unboxingStepAccept" ) )
+    acceptAction.DoClick = function()
+        if( self.tradeSelfAccepted ) then return end
+
+        if( not LocalPlayer():GetUnboxingTradeHasContents( partnerSteamID64, partnerIsSender ) ) then
+            BRICKS_SERVER.Func.CreateTopNotification( BRICKS_SERVER.Func.L( "unboxingNothingInTrade" ), 3, BRICKS_SERVER.DEVCONFIG.BaseThemes.Red )
+            return
+        end
+
+        net.Start( "BRS.Net.AcceptUnboxingActiveTrade" )
+            net.WriteString( partnerSteamID64 )
+            net.WriteBool( partnerIsSender )
+        net.SendToServer()
+    end
+
+    local confirmAction = vgui.Create( "DButton", actionRow )
+    confirmAction:Dock( LEFT )
+    confirmAction:DockMargin( 10, 0, 0, 0 )
+    confirmAction:SetWide( 180 )
+    confirmAction:SetText( BRICKS_SERVER.Func.L( "unboxingStepConfirm" ) )
+    confirmAction.DoClick = function()
+        if( not self.tradeSelfAccepted or not self.tradePartnerAccepted ) then return end
+
+        if( not LocalPlayer():GetUnboxingTradeHasContents( partnerSteamID64, partnerIsSender ) ) then
+            BRICKS_SERVER.Func.CreateTopNotification( BRICKS_SERVER.Func.L( "unboxingNothingInTrade" ), 3, BRICKS_SERVER.DEVCONFIG.BaseThemes.Red )
+            return
+        end
+
+        net.Start( "BRS.Net.ConfirmUnboxingActiveTrade" )
+            net.WriteString( partnerSteamID64 )
+            net.WriteBool( partnerIsSender )
+        net.SendToServer()
+    end
+
+    local function UpdateActionButtons()
+        if( not IsValid( acceptAction ) or not IsValid( confirmAction ) ) then return end
+
+        acceptAction:SetDisabled( self.tradeSelfAccepted )
+        confirmAction:SetDisabled( (not self.tradeSelfAccepted) or (not self.tradePartnerAccepted) or self.tradeSelfConfirmed )
     end
 
     local buttonPanels = {}
@@ -763,6 +813,7 @@ function PANEL:OpenTrade( partnerSteamID64, partnerIsSender )
     hook.Add( "BRS.Hooks.UpdateUnboxingTradeStatus", self, function()
         if( self.activePage == "Trade" ) then
             UpdateTradeTables()
+            UpdateActionButtons()
 
             if( not self.tradeSelfAccepted ) then
                 buttonPanels[1]:SetDisabled( false )
@@ -798,6 +849,7 @@ function PANEL:OpenTrade( partnerSteamID64, partnerIsSender )
     end )
 
     hook.Run( "BRS.Hooks.UpdateUnboxingTradeStatus" )
+    UpdateActionButtons()
 
     -- Trade Chat
     self:CreateTradeChat()

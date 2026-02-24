@@ -158,12 +158,9 @@ net.Receive( "BRS.Net.SendUnboxingTrade", function( len, ply )
     if( receiverPly == ply ) then return end
 
     if( CurTime() < (ply.BRS_TRADECOOLDOWN or 0) ) then 
-        BRICKS_SERVER.Func.SendNotification( ply, 1, 5, BRICKS_SERVER.Func.L( "unboxingTradeCooldown" ), math.ceil( (ply.BRS_TRADECOOLDOWN or 0)-CurTime() ) )
+        BRICKS_SERVER.Func.SendNotification( ply, 1, 5, BRICKS_SERVER.Func.L( "unboxingTradeCooldown", math.ceil( (ply.BRS_TRADECOOLDOWN or 0)-CurTime() ) ) )
         return 
     end
-
-	local tradeCooldown = tonumber( ((BRICKS_SERVER.UNBOXING.LUACFG.TopTier or {}).TradeCooldownSeconds) ) or 5
-	ply.BRS_TRADECOOLDOWN = CurTime()+math.max( tradeCooldown, 5 )
 
     if( not IsValid( receiverPly ) ) then 
         BRICKS_SERVER.Func.SendNotification( ply, 1, 5, BRICKS_SERVER.Func.L( "unboxingPlyNotOnline" ) )
@@ -185,6 +182,9 @@ net.Receive( "BRS.Net.SendUnboxingTrade", function( len, ply )
     if( not BRICKS_SERVER.TEMP.UnboxingTrades[receiverSteamID64] ) then
         BRICKS_SERVER.TEMP.UnboxingTrades[receiverSteamID64] = {}
     end
+
+	local tradeCooldown = tonumber( ((BRICKS_SERVER.UNBOXING.LUACFG.TopTier or {}).TradeCooldownSeconds) ) or 5
+	ply.BRS_TRADECOOLDOWN = CurTime()+math.max( tradeCooldown, 5 )
 
     BRICKS_SERVER.TEMP.UnboxingTrades[receiverSteamID64][ply:SteamID64()] = {}
 
