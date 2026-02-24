@@ -127,7 +127,7 @@ function PANEL:SetItemData( type, itemTable, iconAdjust )
 
     local resolvedModel = BRS_UNBOXING_ResolveItemModel( type, itemTable )
     local iconPath = isstring( itemTable.Icon ) and string.Trim( itemTable.Icon ) or ""
-    local shouldUseIcon = iconPath ~= "" and (type != "ITEM" or not resolvedModel)
+    local shouldUseIcon = iconPath ~= ""
     
     if( shouldUseIcon ) then
         local iconMat
