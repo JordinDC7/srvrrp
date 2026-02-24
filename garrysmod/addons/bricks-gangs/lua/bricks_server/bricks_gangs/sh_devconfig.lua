@@ -577,8 +577,10 @@ BRICKS_SERVER.DEVCONFIG.GangAdminCmds = {
         Name = BRICKS_SERVER.Func.L( "delete" ),
         Icon = "gang_delete.png",
         ClientFunc = function( gangTable, gangID, panel )
-            BRICKS_SERVER.Func.StringRequest( BRICKS_SERVER.Func.L( "gang" ), BRICKS_SERVER.Func.L( "gangDeleteAdminQuery", string.upper( gangTable.Name or "" ) ), "", function( text ) 
-                if( text == string.upper( gangTable.Name ) ) then
+            local gangNameUpper = string.upper( gangTable.Name or "" )
+
+            BRICKS_SERVER.Func.StringRequest( BRICKS_SERVER.Func.L( "gang" ), BRICKS_SERVER.Func.L( "gangDeleteAdminQuery", gangNameUpper ), "", function( text )
+                if( text == gangNameUpper ) then
                     net.Start( "BRS.Net.AdminGangCMD" )
                         net.WriteUInt( 9, 8 )
                         net.WriteUInt( gangID, 16 )
