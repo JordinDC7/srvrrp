@@ -113,9 +113,8 @@ local function BRS_UNBOXING_ResolveItemModel( itemType, itemTable )
         return itemModel
     end
 
-    -- Some workshop/content-pack models don't report as valid at UI build time even though
-    -- they still render correctly in a DModelPanel once requested by path.
-    if( isstring( itemModel ) and itemModel ~= "" and string.EndsWith( string.lower( itemModel ), ".mdl" ) ) then
+    -- Allow models that exist on disk even if util.IsValidModel is false at this exact moment.
+    if( isstring( itemModel ) and itemModel ~= "" and string.EndsWith( string.lower( itemModel ), ".mdl" ) and file.Exists( itemModel, "GAME" ) ) then
         return itemModel
     end
 
@@ -178,7 +177,20 @@ function PANEL:SetItemData( type, itemTable, iconAdjust )
 
         self.itemModel = vgui.Create( "DModelPanel", self )
         self.itemModel:Dock( FILL )
-        self.itemModel:SetModel( resolvedModel or "error.mdl" )
+        local setModelSuccess = self.itemModel:SetModel( resolvedModel or "models/error.mdl" )
+
+        if( not setModelSuccess ) then
+            self.itemModel:Remove()
+
+            self.itemModel = vgui.Create( "DPanel", self )
+            self.itemModel:Dock( FILL )
+            self.itemModel.Paint = function( self2, w, h )
+                BRS_UNBOXING_DrawFallbackIcon( w, h, BRICKS_SERVER.Func.L( "unknown" ) )
+            end
+
+            return
+        end
+
         self.itemModel:SetCursor( "none" )
         self.itemModel:SetPaintBackground( false )
         function self.itemModel:LayoutEntity( Entity ) return end
