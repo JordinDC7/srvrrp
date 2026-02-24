@@ -2,10 +2,10 @@ local PANEL = {}
 
 local statRows = {
     { Key = "DMG", Label = "Damage", Color = Color( 255, 70, 70 ) },
-    { Key = "HND", Label = "Rate", Color = Color( 20, 210, 50 ) },
-    { Key = "CTRL", Label = "Control", Color = Color( 255, 174, 0 ) },
-    { Key = "ACC", Label = "Precision", Color = Color( 36, 223, 224 ) },
-    { Key = "MOV", Label = "Mobility", Color = Color( 173, 118, 255 ) }
+    { Key = "HND", Label = "RPM", Color = Color( 20, 210, 50 ) },
+    { Key = "CTRL", Label = "Mag Size", Color = Color( 255, 174, 0 ) },
+    { Key = "ACC", Label = "Accuracy", Color = Color( 36, 223, 224 ) },
+    { Key = "MOV", Label = "Recoil", Color = Color( 224, 102, 255 ) }
 }
 
 local function BRS_UC_AlphaColor( col, alpha )
@@ -177,16 +177,18 @@ function PANEL:FillPanel( globalKey, rankingMode, rollIndex )
 
     for _, row in ipairs( statRows ) do
         local val = tonumber( stats[row.Key] ) or 0
+        local percent = math.Clamp( math.abs( val ), 0, 100 ) / 100
+        local fillCol = val < 0 and Color( 255, 90, 90 ) or row.Color
 
         local line = vgui.Create( "DPanel", parentPanel )
         line:Dock( TOP )
         line:DockMargin( 8, 6, 8, 0 )
         line:SetTall( 24 )
         line.Paint = function( self2, w, h )
-            draw.SimpleText( string.format( "%s: +%d%%", row.Label:upper(), val ), "BRICKS_SERVER_Font18", w / 2, 0, BRICKS_SERVER.Func.GetTheme( 6 ), TEXT_ALIGN_CENTER, 0 )
+            draw.SimpleText( string.format( "%s: %+d%%", row.Label:upper(), val ), "BRICKS_SERVER_Font18", w / 2, 0, BRICKS_SERVER.Func.GetTheme( 6 ), TEXT_ALIGN_CENTER, 0 )
 
             draw.RoundedBox( 3, 0, 16, w, 8, BRICKS_SERVER.Func.GetTheme( 1 ) )
-            draw.RoundedBox( 3, 0, 16, w * (math.Clamp( val, 0, 100 ) / 100), 8, row.Color )
+            draw.RoundedBox( 3, 0, 16, w * percent, 8, fillCol )
         end
     end
 

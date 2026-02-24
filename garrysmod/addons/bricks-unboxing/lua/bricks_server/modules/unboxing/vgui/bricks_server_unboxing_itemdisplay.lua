@@ -6,8 +6,12 @@ function PANEL:Init()
     self.iconSizeAdjust = 1
 end
 
-local loadingIcon = Material( "materials/bricks_server/loading.png" )
+local loadingIcon = Material( "bricks_server/loading.png", "smooth" )
 local fallbackIcon = Material( "icon16/picture.png", "smooth" )
+
+if( loadingIcon and loadingIcon.IsError and loadingIcon:IsError() ) then
+    loadingIcon = Material( "icon16/arrow_refresh.png", "smooth" )
+end
 
 local function BRS_UNBOXING_GetWeaponModelFromClass( weaponClass )
     if( not isstring( weaponClass ) or weaponClass == "" ) then return nil end
@@ -45,6 +49,53 @@ local function BRS_UNBOXING_DrawFallbackIcon( w, h, text )
     end
 end
 
+local function BRS_UNBOXING_TryGetMaterial( iconPath )
+    if( not isstring( iconPath ) ) then return nil end
+
+    local cleanPath = string.Trim( iconPath )
+    if( cleanPath == "" ) then return nil end
+
+    local candidates = {
+        cleanPath,
+        string.gsub( cleanPath, "^materials/", "" ),
+        string.StripExtension( cleanPath ),
+        string.StripExtension( string.gsub( cleanPath, "^materials/", "" ) )
+    }
+
+    for _, candidate in ipairs( candidates ) do
+        if( isstring( candidate ) and candidate ~= "" ) then
+            local mat = Material( candidate, "smooth" )
+            if( mat and (not mat.IsError or not mat:IsError()) ) then
+                return mat
+            end
+        end
+    end
+
+    return nil
+end
+
+local function BRS_UNBOXING_LoadIconMaterial( iconPath, callback )
+    local localMat = BRS_UNBOXING_TryGetMaterial( iconPath )
+    if( localMat ) then
+        callback( localMat )
+        return
+    end
+
+    if( not isfunction( BRICKS_SERVER.Func.GetImage ) ) then
+        callback( nil )
+        return
+    end
+
+    BRICKS_SERVER.Func.GetImage( iconPath, function( mat )
+        if( ismaterial( mat ) and (not mat.IsError or not mat:IsError()) ) then
+            callback( mat )
+            return
+        end
+
+        callback( nil )
+    end )
+end
+
 local function BRS_UNBOXING_ResolveItemModel( itemType, itemTable )
     local itemModel = itemTable.Model
 
@@ -75,14 +126,15 @@ function PANEL:SetItemData( type, itemTable, iconAdjust )
     self:Clear()
 
     local resolvedModel = BRS_UNBOXING_ResolveItemModel( type, itemTable )
-    local shouldUseIcon = itemTable.Icon and (type != "ITEM" or not resolvedModel)
+    local iconPath = isstring( itemTable.Icon ) and string.Trim( itemTable.Icon ) or ""
+    local shouldUseIcon = iconPath ~= "" and (type != "ITEM" or not resolvedModel)
     
     if( shouldUseIcon ) then
         local iconMat
         local iconRequestedAt = CurTime()
         local iconLoadFailed = false
 
-        BRICKS_SERVER.Func.GetImage( itemTable.Icon, function( mat )
+        BRS_UNBOXING_LoadIconMaterial( iconPath, function( mat )
             if( not IsValid( self ) ) then return end
 
             if( ismaterial( mat ) ) then
@@ -101,7 +153,7 @@ function PANEL:SetItemData( type, itemTable, iconAdjust )
                 local iconSize = h*self.iconSizeAdjust
                 surface.DrawTexturedRect( (w/2)-(iconSize/2), (h/2)-(iconSize/2), iconSize, iconSize )
             elseif( iconLoadFailed or (CurTime()-iconRequestedAt) > IMAGE_LOAD_TIMEOUT ) then
-                BRS_UNBOXING_DrawFallbackIcon( w, h, BRICKS_SERVER.Func.L( "unknown" ) )
+                BRS_UNBOXING_DrawFallbackIcon( w, h, "NO IMAGE" )
             else
                 surface.SetDrawColor( 255, 255, 255, 255 )
                 surface.SetMaterial( loadingIcon )
@@ -146,7 +198,7 @@ function PANEL:SetItemData( type, itemTable, iconAdjust )
             size = math.max( size, math.abs(mn.y) + math.abs(mx.y) )
             size = math.max( size, math.abs(mn.z) + math.abs(mx.z) )
     
-            self.itemModel:SetFOV( (itemModelTable or {}).FOV or 50 )
+            self.itemModel:SetFOV( tonumber( itemTable.FOV ) or 50 )
             self.itemModel:SetCamPos( Vector( size, size, size ) )
             self.itemModel:SetLookAt( (mn + mx) * 0.5 )
 
