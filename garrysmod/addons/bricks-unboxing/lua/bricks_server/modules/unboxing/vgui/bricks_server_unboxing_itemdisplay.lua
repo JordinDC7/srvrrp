@@ -75,7 +75,7 @@ function PANEL:SetItemData( type, itemTable, iconAdjust )
     self:Clear()
 
     local resolvedModel = BRS_UNBOXING_ResolveItemModel( type, itemTable )
-    local shouldUseIcon = itemTable.Icon and (type != "ITEM" or not resolvedModel)
+    local shouldUseIcon = isstring( itemTable.Icon ) and itemTable.Icon ~= ""
     
     if( shouldUseIcon ) then
         local iconMat
