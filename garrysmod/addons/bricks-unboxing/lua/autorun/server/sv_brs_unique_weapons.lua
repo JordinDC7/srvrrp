@@ -112,15 +112,102 @@ function BRS_UW.FetchPlayerWeaponsDB(steamid64, callback)
 end
 
 -- ============================================================
+-- TRADE TRANSFER: Update DB ownership + move cache + sync client
+-- ============================================================
+function BRS_UW.TransferWeaponOwnership(uid, globalKey, newOwner)
+    if not IsValid(newOwner) then return end
+    local newSteamID64 = newOwner:SteamID64()
+
+    -- Update MySQL
+    BRS_UW.TransferWeaponDB(uid, newSteamID64, globalKey)
+
+    -- Find weapon data in ANY player's server cache
+    local weaponData = nil
+    for oldSteamID64, cache in pairs(BRS_UW.ServerCache) do
+        if cache[globalKey] then
+            weaponData = cache[globalKey]
+            cache[globalKey] = nil -- remove from old owner's cache
+            break
+        end
+    end
+
+    -- If not in cache, fetch from DB
+    if weaponData then
+        -- Store in new owner's cache
+        BRS_UW.ServerCache[newSteamID64] = BRS_UW.ServerCache[newSteamID64] or {}
+        BRS_UW.ServerCache[newSteamID64][globalKey] = weaponData
+
+        -- Sync to new owner's client
+        BRS_UW.SyncWeaponToClient(newOwner, globalKey, weaponData)
+
+        print("[BRS UW] Transferred " .. (weaponData.weaponName or "weapon") .. " [" .. uid .. "] to " .. newOwner:Nick())
+    else
+        -- Fetch from DB and sync
+        if not BRS_UNBOXING_DB then return end
+        local q = BRS_UNBOXING_DB:query("SELECT * FROM bricks_server_unique_weapons WHERE uid = '" .. BRS_UNBOXING_DB:escape(uid) .. "';")
+        function q:onSuccess(data)
+            if not data or not data[1] then return end
+            local row = data[1]
+            local stats = util.JSONToTable(row.stats or "{}") or {}
+            local fetchedData = {
+                uid = row.uid,
+                globalKey = row.global_key,
+                baseItemKey = tonumber(row.base_item_key),
+                weaponClass = row.weapon_class,
+                weaponName = row.weapon_name,
+                rarity = row.rarity,
+                quality = row.quality,
+                stats = stats,
+                avgBoost = tonumber(row.avg_boost) or 0,
+            }
+            local wepDef = BRS_UW.WeaponByClass[row.weapon_class]
+            if wepDef then fetchedData.category = wepDef.cat end
+
+            BRS_UW.ServerCache[newSteamID64] = BRS_UW.ServerCache[newSteamID64] or {}
+            BRS_UW.ServerCache[newSteamID64][globalKey] = fetchedData
+
+            if IsValid(newOwner) then
+                BRS_UW.SyncWeaponToClient(newOwner, globalKey, fetchedData)
+            end
+
+            print("[BRS UW] Transferred (DB fetch) " .. (fetchedData.weaponName or "weapon") .. " [" .. uid .. "] to " .. (IsValid(newOwner) and newOwner:Nick() or newSteamID64))
+        end
+        function q:onError(err) print("[BRS UW] Transfer fetch error: " .. err) end
+        q:start()
+    end
+end
+
+-- ============================================================
 -- UNIQUE WEAPON GENERATION
+-- Reads rarity/weapon info directly from the bricks config table
+-- to avoid index calculation errors from mixed-category item layouts
 -- ============================================================
 function BRS_UW.CreateUniqueWeapon(ply, baseItemKey)
-    local weapon, rarity = BRS_UW.GetWeaponFromItemKey(baseItemKey)
-    if not weapon or not rarity then return nil end
+    -- Read the ACTUAL config entry for this item
+    local configTable
+    if BRICKS_SERVER.CONFIG and BRICKS_SERVER.CONFIG.UNBOXING and BRICKS_SERVER.CONFIG.UNBOXING.Items then
+        configTable = BRICKS_SERVER.CONFIG.UNBOXING.Items[baseItemKey]
+    end
+    if not configTable and BRICKS_SERVER.BASECONFIG and BRICKS_SERVER.BASECONFIG.UNBOXING then
+        configTable = BRICKS_SERVER.BASECONFIG.UNBOXING.Items[baseItemKey]
+    end
+    if not configTable then return nil end
+
+    -- Get weapon class from ReqInfo
+    local weaponClass = configTable.ReqInfo and configTable.ReqInfo[1]
+    if not weaponClass then return nil end
+
+    -- Get rarity DIRECTLY from the config (not calculated)
+    local rarityKey = configTable.Rarity or "Common"
+
+    -- Get weapon definition from our lookup
+    local weaponDef = BRS_UW.WeaponByClass[weaponClass]
+    local weaponName = configTable.Name or (weaponDef and weaponDef.name) or weaponClass
+    local category = weaponDef and weaponDef.cat or "Unknown"
 
     local uid = BRS_UW.GenerateUID()
     local globalKey = BRS_UW.MakeUniqueKey(baseItemKey, uid)
-    local stats = BRS_UW.GenerateStats(rarity.key)
+    local stats = BRS_UW.GenerateStats(rarityKey)
     local avgBoost = BRS_UW.CalcAvgBoost(stats)
     local quality = BRS_UW.GetQuality(avgBoost)
 
@@ -128,17 +215,17 @@ function BRS_UW.CreateUniqueWeapon(ply, baseItemKey)
         uid = uid,
         globalKey = globalKey,
         baseItemKey = baseItemKey,
-        weaponClass = weapon.class,
-        weaponName = weapon.name,
-        rarity = rarity.key,
+        weaponClass = weaponClass,
+        weaponName = weaponName,
+        rarity = rarityKey,
         quality = quality,
         stats = stats,
         avgBoost = math.Round(avgBoost, 1),
-        category = weapon.cat,
+        category = category,
     }
 
     -- Save to MySQL
-    BRS_UW.SaveWeaponDB(uid, ply:SteamID64(), globalKey, baseItemKey, weapon.class, weapon.name, rarity.key, quality, stats, avgBoost)
+    BRS_UW.SaveWeaponDB(uid, ply:SteamID64(), globalKey, baseItemKey, weaponClass, weaponName, rarityKey, quality, stats, avgBoost)
 
     -- Cache server-side
     BRS_UW.ServerCache[ply:SteamID64()] = BRS_UW.ServerCache[ply:SteamID64()] or {}
@@ -148,7 +235,7 @@ function BRS_UW.CreateUniqueWeapon(ply, baseItemKey)
     BRS_UW.SyncWeaponToClient(ply, globalKey, weaponData)
 
     print(string.format("[BRS UW] Created %s %s (%s) for %s - Avg: %.1f%% [%s]",
-        rarity.key, weapon.name, quality, ply:Nick(), avgBoost, uid))
+        rarityKey, weaponName, quality, ply:Nick(), avgBoost, uid))
 
     return globalKey, weaponData
 end
@@ -238,7 +325,22 @@ hook.Add("Initialize", "BRS_UW_HookCaseOpening", function()
                 local amount = itemsToAdd[k + 1] or 1
 
                 -- Check if this is a weapon item (ITEM_XX format, not already unique)
-                if isstring(itemKey) and string.StartWith(itemKey, "ITEM_") and not BRS_UW.IsUniqueWeapon(itemKey) then
+                if isstring(itemKey) and string.StartWith(itemKey, "ITEM_") then
+
+                    -- UNIQUE WEAPON BEING TRADED: already has UID suffix
+                    if BRS_UW.IsUniqueWeapon(itemKey) then
+                        -- Transfer ownership in DB and cache
+                        local baseNum, uid = BRS_UW.ParseUniqueKey(itemKey)
+                        if uid then
+                            BRS_UW.TransferWeaponOwnership(uid, itemKey, self)
+                        end
+                        -- Pass through to original (key stays the same)
+                        table.insert(modifiedItems, itemKey)
+                        table.insert(modifiedItems, amount)
+                        continue
+                    end
+
+                    -- NON-UNIQUE WEAPON: convert to unique on unbox
                     local baseNum = tonumber(string.Replace(itemKey, "ITEM_", ""))
 
                     if baseNum then

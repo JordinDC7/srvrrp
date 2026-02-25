@@ -318,22 +318,10 @@ hook.Add("Initialize", "BRS_UW_OverrideGetItemFromGlobalKey", function()
 end)
 
 -- ============================================================
--- ITEM KEY MAPPING
--- Maps each weapon index + rarity to a BRICKS_SERVER item key
--- The baseconfig has 78 weapons × 7 rarities = 546 items
--- Item 1-78 = Common, 79-156 = Uncommon, etc.
+-- NOTE: Item-to-weapon/rarity mapping is done by reading
+-- the actual baseconfig entry's Rarity and ReqInfo fields,
+-- NOT by calculating from item index (since items are grouped
+-- by weapon category, not by rarity blocks).
 -- ============================================================
-function BRS_UW.GetBaseItemKey(weaponIndex, rarityKey)
-    local rarityOffset = (BRS_UW.RarityOrder[rarityKey] - 1) * #BRS_UW.Weapons
-    return rarityOffset + weaponIndex
-end
-
-function BRS_UW.GetWeaponFromItemKey(itemKey)
-    local weaponIndex = ((itemKey - 1) % #BRS_UW.Weapons) + 1
-    local rarityIndex = math.floor((itemKey - 1) / #BRS_UW.Weapons) + 1
-    local rarity = BRS_UW.Rarities[rarityIndex]
-    local weapon = BRS_UW.Weapons[weaponIndex]
-    return weapon, rarity
-end
 
 print("[BRS UniqueWeapons] Shared definitions loaded - " .. #BRS_UW.Weapons .. " weapons, " .. #BRS_UW.Stats .. " stat types, " .. #BRS_UW.Rarities .. " rarities")
