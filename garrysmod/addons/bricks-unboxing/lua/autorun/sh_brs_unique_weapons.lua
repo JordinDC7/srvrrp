@@ -134,7 +134,7 @@ BRS_UW.Stats = {
     { key = "acc",  name = "ACCURACY", shortName = "ACC",  color = Color(80, 200, 255),  applyKey = "Spread" },
     { key = "ctrl", name = "CONTROL",  shortName = "CTRL", color = Color(255, 180, 40),  applyKey = "Recoil" },
     { key = "rpm",  name = "RPM",      shortName = "RPM",  color = Color(80, 255, 120),  applyKey = "RPM" },
-    { key = "mob",  name = "MOBILITY", shortName = "MOB",  color = Color(220, 80, 255),  applyKey = "Mobility" },
+    { key = "mag",  name = "MAGAZINE", shortName = "MAG",  color = Color(220, 80, 255),  applyKey = "ClipSize" },
 }
 
 BRS_UW.StatByKey = {}
@@ -144,16 +144,18 @@ end
 
 -- ============================================================
 -- 7 RARITIES with stat boost ranges
--- Below Legendary = weak, Legendary+ = moderately stronger, Glitched/Mythical = strongest
+-- Rarity determines the CEILING of possible rolls
+-- Quality (forge tier) is derived from how well it actually rolled
+-- Below Legendary = weak, Legendary+ = strong, Glitched/Mythical = god tier
 -- ============================================================
 BRS_UW.Rarities = {
-    { key = "Common",    order = 1, color = Color(180,180,180), min = 1,  max = 8,   dropWeight = 40 },
-    { key = "Uncommon",  order = 2, color = Color(120,200,80),  min = 3,  max = 12,  dropWeight = 28 },
-    { key = "Rare",      order = 3, color = Color(42,133,219),  min = 5,  max = 20,  dropWeight = 16 },
-    { key = "Epic",      order = 4, color = Color(152,68,255),  min = 8,  max = 30,  dropWeight = 9 },
-    { key = "Legendary", order = 5, color = Color(255,165,0),   min = 20, max = 55,  dropWeight = 4.5 },
-    { key = "Glitched",  order = 6, color = Color(0,255,200),   min = 35, max = 75,  dropWeight = 2 },
-    { key = "Mythical",  order = 7, color = Color(255,50,50),   min = 50, max = 100, dropWeight = 0.5 },
+    { key = "Common",    order = 1, color = Color(180,180,180), min = 1,  max = 10,  dropWeight = 40 },
+    { key = "Uncommon",  order = 2, color = Color(120,200,80),  min = 3,  max = 18,  dropWeight = 28 },
+    { key = "Rare",      order = 3, color = Color(42,133,219),  min = 5,  max = 28,  dropWeight = 16 },
+    { key = "Epic",      order = 4, color = Color(152,68,255),  min = 10, max = 42,  dropWeight = 9 },
+    { key = "Legendary", order = 5, color = Color(255,165,0),   min = 20, max = 60,  dropWeight = 4.5 },
+    { key = "Glitched",  order = 6, color = Color(0,255,200),   min = 30, max = 80,  dropWeight = 2 },
+    { key = "Mythical",  order = 7, color = Color(255,50,50),   min = 40, max = 100, dropWeight = 0.5 },
 }
 
 BRS_UW.RarityByKey = {}
@@ -165,14 +167,16 @@ end
 
 -- ============================================================
 -- QUALITY LABELS (based on average boost %)
+-- Quality = "forge tier" - how well the weapon actually rolled
+-- A Mythical can roll Junk if unlucky, Ascended if lucky
 -- ============================================================
 BRS_UW.Qualities = {
-    { key = "Junk",     minAvg = 0,  maxAvg = 10, color = Color(120,120,120) },
-    { key = "Raw",      minAvg = 10, maxAvg = 20, color = Color(140,180,100) },
-    { key = "Standard", minAvg = 20, maxAvg = 35, color = Color(80,160,220) },
-    { key = "Forged",   minAvg = 35, maxAvg = 50, color = Color(180,120,255) },
-    { key = "Refined",  minAvg = 50, maxAvg = 70, color = Color(255,180,40) },
-    { key = "Ascended", minAvg = 70, maxAvg = 101, color = Color(255,60,60) },
+    { key = "Junk",     minAvg = 0,  maxAvg = 8,  color = Color(120,120,120) },
+    { key = "Raw",      minAvg = 8,  maxAvg = 18, color = Color(140,180,100) },
+    { key = "Standard", minAvg = 18, maxAvg = 32, color = Color(80,160,220) },
+    { key = "Forged",   minAvg = 32, maxAvg = 50, color = Color(180,120,255) },
+    { key = "Refined",  minAvg = 50, maxAvg = 72, color = Color(255,180,40) },
+    { key = "Ascended", minAvg = 72, maxAvg = 101, color = Color(255,60,60) },
 }
 
 -- ============================================================
@@ -246,13 +250,30 @@ function BRS_UW.GenerateStats(rarityKey)
     if not rarity then rarity = BRS_UW.Rarities[1] end
 
     local stats = {}
+    local range = rarity.max - rarity.min
+
     for _, statDef in ipairs(BRS_UW.Stats) do
-        -- Each stat gets a random value within the rarity's range
-        -- Use weighted distribution: slight bell curve favoring middle
-        local roll1 = math.Rand(rarity.min, rarity.max)
-        local roll2 = math.Rand(rarity.min, rarity.max)
-        local value = (roll1 + roll2) / 2 -- average of 2 rolls = slight bell curve
-        stats[statDef.key] = math.Round(value, 1)
+        -- Each stat rolls independently with variance
+        -- 70% chance: normal roll within range
+        -- 20% chance: low roll (bottom 40% of range)  
+        -- 10% chance: high roll (top 30% of range)
+        local roll = math.random()
+        local value
+
+        if roll < 0.10 then
+            -- High roll - top end
+            value = rarity.min + range * math.Rand(0.70, 1.0)
+        elseif roll < 0.30 then
+            -- Low roll - bottom end
+            value = rarity.min + range * math.Rand(0.0, 0.40)
+        else
+            -- Normal roll - full range with slight center bias
+            local r1 = math.Rand(0, 1)
+            local r2 = math.Rand(0, 1)
+            value = rarity.min + range * ((r1 + r2) / 2) -- mild bell curve
+        end
+
+        stats[statDef.key] = math.Round(math.Clamp(value, rarity.min, rarity.max), 1)
     end
 
     return stats

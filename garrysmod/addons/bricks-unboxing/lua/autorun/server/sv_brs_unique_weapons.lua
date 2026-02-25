@@ -7,6 +7,15 @@ if not SERVER then return end
 BRS_UW = BRS_UW or {}
 BRS_UW.ServerCache = BRS_UW.ServerCache or {} -- steamid64 -> { [globalKey] = data }
 
+-- Migrate old "mob" stat key to "mag" for existing weapons
+function BRS_UW.MigrateStats(stats)
+    if stats and stats.mob and not stats.mag then
+        stats.mag = stats.mob
+        stats.mob = nil
+    end
+    return stats
+end
+
 util.AddNetworkString("BRS_UW.SyncWeaponData")
 util.AddNetworkString("BRS_UW.SyncAllWeapons")
 util.AddNetworkString("BRS_UW.RequestInspect")
@@ -149,6 +158,7 @@ function BRS_UW.TransferWeaponOwnership(uid, globalKey, newOwner)
             if not data or not data[1] then return end
             local row = data[1]
             local stats = util.JSONToTable(row.stats or "{}") or {}
+            BRS_UW.MigrateStats(stats)
             local fetchedData = {
                 uid = row.uid,
                 globalKey = row.global_key,
@@ -259,6 +269,7 @@ function BRS_UW.SyncAllWeaponsToClient(ply)
         local allData = {}
         for _, row in ipairs(rows) do
             local stats = util.JSONToTable(row.stats or "{}") or {}
+            BRS_UW.MigrateStats(stats)
             local weaponData = {
                 uid = row.uid,
                 globalKey = row.global_key,
@@ -442,49 +453,39 @@ function BRS_UW.ApplyBoostsToWeapon(ply, wep)
         -- Save originals
         wep.BRS_UW_OriginalStats = wep.BRS_UW_OriginalStats or {}
 
-        -- DAMAGE boost
+        -- DAMAGE boost (capped at +100% = double damage)
         if stats.dmg and wep.Primary and wep.Primary.Damage then
             wep.BRS_UW_OriginalStats.Damage = wep.Primary.Damage
-            wep.Primary.Damage = math.Round(wep.Primary.Damage * (1 + stats.dmg / 100))
+            wep.Primary.Damage = math.Round(wep.Primary.Damage * (1 + math.min(stats.dmg, 100) / 100))
         end
 
-        -- ACCURACY boost (reduce spread - lower is better)
+        -- ACCURACY boost (reduce spread - lower is better, max 50% reduction)
         if stats.acc and wep.Primary and wep.Primary.Spread then
             wep.BRS_UW_OriginalStats.Spread = wep.Primary.Spread
-            wep.Primary.Spread = wep.Primary.Spread * (1 - stats.acc / 100 * 0.5) -- cap at 50% reduction
+            wep.Primary.Spread = wep.Primary.Spread * (1 - math.min(stats.acc, 100) / 100 * 0.5)
         end
 
-        -- CONTROL boost (reduce recoil - lower is better)
+        -- CONTROL boost (reduce recoil - lower is better, max 50% reduction)
         if stats.ctrl and wep.Primary and wep.Primary.Recoil then
             wep.BRS_UW_OriginalStats.Recoil = wep.Primary.Recoil
-            wep.Primary.Recoil = wep.Primary.Recoil * (1 - stats.ctrl / 100 * 0.5) -- cap at 50% reduction
+            wep.Primary.Recoil = wep.Primary.Recoil * (1 - math.min(stats.ctrl, 100) / 100 * 0.5)
         end
 
-        -- RPM boost
+        -- RPM boost (capped at +100%)
         if stats.rpm and wep.Primary and wep.Primary.RPM then
             wep.BRS_UW_OriginalStats.RPM = wep.Primary.RPM
-            wep.Primary.RPM = math.Round(wep.Primary.RPM * (1 + stats.rpm / 100))
+            wep.Primary.RPM = math.Round(wep.Primary.RPM * (1 + math.min(stats.rpm, 100) / 100))
             -- Update delay based on RPM
             if wep.Primary.RPM > 0 then
                 wep.Primary.Delay = 60 / wep.Primary.RPM
             end
         end
 
-        -- MAGAZINE boost (clip size)
-        if stats.mob then
-            -- For mobility, we apply to clip size as a tangible stat
-            -- Actual mobility/movement is handled separately
-            if wep.Primary and wep.Primary.ClipSize then
-                wep.BRS_UW_OriginalStats.ClipSize = wep.Primary.ClipSize
-                local newClip = math.Round(wep.Primary.ClipSize * (1 + stats.mob / 100))
-                wep.Primary.ClipSize = newClip
-
-                -- Give extra ammo for the increased clip
-                local currentClip = wep:Clip1()
-                if currentClip > 0 then
-                    wep:SetClip1(math.min(currentClip, newClip))
-                end
-            end
+        -- MAGAZINE boost (clip size, capped at +100% = double mag)
+        if stats.mag and wep.Primary and wep.Primary.ClipSize then
+            wep.BRS_UW_OriginalStats.ClipSize = wep.Primary.ClipSize
+            local newClip = math.Round(wep.Primary.ClipSize * (1 + math.min(stats.mag, 100) / 100))
+            wep.Primary.ClipSize = newClip
         end
 
         wep.BRS_UW_Boosted = true
