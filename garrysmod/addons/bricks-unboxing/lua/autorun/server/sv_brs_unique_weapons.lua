@@ -620,12 +620,32 @@ net.Receive("BRS_UW.DeleteItems", function(len, ply)
 
     local steamid64 = ply:SteamID64()
     local cache = BRS_UW.ServerCache[steamid64] or {}
+
+    -- Get inventory ONCE, modify in memory, then sync ONCE
+    -- This prevents net overflow from calling SetUnboxingInventory per item
+    local inventory = ply:GetUnboxingInventory()
+    local inventoryData = ply:GetUnboxingInventoryData()
+    local inventoryDataChanged = false
     local deleteCount = 0
 
     for _, globalKey in ipairs(keysToDelete) do
-        local inventory = ply:GetUnboxingInventory()
         if inventory[globalKey] then
-            ply:RemoveUnboxingInventoryItem(globalKey, inventory[globalKey])
+            -- Unequip if needed before removing
+            if string.StartWith(globalKey, "ITEM_") and inventoryData[globalKey] and inventoryData[globalKey].Equipped then
+                local baseNum = BRS_UW.IsUniqueWeapon(globalKey) and BRS_UW.ParseUniqueKey(globalKey) or tonumber(string.Replace(globalKey, "ITEM_", ""))
+                local configItemTable = baseNum and BRICKS_SERVER.CONFIG.UNBOXING.Items[baseNum]
+                if configItemTable then
+                    local devConfigTable = BRICKS_SERVER.DEVCONFIG.UnboxingItemTypes[configItemTable.Type]
+                    if devConfigTable and devConfigTable.UnEquipFunction then
+                        devConfigTable.UnEquipFunction(ply, configItemTable.ReqInfo)
+                    end
+                end
+                inventoryData[globalKey] = nil
+                inventoryDataChanged = true
+            end
+
+            inventory[globalKey] = nil
+            deleteCount = deleteCount + 1
         end
 
         -- If unique weapon, also clean MySQL + cache
@@ -638,8 +658,13 @@ net.Receive("BRS_UW.DeleteItems", function(len, ply)
                 cache[globalKey] = nil
             end
         end
+    end
 
-        deleteCount = deleteCount + 1
+    -- Single inventory sync (ONE net message instead of N)
+    ply:SetUnboxingInventory(inventory)
+
+    if inventoryDataChanged then
+        ply:SetUnboxingInventoryData(inventoryData)
     end
 
     BRICKS_SERVER.Func.SendTopNotification(ply, "Deleted " .. deleteCount .. " item(s)", 3, BRICKS_SERVER.DEVCONFIG.BaseThemes.Green)
@@ -676,12 +701,14 @@ net.Receive("BRS_UW.AdminDeleteItems", function(len, ply)
     local deleteCount = 0
 
     if IsValid(targetPly) then
-        -- Player is online
+        -- Player is online - modify inventory in memory, sync once
         local cache = BRS_UW.ServerCache[targetSteamID64] or {}
+        local inventory = targetPly:GetUnboxingInventory()
+
         for _, globalKey in ipairs(keysToDelete) do
-            local inventory = targetPly:GetUnboxingInventory()
             if inventory[globalKey] then
-                targetPly:RemoveUnboxingInventoryItem(globalKey, inventory[globalKey])
+                inventory[globalKey] = nil
+                deleteCount = deleteCount + 1
             end
 
             if BRS_UW.IsUniqueWeapon(globalKey) then
@@ -689,9 +716,9 @@ net.Receive("BRS_UW.AdminDeleteItems", function(len, ply)
                 if uid then BRS_UW.DeleteWeaponDB(uid) end
                 if cache[globalKey] then cache[globalKey] = nil end
             end
-
-            deleteCount = deleteCount + 1
         end
+
+        targetPly:SetUnboxingInventory(inventory)
     else
         -- Player is offline - update DB directly
         BRICKS_SERVER.UNBOXING.Func.FetchInventoryDB(targetSteamID64, function(data)

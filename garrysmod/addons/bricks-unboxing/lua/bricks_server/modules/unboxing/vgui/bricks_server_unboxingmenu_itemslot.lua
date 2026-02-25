@@ -114,8 +114,8 @@ function PANEL:FillPanel( data, amount, actions )
         local rarityX, rarityY = surface.GetTextSize( displayRarity or "" )
     
         local infoH = (nameY+rarityY)-6
-        -- Stat area: quality row + 4 stat bars (more spacious now)
-        local statAreaH = isUniqueWeapon and 36 or 0
+        -- Stat area: quality row + 4 stat bars (spacious layout)
+        local statAreaH = isUniqueWeapon and 48 or 0
 
         self.panelInfo.Paint = function( self2, w, h )
             local toScreenX, toScreenY = self2:LocalToScreen( 0, 0 )
@@ -174,20 +174,20 @@ function PANEL:FillPanel( data, amount, actions )
                 -- Quality badge (small, bottom-left) 
                 local qualityInfo = BRS_UW.GetQualityInfo and BRS_UW.GetQualityInfo(uwData.quality or "Junk")
                 if qualityInfo then
-                    draw.RoundedBox(3, statsX, bottomY - 34, 44, 12, ColorAlpha(qualityInfo.color, 160))
-                    draw.SimpleText(uwData.quality or "Junk", "BRS_UW_Font8", statsX + 22, bottomY - 28, Color(255,255,255,230), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+                    draw.RoundedBox(3, statsX, bottomY - 46, 44, 13, ColorAlpha(qualityInfo.color, 160))
+                    draw.SimpleText(uwData.quality or "Junk", "BRS_UW_Font8", statsX + 22, bottomY - 39, Color(255,255,255,230), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
                 end
 
                 -- Avg boost (small, bottom-right)
                 local avgBoost = uwData.avgBoost or 0
                 local avgCol = avgBoost >= 50 and Color(80,255,120) or (avgBoost >= 25 and Color(255,200,40) or Color(180,180,180))
-                draw.SimpleText("Avg +" .. string.format("%.1f", avgBoost) .. "%", "BRS_UW_Font8", w - 6, bottomY - 28, avgCol, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER)
+                draw.SimpleText("Avg +" .. string.format("%.1f", avgBoost) .. "%", "BRS_UW_Font8", w - 6, bottomY - 39, avgCol, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER)
 
-                -- 4 compact stat bars with better spacing
-                local barStartY = bottomY - 20
-                local barH = 3
-                local barSpacing = 2
-                local labelW = 24
+                -- 4 stat bars with comfortable spacing
+                local barStartY = bottomY - 30
+                local barH = 4
+                local barSpacing = 3
+                local labelW = 26
                 local barW = statsW - labelW - 6
 
                 for i, statDef in ipairs(BRS_UW.Stats) do
