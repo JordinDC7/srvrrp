@@ -12,13 +12,63 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
-      - name: Deploy via SFTP
-        uses: wangyucode/sftp-upload-action@v3
         with:
-          host: ${{ secrets.SFTP_HOST }}
-          port: ${{ secrets.SFTP_PORT }}
-          username: ${{ secrets.SFTP_USER }}
-          password: ${{ secrets.SFTP_PASS }}
-          localDir: ./garrysmod/
-          remoteDir: ${{ secrets.SFTP_REMOTE_DIR }}
+          fetch-depth: 0
+
+      - name: Install lftp
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq lftp
+
+      - name: Deploy changed files via SFTP
+        env:
+          SFTP_HOST: ${{ secrets.SFTP_HOST }}
+          SFTP_PORT: ${{ secrets.SFTP_PORT }}
+          SFTP_USER: ${{ secrets.SFTP_USER }}
+          LFTP_PASSWORD: ${{ secrets.SFTP_PASS }}
+          REMOTE_DIR: ${{ secrets.SFTP_REMOTE_DIR }}
+        run: |
+          BEFORE="${{ github.event.before }}"
+
+          # First push: upload everything. Otherwise: only changed files.
+          if [ "$BEFORE" = "0000000000000000000000000000000000000000" ]; then
+            echo "=== Initial deploy - uploading all tracked files ==="
+            CHANGED=$(find garrysmod/ -type f)
+            DELETED=""
+          else
+            echo "=== Incremental deploy ==="
+            CHANGED=$(git diff --name-only --diff-filter=ACMR "$BEFORE" "${{ github.sha }}" -- garrysmod/ || true)
+            DELETED=$(git diff --name-only --diff-filter=D "$BEFORE" "${{ github.sha }}" -- garrysmod/ || true)
+          fi
+
+          if [ -z "$CHANGED" ] && [ -z "$DELETED" ]; then
+            echo "No files changed in garrysmod/, nothing to deploy."
+            exit 0
+          fi
+
+          # Build lftp command script
+          SCRIPT=""
+
+          while IFS= read -r file; do
+            [ -z "$file" ] && continue
+            remote="${REMOTE_DIR}${file#garrysmod/}"
+            SCRIPT="${SCRIPT}put \"${file}\" -o \"${remote}\";"$'\n'
+            echo "  UPLOAD: $file -> $remote"
+          done <<< "$CHANGED"
+
+          while IFS= read -r file; do
+            [ -z "$file" ] && continue
+            remote="${REMOTE_DIR}${file#garrysmod/}"
+            SCRIPT="${SCRIPT}rm -f \"${remote}\";"$'\n'
+            echo "  DELETE: $remote"
+          done <<< "$DELETED"
+
+          # Execute deploy
+          lftp -u "${SFTP_USER}" "sftp://${SFTP_HOST}:${SFTP_PORT}" -e "
+            set sftp:auto-confirm yes;
+            set xfer:auto-mkdir yes;
+            set net:max-retries 3;
+            set net:reconnect-interval-base 5;
+            ${SCRIPT}
+            quit
+          "
+
+          echo "=== Deploy complete ==="
