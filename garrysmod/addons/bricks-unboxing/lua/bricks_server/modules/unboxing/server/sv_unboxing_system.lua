@@ -135,7 +135,7 @@ net.Receive( "BRS.Net.PurchaseShopUnboxingItems", function( len, ply )
 
 	local shopItems = {}
 	for i = 1, itemCount do
-		local key, amount = net.ReadUInt( 16 ), net.ReadUInt( 8 )
+		local key, amount = net.ReadUInt( 16 ), net.ReadUInt( 16 )
 		if( not key or not amount ) then return end
 		shopItems[key] = amount
 	end

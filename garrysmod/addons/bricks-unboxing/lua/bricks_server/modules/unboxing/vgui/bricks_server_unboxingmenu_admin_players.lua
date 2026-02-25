@@ -256,6 +256,7 @@ function PANEL:RefreshPanel( steamID64, playerData )
     -- Manage bar inside category
     local adminSelectedItems = {}
     local adminSelectMode = false
+    local inventoryTable = playerData.inventory or {}
 
     local manageBar = vgui.Create( "DPanel", inventoryPanel )
     manageBar:Dock( TOP )
@@ -379,8 +380,6 @@ function PANEL:RefreshPanel( steamID64, playerData )
     inventoryGrid:DockMargin( 10, 10, 10, 10 )
     inventoryGrid:SetSpaceY( spacing )
     inventoryGrid:SetSpaceX( spacing )
-
-    local inventoryTable = playerData.inventory or {}
 
     local sortedItems = {}
     for k, v in pairs( inventoryTable ) do

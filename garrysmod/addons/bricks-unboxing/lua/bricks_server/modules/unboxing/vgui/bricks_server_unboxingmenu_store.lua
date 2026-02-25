@@ -185,7 +185,7 @@ function PANEL:FillPanel()
                 
                 for k, v in pairs( BRS_UNBOXING_CART ) do
                     net.WriteUInt( k, 16 )
-                    net.WriteUInt( v, 8 )
+                    net.WriteUInt( v, 16 )
                 end
             net.SendToServer()
         end
@@ -281,6 +281,26 @@ function PANEL:FillPanel()
                     draw.RoundedBox( 16, 0, (h/2)-(amountH/2), w, amountH, BRICKS_SERVER.Func.GetTheme( ((currentItemPos % 2 == 0) and 2) or 1 ) )
 
                     draw.SimpleText( v, "BRICKS_SERVER_Font17", w/2, h/2, Color( BRICKS_SERVER.Func.GetTheme( 6 ).r, BRICKS_SERVER.Func.GetTheme( 6 ).g, BRICKS_SERVER.Func.GetTheme( 6 ).b, 75 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+                end
+
+                -- Click on the quantity number to type a custom amount
+                local cartEntryAmountBtn = vgui.Create( "DButton", cartEntryAmount )
+                cartEntryAmountBtn:Dock( FILL )
+                cartEntryAmountBtn:DockMargin( amountH, 0, amountH, 0 )
+                cartEntryAmountBtn:SetText( "" )
+                cartEntryAmountBtn.Paint = function( self2, w, h )
+                    if self2:IsHovered() then
+                        draw.RoundedBox( 8, 0, (h/2)-(amountH/2)+2, w, amountH-4, BRICKS_SERVER.Func.GetTheme( 0, 50 ) )
+                    end
+                end
+                cartEntryAmountBtn.DoClick = function()
+                    BRICKS_SERVER.Func.StringRequest( "Quantity", "Enter amount:", v, function( text )
+                        local num = tonumber(text)
+                        if num and num >= 1 then
+                            BRS_UNBOXING_CART[k] = math.floor(num)
+                            self:RefreshShoppingCart()
+                        end
+                    end, function() end, "Set", "Cancel", true )
                 end
 
                 local cartEntryAmountAdd = vgui.Create( "DButton", cartEntryAmount )
@@ -409,32 +429,65 @@ end
 function PANEL:AddStoreItem( storeTable, itemKey, grid, itemWidth, itemHeight )
     if( not storeTable or not storeTable.GlobalKey ) then return end
 
-    local function addToCart()
+    local function addToCart( amount )
+        amount = amount or 1
         BRS_UNBOXING_CART = BRS_UNBOXING_CART or {}
-        BRS_UNBOXING_CART[itemKey] = (BRS_UNBOXING_CART[itemKey] or 0)+1
+        BRS_UNBOXING_CART[itemKey] = (BRS_UNBOXING_CART[itemKey] or 0) + amount
         self:RefreshShoppingCart()
 
-        BRICKS_SERVER.Func.CreateTopNotification( BRICKS_SERVER.Func.L( "unboxingCartItemAdded" ), 3, BRICKS_SERVER.DEVCONFIG.BaseThemes.Green )
+        BRICKS_SERVER.Func.CreateTopNotification( BRICKS_SERVER.Func.L( "unboxingCartItemAdded" ) .. " (x" .. amount .. ")", 3, BRICKS_SERVER.DEVCONFIG.BaseThemes.Green )
     end
 
     local slotBack = grid:Add( "bricks_server_unboxingmenu_itemslot" )
     slotBack:SetSize( itemWidth, itemHeight )
-    slotBack:FillPanel( storeTable.GlobalKey, 1, function()
+    slotBack:FillPanel( storeTable.GlobalKey, 1, function( ax, ay, aw, ah )
         local isCase, isKey = string.StartWith( storeTable.GlobalKey, "CASE_" ), string.StartWith( storeTable.GlobalKey, "KEY_" )
         if( not isCase and not isKey ) then
-            addToCart()
-        else
-            local itemKey = tonumber( string.Replace( storeTable.GlobalKey, (isCase and "CASE_") or "KEY_", "" ) )
-            self.popoutPanel = vgui.Create( (isCase and "bricks_server_unboxingmenu_caseview_popup") or "bricks_server_unboxingmenu_keyview_popup", self )
-            self.popoutPanel:SetPos( 0, 0 )
-            self.popoutPanel:SetSize( self.panelWide, self.panelTall )
-            self.popoutPanel:CreatePopout()
-            self.popoutPanel:FillPanel( itemKey, function()
-                addToCart()
-
-                if( not IsValid( self.popoutPanel.popoutPanel ) ) then return end
-                self.popoutPanel.popoutPanel.ClosePopout()
+            -- Show quantity popup
+            local menu = DermaMenu()
+            menu:AddOption( "Add 1 to Cart", function() addToCart(1) end )
+            menu:AddOption( "Add 5 to Cart", function() addToCart(5) end )
+            menu:AddOption( "Add 10 to Cart", function() addToCart(10) end )
+            menu:AddOption( "Add 25 to Cart", function() addToCart(25) end )
+            menu:AddSpacer()
+            menu:AddOption( "Custom Amount...", function()
+                BRICKS_SERVER.Func.StringRequest( "Quantity", "How many to add to cart?", "1", function( text )
+                    local num = tonumber(text)
+                    if num and num >= 1 then
+                        addToCart(math.floor(num))
+                    end
+                end, function() end, "Add", "Cancel", true )
             end )
+            menu:Open()
+        else
+            local menu = DermaMenu()
+            menu:AddOption( "View Contents", function()
+                local itmKey = tonumber( string.Replace( storeTable.GlobalKey, (isCase and "CASE_") or "KEY_", "" ) )
+                self.popoutPanel = vgui.Create( (isCase and "bricks_server_unboxingmenu_caseview_popup") or "bricks_server_unboxingmenu_keyview_popup", self )
+                self.popoutPanel:SetPos( 0, 0 )
+                self.popoutPanel:SetSize( self.panelWide, self.panelTall )
+                self.popoutPanel:CreatePopout()
+                self.popoutPanel:FillPanel( itmKey, function()
+                    addToCart(1)
+                    if( not IsValid( self.popoutPanel.popoutPanel ) ) then return end
+                    self.popoutPanel.popoutPanel.ClosePopout()
+                end )
+            end )
+            menu:AddSpacer()
+            menu:AddOption( "Add 1 to Cart", function() addToCart(1) end )
+            menu:AddOption( "Add 5 to Cart", function() addToCart(5) end )
+            menu:AddOption( "Add 10 to Cart", function() addToCart(10) end )
+            menu:AddOption( "Add 25 to Cart", function() addToCart(25) end )
+            menu:AddSpacer()
+            menu:AddOption( "Custom Amount...", function()
+                BRICKS_SERVER.Func.StringRequest( "Quantity", "How many to add to cart?", "1", function( text )
+                    local num = tonumber(text)
+                    if num and num >= 1 then
+                        addToCart(math.floor(num))
+                    end
+                end, function() end, "Add", "Cancel", true )
+            end )
+            menu:Open()
         end
     end )
     slotBack:AddTopInfo( BRICKS_SERVER.UNBOXING.Func.FormatCurrency( storeTable.Price or 0, storeTable.Currency ) )
