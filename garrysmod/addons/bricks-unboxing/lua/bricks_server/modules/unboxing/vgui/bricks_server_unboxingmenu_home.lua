@@ -1,13 +1,10 @@
 -- ============================================================
--- SmG RP - Custom Home Page
--- Dark tactical theme with stat cards + activity feed
+-- SmG RP - Home Page (Robust Layout)
+-- No precomputed widths - fully dock-driven
 -- ============================================================
 local PANEL = {}
 
 function PANEL:Init()
-    -- DockPadding for internal spacing (DockMargin does nothing since page is manually positioned)
-    self:DockPadding( 20, 16, 20, 16 )
-
     hook.Add( "BRS.Hooks.ConfigReceived", self, function()
         self:FillPanel()
     end )
@@ -17,271 +14,274 @@ function PANEL:FillPanel()
     self:Clear()
     local C = SMGRP and SMGRP.UI and SMGRP.UI.Colors or {}
 
-    -- Use actual page dimensions (set by main menu before FillPanel)
-    local pageW = self:GetWide()
-    local pageH = self:GetTall()
-    -- panelWide/panelTall set by main menu SwitchToPage
-    local pW = self.panelWide or pageW
-    local pH = self.panelTall or pageH
-    -- Account for DockPadding (20 left + 20 right = 40, 16 top + 16 bottom = 32)
-    local innerW = pW - 40
-    local innerH = pH - 32
+    -- ====== CONTENT WRAPPER (provides margins) ======
+    local wrapper = vgui.Create("DPanel", self)
+    wrapper:Dock(FILL)
+    wrapper:DockMargin(20, 12, 20, 12)
+    wrapper.Paint = function() end
 
+    -- ====== STATISTICS ======
     local statistics = {
-        { Title = BRICKS_SERVER.Func.L( "unboxingCasesOpened" ), Value = function() return LocalPlayer():GetUnboxingStat( "cases" ) end, Icon = "📦" },
-        { Title = BRICKS_SERVER.Func.L( "unboxingTradesCompleted" ), Value = function() return LocalPlayer():GetUnboxingStat( "trades" ) end, Icon = "🤝" },
-        { Title = BRICKS_SERVER.Func.L( "unboxingItemsPurchased" ), Value = function() return LocalPlayer():GetUnboxingStat( "items" ) end, Icon = "🛒" },
+        { Title = BRICKS_SERVER.Func.L( "unboxingCasesOpened" ), Value = function() return LocalPlayer():GetUnboxingStat( "cases" ) end },
+        { Title = BRICKS_SERVER.Func.L( "unboxingTradesCompleted" ), Value = function() return LocalPlayer():GetUnboxingStat( "trades" ) end },
+        { Title = BRICKS_SERVER.Func.L( "unboxingItemsPurchased" ), Value = function() return LocalPlayer():GetUnboxingStat( "items" ) end },
     }
 
-    -- ====== TOP: STAT CARDS ======
-    local topBack = vgui.Create( "DPanel", self )
-    topBack:Dock( TOP )
-    topBack:SetTall( 130 )
-    topBack.Paint = function() end
+    -- ====== TOP: STAT CARDS ROW ======
+    local topRow = vgui.Create("DPanel", wrapper)
+    topRow:Dock(TOP)
+    topRow:SetTall(120)
+    topRow.Paint = function() end
 
-    local topBackW = innerW
-    local entrySpacing = 10
-    local entryWide = (topBackW - ((#statistics-1) * entrySpacing)) / #statistics
+    -- Use DIconLayout for evenly-spaced stat cards
+    for k, v in ipairs(statistics) do
+        local card = vgui.Create("DPanel", topRow)
+        card:Dock(LEFT)
+        -- On first PerformLayout, compute 1/3 width
+        card.PerformLayout = function(self2, w, h)
+            local parentW = topRow:GetWide()
+            if parentW > 100 then
+                local spacing = 10
+                local cardW = (parentW - (spacing * (#statistics - 1))) / #statistics
+                self2:SetWide(cardW)
+            end
+        end
+        card:DockMargin(0, 0, k < #statistics and 10 or 0, 0)
+        card:SetWide(200) -- initial, gets recalculated
 
-    for k, v in ipairs( statistics ) do
-        local statisticEntry = vgui.Create( "DPanel", topBack )
-        statisticEntry:Dock( LEFT )
-        statisticEntry:DockMargin( 0, 0, entrySpacing, 0 )
-        statisticEntry:SetWide( entryWide )
-        local value = 0
-        statisticEntry.Paint = function( self2, w, h ) 
-            draw.RoundedBox( 6, 0, 0, w, h, C.bg_mid or Color(26,27,35) )
-            surface.SetDrawColor(C.border or Color(50,52,65))
+        local animValue = 0
+        card.Paint = function(self2, w, h)
+            draw.RoundedBox(6, 0, 0, w, h, C.bg_mid or Color(26, 27, 35))
+            surface.SetDrawColor(C.border or Color(50, 52, 65))
             surface.DrawOutlinedRect(0, 0, w, h, 1)
 
             -- Accent bar at top
-            draw.RoundedBoxEx( 6, 0, 0, w, 3, C.accent_dim or Color(0,160,128), true, true, false, false )
-    
-            -- Title
-            draw.SimpleText( string.upper( v.Title ), "SMGRP_Bold12", w/2, 28, C.text_muted or Color(90,94,110), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
-            
-            -- Animated value
-            value = math.ceil( Lerp( FrameTime()*5, value, v.Value() ) )
-            draw.SimpleText( string.Comma( value ), "SMGRP_Stat32", w/2, 72, C.text_primary or Color(220,222,230), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+            draw.RoundedBoxEx(6, 0, 0, w, 3, C.accent_dim or Color(0, 160, 128), true, true, false, false)
+
+            -- Title (uppercase, muted)
+            draw.SimpleText(string.upper(v.Title), "SMGRP_Bold12", w/2, 30, C.text_muted or Color(90, 94, 110), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+
+            -- Animated counter
+            animValue = math.ceil(Lerp(FrameTime() * 5, animValue, v.Value()))
+            draw.SimpleText(string.Comma(animValue), "SMGRP_Stat32", w/2, 72, C.text_primary or Color(220, 222, 230), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
         end
     end
 
-    -- ====== BOTTOM: COLUMNS ======
-    local bottomBack = vgui.Create( "DPanel", self )
-    bottomBack:Dock( FILL )
-    bottomBack:DockMargin( 0, 10, 0, 0 )
-    bottomBack.Paint = function() end
+    -- ====== BOTTOM: 3-COLUMN LAYOUT ======
+    local bottomRow = vgui.Create("DPanel", wrapper)
+    bottomRow:Dock(FILL)
+    bottomRow:DockMargin(0, 10, 0, 0)
+    bottomRow.Paint = function() end
 
-    -- ====== ACTIVITY FEED (right) ======
-    local activityBack = vgui.Create( "DPanel", bottomBack )
-    activityBack:Dock( RIGHT )
-    activityBack:SetWide( innerW * 0.38 )
-    activityBack.Paint = function( self2, w, h ) 
-        draw.RoundedBox( 6, 0, 0, w, h, C.bg_mid or Color(26,27,35) )
-        surface.SetDrawColor(C.border or Color(50,52,65))
+    -- ====== COLUMN 1: LEADERBOARD (left, 30%) ======
+    local leaderboardBack = vgui.Create("DPanel", bottomRow)
+    leaderboardBack:Dock(LEFT)
+    leaderboardBack:DockMargin(0, 0, 10, 0)
+    -- Responsive width
+    leaderboardBack.PerformLayout = function(self2)
+        local parentW = bottomRow:GetWide()
+        if parentW > 100 then self2:SetWide(parentW * 0.28) end
+    end
+    leaderboardBack:SetWide(250)
+
+    leaderboardBack.Paint = function(self2, w, h)
+        draw.RoundedBox(6, 0, 0, w, h, C.bg_mid or Color(26, 27, 35))
+        surface.SetDrawColor(C.border or Color(50, 52, 65))
         surface.DrawOutlinedRect(0, 0, w, h, 1)
-        
-        -- Header area
-        draw.RoundedBoxEx( 6, 0, 0, w, 40, C.bg_light or Color(34,36,46), true, true, false, false )
-        draw.SimpleText( "LIVE ACTIVITY", "SMGRP_Bold13", 16, 20, C.text_secondary or Color(140,144,160), 0, TEXT_ALIGN_CENTER )
-    end
-
-    local bottomBackTall = innerH - topBack:GetTall() - 10
-    local activityEntryHeight, activityEntrySpacing = 40, 8
-    local activityScrollMaxH = bottomBackTall - 70
-
-    local activityScroll = vgui.Create( "bricks_server_scrollpanel_bar", activityBack )
-    activityScroll:Dock( FILL )
-    activityScroll:DockMargin( 12, 50, 12, 12 )
-    activityScroll:SetBarBackColor( C.bg_darkest or Color(12,12,18) )
-    local scrollH = 0
-    activityScroll.pnlCanvas.Paint = function( self2, w, h ) 
-        if( scrollH != h ) then
-            scrollH = h
-            activityScroll.VBar:AnimateTo( scrollH, 0 ) 
-        end
-    end
-
-    self.activitySlots = 0
-    function self.AddActivityEntry( plyName, rarityName, itemName )
-        self.activitySlots = self.activitySlots+1
-        activityScroll:SetTall( math.min( activityScrollMaxH, activityScroll:GetTall()+activityEntryHeight+((self.activitySlots != 1 and activityEntrySpacing) or 0) ) )
-
-        surface.SetFont( "SMGRP_Body13" )
-        local textX, textY = surface.GetTextSize( BRICKS_SERVER.Func.L( "unboxingPlyUnboxedA", plyName, itemName ) )
-
-        local rarityInfo, rarityKey = BRICKS_SERVER.Func.GetRarityInfo( rarityName )
-        local curActivitySlot = self.activitySlots
-        local rarityColor = (SMGRP and SMGRP.UI) and SMGRP.UI.GetRarityColor(rarityName) or BRICKS_SERVER.Func.GetRarityColor(rarityInfo)
-
-        local activityEntry = vgui.Create( "DPanel", activityScroll )
-        activityEntry:Dock( TOP )
-        activityEntry:DockMargin( 0, curActivitySlot > 1 and activityEntrySpacing or 0, 6, 0 )
-        activityEntry:SetTall( activityEntryHeight )
-        activityEntry.Paint = function( self2, w, h ) 
-            draw.RoundedBox( 4, 0, 0, w, h, C.bg_light or Color(34,36,46) )
-
-            surface.SetFont( "SMGRP_Body13" )
-            surface.SetTextPos( 12, (h/2)-(textY/2) ) 
-            surface.SetTextColor( (C.text_secondary or Color(140,144,160)).r, (C.text_secondary or Color(140,144,160)).g, (C.text_secondary or Color(140,144,160)).b )
-            surface.DrawText( BRICKS_SERVER.Func.L( "unboxingPlyUnboxedA1", plyName ) )
-            surface.SetTextColor( rarityColor.r, rarityColor.g, rarityColor.b )
-            surface.DrawText( "'" .. itemName .. "'" )
-        end
-
-        activityScroll.Filler:SetTall( activityScroll.Filler:GetTall()-(activityEntry:GetTall()+((self.activitySlots != 1 and activityEntrySpacing) or 0)) )
-        return activityEntry
-    end
-
-    function self.RefreshActivity()
-        activityScroll:Clear()
-        self.activitySlots = 0
-        activityScroll.Filler = vgui.Create( "DPanel", activityScroll )
-        activityScroll.Filler:Dock( TOP )
-        activityScroll.Filler:SetTall( activityScrollMaxH )
-        activityScroll.Filler.Paint = function() end
-        for k, v in ipairs( BRS_UNBOXING_ACTIVITY or {} ) do
-            self.AddActivityEntry( v[1], v[2], v[3], v[4] )
-        end
-    end
-    self.RefreshActivity()
-
-    hook.Add( "BRS.Hooks.InsertUnboxingAlert", self, function( self2, activityKey )
-        local activityTable = (BRS_UNBOXING_ACTIVITY or {})[activityKey]
-        if( not activityTable ) then return end
-        self.AddActivityEntry( activityTable[1], activityTable[2], activityTable[3] )
-    end )
-
-    -- ====== LEADERBOARD (left) ======
-    local leaderboardBack = vgui.Create( "DPanel", bottomBack )
-    leaderboardBack:Dock( LEFT )
-    leaderboardBack:SetWide( entryWide )
-    leaderboardBack:DockMargin( 0, 0, 10, 0 )
-    leaderboardBack.Paint = function( self2, w, h ) 
-        draw.RoundedBox( 6, 0, 0, w, h, C.bg_mid or Color(26,27,35) )
-        surface.SetDrawColor(C.border or Color(50,52,65))
-        surface.DrawOutlinedRect(0, 0, w, h, 1)
-        
-        draw.RoundedBoxEx( 6, 0, 0, w, 40, C.bg_light or Color(34,36,46), true, true, false, false )
-        draw.SimpleText( "LEADERBOARD", "SMGRP_Bold13", 16, 20, C.text_secondary or Color(140,144,160), 0, TEXT_ALIGN_CENTER )
+        draw.RoundedBoxEx(6, 0, 0, w, 38, C.bg_light or Color(34, 36, 46), true, true, false, false)
+        draw.SimpleText("LEADERBOARD", "SMGRP_Bold12", 14, 19, C.text_secondary or Color(140, 144, 160), 0, TEXT_ALIGN_CENTER)
     end
 
     function self.RefreshPanel()
         leaderboardBack:Clear()
-
-        local height, spacing = 60, 8
+        local height, spacing = 56, 6
         local slots = #(BRICKS_SERVER.TEMP.UnboxingLeaderboard or {})
-        local scrollPanelTall = bottomBackTall - 70
-        local displayBar = (slots*(height+spacing))-spacing > scrollPanelTall
 
-        local leaderboardScroll = vgui.Create( displayBar and "bricks_server_scrollpanel_bar" or "bricks_server_scrollpanel", leaderboardBack )
-        leaderboardScroll:Dock( FILL )
-        leaderboardScroll:DockMargin( 12, 50, 12, 12 )
-        if( displayBar ) then leaderboardScroll:SetBarBackColor( C.bg_darkest or Color(12,12,18) ) end
+        local lbScroll = vgui.Create("bricks_server_scrollpanel_bar", leaderboardBack)
+        lbScroll:Dock(FILL)
+        lbScroll:DockMargin(10, 46, 10, 10)
+        lbScroll:SetBarBackColor(C.bg_darkest or Color(12, 12, 18))
 
         local medalColors = {
-            Color(255, 200, 50),  -- Gold
-            Color(190, 195, 205), -- Silver
-            Color(200, 145, 60),  -- Bronze
+            Color(255, 200, 50),
+            Color(190, 195, 205),
+            Color(200, 145, 60),
         }
 
-        for k, v in pairs( BRICKS_SERVER.TEMP.UnboxingLeaderboard or {} ) do
-            local avatarBackSize = height-14
-            local textStartPos = height
+        for k, v in pairs(BRICKS_SERVER.TEMP.UnboxingLeaderboard or {}) do
+            local avatarSize = height - 16
 
-            local playerName = BRICKS_SERVER.Func.L( "unknown" )
-            if( v.steamID64 ) then
-                steamworks.RequestPlayerInfo( v.steamID64, function( steamName )
-                    playerName = steamName
-                end )
+            local playerName = BRICKS_SERVER.Func.L("unknown")
+            if v.steamID64 then
+                steamworks.RequestPlayerInfo(v.steamID64, function(n) playerName = n end)
             end
 
-            local playerBack = vgui.Create( "DPanel", leaderboardScroll )
-            playerBack:Dock( TOP )
-            playerBack:DockMargin( 0, 0, displayBar and 6 or 0, spacing )
-            playerBack:SetTall( height )
-            playerBack.Paint = function( self2, w, h )
-                draw.RoundedBox( 4, 0, 0, w, h, C.bg_light or Color(34,36,46) )
-
-                -- Rank medal
+            local entry = vgui.Create("DPanel", lbScroll)
+            entry:Dock(TOP)
+            entry:DockMargin(0, 0, 4, spacing)
+            entry:SetTall(height)
+            entry.Paint = function(self2, w, h)
+                draw.RoundedBox(4, 0, 0, w, h, C.bg_light or Color(34, 36, 46))
                 if k <= 3 then
-                    local medalCol = medalColors[k]
-                    draw.RoundedBox( 2, 2, 2, 4, h-4, medalCol )
+                    draw.RoundedBox(2, 2, 2, 3, h - 4, medalColors[k])
                 end
-
-                draw.SimpleText( playerName, "SMGRP_Bold13", textStartPos, h/2+1, C.text_primary or Color(220,222,230), 0, TEXT_ALIGN_BOTTOM )
-                draw.SimpleText( BRICKS_SERVER.Func.L( "unboxingXCases", (v.cases or 0) ), "SMGRP_Body12", textStartPos, h/2-1, C.text_muted or Color(90,94,110), 0, 0 )
-
-                -- Rank number
-                draw.SimpleText( "#" .. k, "SMGRP_Bold14", w-12, h/2, k <= 3 and medalColors[k] or (C.text_muted or Color(90,94,110)), TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )
+                local tx = height - 4
+                draw.SimpleText(playerName, "SMGRP_Bold12", tx, h/2 + 1, C.text_primary or Color(220, 222, 230), 0, TEXT_ALIGN_BOTTOM)
+                draw.SimpleText(BRICKS_SERVER.Func.L("unboxingXCases", v.cases or 0), "SMGRP_Body12", tx, h/2 - 1, C.text_muted or Color(90, 94, 110), 0, 0)
+                draw.SimpleText("#" .. k, "SMGRP_Bold13", w - 10, h/2, k <= 3 and medalColors[k] or (C.text_muted or Color(90, 94, 110)), TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER)
             end
 
-            local avatarIcon = vgui.Create( "bricks_server_circle_avatar", playerBack )
-            avatarIcon:SetPos( 12, (height-avatarBackSize)/2 )
-            avatarIcon:SetSize( avatarBackSize, avatarBackSize )
-            avatarIcon:SetSteamID( v.steamID64 or "", 64 )
+            local av = vgui.Create("bricks_server_circle_avatar", entry)
+            av:SetPos(8, (height - avatarSize) / 2)
+            av:SetSize(avatarSize, avatarSize)
+            av:SetSteamID(v.steamID64 or "", 64)
         end
     end
     self.RefreshPanel()
 
-    hook.Add( "BRS.Hooks.RefreshUnboxingLeaderboard", self, function()
+    hook.Add("BRS.Hooks.RefreshUnboxingLeaderboard", self, function()
         self.RefreshPanel()
-    end )
+    end)
 
     BRICKS_SERVER.UNBOXING.Func.RequestLeaderboardStats()
-    if( not timer.Exists( "BRS_TIMER_UNBOXING_LEADERBOARD" ) ) then
-        timer.Create( "BRS_TIMER_UNBOXING_LEADERBOARD", 60, 0, function()
-            if( IsValid( self ) ) then
+    if not timer.Exists("BRS_TIMER_UNBOXING_LEADERBOARD") then
+        timer.Create("BRS_TIMER_UNBOXING_LEADERBOARD", 60, 0, function()
+            if IsValid(self) then
                 BRICKS_SERVER.UNBOXING.Func.RequestLeaderboardStats()
             else
-                timer.Remove( "BRS_TIMER_UNBOXING_LEADERBOARD" )
+                timer.Remove("BRS_TIMER_UNBOXING_LEADERBOARD")
             end
-        end )
+        end)
     end
 
-    -- ====== FEATURED ITEMS (center) ======
-    local featuredBack = vgui.Create( "DPanel", bottomBack )
-    featuredBack:Dock( FILL )
-    featuredBack:DockMargin( 0, 0, 10, 0 )
-    featuredBack.Paint = function( self2, w, h ) 
-        draw.RoundedBox( 6, 0, 0, w, h, C.bg_mid or Color(26,27,35) )
-        surface.SetDrawColor(C.border or Color(50,52,65))
+    -- ====== COLUMN 3: ACTIVITY FEED (right, 38%) ======
+    local activityBack = vgui.Create("DPanel", bottomRow)
+    activityBack:Dock(RIGHT)
+    activityBack:DockMargin(10, 0, 0, 0)
+    activityBack.PerformLayout = function(self2)
+        local parentW = bottomRow:GetWide()
+        if parentW > 100 then self2:SetWide(parentW * 0.36) end
+    end
+    activityBack:SetWide(300)
+
+    activityBack.Paint = function(self2, w, h)
+        draw.RoundedBox(6, 0, 0, w, h, C.bg_mid or Color(26, 27, 35))
+        surface.SetDrawColor(C.border or Color(50, 52, 65))
         surface.DrawOutlinedRect(0, 0, w, h, 1)
-        
-        draw.RoundedBoxEx( 6, 0, 0, w, 40, C.bg_light or Color(34,36,46), true, true, false, false )
-        draw.SimpleText( "FEATURED", "SMGRP_Bold13", 16, 20, C.accent or Color(0,212,170), 0, TEXT_ALIGN_CENTER )
+        draw.RoundedBoxEx(6, 0, 0, w, 38, C.bg_light or Color(34, 36, 46), true, true, false, false)
+        draw.SimpleText("LIVE ACTIVITY", "SMGRP_Bold12", 14, 19, C.text_secondary or Color(140, 144, 160), 0, TEXT_ALIGN_CENTER)
     end
 
-    local featuredScroll = vgui.Create( "bricks_server_scrollpanel_bar", featuredBack )
-    featuredScroll:Dock( FILL )
-    featuredScroll:DockMargin( 12, 50, 12, 12 )
-    featuredScroll:SetBarBackColor( C.bg_darkest or Color(12,12,18) )
+    local actScroll = vgui.Create("bricks_server_scrollpanel_bar", activityBack)
+    actScroll:Dock(FILL)
+    actScroll:DockMargin(10, 46, 10, 10)
+    actScroll:SetBarBackColor(C.bg_darkest or Color(12, 12, 18))
+    local scrollH = 0
+    actScroll.pnlCanvas.Paint = function(self2, w, h)
+        if scrollH ~= h then
+            scrollH = h
+            actScroll.VBar:AnimateTo(scrollH, 0)
+        end
+    end
 
-    local featuredSlotWide = innerW - leaderboardBack:GetWide() - activityBack:GetWide() - 20 - 24
+    -- Filler panel that pushes new entries to bottom
+    local actScrollMaxH = 800 -- generous initial; will be constrained by panel size
+    self.activitySlots = 0
+
+    function self.AddActivityEntry(plyName, rarityName, itemName)
+        self.activitySlots = self.activitySlots + 1
+
+        surface.SetFont("SMGRP_Body12")
+        local _, textY = surface.GetTextSize("Ay")
+
+        local rarityInfo = BRICKS_SERVER.Func.GetRarityInfo(rarityName)
+        local rarityColor = (SMGRP and SMGRP.UI and SMGRP.UI.GetRarityColor) and SMGRP.UI.GetRarityColor(rarityName) or BRICKS_SERVER.Func.GetRarityColor(rarityInfo)
+        local curSlot = self.activitySlots
+
+        local entry = vgui.Create("DPanel", actScroll)
+        entry:Dock(TOP)
+        entry:DockMargin(0, curSlot > 1 and 6 or 0, 4, 0)
+        entry:SetTall(36)
+        entry.Paint = function(self2, w, h)
+            draw.RoundedBox(4, 0, 0, w, h, C.bg_light or Color(34, 36, 46))
+            surface.SetFont("SMGRP_Body12")
+            surface.SetTextPos(10, (h/2) - (textY/2))
+            local tc = C.text_secondary or Color(140, 144, 160)
+            surface.SetTextColor(tc.r, tc.g, tc.b)
+            surface.DrawText(BRICKS_SERVER.Func.L("unboxingPlyUnboxedA1", plyName))
+            surface.SetTextColor(rarityColor.r, rarityColor.g, rarityColor.b)
+            surface.DrawText("'" .. itemName .. "'")
+        end
+
+        if IsValid(actScroll.Filler) then
+            local curFH = actScroll.Filler:GetTall()
+            actScroll.Filler:SetTall(math.max(0, curFH - 42))
+        end
+        return entry
+    end
+
+    function self.RefreshActivity()
+        actScroll:Clear()
+        self.activitySlots = 0
+
+        actScroll.Filler = vgui.Create("DPanel", actScroll)
+        actScroll.Filler:Dock(TOP)
+        actScroll.Filler:SetTall(actScrollMaxH)
+        actScroll.Filler.Paint = function() end
+
+        for _, v in ipairs(BRS_UNBOXING_ACTIVITY or {}) do
+            self.AddActivityEntry(v[1], v[2], v[3])
+        end
+    end
+    self.RefreshActivity()
+
+    hook.Add("BRS.Hooks.InsertUnboxingAlert", self, function(self2, activityKey)
+        local t = (BRS_UNBOXING_ACTIVITY or {})[activityKey]
+        if t then self.AddActivityEntry(t[1], t[2], t[3]) end
+    end)
+
+    -- ====== COLUMN 2: FEATURED ITEMS (center, fills remaining) ======
+    local featuredBack = vgui.Create("DPanel", bottomRow)
+    featuredBack:Dock(FILL)
+    featuredBack:DockMargin(0, 0, 0, 0)
+    featuredBack.Paint = function(self2, w, h)
+        draw.RoundedBox(6, 0, 0, w, h, C.bg_mid or Color(26, 27, 35))
+        surface.SetDrawColor(C.border or Color(50, 52, 65))
+        surface.DrawOutlinedRect(0, 0, w, h, 1)
+        draw.RoundedBoxEx(6, 0, 0, w, 38, C.bg_light or Color(34, 36, 46), true, true, false, false)
+        draw.SimpleText("FEATURED", "SMGRP_Bold12", 14, 19, C.accent or Color(0, 212, 170), 0, TEXT_ALIGN_CENTER)
+    end
+
+    local featScroll = vgui.Create("bricks_server_scrollpanel_bar", featuredBack)
+    featScroll:Dock(FILL)
+    featScroll:DockMargin(10, 46, 10, 10)
+    featScroll:SetBarBackColor(C.bg_darkest or Color(12, 12, 18))
+
+    -- Featured items - use a reasonable fixed size, docked
     for i = 1, BRICKS_SERVER.DEVCONFIG.UnboxingFeaturedAmount do
         local storeItemTable = BRICKS_SERVER.CONFIG.UNBOXING.Store.Items[BRICKS_SERVER.CONFIG.UNBOXING.Store.Featured[i] or 0]
-        if( not storeItemTable ) then continue end
+        if not storeItemTable then continue end
 
-        local slotBack = vgui.Create( "bricks_server_unboxingmenu_itemslot", featuredScroll )
-        slotBack:Dock( TOP )
-        slotBack:DockMargin( 0, 0, 6, 8 )
-        slotBack:SetSize( featuredSlotWide, featuredSlotWide*1.2 )
-        slotBack:FillPanel( storeItemTable.GlobalKey, 1 )
-        slotBack:AddTopInfo( BRICKS_SERVER.UNBOXING.Func.FormatCurrency( storeItemTable.Price or 0, storeItemTable.Currency ), C.accent_dim or Color(0,160,128), Color(255,255,255) )
-    
-        if( storeItemTable.Group ) then
+        local slot = vgui.Create("bricks_server_unboxingmenu_itemslot", featScroll)
+        slot:Dock(TOP)
+        slot:DockMargin(0, 0, 4, 8)
+        slot:SetTall(180)
+        slot:FillPanel(storeItemTable.GlobalKey, 1)
+        slot:AddTopInfo(BRICKS_SERVER.UNBOXING.Func.FormatCurrency(storeItemTable.Price or 0, storeItemTable.Currency), C.accent_dim or Color(0, 160, 128), Color(255, 255, 255))
+
+        if storeItemTable.Group then
             local groupTable = {}
-            for key, val in pairs( BRICKS_SERVER.CONFIG.GENERAL.Groups ) do
-                if( val[1] == storeItemTable.Group ) then groupTable = val break end
+            for key, val in pairs(BRICKS_SERVER.CONFIG.GENERAL.Groups) do
+                if val[1] == storeItemTable.Group then groupTable = val break end
             end
-            slotBack:AddTopInfo( storeItemTable.Group, groupTable[3], BRICKS_SERVER.Func.GetTheme( 6 ) )
+            slot:AddTopInfo(storeItemTable.Group, groupTable[3], BRICKS_SERVER.Func.GetTheme(6))
         end
     end
 end
 
-function PANEL:Paint( w, h )
+function PANEL:Paint(w, h)
     local C = SMGRP and SMGRP.UI and SMGRP.UI.Colors or {}
-    draw.RoundedBox( 0, 0, 0, w, h, C.bg_darkest or Color(12,12,18) )
+    draw.RoundedBox(0, 0, 0, w, h, C.bg_darkest or Color(12, 12, 18))
 end
 
-vgui.Register( "bricks_server_unboxingmenu_home", PANEL, "DPanel" )
+vgui.Register("bricks_server_unboxingmenu_home", PANEL, "DPanel")
