@@ -7,11 +7,12 @@
     We wrap language.Add to silently handle nil second arguments.
 ]]--
 
-local origLanguageAdd = language.Add
-language.Add = function(key, val)
-    if key == nil then return end
-    if val == nil then val = tostring(key) end
-    return origLanguageAdd(key, val)
+if CLIENT then
+    local origLanguageAdd = language.Add
+    language.Add = function(key, val)
+        if key == nil then return end
+        if val == nil then val = tostring(key) end
+        return origLanguageAdd(key, val)
+    end
+    print("[BRS] M9K Specialties language.Add fix loaded")
 end
-
-print("[BRS] M9K Specialties language.Add fix loaded")
