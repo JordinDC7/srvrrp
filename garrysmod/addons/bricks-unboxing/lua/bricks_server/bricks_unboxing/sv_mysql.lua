@@ -1,4 +1,4 @@
-local Host = "localhost"
+local Host = "193.243.190.26"
 local Username = "u14547_rEOEMLMVTj"
 local Password = "lm=uJs8+ln^!vnBZR30dWtH4"
 local DatabaseName = "s14547_unboxing"
