@@ -366,3 +366,4 @@ function BRS_WEAPONS.GetRarityColor(rarity)
 end
 
 print("[BRS UniqueWeapons] Shared definitions loaded - " .. #BRS_WEAPONS.AllWeapons .. " weapons, 7 rarity tiers")
+-- Force redeploy Wed Feb 25 01:01:54 UTC 2026
