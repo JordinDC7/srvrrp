@@ -171,20 +171,20 @@ BRS_WEAPONS.AllWeapons = {
     -- ========================
     -- M9K SMALL ARMS (Pistols & SMGs)
     -- ========================
-    { class = "m9k_colt_1911",           name = "Colt 1911",              model = "models/weapons/w_1911.mdl",                  category = "Pistol" },
-    { class = "m9k_browninghp",          name = "Browning Hi-Power",      model = "models/weapons/w_browning_hp.mdl",           category = "Pistol" },
+    { class = "m9k_colt1911",           name = "Colt 1911",              model = "models/weapons/w_1911.mdl",                  category = "Pistol" },
+    { class = "m9k_model3russian",          name = "S&W Model 3 Russian",      model = "models/weapons/w_browning_hp.mdl",           category = "Pistol" },
     { class = "m9k_coltpython",          name = "Colt Python",            model = "models/weapons/w_colt_python.mdl",           category = "Pistol" },
     { class = "m9k_deagle",              name = "Desert Eagle",           model = "models/weapons/w_tcom_deagle.mdl",           category = "Pistol" },
     { class = "m9k_glock",               name = "Glock 18",              model = "models/weapons/w_dmg_glock.mdl",             category = "Pistol" },
     { class = "m9k_hk45",               name = "HK45C",                 model = "models/weapons/w_hk45c.mdl",                 category = "Pistol" },
     { class = "m9k_luger",               name = "Luger P08",             model = "models/weapons/w_luger_p08.mdl",             category = "Pistol" },
     { class = "m9k_m29satan",            name = "S&W Model 29 Satan",    model = "models/weapons/w_sw_model_29.mdl",           category = "Pistol" },
-    { class = "m9k_m92beretta",          name = "Beretta M92",           model = "models/weapons/w_beretta_m92.mdl",           category = "Pistol" },
+    { class = "m9k_m92baretta",          name = "Beretta M92",           model = "models/weapons/w_beretta_m92.mdl",           category = "Pistol" },
     { class = "m9k_model500",            name = "S&W Model 500",         model = "models/weapons/w_sw_model_500.mdl",          category = "Pistol" },
     { class = "m9k_model627",            name = "S&W Model 627",         model = "models/weapons/w_sw_model_627.mdl",          category = "Pistol" },
     { class = "m9k_ragingbull",          name = "Taurus Raging Bull",    model = "models/weapons/w_taurus_raging_bull.mdl",    category = "Pistol" },
     { class = "m9k_remington1858",       name = "Remington 1858",        model = "models/weapons/w_remington_1858.mdl",        category = "Pistol" },
-    { class = "m9k_scoped_taurus",       name = "Scoped Taurus",         model = "models/weapons/w_raging_bull_scoped.mdl",    category = "Pistol" },
+    { class = "m9k_dbarrel",       name = "Double Barrel Shotgun",         model = "models/weapons/w_raging_bull_scoped.mdl",    category = "Pistol" },
     { class = "m9k_sig_p229r",           name = "SIG P229R",             model = "models/weapons/w_sig_229r.mdl",              category = "Pistol" },
     { class = "m9k_usp",                 name = "HK USP",                model = "models/weapons/w_pist_fokkususp.mdl",        category = "Pistol" },
     { class = "m9k_tec9",                name = "TEC-9",                 model = "models/weapons/w_intratec_tec9.mdl",         category = "Pistol" },
@@ -197,8 +197,8 @@ BRS_WEAPONS.AllWeapons = {
     { class = "m9k_mp5sd",               name = "MP5SD",                 model = "models/weapons/w_hk_mp5sd.mdl",             category = "SMG" },
     { class = "m9k_mp7",                 name = "MP7",                   model = "models/weapons/w_mp7_silenced.mdl",          category = "SMG" },
     { class = "m9k_mp9",                 name = "MP9",                   model = "models/weapons/w_brugger_thomet_mp9.mdl",    category = "SMG" },
-    { class = "m9k_mp40",                name = "MP40",                  model = "models/weapons/w_mp40_ww2.mdl",              category = "SMG" },
-    { class = "m9k_ppsh",                name = "PPSh-41",               model = "models/weapons/w_ppsh_41_ww2.mdl",           category = "SMG" },
+    { class = "m9k_sten",                name = "Sten",                  model = "models/weapons/w_mp40_ww2.mdl",              category = "SMG" },
+    { class = "m9k_magpulpdr",                name = "Magpul PDR",               model = "models/weapons/w_ppsh_41_ww2.mdl",           category = "SMG" },
     { class = "m9k_smgp90",              name = "FN P90",                model = "models/weapons/w_fn_p90.mdl",                category = "SMG" },
     { class = "m9k_thompson",            name = "Thompson M1A1",         model = "models/weapons/w_m1a1_thompson.mdl",         category = "SMG" },
     { class = "m9k_uzi",                 name = "Uzi",                   model = "models/weapons/w_uzi_imi.mdl",              category = "SMG" },
@@ -222,11 +222,11 @@ BRS_WEAPONS.AllWeapons = {
     { class = "m9k_m16a4_acog",         name = "M16A4 ACOG",           model = "models/weapons/w_m16a4_acog.mdl",            category = "Rifle" },
     { class = "m9k_m4a1",               name = "M4A1",                  model = "models/weapons/w_m4a1_iron.mdl",             category = "Rifle" },
     { class = "m9k_scar",               name = "SCAR-H",               model = "models/weapons/w_fn_scar_h.mdl",             category = "Rifle" },
-    { class = "m9k_scarl",              name = "SCAR-L",               model = "models/weapons/w_fn_scar_l.mdl",             category = "Rifle" },
+    { class = "m9k_val",              name = "AS VAL",               model = "models/weapons/w_fn_scar_l.mdl",             category = "Rifle" },
     { class = "m9k_sig_sg552",          name = "SIG SG552",            model = "models/weapons/w_sig_sg552.mdl",             category = "Rifle" },
     { class = "m9k_tar21",              name = "TAR-21",                model = "models/weapons/w_imi_tar21.mdl",             category = "Rifle" },
     { class = "m9k_vikhr",              name = "SR-3M Vikhr",           model = "models/weapons/w_sr3m_vikhr.mdl",            category = "Rifle" },
-    { class = "m9k_Winchester73",       name = "Winchester 1873",       model = "models/weapons/w_winchester_1873.mdl",       category = "Rifle" },
+    { class = "m9k_winchester73",       name = "Winchester 1873",       model = "models/weapons/w_winchester_1873.mdl",       category = "Rifle" },
 
     -- ========================
     -- M9K HEAVY WEAPONS
@@ -246,7 +246,7 @@ BRS_WEAPONS.AllWeapons = {
 
     -- Snipers
     { class = "m9k_aw50",               name = "AW50",                  model = "models/weapons/w_acc_int_aw50.mdl",          category = "Sniper" },
-    { class = "m9k_barrettm82",         name = "Barrett M82",           model = "models/weapons/w_barrett_m82.mdl",           category = "Sniper" },
+    { class = "m9k_barret_m82",         name = "Barrett M82",           model = "models/weapons/w_barrett_m82.mdl",           category = "Sniper" },
     { class = "m9k_contender",          name = "Contender G2",          model = "models/weapons/w_g2_contender.mdl",          category = "Sniper" },
     { class = "m9k_dragunov",           name = "SVD Dragunov",          model = "models/weapons/w_svd_dragunov.mdl",          category = "Sniper" },
     { class = "m9k_intervention",       name = "Intervention",          model = "models/weapons/w_cheytac_m200.mdl",          category = "Sniper" },
