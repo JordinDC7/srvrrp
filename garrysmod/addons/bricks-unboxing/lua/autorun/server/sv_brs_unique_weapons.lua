@@ -420,11 +420,23 @@ end)
 
 -- Also apply on PlayerLoadout (for permanent weapons)
 hook.Add("PlayerLoadout", "BRS_UW_ApplyOnLoadout", function(ply)
-    timer.Simple(0.5, function()
-        if not IsValid(ply) then return end
-        for _, wep in ipairs(ply:GetWeapons()) do
-            BRS_UW.ApplyBoostsToWeapon(ply, wep)
-        end
+    -- Apply boosts with staggered attempts to catch late-loading weapons
+    for _, delay in ipairs({0.5, 1.5, 3.0}) do
+        timer.Simple(delay, function()
+            if not IsValid(ply) then return end
+            for _, wep in ipairs(ply:GetWeapons()) do
+                BRS_UW.ApplyBoostsToWeapon(ply, wep)
+            end
+        end)
+    end
+end)
+
+-- Also catch weapon switching / re-equipping
+hook.Add("PlayerSwitchWeapon", "BRS_UW_ApplyOnSwitch", function(ply, oldWep, newWep)
+    if not IsValid(newWep) or not IsValid(ply) then return end
+    timer.Simple(0.05, function()
+        if not IsValid(newWep) or not IsValid(ply) then return end
+        BRS_UW.ApplyBoostsToWeapon(ply, newWep)
     end)
 end)
 
@@ -450,47 +462,79 @@ function BRS_UW.ApplyBoostsToWeapon(ply, wep)
         local stats = uwData.stats
         if not stats then continue end
 
-        -- Save originals
-        wep.BRS_UW_OriginalStats = wep.BRS_UW_OriginalStats or {}
+        -- CRITICAL: Deep copy Primary table to avoid modifying shared class reference
+        -- M9K weapons share their Primary table across all instances by default
+        if wep.Primary then
+            local origPrimary = wep.Primary
+            wep.Primary = {}
+            for k, v in pairs(origPrimary) do
+                wep.Primary[k] = v
+            end
+        else
+            print("[BRS UW] WARNING: " .. wepClass .. " has no Primary table!")
+            continue
+        end
+
+        -- Save originals for reference
+        wep.BRS_UW_OriginalStats = {
+            Damage = wep.Primary.Damage,
+            Spread = wep.Primary.Spread,
+            Recoil = wep.Primary.Recoil,
+            RPM = wep.Primary.RPM,
+            ClipSize = wep.Primary.ClipSize,
+        }
+
+        local applied = {}
 
         -- DAMAGE boost (capped at +100% = double damage)
-        if stats.dmg and wep.Primary and wep.Primary.Damage then
-            wep.BRS_UW_OriginalStats.Damage = wep.Primary.Damage
-            wep.Primary.Damage = math.Round(wep.Primary.Damage * (1 + math.min(stats.dmg, 100) / 100))
+        if stats.dmg and stats.dmg > 0 and wep.Primary.Damage then
+            local orig = wep.Primary.Damage
+            wep.Primary.Damage = math.Round(orig * (1 + math.min(stats.dmg, 100) / 100))
+            table.insert(applied, "DMG:" .. orig .. "->" .. wep.Primary.Damage)
         end
 
         -- ACCURACY boost (reduce spread - lower is better, max 50% reduction)
-        if stats.acc and wep.Primary and wep.Primary.Spread then
-            wep.BRS_UW_OriginalStats.Spread = wep.Primary.Spread
-            wep.Primary.Spread = wep.Primary.Spread * (1 - math.min(stats.acc, 100) / 100 * 0.5)
+        if stats.acc and stats.acc > 0 and wep.Primary.Spread then
+            local orig = wep.Primary.Spread
+            wep.Primary.Spread = orig * (1 - math.min(stats.acc, 100) / 100 * 0.5)
+            table.insert(applied, "ACC:" .. string.format("%.4f", orig) .. "->" .. string.format("%.4f", wep.Primary.Spread))
         end
 
         -- CONTROL boost (reduce recoil - lower is better, max 50% reduction)
-        if stats.ctrl and wep.Primary and wep.Primary.Recoil then
-            wep.BRS_UW_OriginalStats.Recoil = wep.Primary.Recoil
-            wep.Primary.Recoil = wep.Primary.Recoil * (1 - math.min(stats.ctrl, 100) / 100 * 0.5)
+        if stats.ctrl and stats.ctrl > 0 and wep.Primary.Recoil then
+            local orig = wep.Primary.Recoil
+            wep.Primary.Recoil = orig * (1 - math.min(stats.ctrl, 100) / 100 * 0.5)
+            table.insert(applied, "CTRL:" .. string.format("%.2f", orig) .. "->" .. string.format("%.2f", wep.Primary.Recoil))
         end
 
         -- RPM boost (capped at +100%)
-        if stats.rpm and wep.Primary and wep.Primary.RPM then
-            wep.BRS_UW_OriginalStats.RPM = wep.Primary.RPM
-            wep.Primary.RPM = math.Round(wep.Primary.RPM * (1 + math.min(stats.rpm, 100) / 100))
-            -- Update delay based on RPM
+        if stats.rpm and stats.rpm > 0 and wep.Primary.RPM then
+            local orig = wep.Primary.RPM
+            wep.Primary.RPM = math.Round(orig * (1 + math.min(stats.rpm, 100) / 100))
+            -- Update delay based on RPM (M9K uses Delay = 60/RPM)
             if wep.Primary.RPM > 0 then
                 wep.Primary.Delay = 60 / wep.Primary.RPM
             end
+            table.insert(applied, "RPM:" .. orig .. "->" .. wep.Primary.RPM)
         end
 
         -- MAGAZINE boost (clip size, capped at +100% = double mag)
-        if stats.mag and wep.Primary and wep.Primary.ClipSize then
-            wep.BRS_UW_OriginalStats.ClipSize = wep.Primary.ClipSize
-            local newClip = math.Round(wep.Primary.ClipSize * (1 + math.min(stats.mag, 100) / 100))
+        if stats.mag and stats.mag > 0 and wep.Primary.ClipSize then
+            local orig = wep.Primary.ClipSize
+            local newClip = math.Round(orig * (1 + math.min(stats.mag, 100) / 100))
             wep.Primary.ClipSize = newClip
+            -- Also update DefaultClip if it exists (M9K uses this)
+            if wep.Primary.DefaultClip then
+                wep.Primary.DefaultClip = newClip
+            end
+            table.insert(applied, "MAG:" .. orig .. "->" .. newClip)
         end
 
         wep.BRS_UW_Boosted = true
         wep.BRS_UW_GlobalKey = globalKey
         wep.BRS_UW_Data = uwData
+
+        print("[BRS UW] Applied boosts to " .. ply:Nick() .. "'s " .. uwData.weaponName .. " (" .. uwData.rarity .. " " .. uwData.quality .. "): " .. table.concat(applied, ", "))
 
         break -- only apply one unique weapon per class
     end
@@ -510,6 +554,53 @@ net.Receive("BRS_UW.RequestInspect", function(len, ply)
             net.WriteString(util.TableToJSON(cache[globalKey]))
         net.Send(ply)
     end
+end)
+
+-- ============================================================
+-- HANDLE DELETE WEAPONS (bulk or single)
+-- ============================================================
+util.AddNetworkString("BRS_UW.DeleteWeapons")
+net.Receive("BRS_UW.DeleteWeapons", function(len, ply)
+    local count = net.ReadUInt(16)
+    if not count or count < 1 or count > 500 then return end
+
+    local keysToDelete = {}
+    for i = 1, count do
+        local globalKey = net.ReadString()
+        if globalKey and BRS_UW.IsUniqueWeapon(globalKey) then
+            table.insert(keysToDelete, globalKey)
+        end
+    end
+
+    if #keysToDelete == 0 then return end
+
+    local steamid64 = ply:SteamID64()
+    local cache = BRS_UW.ServerCache[steamid64] or {}
+    local deleteCount = 0
+
+    for _, globalKey in ipairs(keysToDelete) do
+        -- Remove from bricks inventory
+        local inventory = ply:GetUnboxingInventory()
+        if inventory[globalKey] then
+            ply:RemoveUnboxingInventoryItem(globalKey, inventory[globalKey])
+        end
+
+        -- Remove from MySQL
+        local baseNum, uid = BRS_UW.ParseUniqueKey(globalKey)
+        if uid then
+            BRS_UW.DeleteWeaponDB(uid)
+        end
+
+        -- Remove from server cache
+        if cache[globalKey] then
+            cache[globalKey] = nil
+        end
+
+        deleteCount = deleteCount + 1
+    end
+
+    BRICKS_SERVER.Func.SendTopNotification(ply, "Deleted " .. deleteCount .. " weapon(s)", 3, BRICKS_SERVER.DEVCONFIG.BaseThemes.Green)
+    print("[BRS UW] " .. ply:Nick() .. " deleted " .. deleteCount .. " weapons")
 end)
 
 -- ============================================================
