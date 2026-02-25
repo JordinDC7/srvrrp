@@ -260,11 +260,55 @@ end
 -- ============================================================
 -- CLIENT SYNC
 -- ============================================================
+-- Queue individual weapon syncs and batch them to prevent net overflow
+BRS_UW._SyncQueue = BRS_UW._SyncQueue or {}
+
 function BRS_UW.SyncWeaponToClient(ply, globalKey, data)
-    net.Start("BRS_UW.SyncWeaponData")
-        net.WriteString(globalKey)
-        net.WriteString(util.TableToJSON(data))
-    net.Send(ply)
+    local sid = ply:SteamID64()
+    BRS_UW._SyncQueue[sid] = BRS_UW._SyncQueue[sid] or { ply = ply, weapons = {} }
+    BRS_UW._SyncQueue[sid].weapons[globalKey] = data
+
+    -- Debounce: flush queue after a short delay
+    if not BRS_UW._SyncQueue[sid].timerActive then
+        BRS_UW._SyncQueue[sid].timerActive = true
+        timer.Simple(0.1, function()
+            BRS_UW.FlushSyncQueue(sid)
+        end)
+    end
+end
+
+function BRS_UW.FlushSyncQueue(sid)
+    local queueData = BRS_UW._SyncQueue[sid]
+    if not queueData then return end
+    BRS_UW._SyncQueue[sid] = nil
+
+    local ply = queueData.ply
+    if not IsValid(ply) then return end
+
+    local count = table.Count(queueData.weapons)
+    if count == 0 then return end
+
+    if count <= 3 then
+        -- Small batch: send individually (cheaper than compress)
+        for gk, d in pairs(queueData.weapons) do
+            net.Start("BRS_UW.SyncWeaponData")
+                net.WriteString(gk)
+                net.WriteString(util.TableToJSON(d))
+            net.Send(ply)
+        end
+    else
+        -- Large batch: compress and send via SyncAllWeapons channel
+        local jsonStr = util.TableToJSON(queueData.weapons)
+        local compressed = util.Compress(jsonStr)
+        if not compressed then return end
+
+        net.Start("BRS_UW.SyncAllWeapons")
+            net.WriteUInt(#compressed, 32)
+            net.WriteData(compressed, #compressed)
+        net.Send(ply)
+    end
+
+    print("[BRS UW] Flushed " .. count .. " weapon sync(s) to " .. ply:Nick())
 end
 
 function BRS_UW.SyncAllWeaponsToClient(ply)

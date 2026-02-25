@@ -175,16 +175,32 @@ function PANEL:FillPanel()
                     table.insert(keys, k)
                 end
 
-                net.Start("BRS_UW.DeleteItems")
-                    net.WriteUInt(#keys, 16)
-                    for _, key in ipairs(keys) do
-                        net.WriteString(key)
-                    end
-                net.SendToServer()
+                -- Batch delete in chunks of 50 to prevent net overflow
+                local chunkSize = 50
+                local totalChunks = math.ceil(#keys / chunkSize)
+                for chunk = 1, totalChunks do
+                    local startIdx = (chunk - 1) * chunkSize + 1
+                    local endIdx = math.min(chunk * chunkSize, #keys)
+                    local batchCount = endIdx - startIdx + 1
+
+                    timer.Simple((chunk - 1) * 0.2, function()
+                        net.Start("BRS_UW.DeleteItems")
+                            net.WriteUInt(batchCount, 16)
+                            for i = startIdx, endIdx do
+                                net.WriteString(keys[i])
+                            end
+                        net.SendToServer()
+                    end)
+                end
 
                 self.selectedItems = {}
                 self.selectMode = false
                 self.actionBar:SetVisible(false)
+
+                -- Refresh after all batches sent
+                timer.Simple(totalChunks * 0.2 + 0.5, function()
+                    if IsValid(self) then self:FillInventory() end
+                end)
             end,
             "Cancel", function() end
         )

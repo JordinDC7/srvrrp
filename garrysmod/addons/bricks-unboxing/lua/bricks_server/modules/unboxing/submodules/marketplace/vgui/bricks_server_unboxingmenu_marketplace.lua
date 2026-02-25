@@ -195,7 +195,7 @@ function PANEL:CreateAuctionSlot( parent, width, height, marketKey, marketItemTa
         end
 
         slot.popoutPanel = vgui.Create( "bricks_server_unboxingmenu_marketplace_view" )
-        slot.popoutPanel:SetPos( x+w+5, y )
+        slot.popoutPanel:SetPos( (x or 0)+(w or 0)+5, y or 0 )
         slot.popoutPanel:FillPanel( marketItemTable.ItemGlobalKey, (marketItemTable.ItemAmount or 1), actions, marketItemTable )
         slot.popoutPanel.Think = function( self3 )
             if( not self3:HasFocus() ) then

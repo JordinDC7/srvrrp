@@ -60,7 +60,12 @@ function PANEL:FillPanel( data, amount, actions )
             configItemTable, itemKey, isItem, isCase, isKey = BRICKS_SERVER.UNBOXING.Func.GetItemFromGlobalKey( globalKey )
         else
             globalKey = data[1]
-            configItemTable, itemKey, isItem, isCase, isKey = data[2], false, string.StartWith( globalKey, "ITEM_" ), string.StartWith( globalKey, "CASE_" ), string.StartWith( globalKey, "KEY_" )
+            configItemTable = data[2]
+            if isstring(globalKey) then
+                isItem = string.StartWith( globalKey, "ITEM_" )
+                isCase = string.StartWith( globalKey, "CASE_" )
+                isKey = string.StartWith( globalKey, "KEY_" )
+            end
         end
     end
 
@@ -109,8 +114,8 @@ function PANEL:FillPanel( data, amount, actions )
         local rarityX, rarityY = surface.GetTextSize( displayRarity or "" )
     
         local infoH = (nameY+rarityY)-6
-        -- Stat area: quality row + 5 stat bars
-        local statAreaH = isUniqueWeapon and 40 or 0
+        -- Stat area: quality row + 4 stat bars (more spacious now)
+        local statAreaH = isUniqueWeapon and 36 or 0
 
         self.panelInfo.Paint = function( self2, w, h )
             local toScreenX, toScreenY = self2:LocalToScreen( 0, 0 )
@@ -162,38 +167,38 @@ function PANEL:FillPanel( data, amount, actions )
 
             -- ====== UNIQUE WEAPON: QUALITY + STATS OVERLAY ======
             if isUniqueWeapon and uwData and uwData.stats and BRS_UW.Stats then
-                local bottomY = h - 10
-                local statsX = 5
-                local statsW = w - 10
+                local bottomY = h - 8
+                local statsX = 6
+                local statsW = w - 12
 
                 -- Quality badge (small, bottom-left) 
                 local qualityInfo = BRS_UW.GetQualityInfo and BRS_UW.GetQualityInfo(uwData.quality or "Junk")
                 if qualityInfo then
-                    draw.RoundedBox(3, statsX, bottomY - 38, 44, 12, ColorAlpha(qualityInfo.color, 160))
-                    draw.SimpleText(uwData.quality or "Junk", "BRS_UW_Font8", statsX + 22, bottomY - 32, Color(255,255,255,230), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+                    draw.RoundedBox(3, statsX, bottomY - 34, 44, 12, ColorAlpha(qualityInfo.color, 160))
+                    draw.SimpleText(uwData.quality or "Junk", "BRS_UW_Font8", statsX + 22, bottomY - 28, Color(255,255,255,230), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
                 end
 
                 -- Avg boost (small, bottom-right)
                 local avgBoost = uwData.avgBoost or 0
                 local avgCol = avgBoost >= 50 and Color(80,255,120) or (avgBoost >= 25 and Color(255,200,40) or Color(180,180,180))
-                draw.SimpleText("Avg +" .. string.format("%.1f", avgBoost) .. "%", "BRS_UW_Font8", w - 5, bottomY - 32, avgCol, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER)
+                draw.SimpleText("Avg +" .. string.format("%.1f", avgBoost) .. "%", "BRS_UW_Font8", w - 6, bottomY - 28, avgCol, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER)
 
-                -- 5 compact stat bars
-                local barStartY = bottomY - 24
+                -- 4 compact stat bars with better spacing
+                local barStartY = bottomY - 20
                 local barH = 3
-                local barSpacing = 1
-                local labelW = 22
-                local barW = statsW - labelW - 4
+                local barSpacing = 2
+                local labelW = 24
+                local barW = statsW - labelW - 6
 
                 for i, statDef in ipairs(BRS_UW.Stats) do
                     local val = uwData.stats[statDef.key] or 0
                     local barY = barStartY + (i - 1) * (barH + barSpacing)
                     
                     -- Colored label
-                    draw.SimpleText(statDef.shortName, "BRS_UW_Font8", statsX + labelW - 1, barY + 1, statDef.color, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER)
+                    draw.SimpleText(statDef.shortName, "BRS_UW_Font8", statsX + labelW, barY + 1, statDef.color, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER)
                     
                     -- Bar bg
-                    local barX = statsX + labelW + 2
+                    local barX = statsX + labelW + 3
                     draw.RoundedBox(1, barX, barY, barW, barH, Color(15,15,15,220))
                     
                     -- Bar fill

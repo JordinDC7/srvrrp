@@ -340,13 +340,24 @@ function PANEL:RefreshPanel( steamID64, playerData )
                     table.insert(keys, k)
                 end
 
-                net.Start("BRS_UW.AdminDeleteItems")
-                    net.WriteString(steamID64)
-                    net.WriteUInt(#keys, 16)
-                    for _, key in ipairs(keys) do
-                        net.WriteString(key)
-                    end
-                net.SendToServer()
+                -- Batch in chunks of 50 to prevent net overflow
+                local chunkSize = 50
+                local totalChunks = math.ceil(#keys / chunkSize)
+                for chunk = 1, totalChunks do
+                    local startIdx = (chunk - 1) * chunkSize + 1
+                    local endIdx = math.min(chunk * chunkSize, #keys)
+                    local batchCount = endIdx - startIdx + 1
+
+                    timer.Simple((chunk - 1) * 0.2, function()
+                        net.Start("BRS_UW.AdminDeleteItems")
+                            net.WriteString(steamID64)
+                            net.WriteUInt(batchCount, 16)
+                            for i = startIdx, endIdx do
+                                net.WriteString(keys[i])
+                            end
+                        net.SendToServer()
+                    end)
+                end
 
                 adminSelectedItems = {}
                 adminSelectMode = false
@@ -355,8 +366,8 @@ function PANEL:RefreshPanel( steamID64, playerData )
                 adminCountLabel:SetVisible(false)
                 adminDeleteBtn:SetVisible(false)
 
-                -- Re-request player data to refresh
-                timer.Simple(0.5, function()
+                -- Re-request player data after all batches
+                timer.Simple(totalChunks * 0.2 + 0.5, function()
                     net.Start("BRS.Net.RequestUnboxingAdminPlayerData")
                         net.WriteString(steamID64)
                     net.SendToServer()
