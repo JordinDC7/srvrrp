@@ -49,6 +49,9 @@ garrysmod/cfg/skill3.cfg
 garrysmod/cfg/skill_manifest.cfg
 garrysmod/cfg/valve.rc
 
+# --- Sensitive Files (credentials, API keys) ---
+garrysmod/addons/bricks-unboxing/lua/bricks_server/bricks_unboxing/sv_mysql.lua
+
 # --- Nested .git directories (cloned addons) ---
 garrysmod/addons/**/.git
 
