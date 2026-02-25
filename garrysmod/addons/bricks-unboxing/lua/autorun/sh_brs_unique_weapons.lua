@@ -55,6 +55,7 @@ BRS_UW.Weapons = {
     { class = "m9k_vector",         name = "Kriss Vector",         cat = "SMG" },
     { class = "m9k_thompson",       name = "Thompson M1A1",        cat = "SMG" },
     { class = "m9k_sten",           name = "Sten MkII",            cat = "SMG" },
+    { class = "m9k_magpulpdr",      name = "Magpul PDR",           cat = "SMG" },
 
     -- RIFLES (20)
     { class = "m9k_ak47",           name = "AK-47",                cat = "Rifle" },
@@ -76,8 +77,9 @@ BRS_UW.Weapons = {
     { class = "m9k_sl8",            name = "HK SL8",               cat = "Rifle" },
     { class = "m9k_honeybadger",    name = "Honey Badger",         cat = "Rifle" },
     { class = "m9k_svt40",          name = "SVT-40",               cat = "Rifle" },
+    { class = "m9k_remington7615p", name = "Remington 7615P",      cat = "Rifle" },
 
-    -- SHOTGUNS (10)
+    -- SHOTGUNS (11)
     { class = "m9k_remington870",   name = "Remington 870",        cat = "Shotgun" },
     { class = "m9k_mossberg590",    name = "Mossberg 590",         cat = "Shotgun" },
     { class = "m9k_spas12",         name = "SPAS-12",              cat = "Shotgun" },
@@ -88,11 +90,11 @@ BRS_UW.Weapons = {
     { class = "m9k_striker12",      name = "Striker-12",           cat = "Shotgun" },
     { class = "m9k_jackhammer",     name = "Pancor Jackhammer",    cat = "Shotgun" },
     { class = "m9k_usas",           name = "USAS-12",              cat = "Shotgun" },
+    { class = "m9k_m3",             name = "M3 Super 90",          cat = "Shotgun" },
 
-    -- SNIPERS (10)
+    -- SNIPERS (9)
     { class = "m9k_intervention",   name = "Intervention",         cat = "Sniper" },
     { class = "m9k_m24",            name = "M24",                  cat = "Sniper" },
-    { class = "m9k_remington7615p", name = "Remington 7615P",      cat = "Sniper" },
     { class = "m9k_m98b",           name = "Barrett M98B",         cat = "Sniper" },
     { class = "m9k_barret_m82",     name = "Barrett M82",          cat = "Sniper" },
     { class = "m9k_aw50",           name = "AW50",                 cat = "Sniper" },
@@ -101,14 +103,12 @@ BRS_UW.Weapons = {
     { class = "m9k_contender",      name = "Contender G2",         cat = "Sniper" },
     { class = "m9k_m14sp",          name = "M14 EBR",              cat = "Sniper" },
 
-    -- HEAVY (10)
+    -- HEAVY (7 - LMGs, Minigun, Launchers)
     { class = "m9k_m249lmg",        name = "M249 LMG",             cat = "Heavy" },
     { class = "m9k_m60",            name = "M60",                  cat = "Heavy" },
     { class = "m9k_pkm",            name = "PKM",                  cat = "Heavy" },
     { class = "m9k_ares_shrike",    name = "Ares Shrike",          cat = "Heavy" },
     { class = "m9k_minigun",        name = "M134 Minigun",         cat = "Heavy" },
-    { class = "m9k_magpulpdr",      name = "Magpul PDR",           cat = "Heavy" },
-    { class = "m9k_m3",             name = "M3 Super 90",          cat = "Heavy" },
     { class = "m9k_m202",           name = "M202 Flash",           cat = "Heavy" },
     { class = "m9k_milkormgl",      name = "Milkor MGL",           cat = "Heavy" },
 }
@@ -123,12 +123,11 @@ for i, wep in ipairs(BRS_UW.Weapons) do
 end
 
 -- ============================================================
--- 5 STAT TYPES
+-- 4 STAT TYPES (matches actual M9K weapon properties)
 -- ============================================================
 BRS_UW.Stats = {
     { key = "dmg",  name = "DAMAGE",   shortName = "DMG",  color = Color(255, 80, 80),   applyKey = "Damage" },
-    { key = "acc",  name = "ACCURACY", shortName = "ACC",  color = Color(80, 200, 255),  applyKey = "Spread" },
-    { key = "ctrl", name = "CONTROL",  shortName = "CTRL", color = Color(255, 180, 40),  applyKey = "Recoil" },
+    { key = "spd",  name = "SPREAD",   shortName = "SPD",  color = Color(80, 200, 255),  applyKey = "Spread" },
     { key = "rpm",  name = "RPM",      shortName = "RPM",  color = Color(80, 255, 120),  applyKey = "RPM" },
     { key = "mag",  name = "MAGAZINE", shortName = "MAG",  color = Color(220, 80, 255),  applyKey = "ClipSize" },
 }

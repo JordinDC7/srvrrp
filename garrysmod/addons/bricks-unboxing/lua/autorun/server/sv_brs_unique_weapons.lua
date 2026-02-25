@@ -7,12 +7,19 @@ if not SERVER then return end
 BRS_UW = BRS_UW or {}
 BRS_UW.ServerCache = BRS_UW.ServerCache or {} -- steamid64 -> { [globalKey] = data }
 
--- Migrate old "mob" stat key to "mag" for existing weapons
+-- Migrate old stat keys for existing weapons
+-- mob → mag, acc → spd, ctrl → removed
 function BRS_UW.MigrateStats(stats)
-    if stats and stats.mob and not stats.mag then
+    if not stats then return stats end
+    if stats.mob and not stats.mag then
         stats.mag = stats.mob
         stats.mob = nil
     end
+    if stats.acc and not stats.spd then
+        stats.spd = stats.acc
+        stats.acc = nil
+    end
+    stats.ctrl = nil -- M9K has no modifiable recoil
     return stats
 end
 
@@ -479,7 +486,6 @@ function BRS_UW.ApplyBoostsToWeapon(ply, wep)
         wep.BRS_UW_OriginalStats = {
             Damage = wep.Primary.Damage,
             Spread = wep.Primary.Spread,
-            Recoil = wep.Primary.Recoil,
             RPM = wep.Primary.RPM,
             ClipSize = wep.Primary.ClipSize,
         }
@@ -493,18 +499,11 @@ function BRS_UW.ApplyBoostsToWeapon(ply, wep)
             table.insert(applied, "DMG:" .. orig .. "->" .. wep.Primary.Damage)
         end
 
-        -- ACCURACY boost (reduce spread - lower is better, max 50% reduction)
-        if stats.acc and stats.acc > 0 and wep.Primary.Spread then
+        -- SPREAD boost (reduce spread - lower = more accurate, max 50% reduction)
+        if stats.spd and stats.spd > 0 and wep.Primary.Spread then
             local orig = wep.Primary.Spread
-            wep.Primary.Spread = orig * (1 - math.min(stats.acc, 100) / 100 * 0.5)
-            table.insert(applied, "ACC:" .. string.format("%.4f", orig) .. "->" .. string.format("%.4f", wep.Primary.Spread))
-        end
-
-        -- CONTROL boost (reduce recoil - lower is better, max 50% reduction)
-        if stats.ctrl and stats.ctrl > 0 and wep.Primary.Recoil then
-            local orig = wep.Primary.Recoil
-            wep.Primary.Recoil = orig * (1 - math.min(stats.ctrl, 100) / 100 * 0.5)
-            table.insert(applied, "CTRL:" .. string.format("%.2f", orig) .. "->" .. string.format("%.2f", wep.Primary.Recoil))
+            wep.Primary.Spread = orig * (1 - math.min(stats.spd, 100) / 100 * 0.5)
+            table.insert(applied, "SPD:" .. string.format("%.4f", orig) .. "->" .. string.format("%.4f", wep.Primary.Spread))
         end
 
         -- RPM boost (capped at +100%)
