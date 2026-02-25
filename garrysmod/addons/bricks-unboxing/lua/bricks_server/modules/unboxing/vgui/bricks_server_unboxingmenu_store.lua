@@ -9,7 +9,7 @@ function PANEL:Init()
 end
 
 function PANEL:FillPanel()
-    self.panelTall = ScrH()*0.65-40
+    self.panelTall = self.panelTall or (self:GetTall())
     local C = SMGRP and SMGRP.UI and SMGRP.UI.Colors or {}
 
     -- ====== TOP BAR ======

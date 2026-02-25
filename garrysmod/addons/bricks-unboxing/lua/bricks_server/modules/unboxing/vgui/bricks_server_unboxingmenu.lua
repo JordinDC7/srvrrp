@@ -20,9 +20,27 @@ function PANEL:Init()
     self:ShowCloseButton( false )
     self:MakePopup()
     self:SetDeleteOnClose( false )
+    -- Override DFrame's default padding (5, 24, 5, 5) which reserves space for title bar
+    self:DockPadding( 0, 0, 0, 0 )
 
     self.contentWide = frameW
     self.contentTall = frameH - TOTAL_TOP
+
+    -- ====== COMPATIBILITY SHIM: self.sheet ======
+    -- Trading submodule checks BRICKS_SERVER_UNBOXINGMENU.sheet.ActiveButton.label
+    -- Provide a fake sheet object that reflects our current page
+    self.sheet = {
+        ActiveButton = { label = "" }
+    }
+    self.sheet.SetActiveSheet = function(_, label)
+        -- Find the page that matches this label and switch to it
+        for k, v in pairs(self.pageInstances or {}) do
+            if v.info and v.info.bricksLabel == label then
+                self:SwitchToPage(k)
+                return
+            end
+        end
+    end
 
     -- ====== CLOSE CALLBACK (marketplace, coinflip cleanup) ======
     -- Store cleanup function; called from PANEL:OnClose()
@@ -153,35 +171,35 @@ function PANEL:BuildPages()
 
     -- Define all pages
     local pages = {}
-    table.insert( pages, { key = "home",      label = "HOME",      panel = "bricks_server_unboxingmenu_home",      icon = "H" } )
-    table.insert( pages, { key = "store",     label = "STORE",     panel = "bricks_server_unboxingmenu_store",     icon = "S" } )
-    table.insert( pages, { key = "inventory", label = "INVENTORY", panel = "bricks_server_unboxingmenu_inventory", icon = "I" } )
+    table.insert( pages, { key = "home",      label = "HOME",      panel = "bricks_server_unboxingmenu_home",      bricksLabel = BRICKS_SERVER.Func.L( "unboxingHome" ) } )
+    table.insert( pages, { key = "store",     label = "STORE",     panel = "bricks_server_unboxingmenu_store",     bricksLabel = BRICKS_SERVER.Func.L( "unboxingStore" ) } )
+    table.insert( pages, { key = "inventory", label = "INVENTORY", panel = "bricks_server_unboxingmenu_inventory", bricksLabel = BRICKS_SERVER.Func.L( "unboxingInventory" ) } )
 
     if( SH_EASYSKINS ) then
-        table.insert( pages, { key = "skins", label = "SKINS", panel = "bricks_server_unboxingmenu_easyskins", icon = "K", extraInit = function(page) if page.RefreshCategory then page.RefreshCategory() end end } )
+        table.insert( pages, { key = "skins", label = "SKINS", panel = "bricks_server_unboxingmenu_easyskins", bricksLabel = BRICKS_SERVER.Func.L( "unboxingSkins" ), extraInit = function(page) if page.RefreshCategory then page.RefreshCategory() end end } )
     end
 
     if( BRICKS_SERVER.Func.IsSubModuleEnabled( "unboxing", "trading" ) ) then
-        table.insert( pages, { key = "trading", label = "TRADING", panel = "bricks_server_unboxingmenu_trading", icon = "T" } )
+        table.insert( pages, { key = "trading", label = "TRADING", panel = "bricks_server_unboxingmenu_trading", bricksLabel = BRICKS_SERVER.Func.L( "unboxingTrading" ) } )
     end
 
     if( BRICKS_SERVER.Func.IsSubModuleEnabled( "unboxing", "marketplace" ) ) then
-        table.insert( pages, { key = "marketplace", label = "MARKET", panel = "bricks_server_unboxingmenu_marketplace", icon = "M" } )
+        table.insert( pages, { key = "marketplace", label = "MARKET", panel = "bricks_server_unboxingmenu_marketplace", bricksLabel = BRICKS_SERVER.Func.L( "unboxingMarketplace" ) } )
     end
 
     if( BRICKS_SERVER.Func.IsSubModuleEnabled( "unboxing", "rewards" ) ) then
-        table.insert( pages, { key = "rewards", label = "REWARDS", panel = "bricks_server_unboxingmenu_rewards", icon = "R" } )
+        table.insert( pages, { key = "rewards", label = "REWARDS", panel = "bricks_server_unboxingmenu_rewards", bricksLabel = BRICKS_SERVER.Func.L( "unboxingRewards" ) } )
     end
 
     if( BRICKS_SERVER.Func.IsModuleEnabled( "coinflip" ) ) then
-        table.insert( pages, { key = "coinflip",  label = "COINFLIP", panel = "bricks_server_coinflip_flips",   icon = "C" } )
-        table.insert( pages, { key = "cfhistory", label = "CF HISTORY", panel = "bricks_server_coinflip_history", icon = "H" } )
+        table.insert( pages, { key = "coinflip",  label = "COINFLIP", panel = "bricks_server_coinflip_flips",   bricksLabel = BRICKS_SERVER.Func.L( "coinflips" ) } )
+        table.insert( pages, { key = "cfhistory", label = "CF HISTORY", panel = "bricks_server_coinflip_history", bricksLabel = BRICKS_SERVER.Func.L( "coinflipHistory" ) } )
     end
 
     local isAdmin = BRICKS_SERVER.Func.HasAdminAccess( LocalPlayer() )
     if isAdmin then
-        table.insert( pages, { key = "admin",  label = "ADMIN",  panel = "bricks_server_unboxingmenu_admin",  icon = "A", admin = true } )
-        table.insert( pages, { key = "config", label = "CONFIG", panel = "bricks_server_config",               icon = "⚙", admin = true, wideMode = true } )
+        table.insert( pages, { key = "admin",  label = "ADMIN",  panel = "bricks_server_unboxingmenu_admin",  admin = true, bricksLabel = BRICKS_SERVER.Func.L( "admin" ) } )
+        table.insert( pages, { key = "config", label = "CONFIG", panel = "bricks_server_config",               admin = true, wideMode = true, bricksLabel = BRICKS_SERVER.Func.L( "config" ) } )
     end
 
     -- Create nav buttons
@@ -288,6 +306,8 @@ function PANEL:SwitchToPage( pageKey )
     page:SetVisible( true )
     page:SetPos( 0, 0 )
     page.panelWide = cw
+    -- Set panelTall for pages that use it (marketplace, trading, store, etc.)
+    page.panelTall = ch
 
     if not pageData.filled and page.FillPanel then
         page:FillPanel()
@@ -301,8 +321,13 @@ function PANEL:SwitchToPage( pageKey )
     self.activePage = page
     self.activePageKey = pageKey
 
+    -- Update sheet compatibility shim for trading/other submodules
+    if self.sheet then
+        self.sheet.ActiveButton.label = pageData.info.bricksLabel or pageData.info.label
+    end
+
     -- Fire switchpage hook
-    hook.Run( "BRS.Hooks.UnboxingSwitchpage", pageData.info.label )
+    hook.Run( "BRS.Hooks.UnboxingSwitchpage", pageData.info.bricksLabel or pageData.info.label )
 end
 
 -- ====== FRAME PAINTING ======
@@ -354,6 +379,12 @@ function PANEL:OnSizeChanged(w, h)
     self:Center()
     self.contentWide = w
     self.contentTall = h - TOTAL_TOP
+end
+
+-- CRITICAL: DFrame:PerformLayout resets DockPadding to (5, 24+, 5, 5) every frame
+-- Override to keep our zero padding
+function PANEL:PerformLayout(w, h)
+    self:DockPadding( 0, 0, 0, 0 )
 end
 
 vgui.Register( "bricks_server_unboxingmenu", PANEL, "DFrame" )

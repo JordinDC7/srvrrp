@@ -5,9 +5,8 @@
 local PANEL = {}
 
 function PANEL:Init()
-    self.panelTall = ScrH()*0.65-40
-
-    self:DockMargin( 20, 16, 20, 16 )
+    -- DockPadding for internal spacing (DockMargin does nothing since page is manually positioned)
+    self:DockPadding( 20, 16, 20, 16 )
 
     hook.Add( "BRS.Hooks.ConfigReceived", self, function()
         self:FillPanel()
@@ -17,6 +16,16 @@ end
 function PANEL:FillPanel()
     self:Clear()
     local C = SMGRP and SMGRP.UI and SMGRP.UI.Colors or {}
+
+    -- Use actual page dimensions (set by main menu before FillPanel)
+    local pageW = self:GetWide()
+    local pageH = self:GetTall()
+    -- panelWide/panelTall set by main menu SwitchToPage
+    local pW = self.panelWide or pageW
+    local pH = self.panelTall or pageH
+    -- Account for DockPadding (20 left + 20 right = 40, 16 top + 16 bottom = 32)
+    local innerW = pW - 40
+    local innerH = pH - 32
 
     local statistics = {
         { Title = BRICKS_SERVER.Func.L( "unboxingCasesOpened" ), Value = function() return LocalPlayer():GetUnboxingStat( "cases" ) end, Icon = "📦" },
@@ -30,9 +39,9 @@ function PANEL:FillPanel()
     topBack:SetTall( 130 )
     topBack.Paint = function() end
 
-    local topBackW = self.panelWide-40
+    local topBackW = innerW
     local entrySpacing = 10
-    local entryWide = (topBackW-((#statistics-1)*entrySpacing))/#statistics
+    local entryWide = (topBackW - ((#statistics-1) * entrySpacing)) / #statistics
 
     for k, v in ipairs( statistics ) do
         local statisticEntry = vgui.Create( "DPanel", topBack )
@@ -66,7 +75,7 @@ function PANEL:FillPanel()
     -- ====== ACTIVITY FEED (right) ======
     local activityBack = vgui.Create( "DPanel", bottomBack )
     activityBack:Dock( RIGHT )
-    activityBack:SetWide( self.panelWide*0.38 )
+    activityBack:SetWide( innerW * 0.38 )
     activityBack.Paint = function( self2, w, h ) 
         draw.RoundedBox( 6, 0, 0, w, h, C.bg_mid or Color(26,27,35) )
         surface.SetDrawColor(C.border or Color(50,52,65))
@@ -77,9 +86,9 @@ function PANEL:FillPanel()
         draw.SimpleText( "LIVE ACTIVITY", "SMGRP_Bold13", 16, 20, C.text_secondary or Color(140,144,160), 0, TEXT_ALIGN_CENTER )
     end
 
-    local bottomBackTall = self.panelTall-40-topBack:GetTall()-10
+    local bottomBackTall = innerH - topBack:GetTall() - 10
     local activityEntryHeight, activityEntrySpacing = 40, 8
-    local activityScrollMaxH = bottomBackTall-50-20
+    local activityScrollMaxH = bottomBackTall - 70
 
     local activityScroll = vgui.Create( "bricks_server_scrollpanel_bar", activityBack )
     activityScroll:Dock( FILL )
@@ -162,7 +171,7 @@ function PANEL:FillPanel()
 
         local height, spacing = 60, 8
         local slots = #(BRICKS_SERVER.TEMP.UnboxingLeaderboard or {})
-        local scrollPanelTall = bottomBackTall-50-20
+        local scrollPanelTall = bottomBackTall - 70
         local displayBar = (slots*(height+spacing))-spacing > scrollPanelTall
 
         local leaderboardScroll = vgui.Create( displayBar and "bricks_server_scrollpanel_bar" or "bricks_server_scrollpanel", leaderboardBack )
@@ -248,7 +257,7 @@ function PANEL:FillPanel()
     featuredScroll:DockMargin( 12, 50, 12, 12 )
     featuredScroll:SetBarBackColor( C.bg_darkest or Color(12,12,18) )
 
-    local featuredSlotWide = self.panelWide-40-leaderboardBack:GetWide()-activityBack:GetWide()-10-10-24-20
+    local featuredSlotWide = innerW - leaderboardBack:GetWide() - activityBack:GetWide() - 20 - 24
     for i = 1, BRICKS_SERVER.DEVCONFIG.UnboxingFeaturedAmount do
         local storeItemTable = BRICKS_SERVER.CONFIG.UNBOXING.Store.Items[BRICKS_SERVER.CONFIG.UNBOXING.Store.Featured[i] or 0]
         if( not storeItemTable ) then continue end
