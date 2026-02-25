@@ -90,8 +90,7 @@ function PANEL:FillPanel( data, amount, actions )
         local textFonts = { 
             { "BRICKS_SERVER_Font22", "BRICKS_SERVER_Font18" }, 
             { "BRICKS_SERVER_Font21", "BRICKS_SERVER_Font17" }, 
-            { "BRICKS_SERVER_Font20", "BRICKS_SERVER_Font17" }, 
-            { "BRICKS_SERVER_Font19", "BRICKS_SERVER_Font17" }
+            { "BRICKS_SERVER_Font20", "BRICKS_SERVER_Font17" }
         }
         
         local function CheckNameSize( fontNum )
