@@ -133,7 +133,7 @@ function playerMeta:RemoveUnboxingInventoryItem( ... )
 			inventoryTable[itemKey] = nil
 
 			if( string.StartWith( itemKey, "ITEM_" ) ) then 
-				local configItemTable = BRICKS_SERVER.CONFIG.UNBOXING.Items[tonumber( string.Replace( itemKey, "ITEM_", "" ) )]
+				local configItemTable = BRICKS_SERVER.CONFIG.UNBOXING.Items[(BRS_UW and BRS_UW.ParseUniqueKey(itemKey)) or tonumber( string.Replace( itemKey, "ITEM_", "" ) )]
 				local devConfigTable = BRICKS_SERVER.DEVCONFIG.UnboxingItemTypes[configItemTable.Type]
 
 				if( devConfigTable and devConfigTable.UnEquipFunction ) then
@@ -171,7 +171,7 @@ hook.Add( "canDropWeapon", "BricksServerHooks_canDropWeapon_UnboxingPerm", funct
 	for k, v in pairs( ply:GetUnboxingInventoryData() ) do
 		if( not plyInventory[k] or not v.Equipped or not string.StartWith( k, "ITEM_" ) ) then continue end
 
-		local configItemTable = BRICKS_SERVER.CONFIG.UNBOXING.Items[tonumber( string.Replace( k, "ITEM_", "" ) )]
+		local configItemTable = BRICKS_SERVER.CONFIG.UNBOXING.Items[(BRS_UW and BRS_UW.ParseUniqueKey(k)) or tonumber( string.Replace( k, "ITEM_", "" ) )]
 
 		if( not configItemTable or configItemTable.Type != "PermWeapon" or (configItemTable.ReqInfo[1] or "") != wep:GetClass() ) then continue end
 
@@ -185,7 +185,7 @@ local function checkPermModel( ply, delay )
 		for k, v in pairs( ply:GetUnboxingInventoryData() ) do
 			if( not plyInventory[k] or not v.Equipped or not string.StartWith( k, "ITEM_" ) ) then continue end
 
-			local configItemTable = BRICKS_SERVER.CONFIG.UNBOXING.Items[tonumber( string.Replace( k, "ITEM_", "" ) )]
+			local configItemTable = BRICKS_SERVER.CONFIG.UNBOXING.Items[(BRS_UW and BRS_UW.ParseUniqueKey(k)) or tonumber( string.Replace( k, "ITEM_", "" ) )]
 
 			if( not configItemTable or configItemTable.Type != "PermPlayermodel" ) then continue end
 
@@ -207,7 +207,7 @@ if( not BRICKS_SERVER.UNBOXING.LUACFG.TTT ) then
 		for k, v in pairs( ply:GetUnboxingInventoryData() ) do
 			if( not plyInventory[k] or not v.Equipped or not string.StartWith( k, "ITEM_" ) ) then continue end
 	
-			local configItemTable = BRICKS_SERVER.CONFIG.UNBOXING.Items[tonumber( string.Replace( k, "ITEM_", "" ) )]
+			local configItemTable = BRICKS_SERVER.CONFIG.UNBOXING.Items[(BRS_UW and BRS_UW.ParseUniqueKey(k)) or tonumber( string.Replace( k, "ITEM_", "" ) )]
 	
 			if( not configItemTable or configItemTable.Type != "PermWeapon" ) then continue end
 	
@@ -233,7 +233,7 @@ else
 			for k, v in pairs( ply:GetUnboxingInventoryData() ) do
 				if( not plyInventory[k] or not v.Equipped or not string.StartWith( k, "ITEM_" ) ) then continue end
 		
-				local configItemTable = BRICKS_SERVER.CONFIG.UNBOXING.Items[tonumber( string.Replace( k, "ITEM_", "" ) )]
+				local configItemTable = BRICKS_SERVER.CONFIG.UNBOXING.Items[(BRS_UW and BRS_UW.ParseUniqueKey(k)) or tonumber( string.Replace( k, "ITEM_", "" ) )]
 		
 				if( not configItemTable ) then continue end
 

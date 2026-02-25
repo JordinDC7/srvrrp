@@ -59,7 +59,14 @@ net.Receive( "BRS.Net.EquipUnboxingItem", function( len, ply )
 
 	if( not inventoryTable or not inventoryTable[globalKey] ) then return end
 
-	local itemKey = tonumber( string.Replace( globalKey, "ITEM_", "" ) )
+	-- Support unique weapon keys (ITEM_XX_YYYYYYYY)
+	local itemKey
+	if BRS_UW and BRS_UW.ParseUniqueKey then
+		local baseNum = BRS_UW.ParseUniqueKey(globalKey)
+		itemKey = baseNum or tonumber( string.Replace( globalKey, "ITEM_", "" ) )
+	else
+		itemKey = tonumber( string.Replace( globalKey, "ITEM_", "" ) )
+	end
 	local configItemTable = BRICKS_SERVER.CONFIG.UNBOXING.Items[itemKey]
 
 	if( not configItemTable ) then return end
@@ -91,7 +98,14 @@ net.Receive( "BRS.Net.UnEquipUnboxingItem", function( len, ply )
 
 	if( not inventoryTable or not inventoryTable[globalKey] ) then return end
 
-	local itemKey = tonumber( string.Replace( globalKey, "ITEM_", "" ) )
+	-- Support unique weapon keys (ITEM_XX_YYYYYYYY)
+	local itemKey
+	if BRS_UW and BRS_UW.ParseUniqueKey then
+		local baseNum = BRS_UW.ParseUniqueKey(globalKey)
+		itemKey = baseNum or tonumber( string.Replace( globalKey, "ITEM_", "" ) )
+	else
+		itemKey = tonumber( string.Replace( globalKey, "ITEM_", "" ) )
+	end
 	local configItemTable = BRICKS_SERVER.CONFIG.UNBOXING.Items[itemKey]
 
 	if( not configItemTable ) then return end
