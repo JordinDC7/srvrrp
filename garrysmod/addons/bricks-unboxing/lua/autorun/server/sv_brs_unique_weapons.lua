@@ -1,19 +1,18 @@
 --[[
-    UNIQUE WEAPON SYSTEM - Server Side
+    UNIQUE WEAPON SYSTEM - Server Side (v3 - robust hooking)
     Handles: MySQL storage, unique weapon creation on unbox,
     stat booster application, network sync to clients
     
-    IMPORTANT: This system runs PARALLEL to bricks inventory.
-    Bricks handles inventory normally (ITEM_X format).
-    We track unique weapon data (UIDs, stat boosters) separately
-    and apply boosters when weapons are equipped.
+    Runs PARALLEL to bricks inventory. Bricks handles inventory
+    normally; we track unique weapon data (UIDs, stat boosters)
+    separately and apply boosters when weapons are equipped.
 ]]--
 
 if not SERVER then return end
 
 BRS_WEAPONS = BRS_WEAPONS or {}
-BRS_WEAPONS.Cache = BRS_WEAPONS.Cache or {} -- uid -> weapon data cache
-BRS_WEAPONS.PlayerWeapons = BRS_WEAPONS.PlayerWeapons or {} -- steamid64 -> { uid -> data }
+BRS_WEAPONS.Cache = BRS_WEAPONS.Cache or {}
+BRS_WEAPONS.PlayerWeapons = BRS_WEAPONS.PlayerWeapons or {}
 
 -- ============================================================
 -- DATABASE SETUP
@@ -24,7 +23,7 @@ local function WaitForDB(callback)
         callback()
         return
     end
-    timer.Create("BRS_UniqueWeapons_WaitDB", 1, 30, function()
+    timer.Create("BRS_UniqueWeapons_WaitDB", 1, 60, function()
         if BRS_UNBOXING_DB then
             timer.Remove("BRS_UniqueWeapons_WaitDB")
             callback()
@@ -57,7 +56,7 @@ local function EscapeStr(str)
     return BRS_UNBOXING_DB:escape(tostring(str))
 end
 
--- Create table
+-- Create our unique weapons table
 WaitForDB(function()
     QueryDB([[
         CREATE TABLE IF NOT EXISTS bricks_server_unboxing_unique_weapons (
@@ -72,8 +71,9 @@ WaitForDB(function()
             INDEX idx_owner (owner_steamid64),
             INDEX idx_rarity (rarity)
         );
-    ]])
-    print("[BRS UniqueWeapons] Database table validated!")
+    ]], function()
+        print("[BRS UniqueWeapons] Database table validated!")
+    end)
 end)
 
 -- ============================================================
@@ -91,7 +91,7 @@ function BRS_WEAPONS.SaveWeapon(uid, steamID64, itemIndex, weaponClass, weaponNa
     )
     QueryDB(query)
 
-    BRS_WEAPONS.Cache[uid] = {
+    local weaponData = {
         weapon_uid = uid,
         owner_steamid64 = steamID64,
         item_index = itemIndex,
@@ -102,9 +102,11 @@ function BRS_WEAPONS.SaveWeapon(uid, steamID64, itemIndex, weaponClass, weaponNa
         created_at = os.time()
     }
 
-    -- Add to player cache
+    BRS_WEAPONS.Cache[uid] = weaponData
     BRS_WEAPONS.PlayerWeapons[steamID64] = BRS_WEAPONS.PlayerWeapons[steamID64] or {}
-    BRS_WEAPONS.PlayerWeapons[steamID64][uid] = BRS_WEAPONS.Cache[uid]
+    BRS_WEAPONS.PlayerWeapons[steamID64][uid] = weaponData
+
+    return weaponData
 end
 
 function BRS_WEAPONS.FetchPlayerWeapons(steamID64, callback)
@@ -158,6 +160,8 @@ function BRS_WEAPONS.SyncToClient(ply)
             net.WriteUInt(#compressed, 32)
             net.WriteData(compressed, #compressed)
         net.Send(ply)
+
+        print("[BRS UniqueWeapons] Synced " .. table.Count(weapons) .. " weapons to " .. ply:Nick())
     end)
 end
 
@@ -169,7 +173,7 @@ end
 
 -- Sync on join
 hook.Add("PlayerInitialSpawn", "BRS_UniqueWeapons_InitSync", function(ply)
-    timer.Simple(5, function()
+    timer.Simple(8, function()
         if IsValid(ply) then
             BRS_WEAPONS.SyncToClient(ply)
         end
@@ -188,84 +192,237 @@ net.Receive("BRS.UniqueWeapons.Inspect", function(len, ply)
 end)
 
 -- ============================================================
--- CASE OPENING HOOK
--- Listen for case opens and create unique weapon records
--- WITHOUT overriding the inventory system
+-- CASE OPENING HOOK (v3 - ROBUST)
+-- Multiple strategies to intercept weapon creation:
+-- 1. Hook Player metatable AddUnboxingInventoryItem (if it exists)
+-- 2. Hook BRICKS_SERVER.UNBOXING.Func.AddInventoryItem (if it exists)
+-- 3. Hook the inventory update DB function to catch writes
+-- 4. Periodically scan player inventories for new weapons
 -- ============================================================
 
--- Track last unboxed item per player to catch the AddUnboxingInventoryItem call
-local pendingUnboxes = {} -- steamid64 -> true when we know a case was just opened
+local _hookInstalled = false
 
-hook.Add("Initialize", "BRS_UniqueWeapons_HookCaseOpen", function()
-    timer.Simple(5, function()
-        if not BRICKS_SERVER or not BRICKS_SERVER.UNBOXING then
-            print("[BRS UniqueWeapons] WARNING: BRICKS_SERVER.UNBOXING not found!")
-            return
+-- The core function that creates a unique weapon record
+local function OnWeaponUnboxed(ply, globalKey, configItem)
+    if not IsValid(ply) then return end
+    if not configItem then return end
+    if configItem.Type ~= "PermWeapon" and configItem.Type ~= "Weapon" then return end
+
+    local weaponClass = configItem.ReqInfo and configItem.ReqInfo[1] or ""
+    local weaponName = configItem.Name or "Unknown"
+    local rarity = configItem.Rarity or "Common"
+    local itemKey = tonumber(string.match(tostring(globalKey), "ITEM_(%d+)")) or 0
+
+    local uid = BRS_WEAPONS.GenerateUID()
+    local boosters = BRS_WEAPONS.RollStatBoosters(rarity)
+
+    local weaponData = BRS_WEAPONS.SaveWeapon(
+        uid, ply:SteamID64(), itemKey,
+        weaponClass, weaponName, rarity, boosters
+    )
+
+    BRS_WEAPONS.NotifyNewWeapon(ply, weaponData)
+
+    print(string.format(
+        "[BRS UniqueWeapons] %s unboxed %s [%s] UID:%s with %d boosters (DMG:%.1f%% ACC:%.1f%% MAG:%.1f%% RPM:%.1f%% SPD:%.1f%%)",
+        ply:Nick(), weaponName, rarity, uid, table.Count(boosters),
+        (boosters.DMG or 0) * 100, (boosters.ACC or 0) * 100,
+        (boosters.MAG or 0) * 100, (boosters.RPM or 0) * 100,
+        (boosters.SPD or 0) * 100
+    ))
+end
+
+-- Look up a config item from a global key
+local function GetConfigItem(globalKey)
+    if not BRICKS_SERVER or not BRICKS_SERVER.CONFIG then return nil end
+    if not BRICKS_SERVER.CONFIG.UNBOXING or not BRICKS_SERVER.CONFIG.UNBOXING.Items then return nil end
+
+    local itemKey = tonumber(string.match(tostring(globalKey), "ITEM_(%d+)"))
+    if not itemKey then return nil end
+
+    return BRICKS_SERVER.CONFIG.UNBOXING.Items[itemKey]
+end
+
+-- STRATEGY 1: Wrap Player:AddUnboxingInventoryItem on the metatable
+local function TryHookPlayerMeta()
+    local meta = FindMetaTable("Player")
+    if not meta then return false end
+    if not meta.AddUnboxingInventoryItem then return false end
+    if meta._BRS_ORIG_AddUnboxingInventoryItem then return true end -- already hooked
+
+    meta._BRS_ORIG_AddUnboxingInventoryItem = meta.AddUnboxingInventoryItem
+    meta.AddUnboxingInventoryItem = function(self, ...)
+        -- Call original first
+        meta._BRS_ORIG_AddUnboxingInventoryItem(self, ...)
+
+        -- Process weapon additions
+        local args = { ... }
+        for i = 1, #args, 2 do
+            local globalKey = args[i]
+            local amount = args[i + 1] or 1
+            if isstring(globalKey) and string.StartWith(globalKey, "ITEM_") then
+                local configItem = GetConfigItem(globalKey)
+                if configItem then
+                    for n = 1, amount do
+                        OnWeaponUnboxed(self, globalKey, configItem)
+                    end
+                end
+            end
         end
+    end
 
-        -- Hook AFTER AddUnboxingInventoryItem to create unique weapon records
-        -- We wrap it to detect when weapons are added, but DON'T change the key
-        local origAdd = FindMetaTable("Player").AddUnboxingInventoryItem
+    print("[BRS UniqueWeapons] HOOK INSTALLED via Player metatable!")
+    return true
+end
 
-        FindMetaTable("Player").AddUnboxingInventoryItem = function(self, ...)
-            -- Call original FIRST - let bricks handle inventory normally
-            origAdd(self, ...)
+-- STRATEGY 2: Wrap BRICKS_SERVER.UNBOXING.Func inventory functions
+local function TryHookBricksFunc()
+    if not BRICKS_SERVER then return false end
+    if not BRICKS_SERVER.UNBOXING then return false end
+    if not BRICKS_SERVER.UNBOXING.Func then return false end
 
-            -- Now check what was added and create unique weapon records
-            local args = { ... }
-            for i = 1, #args, 2 do
-                local globalKey = args[i]
-                local amount = args[i + 1] or 1
+    -- Try AddInventoryItem
+    local funcNames = {
+        "AddInventoryItem",
+        "AddItem",
+        "GiveItem",
+        "AddUnboxingInventoryItem"
+    }
 
-                if isstring(globalKey) and string.StartWith(globalKey, "ITEM_") then
-                    local itemKey = tonumber(string.Replace(globalKey, "ITEM_", ""))
+    for _, funcName in ipairs(funcNames) do
+        local origFunc = BRICKS_SERVER.UNBOXING.Func[funcName]
+        if origFunc and not BRICKS_SERVER.UNBOXING.Func["_BRS_ORIG_" .. funcName] then
+            BRICKS_SERVER.UNBOXING.Func["_BRS_ORIG_" .. funcName] = origFunc
+            BRICKS_SERVER.UNBOXING.Func[funcName] = function(ply, ...)
+                origFunc(ply, ...)
 
-                    if itemKey and BRICKS_SERVER.CONFIG and
-                       BRICKS_SERVER.CONFIG.UNBOXING and
-                       BRICKS_SERVER.CONFIG.UNBOXING.Items and
-                       BRICKS_SERVER.CONFIG.UNBOXING.Items[itemKey] then
-
-                        local configItem = BRICKS_SERVER.CONFIG.UNBOXING.Items[itemKey]
-
-                        if configItem.Type == "PermWeapon" or configItem.Type == "Weapon" then
-                            local weaponClass = configItem.ReqInfo and configItem.ReqInfo[1] or ""
-                            local weaponName = configItem.Name or "Unknown"
-                            local rarity = configItem.Rarity or "Common"
-
-                            -- Create unique weapon record for each copy
-                            for n = 1, amount do
-                                local uid = BRS_WEAPONS.GenerateUID()
-                                local boosters = BRS_WEAPONS.RollStatBoosters(rarity)
-
-                                BRS_WEAPONS.SaveWeapon(
-                                    uid, self:SteamID64(), itemKey,
-                                    weaponClass, weaponName, rarity, boosters
-                                )
-
-                                BRS_WEAPONS.NotifyNewWeapon(self, BRS_WEAPONS.Cache[uid])
-
-                                print(string.format(
-                                    "[BRS UniqueWeapons] %s unboxed %s [%s] UID:%s with %d boosters",
-                                    self:Nick(), weaponName, rarity, uid, table.Count(boosters)
-                                ))
+                if IsValid(ply) then
+                    local args = { ... }
+                    for i = 1, #args, 2 do
+                        local globalKey = args[i]
+                        local amount = args[i + 1] or 1
+                        if isstring(globalKey) and string.StartWith(globalKey, "ITEM_") then
+                            local configItem = GetConfigItem(globalKey)
+                            if configItem then
+                                for n = 1, amount do
+                                    OnWeaponUnboxed(ply, globalKey, configItem)
+                                end
                             end
                         end
                     end
                 end
             end
+            print("[BRS UniqueWeapons] HOOK INSTALLED via BRICKS_SERVER.UNBOXING.Func." .. funcName .. "!")
+            return true
         end
+    end
 
-        print("[BRS UniqueWeapons] Case opening hook installed (non-invasive)!")
-    end)
+    return false
+end
+
+-- STRATEGY 3: Hook the inventory DB update to detect new weapons added
+local function TryHookInventoryDB()
+    if not BRICKS_SERVER then return false end
+    if not BRICKS_SERVER.UNBOXING then return false end
+    if not BRICKS_SERVER.UNBOXING.Func then return false end
+    if not BRICKS_SERVER.UNBOXING.Func.UpdateInventoryDB then return false end
+    if BRICKS_SERVER.UNBOXING.Func._BRS_ORIG_UpdateInventoryDB then return true end
+
+    BRICKS_SERVER.UNBOXING.Func._BRS_ORIG_UpdateInventoryDB = BRICKS_SERVER.UNBOXING.Func.UpdateInventoryDB
+    BRICKS_SERVER.UNBOXING.Func.UpdateInventoryDB = function(steamID64, inventory)
+        -- Call original
+        BRICKS_SERVER.UNBOXING.Func._BRS_ORIG_UpdateInventoryDB(steamID64, inventory)
+
+        -- Scan inventory for weapons we haven't tracked yet
+        if not inventory then return end
+
+        local ply = nil
+        for _, p in ipairs(player.GetAll()) do
+            if p:SteamID64() == steamID64 then
+                ply = p
+                break
+            end
+        end
+        if not IsValid(ply) then return end
+
+        -- Track known items to detect new ones
+        ply._BRS_KNOWN_ITEMS = ply._BRS_KNOWN_ITEMS or {}
+
+        for globalKey, amount in pairs(inventory) do
+            if isstring(globalKey) and string.StartWith(globalKey, "ITEM_") then
+                local configItem = GetConfigItem(globalKey)
+                if configItem and (configItem.Type == "PermWeapon" or configItem.Type == "Weapon") then
+                    local prevAmount = ply._BRS_KNOWN_ITEMS[globalKey] or 0
+                    local currentAmount = tonumber(amount) or 0
+
+                    if currentAmount > prevAmount then
+                        local newCount = currentAmount - prevAmount
+                        for n = 1, newCount do
+                            OnWeaponUnboxed(ply, globalKey, configItem)
+                        end
+                    end
+
+                    ply._BRS_KNOWN_ITEMS[globalKey] = currentAmount
+                end
+            end
+        end
+    end
+
+    print("[BRS UniqueWeapons] HOOK INSTALLED via UpdateInventoryDB wrapper!")
+    return true
+end
+
+-- Master hook installer - tries all strategies repeatedly
+timer.Create("BRS_UniqueWeapons_InstallHook", 2, 60, function()
+    if _hookInstalled then
+        timer.Remove("BRS_UniqueWeapons_InstallHook")
+        return
+    end
+
+    -- Debug: print what's available
+    local hasBricks = BRICKS_SERVER ~= nil
+    local hasUnboxing = hasBricks and BRICKS_SERVER.UNBOXING ~= nil
+    local hasFunc = hasUnboxing and BRICKS_SERVER.UNBOXING.Func ~= nil
+    local hasMeta = FindMetaTable("Player").AddUnboxingInventoryItem ~= nil
+
+    -- Try strategies in order of preference
+    if TryHookPlayerMeta() then
+        _hookInstalled = true
+    elseif TryHookBricksFunc() then
+        _hookInstalled = true
+    elseif TryHookInventoryDB() then
+        _hookInstalled = true
+    else
+        -- Print debug info every 10 seconds (every 5th attempt)
+        local attempts = (BRS_WEAPONS._hookAttempts or 0) + 1
+        BRS_WEAPONS._hookAttempts = attempts
+        if attempts % 5 == 1 then
+            print("[BRS UniqueWeapons] Hook attempt #" .. attempts .. " - waiting for bricks...")
+            print("  BRICKS_SERVER: " .. tostring(hasBricks))
+            print("  .UNBOXING: " .. tostring(hasUnboxing))
+            print("  .Func: " .. tostring(hasFunc))
+            print("  Player:AddUnboxingInventoryItem: " .. tostring(hasMeta))
+            if hasFunc then
+                print("  Available Func keys:")
+                for k, v in pairs(BRICKS_SERVER.UNBOXING.Func) do
+                    if isfunction(v) then
+                        print("    " .. k .. "()")
+                    end
+                end
+            end
+        end
+    end
+
+    if _hookInstalled then
+        timer.Remove("BRS_UniqueWeapons_InstallHook")
+    end
 end)
 
 -- ============================================================
 -- STAT BOOSTER APPLICATION
--- When a player equips a weapon from inventory, find the best
--- matching unique weapon record and apply its boosters
 -- ============================================================
 
-local appliedWeapons = {} -- Entity index -> uid
+local appliedWeapons = {}
 
 function BRS_WEAPONS.ApplyBoosters(wep, uid)
     if not IsValid(wep) then return end
@@ -292,19 +449,16 @@ function BRS_WEAPONS.ApplyBoosters(wep, uid)
 
     appliedWeapons[wep:EntIndex()] = uid
 
-    -- Recalculate delay from RPM if boosted
     if boosters["RPM"] and primary.RPM then
         primary.Delay = 60 / primary.RPM
     end
 end
 
---- Find the best unique weapon record for a player's weapon class
 function BRS_WEAPONS.FindBestForPlayer(ply, weaponClass)
     local steamID = ply:SteamID64()
     local playerWeapons = BRS_WEAPONS.PlayerWeapons[steamID]
     if not playerWeapons then return nil end
 
-    -- Find all unique weapons matching this class, pick the best (highest total boost)
     local bestUID, bestTotal = nil, -1
     for uid, data in pairs(playerWeapons) do
         if data.weapon_class == weaponClass then
@@ -321,10 +475,8 @@ function BRS_WEAPONS.FindBestForPlayer(ply, weaponClass)
     return bestUID
 end
 
---- Apply boosters to all equipped weapons on a player
 function BRS_WEAPONS.ApplyEquippedBoosters(ply)
     if not IsValid(ply) then return end
-
     for _, wep in ipairs(ply:GetWeapons()) do
         if IsValid(wep) and not appliedWeapons[wep:EntIndex()] then
             local uid = BRS_WEAPONS.FindBestForPlayer(ply, wep:GetClass())
@@ -360,4 +512,35 @@ hook.Add("EntityRemoved", "BRS_UniqueWeapons_CleanupTracking", function(ent)
     end
 end)
 
-print("[BRS UniqueWeapons] Server system loaded (v2 - non-invasive)!")
+-- ============================================================
+-- DEBUG COMMAND
+-- ============================================================
+concommand.Add("brs_debug_sv", function(ply)
+    if not ply:IsSuperAdmin() then return end
+    print("=== BRS UniqueWeapons Server Debug ===")
+    print("Hook installed: " .. tostring(_hookInstalled))
+    print("Hook attempts: " .. tostring(BRS_WEAPONS._hookAttempts or 0))
+    print("DB connected: " .. tostring(BRS_UNBOXING_DB ~= nil))
+    print("BRICKS_SERVER: " .. tostring(BRICKS_SERVER ~= nil))
+    print("BRICKS_SERVER.UNBOXING: " .. tostring(BRICKS_SERVER and BRICKS_SERVER.UNBOXING ~= nil))
+    print("BRICKS_SERVER.UNBOXING.Func: " .. tostring(BRICKS_SERVER and BRICKS_SERVER.UNBOXING and BRICKS_SERVER.UNBOXING.Func ~= nil))
+    print("Player meta AddUnboxingInventoryItem: " .. tostring(FindMetaTable("Player").AddUnboxingInventoryItem ~= nil))
+
+    if BRICKS_SERVER and BRICKS_SERVER.UNBOXING and BRICKS_SERVER.UNBOXING.Func then
+        print("Func methods:")
+        for k, v in pairs(BRICKS_SERVER.UNBOXING.Func) do
+            if isfunction(v) then print("  " .. k .. "()") end
+        end
+    end
+
+    local totalWeapons = 0
+    for sid, weapons in pairs(BRS_WEAPONS.PlayerWeapons) do
+        local count = table.Count(weapons)
+        totalWeapons = totalWeapons + count
+        print("Player " .. sid .. ": " .. count .. " weapons")
+    end
+    print("Total cached weapons: " .. totalWeapons)
+    print("=====================================")
+end)
+
+print("[BRS UniqueWeapons] Server system loaded (v3 - robust hooking)!")
