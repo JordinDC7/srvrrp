@@ -134,7 +134,7 @@ function BRS_UW.DrawMiniStatBars(x, y, w, h, stats, rarity)
 end
 
 -- ============================================================
--- INSPECT POPUP
+-- INSPECT POPUP - Premium Full Overlay
 -- ============================================================
 function BRS_UW.OpenInspectPopup(globalKey, data)
     if IsValid(BRS_UW.InspectFrame) then BRS_UW.InspectFrame:Remove() end
@@ -142,241 +142,408 @@ function BRS_UW.OpenInspectPopup(globalKey, data)
     local rarity = BRS_UW.RarityByKey[data.rarity] or BRS_UW.Rarities[1]
     local qualityInfo = BRS_UW.GetQualityInfo(data.quality or "Junk")
     local avgBoost = data.avgBoost or BRS_UW.CalcAvgBoost(data.stats)
+    local C = SMGRP and SMGRP.UI and SMGRP.UI.Colors or {}
 
-    local fw, fh = 340, 480
-    local frame = vgui.Create("DPanel")
+    local rarityCol = (SMGRP and SMGRP.UI and SMGRP.UI.GetRarityColor) and SMGRP.UI.GetRarityColor(data.rarity) or rarity.color
+
+    -- ====== FULLSCREEN OVERLAY ======
+    local overlay = vgui.Create("DPanel")
+    overlay:SetSize(ScrW(), ScrH())
+    overlay:SetPos(0, 0)
+    overlay:MakePopup()
+    overlay:SetMouseInputEnabled(true)
+    overlay:SetKeyboardInputEnabled(true)
+    overlay.fadeIn = 0
+    BRS_UW.InspectFrame = overlay
+
+    overlay.Paint = function(self2, w, h)
+        self2.fadeIn = math.Clamp((self2.fadeIn or 0) + FrameTime() * 4, 0, 1)
+        draw.RoundedBox(0, 0, 0, w, h, Color(0, 0, 0, 180 * self2.fadeIn))
+    end
+
+    -- Close on clicking backdrop
+    overlay.OnMousePressed = function(self2, mc)
+        if mc == MOUSE_LEFT then self2:Remove() end
+    end
+    overlay.OnKeyCodePressed = function(self2, key)
+        if key == KEY_ESCAPE or key == KEY_TAB then self2:Remove() end
+    end
+
+    -- ====== MAIN PANEL ======
+    local fw, fh = 580, 520
+    local frame = vgui.Create("DPanel", overlay)
     frame:SetSize(fw, fh)
     frame:Center()
-    frame:MakePopup()
-    frame:SetMouseInputEnabled(true)
-    frame:SetKeyboardInputEnabled(true)
-    BRS_UW.InspectFrame = frame
+    frame.startTime = CurTime()
 
-    local borderThickness = 3
-    local startTime = CurTime()
+    -- Prevent click-through to overlay
+    frame.OnMousePressed = function() end
 
-    frame.Paint = function(self, w, h)
-        -- Background
-        draw.RoundedBox(12, 0, 0, w, h, Color(20, 22, 28, 250))
+    local borderT = 2
+    frame.Paint = function(self2, w, h)
+        local age = CurTime() - self2.startTime
 
-        -- Animated rarity border
-        local borderColor = BRS_UW.GetBorderColor(data.rarity)
-        local bT = borderThickness
+        -- Drop shadow
+        draw.RoundedBox(10, 4, 4, w, h, Color(0, 0, 0, 60))
 
-        -- Top
-        draw.RoundedBoxEx(12, 0, 0, w, bT, borderColor, true, true, false, false)
-        -- Bottom
-        draw.RoundedBoxEx(12, 0, h - bT, w, bT, borderColor, false, false, true, true)
-        -- Left
-        surface.SetDrawColor(borderColor)
-        surface.DrawRect(0, bT, bT, h - bT * 2)
-        -- Right
-        surface.DrawRect(w - bT, bT, bT, h - bT * 2)
+        -- Main bg
+        draw.RoundedBox(8, 0, 0, w, h, C.bg_dark or Color(18, 18, 26))
 
-        -- Glow for Glitched/Mythical
-        if data.rarity == "Glitched" or data.rarity == "Mythical" then
-            local pulse = math.sin(CurTime() * 3) * 0.3 + 0.7
-            local glowCol = ColorAlpha(borderColor, 30 * pulse)
-            draw.RoundedBox(12, -2, -2, w + 4, h + 4, glowCol)
+        -- Rarity border
+        local bCol = BRS_UW.GetBorderColor(data.rarity)
+        draw.RoundedBoxEx(8, 0, 0, w, borderT, bCol, true, true, false, false)
+        draw.RoundedBoxEx(8, 0, h - borderT, w, borderT, bCol, false, false, true, true)
+        surface.SetDrawColor(bCol)
+        surface.DrawRect(0, borderT, borderT, h - borderT * 2)
+        surface.DrawRect(w - borderT, borderT, borderT, h - borderT * 2)
+
+        -- Top gradient tint from rarity color
+        local tint = ColorAlpha(bCol, 12)
+        for i = 0, 60 do
+            surface.SetDrawColor(ColorAlpha(tint, math.max(0, 12 - i * 0.2)))
+            surface.DrawRect(borderT, borderT + i, w - borderT * 2, 1)
+        end
+
+        -- Glow pulse for rare+ items
+        if data.rarity == "Glitched" or data.rarity == "Mythical" or data.rarity == "Legendary" then
+            local pulse = math.sin(CurTime() * 3) * 0.4 + 0.6
+            draw.RoundedBox(10, -3, -3, w + 6, h + 6, ColorAlpha(bCol, 15 * pulse))
         end
     end
 
-    -- Weapon Name
-    local nameLabel = vgui.Create("DLabel", frame)
-    nameLabel:SetFont("BRS_UW_Font22B")
-    nameLabel:SetText(data.weaponName or "Unknown")
-    nameLabel:SetContentAlignment(5)
-    nameLabel:Dock(TOP)
-    nameLabel:DockMargin(15, 20, 15, 0)
-    nameLabel:SetTall(28)
-    nameLabel:SetTextColor(Color(240,240,240))
+    -- ====== HEADER SECTION ======
+    local header = vgui.Create("DPanel", frame)
+    header:Dock(TOP)
+    header:SetTall(70)
+    header.Paint = function(self2, w, h)
+        -- Weapon name
+        draw.SimpleText(data.weaponName or "Unknown Weapon", "SMGRP_Header", 24, 18, C.text_primary or Color(220, 222, 230), 0, 0)
 
-    -- Rarity label
-    local rarityLabel = vgui.Create("DLabel", frame)
-    rarityLabel:SetFont("BRS_UW_Font16")
-    rarityLabel:SetText(data.rarity or "Common")
-    rarityLabel:SetContentAlignment(5)
-    rarityLabel:Dock(TOP)
-    rarityLabel:DockMargin(15, 2, 15, 0)
-    rarityLabel:SetTall(22)
-    rarityLabel:SetTextColor(rarity.color)
+        -- Rarity + quality on second line
+        draw.SimpleText(data.rarity or "Common", "SMGRP_Bold14", 24, 44, rarityCol, 0, 0)
 
-    -- Model display area (blank space for now - could add 3D model later)
-    local modelArea = vgui.Create("DPanel", frame)
-    modelArea:Dock(TOP)
-    modelArea:DockMargin(15, 10, 15, 0)
-    modelArea:SetTall(10)
-    modelArea.Paint = function() end
+        surface.SetFont("SMGRP_Bold14")
+        local rw = surface.GetTextSize(data.rarity or "Common")
+        draw.SimpleText("  ·  ", "SMGRP_Bold14", 24 + rw, 44, C.text_muted or Color(90, 94, 110), 0, 0)
+        local dotW = surface.GetTextSize("  ·  ")
+        draw.SimpleText(data.quality or "Junk", "SMGRP_Bold14", 24 + rw + dotW, 44, qualityInfo.color, 0, 0)
 
-    -- Quality + Booster Score bar
-    local scoreBar = vgui.Create("DPanel", frame)
-    scoreBar:Dock(TOP)
-    scoreBar:DockMargin(20, 5, 20, 0)
-    scoreBar:SetTall(28)
-    scoreBar.Paint = function(self2, w, h)
-        draw.RoundedBox(6, 0, 0, w, h, Color(35,38,48))
+        -- Category + Class (right side)
+        draw.SimpleText(data.category or "", "SMGRP_Body13", w - 24, 22, C.text_muted or Color(90, 94, 110), TEXT_ALIGN_RIGHT, 0)
+        draw.SimpleText(data.weaponClass or "", "SMGRP_Body12", w - 24, 40, C.text_muted or Color(90, 94, 110), TEXT_ALIGN_RIGHT, 0)
 
-        -- Quality badge
-        draw.RoundedBox(4, 4, 4, 60, h - 8, ColorAlpha(qualityInfo.color, 180))
-        draw.SimpleText(data.quality or "Junk", "BRS_UW_Font12B", 34, h/2, Color(255,255,255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
-
-        -- Booster score
-        draw.SimpleText("Booster Score: " .. string.format("%.1f", avgBoost), "BRS_UW_Font14", w/2 + 10, h/2, Color(200,200,200), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
-
-        -- Avg badge
-        local avgColor = avgBoost >= 50 and Color(80,255,120) or (avgBoost >= 25 and Color(255,200,40) or Color(200,200,200))
-        draw.SimpleText("+" .. string.format("%.0f", avgBoost) .. "% avg", "BRS_UW_Font12B", w - 8, h/2, avgColor, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER)
+        -- Divider
+        surface.SetDrawColor(C.border or Color(50, 52, 65))
+        surface.DrawRect(24, h - 1, w - 48, 1)
     end
 
-    -- Tab bar
-    local activeTab = "stats"
-    local tabBar = vgui.Create("DPanel", frame)
-    tabBar:Dock(TOP)
-    tabBar:DockMargin(20, 12, 20, 0)
-    tabBar:SetTall(32)
-    tabBar.Paint = function() end
+    -- Close X button (top right)
+    local closeX = vgui.Create("DButton", header)
+    closeX:SetSize(28, 28)
+    closeX:SetPos(fw - 36, 8)
+    closeX:SetText("")
+    closeX.hoverA = 0
+    closeX.Paint = function(s, w, h)
+        s.hoverA = math.Clamp(s.hoverA + (s:IsHovered() and 12 or -12), 0, 255)
+        if s.hoverA > 0 then draw.RoundedBox(4, 0, 0, w, h, Color(220, 60, 60, s.hoverA)) end
+        local cx, cy, sz = w/2, h/2, 5
+        surface.SetDrawColor(200, 200, 210)
+        surface.DrawLine(cx-sz, cy-sz, cx+sz, cy+sz)
+        surface.DrawLine(cx+sz, cy-sz, cx-sz, cy+sz)
+    end
+    closeX.DoClick = function() overlay:Remove() end
 
-    local tabs = {"Stats", "Ranking", "Info"}
-    local tabButtons = {}
+    -- ====== BODY: LEFT (model + radar) + RIGHT (stats) ======
+    local body = vgui.Create("DPanel", frame)
+    body:Dock(FILL)
+    body:DockMargin(0, 0, 0, 0)
+    body.Paint = function() end
 
-    local contentPanel = vgui.Create("DPanel", frame)
-    contentPanel:Dock(TOP)
-    contentPanel:DockMargin(20, 8, 20, 0)
-    contentPanel:SetTall(240)
-    contentPanel.Paint = function() end
+    -- ====== LEFT COLUMN: WEAPON MODEL + RADAR CHART ======
+    local leftCol = vgui.Create("DPanel", body)
+    leftCol:Dock(LEFT)
+    leftCol:SetWide(fw * 0.44)
+    leftCol:DockMargin(16, 8, 0, 16)
+    leftCol.Paint = function() end
 
-    local function FillContent()
-        contentPanel:Clear()
+    -- Weapon model display
+    local modelPanel = vgui.Create("DPanel", leftCol)
+    modelPanel:Dock(TOP)
+    modelPanel:SetTall(180)
+    modelPanel.Paint = function(self2, w, h)
+        draw.RoundedBox(6, 0, 0, w, h, C.bg_mid or Color(26, 27, 35))
+        surface.SetDrawColor(C.border or Color(50, 52, 65))
+        surface.DrawOutlinedRect(0, 0, w, h, 1)
+    end
 
-        if activeTab == "stats" then
-            -- Stat bars
-            for i, statDef in ipairs(BRS_UW.Stats) do
-                local val = (data.stats and data.stats[statDef.key]) or 0
+    -- Try to get weapon model from item config
+    local weaponModel = nil
+    if data.weaponClass then
+        local weps = weapons.GetStored(data.weaponClass)
+        if weps and weps.WorldModel then
+            weaponModel = weps.WorldModel
+        end
+    end
 
-                local row = vgui.Create("DPanel", contentPanel)
-                row:Dock(TOP)
-                row:DockMargin(0, 4, 0, 0)
-                row:SetTall(30)
-                row.Paint = function(self2, w, h)
-                    -- Stat name
-                    draw.SimpleText(statDef.name, "BRS_UW_Font14B", 0, h/2, statDef.color, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
+    -- Also try looking up from bricks config
+    if not weaponModel and globalKey then
+        local baseKey = string.match(globalKey, "^ITEM_%d+") or globalKey
+        local configItem = BRICKS_SERVER.UNBOXING.Func.GetItemFromGlobalKey(baseKey)
+        if configItem and configItem.Model then
+            weaponModel = configItem.Model
+        end
+    end
 
-                    -- Value
-                    draw.SimpleText("+" .. string.format("%.1f", val) .. "%", "BRS_UW_Font14", w, h/2, Color(220,220,220), TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER)
+    if weaponModel then
+        local mdl = vgui.Create("DModelPanel", modelPanel)
+        mdl:Dock(FILL)
+        mdl:DockMargin(4, 4, 4, 4)
+        mdl:SetModel(weaponModel)
+        mdl:SetCursor("none")
+        mdl.LayoutEntity = function() end
+        mdl.PreDrawModel = function() render.ClearDepth() end
 
-                    -- Bar background
-                    local barX, barY, barW, barH = 100, h/2 - 5, w - 170, 10
-                    draw.RoundedBox(4, barX, barY, barW, barH, Color(30,33,42))
+        local ent = mdl.Entity
+        if IsValid(ent) then
+            local mn, mx = ent:GetRenderBounds()
+            local size = math.max(math.abs(mn.x) + math.abs(mx.x), math.abs(mn.y) + math.abs(mx.y), math.abs(mn.z) + math.abs(mx.z))
+            mdl:SetFOV(45)
+            mdl:SetCamPos(Vector(size * 1.1, size * 0.8, size * 0.4))
+            mdl:SetLookAt((mn + mx) * 0.5)
+        end
+    else
+        -- Fallback: show weapon name as text
+        local fallback = vgui.Create("DPanel", modelPanel)
+        fallback:Dock(FILL)
+        fallback.Paint = function(s, w, h)
+            draw.SimpleText(data.weaponName or "?", "SMGRP_SubHeader", w/2, h/2, C.text_muted or Color(90, 94, 110), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+        end
+    end
 
-                    -- Bar fill
-                    local fillW = math.Clamp(val / 100, 0, 1) * barW
-                    if fillW > 1 then
-                        draw.RoundedBox(4, barX, barY, fillW, barH, ColorAlpha(statDef.color, 220))
-                    end
-                end
+    -- ====== PENTAGON RADAR CHART ======
+    local radarPanel = vgui.Create("DPanel", leftCol)
+    radarPanel:Dock(FILL)
+    radarPanel:DockMargin(0, 8, 0, 0)
+
+    radarPanel.Paint = function(self2, w, h)
+        draw.RoundedBox(6, 0, 0, w, h, C.bg_mid or Color(26, 27, 35))
+        surface.SetDrawColor(C.border or Color(50, 52, 65))
+        surface.DrawOutlinedRect(0, 0, w, h, 1)
+
+        local cx, cy = w / 2, h / 2 + 4
+        local maxR = math.min(w, h) * 0.38
+        local stats = data.stats or {}
+        local statDefs = BRS_UW.Stats or {}
+        local numStats = #statDefs
+        if numStats < 3 then return end
+
+        local age = math.Clamp((CurTime() - frame.startTime) * 2, 0, 1) -- animate in
+
+        -- Draw grid rings
+        for ring = 1, 4 do
+            local r = maxR * (ring / 4)
+            local pts = {}
+            for i = 1, numStats do
+                local angle = math.rad(-90 + (i - 1) * (360 / numStats))
+                table.insert(pts, { x = cx + math.cos(angle) * r, y = cy + math.sin(angle) * r })
             end
-
-            -- Overall Power
-            local overallRow = vgui.Create("DPanel", contentPanel)
-            overallRow:Dock(TOP)
-            overallRow:DockMargin(0, 12, 0, 0)
-            overallRow:SetTall(30)
-            overallRow.Paint = function(self2, w, h)
-                local overallColor = Color(255, 220, 100)
-                draw.SimpleText("OVERALL POWER", "BRS_UW_Font14B", 0, h/2, overallColor, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
-                draw.SimpleText("+" .. string.format("%.1f", avgBoost) .. "%", "BRS_UW_Font14", w, h/2, overallColor, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER)
-
-                local barX, barY, barW, barH = 130, h/2 - 5, w - 200, 10
-                draw.RoundedBox(4, barX, barY, barW, barH, Color(30,33,42))
-                local fillW = math.Clamp(avgBoost / 100, 0, 1) * barW
-                if fillW > 1 then
-                    draw.RoundedBox(4, barX, barY, fillW, barH, ColorAlpha(overallColor, 220))
-                end
-            end
-
-        elseif activeTab == "ranking" then
-            local infoLabel = vgui.Create("DLabel", contentPanel)
-            infoLabel:Dock(TOP)
-            infoLabel:DockMargin(0, 40, 0, 0)
-            infoLabel:SetTall(30)
-            infoLabel:SetFont("BRS_UW_Font16")
-            infoLabel:SetText("Ranking system coming soon...")
-            infoLabel:SetTextColor(Color(150,150,150))
-            infoLabel:SetContentAlignment(5)
-
-        elseif activeTab == "info" then
-            local infoPairs = {
-                {"Weapon", data.weaponName or "Unknown"},
-                {"Class", data.weaponClass or "Unknown"},
-                {"Rarity", data.rarity or "Common"},
-                {"Quality", data.quality or "Junk"},
-                {"Category", data.category or "Unknown"},
-                {"UID", data.uid or "N/A"},
-                {"Avg Boost", string.format("%.1f%%", avgBoost)},
-            }
-
-            for _, pair in ipairs(infoPairs) do
-                local row = vgui.Create("DPanel", contentPanel)
-                row:Dock(TOP)
-                row:DockMargin(0, 4, 0, 0)
-                row:SetTall(24)
-                row.Paint = function(self2, w, h)
-                    draw.SimpleText(pair[1], "BRS_UW_Font14", 0, h/2, Color(140,140,140), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
-                    draw.SimpleText(pair[2], "BRS_UW_Font14", w, h/2, Color(220,220,220), TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER)
-                end
+            surface.SetDrawColor(C.border or Color(50, 52, 65))
+            for i = 1, #pts do
+                local next = (i % #pts) + 1
+                surface.DrawLine(pts[i].x, pts[i].y, pts[next].x, pts[next].y)
             end
         end
-    end
 
-    for i, tabName in ipairs(tabs) do
-        local btn = vgui.Create("DButton", tabBar)
-        btn:Dock(LEFT)
-        btn:SetWide(80)
-        btn:DockMargin(0, 0, 5, 0)
-        btn:SetText("")
-        btn.Paint = function(self2, w, h)
-            local isActive = (activeTab == string.lower(tabName))
-            local bgCol = isActive and rarity.color or Color(40,43,55)
-            draw.RoundedBox(6, 0, 0, w, h, bgCol)
-            local textCol = isActive and Color(255,255,255) or Color(160,160,160)
-            draw.SimpleText(tabName, "BRS_UW_Font14B", w/2, h/2, textCol, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+        -- Draw axis lines + labels
+        for i, statDef in ipairs(statDefs) do
+            local angle = math.rad(-90 + (i - 1) * (360 / numStats))
+            local ex, ey = cx + math.cos(angle) * maxR, cy + math.sin(angle) * maxR
+            surface.SetDrawColor(C.border or Color(50, 52, 65))
+            surface.DrawLine(cx, cy, ex, ey)
+
+            -- Label
+            local lx = cx + math.cos(angle) * (maxR + 16)
+            local ly = cy + math.sin(angle) * (maxR + 16)
+            draw.SimpleText(statDef.shortName, "SMGRP_Bold10", lx, ly, statDef.color, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
         end
-        btn.DoClick = function()
-            activeTab = string.lower(tabName)
-            FillContent()
+
+        -- Draw stat polygon (filled)
+        local polyPts = {}
+        local screenPts = {}
+        for i, statDef in ipairs(statDefs) do
+            local val = math.Clamp((stats[statDef.key] or 0) / 100, 0, 1) * age
+            local angle = math.rad(-90 + (i - 1) * (360 / numStats))
+            local r = maxR * val
+            local px, py = cx + math.cos(angle) * r, cy + math.sin(angle) * r
+            local sx, sy = self2:LocalToScreen(px, py)
+            table.insert(polyPts, { x = sx, y = sy })
+            table.insert(screenPts, { px, py })
         end
-        tabButtons[i] = btn
+
+        -- Fill polygon
+        if #polyPts >= 3 then
+            local fillCol = ColorAlpha(rarityCol, 40)
+            surface.SetDrawColor(fillCol)
+            draw.NoTexture()
+            surface.DrawPoly(polyPts)
+        end
+
+        -- Draw polygon outline
+        surface.SetDrawColor(ColorAlpha(rarityCol, 180))
+        for i = 1, #screenPts do
+            local next = (i % #screenPts) + 1
+            surface.DrawLine(screenPts[i][1], screenPts[i][2], screenPts[next][1], screenPts[next][2])
+        end
+
+        -- Draw stat dots
+        for i, pt in ipairs(screenPts) do
+            draw.RoundedBox(3, pt[1] - 3, pt[2] - 3, 6, 6, rarityCol)
+        end
+
+        -- Center power score
+        draw.SimpleText(string.format("%.0f", avgBoost) .. "%", "SMGRP_Stat20", cx, cy, ColorAlpha(C.text_primary or Color(220,222,230), 200 * age), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
     end
 
-    FillContent()
+    -- ====== RIGHT COLUMN: STAT BARS + INFO ======
+    local rightCol = vgui.Create("DPanel", body)
+    rightCol:Dock(FILL)
+    rightCol:DockMargin(12, 8, 16, 16)
+    rightCol.Paint = function() end
 
-    -- Close button
-    local closeBtn = vgui.Create("DButton", frame)
-    closeBtn:Dock(BOTTOM)
-    closeBtn:DockMargin(20, 0, 20, 15)
-    closeBtn:SetTall(36)
-    closeBtn:SetText("")
-    closeBtn.Paint = function(self2, w, h)
-        local col = self2:IsHovered() and Color(60,63,75) or Color(40,43,55)
-        draw.RoundedBox(8, 0, 0, w, h, col)
-        draw.SimpleText("Close", "BRS_UW_Font16", w/2, h/2, Color(200,200,200), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+    -- ====== STAT BARS (animated fill) ======
+    local statsPanel = vgui.Create("DPanel", rightCol)
+    statsPanel:Dock(TOP)
+    statsPanel:SetTall(24 + #(BRS_UW.Stats or {}) * 42 + 50)
+    statsPanel.Paint = function(self2, w, h)
+        draw.RoundedBox(6, 0, 0, w, h, C.bg_mid or Color(26, 27, 35))
+        surface.SetDrawColor(C.border or Color(50, 52, 65))
+        surface.DrawOutlinedRect(0, 0, w, h, 1)
+
+        draw.SimpleText("WEAPON STATS", "SMGRP_Bold12", 14, 14, C.text_muted or Color(90, 94, 110), 0, TEXT_ALIGN_CENTER)
     end
-    closeBtn.DoClick = function()
-        frame:Remove()
+
+    local statsInner = vgui.Create("DPanel", statsPanel)
+    statsInner:Dock(FILL)
+    statsInner:DockMargin(14, 28, 14, 8)
+    statsInner.Paint = function() end
+
+    for i, statDef in ipairs(BRS_UW.Stats or {}) do
+        local val = (data.stats and data.stats[statDef.key]) or 0
+        local delay = (i - 1) * 0.12 -- stagger animation
+
+        local row = vgui.Create("DPanel", statsInner)
+        row:Dock(TOP)
+        row:DockMargin(0, 0, 0, 6)
+        row:SetTall(36)
+        row.Paint = function(self2, w, h)
+            local age = math.Clamp((CurTime() - frame.startTime - delay) * 3, 0, 1)
+            local animVal = val * age
+
+            -- Stat name
+            draw.SimpleText(statDef.name, "SMGRP_Bold13", 0, 4, statDef.color, 0, 0)
+
+            -- Value text
+            draw.SimpleText("+" .. string.format("%.1f", animVal) .. "%", "SMGRP_Bold13", w, 4, C.text_primary or Color(220, 222, 230), TEXT_ALIGN_RIGHT, 0)
+
+            -- Bar track
+            local barY = 24
+            local barH = 8
+            draw.RoundedBox(3, 0, barY, w, barH, Color(15, 15, 20, 200))
+
+            -- Bar fill
+            local fillW = math.Clamp(animVal / 100, 0, 1) * w
+            if fillW > 2 then
+                draw.RoundedBox(3, 0, barY, fillW, barH, statDef.color)
+                -- Inner highlight
+                surface.SetDrawColor(255, 255, 255, 40)
+                surface.DrawRect(1, barY, fillW - 2, math.floor(barH / 2))
+            end
+        end
+    end
+
+    -- Overall Power row
+    local overallRow = vgui.Create("DPanel", statsInner)
+    overallRow:Dock(TOP)
+    overallRow:DockMargin(0, 6, 0, 0)
+    overallRow:SetTall(36)
+    overallRow.Paint = function(self2, w, h)
+        local age = math.Clamp((CurTime() - frame.startTime - #(BRS_UW.Stats or {}) * 0.12) * 3, 0, 1)
+        local animVal = avgBoost * age
+
+        -- Separator
+        surface.SetDrawColor(C.border or Color(50, 52, 65))
+        surface.DrawRect(0, 0, w, 1)
+
+        local powerCol = avgBoost >= 60 and (C.accent or Color(0, 212, 170)) or (avgBoost >= 35 and (C.amber or Color(255, 185, 50)) or (C.text_secondary or Color(140, 144, 160)))
+        draw.SimpleText("OVERALL POWER", "SMGRP_Bold13", 0, 10, powerCol, 0, 0)
+        draw.SimpleText("+" .. string.format("%.1f", animVal) .. "%", "SMGRP_Bold13", w, 10, powerCol, TEXT_ALIGN_RIGHT, 0)
+
+        local barY = 28
+        local barH = 8
+        draw.RoundedBox(3, 0, barY, w, barH, Color(15, 15, 20, 200))
+        local fillW = math.Clamp(animVal / 100, 0, 1) * w
+        if fillW > 2 then
+            draw.RoundedBox(3, 0, barY, fillW, barH, powerCol)
+            surface.SetDrawColor(255, 255, 255, 40)
+            surface.DrawRect(1, barY, fillW - 2, math.floor(barH / 2))
+        end
+    end
+
+    -- ====== WEAPON INFO PANEL ======
+    local infoPanel = vgui.Create("DPanel", rightCol)
+    infoPanel:Dock(FILL)
+    infoPanel:DockMargin(0, 8, 0, 0)
+    infoPanel.Paint = function(self2, w, h)
+        draw.RoundedBox(6, 0, 0, w, h, C.bg_mid or Color(26, 27, 35))
+        surface.SetDrawColor(C.border or Color(50, 52, 65))
+        surface.DrawOutlinedRect(0, 0, w, h, 1)
+
+        draw.SimpleText("DETAILS", "SMGRP_Bold12", 14, 14, C.text_muted or Color(90, 94, 110), 0, TEXT_ALIGN_CENTER)
+    end
+
+    local infoInner = vgui.Create("DPanel", infoPanel)
+    infoInner:Dock(FILL)
+    infoInner:DockMargin(14, 28, 14, 10)
+    infoInner.Paint = function() end
+
+    local infoPairs = {
+        { "Category", data.category or "Unknown" },
+        { "Rarity", data.rarity or "Common", rarityCol },
+        { "Quality", data.quality or "Junk", qualityInfo.color },
+        { "Avg Boost", string.format("+%.1f%%", avgBoost) },
+        { "UID", data.uid or "N/A" },
+    }
+
+    for _, pair in ipairs(infoPairs) do
+        local row = vgui.Create("DPanel", infoInner)
+        row:Dock(TOP)
+        row:DockMargin(0, 0, 0, 2)
+        row:SetTall(20)
+        row.Paint = function(self2, w, h)
+            draw.SimpleText(pair[1], "SMGRP_Body12", 0, h/2, C.text_muted or Color(90, 94, 110), 0, TEXT_ALIGN_CENTER)
+            draw.SimpleText(pair[2], "SMGRP_Bold12", w, h/2, pair[3] or (C.text_primary or Color(220, 222, 230)), TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER)
+        end
     end
 end
 
 -- ============================================================
--- FONTS
+-- FONTS (Montserrat to match SmG RP theme, old names kept for admin compat)
 -- ============================================================
-surface.CreateFont("BRS_UW_Font8", { font = "Roboto", size = 10, weight = 700 })
-surface.CreateFont("BRS_UW_Font10", { font = "Roboto", size = 12, weight = 500 })
-surface.CreateFont("BRS_UW_Font10B", { font = "Roboto", size = 12, weight = 700 })
-surface.CreateFont("BRS_UW_Font12B", { font = "Roboto", size = 14, weight = 700 })
-surface.CreateFont("BRS_UW_Font14", { font = "Roboto", size = 16, weight = 500 })
-surface.CreateFont("BRS_UW_Font14B", { font = "Roboto", size = 16, weight = 700 })
-surface.CreateFont("BRS_UW_Font16", { font = "Roboto", size = 18, weight = 500 })
-surface.CreateFont("BRS_UW_Font18B", { font = "Roboto", size = 20, weight = 700 })
-surface.CreateFont("BRS_UW_Font22B", { font = "Roboto", size = 24, weight = 700 })
+local fontBase = "Montserrat"
+local fontFallback = "Segoe UI"
+local fontDefs = {
+    {"BRS_UW_Font8",   10, 700},
+    {"BRS_UW_Font10",  12, 500},
+    {"BRS_UW_Font10B", 12, 700},
+    {"BRS_UW_Font12B", 14, 700},
+    {"BRS_UW_Font14",  16, 500},
+    {"BRS_UW_Font14B", 16, 700},
+    {"BRS_UW_Font16",  18, 500},
+    {"BRS_UW_Font18B", 20, 700},
+    {"BRS_UW_Font22B", 24, 700},
+}
+for _, def in ipairs(fontDefs) do
+    surface.CreateFont(def[1], { font = fontBase, size = def[2], weight = def[3], antialias = true })
+end
 
 print("[BRS UW] Client system loaded")
