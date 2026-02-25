@@ -1,0 +1,11 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "sterling/brickwall_lootbox_logo"
+	"$alphatest" "1"
+
+	Proxies {
+		CaseLogo {
+			resultVar $basetexture
+		}
+	}
+}

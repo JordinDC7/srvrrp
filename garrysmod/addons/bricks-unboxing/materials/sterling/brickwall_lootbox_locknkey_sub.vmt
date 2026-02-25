@@ -1,0 +1,16 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "sterling/brickwall_lootbox_locknkey_sub"
+	"$bumpmap" "sterling/brickwall_lootbox_locknkey_norm"
+
+	"$envmap"			"env_cubemap"
+	"$normalmapalphaenvmapmask"	"1"
+	"$envmaptint"			"[0.2 0.2 0.2]"
+
+	"$phong" "1"
+	"$phongboost" "10"
+	"$phongexponent" "5"
+	"$phongfresnelranges"		"[0.1 0.1 0.1]"
+
+	"$blendtintbybasealpha" "1"	
+}

@@ -1,0 +1,1 @@
+~'StripWeapons":b1'QuickFreeze":b1'ResetVelocity":b1'RainbowPhysgun":b1'NegateFallDamage":b1'GodPickup":b1

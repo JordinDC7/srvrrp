@@ -1,0 +1,58 @@
+# ============================================
+# Garry's Mod Dedicated Server - .gitignore
+# Only track custom addons, configs, and data.
+# Base game files are managed by SteamCMD.
+# ============================================
+
+# --- Base Game / Engine Files (installed by SteamCMD) ---
+garrysmod/*.vpk
+garrysmod/*.vbsp
+garrysmod/gameinfo.txt
+garrysmod/garrysmod.ver
+garrysmod/steam.inf
+garrysmod/lights.rad
+
+# Stock gamemodes (base & sandbox come with the install)
+garrysmod/gamemodes/base/
+garrysmod/gamemodes/sandbox/
+
+# Default maps and nav/particle files (shipped with game)
+garrysmod/maps/
+
+# --- Runtime / Generated Data ---
+garrysmod/sv.db
+garrysmod/modelsounds.cache
+garrysmod/clientside_errors.txt
+garrysmod/GameState.txt
+garrysmod/stats.txt
+
+# Cache (workshop downloads, srcds cache, etc.)
+garrysmod/cache/
+
+# Logs (generated at runtime, not deployment config)
+garrysmod/data/ulx_logs/
+garrysmod/data/darkrp_logs/
+garrysmod/data/ulib_backups/
+
+# --- Default/Stock Config Files (shipped with game) ---
+garrysmod/cfg/360controller.cfg
+garrysmod/cfg/360controller-linux.cfg
+garrysmod/cfg/undo360controller.cfg
+garrysmod/cfg/config_default.cfg
+garrysmod/cfg/game.cfg
+garrysmod/cfg/network.cfg
+garrysmod/cfg/settings_default.scr
+garrysmod/cfg/skill.cfg
+garrysmod/cfg/skill1.cfg
+garrysmod/cfg/skill2.cfg
+garrysmod/cfg/skill3.cfg
+garrysmod/cfg/skill_manifest.cfg
+garrysmod/cfg/valve.rc
+
+# --- OS / Editor / Tool Junk ---
+Thumbs.db
+Desktop.ini
+.DS_Store
+*.swp
+*.swo
+*~
