@@ -12,16 +12,13 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
       - name: Deploy via SFTP
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        uses: wangyucode/sftp-upload-action@v3
         with:
-          server: ${{ secrets.SFTP_HOST }}
+          host: ${{ secrets.SFTP_HOST }}
           port: ${{ secrets.SFTP_PORT }}
-          protocol: sftp
           username: ${{ secrets.SFTP_USER }}
           password: ${{ secrets.SFTP_PASS }}
-          local-dir: ./garrysmod/
-          server-dir: ${{ secrets.SFTP_REMOTE_DIR }}
+          localDir: ./garrysmod/
+          remoteDir: ${{ secrets.SFTP_REMOTE_DIR }}
