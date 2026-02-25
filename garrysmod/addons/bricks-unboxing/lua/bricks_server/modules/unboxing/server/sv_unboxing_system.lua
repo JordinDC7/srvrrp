@@ -5,7 +5,12 @@ function BRICKS_SERVER.UNBOXING.Func.OpenMenu( ply )
 end
 
 hook.Add( "PlayerSay", "BricksServerHooks_PlayerSay_OpenUnboxingMenu", function( ply, text )
-	if( BRICKS_SERVER.UNBOXING.LUACFG.MenuCommands[string.lower( text )] ) then
+	if( not isstring( text ) ) then return end
+
+	local lowerText = string.lower( string.Trim( text ) )
+	local firstArg = string.Explode( " ", lowerText )[1]
+
+	if( BRICKS_SERVER.UNBOXING.LUACFG.MenuCommands[lowerText] or BRICKS_SERVER.UNBOXING.LUACFG.MenuCommands[firstArg] ) then
 		BRICKS_SERVER.UNBOXING.Func.OpenMenu( ply )
 		return ""
 	end
