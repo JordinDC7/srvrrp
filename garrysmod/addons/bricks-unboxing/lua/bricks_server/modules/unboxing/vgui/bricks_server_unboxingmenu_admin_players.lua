@@ -253,6 +253,127 @@ function PANEL:RefreshPanel( steamID64, playerData )
     local spacing = 10
     local slotSize = (gridWide-((slotsWide-1)*spacing))/slotsWide
 
+    -- Manage bar inside category
+    local adminSelectedItems = {}
+    local adminSelectMode = false
+
+    local manageBar = vgui.Create( "DPanel", inventoryPanel )
+    manageBar:Dock( TOP )
+    manageBar:DockMargin( 10, 5, 10, 0 )
+    manageBar:SetTall( 32 )
+    manageBar.Paint = function( self2, w, h )
+        if adminSelectMode then
+            draw.RoundedBox( 6, 0, 0, w, h, Color(40, 20, 20) )
+        end
+    end
+
+    local manageToggle = vgui.Create( "DButton", manageBar )
+    manageToggle:Dock( LEFT )
+    manageToggle:SetWide( 70 )
+    manageToggle:SetText( "" )
+    manageToggle.Paint = function( self2, w, h )
+        local bgCol = adminSelectMode and Color(200,50,50) or BRICKS_SERVER.Func.GetTheme( 0 )
+        if self2:IsHovered() then bgCol = adminSelectMode and Color(220,70,70) or BRICKS_SERVER.Func.GetTheme( 0, 150 ) end
+        draw.RoundedBox( 4, 0, 0, w, h, bgCol )
+        draw.SimpleText( adminSelectMode and "Cancel" or "Manage", "BRS_UW_Font12B", w/2, h/2, Color(255,255,255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+    end
+
+    local selectAllAdminBtn = vgui.Create( "DButton", manageBar )
+    selectAllAdminBtn:Dock( LEFT )
+    selectAllAdminBtn:DockMargin( 5, 0, 0, 0 )
+    selectAllAdminBtn:SetWide( 70 )
+    selectAllAdminBtn:SetText( "" )
+    selectAllAdminBtn:SetVisible(false)
+    selectAllAdminBtn.Paint = function( self2, w, h )
+        draw.RoundedBox( 4, 0, 0, w, h, self2:IsHovered() and Color(60,63,75) or Color(45,48,58) )
+        draw.SimpleText( "Select All", "BRS_UW_Font10B", w/2, h/2, Color(200,200,200), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+    end
+    selectAllAdminBtn.DoClick = function()
+        for k, v in pairs(inventoryTable) do
+            adminSelectedItems[k] = true
+        end
+    end
+
+    local deselectAdminBtn = vgui.Create( "DButton", manageBar )
+    deselectAdminBtn:Dock( LEFT )
+    deselectAdminBtn:DockMargin( 5, 0, 0, 0 )
+    deselectAdminBtn:SetWide( 75 )
+    deselectAdminBtn:SetText( "" )
+    deselectAdminBtn:SetVisible(false)
+    deselectAdminBtn.Paint = function( self2, w, h )
+        draw.RoundedBox( 4, 0, 0, w, h, self2:IsHovered() and Color(60,63,75) or Color(45,48,58) )
+        draw.SimpleText( "Deselect All", "BRS_UW_Font10B", w/2, h/2, Color(200,200,200), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+    end
+    deselectAdminBtn.DoClick = function()
+        adminSelectedItems = {}
+    end
+
+    local adminCountLabel = vgui.Create( "DPanel", manageBar )
+    adminCountLabel:Dock( LEFT )
+    adminCountLabel:DockMargin( 10, 0, 0, 0 )
+    adminCountLabel:SetWide( 90 )
+    adminCountLabel:SetVisible(false)
+    adminCountLabel.Paint = function( self2, w, h )
+        draw.SimpleText( table.Count(adminSelectedItems) .. " selected", "BRS_UW_Font12B", w/2, h/2, Color(180,180,180), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+    end
+
+    local adminDeleteBtn = vgui.Create( "DButton", manageBar )
+    adminDeleteBtn:Dock( RIGHT )
+    adminDeleteBtn:SetWide( 100 )
+    adminDeleteBtn:SetText( "" )
+    adminDeleteBtn:SetVisible(false)
+    adminDeleteBtn.Paint = function( self2, w, h )
+        local count = table.Count(adminSelectedItems)
+        local bgCol = count > 0 and (self2:IsHovered() and Color(220,40,40) or Color(180,30,30)) or Color(80,30,30)
+        draw.RoundedBox( 4, 0, 0, w, h, bgCol )
+        draw.SimpleText( "Delete (" .. count .. ")", "BRS_UW_Font12B", w/2, h/2, Color(255,255,255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+    end
+    adminDeleteBtn.DoClick = function()
+        local count = table.Count(adminSelectedItems)
+        if count == 0 then return end
+
+        Derma_Query("Admin delete " .. count .. " item(s) from this player? Cannot be undone.", "Admin Confirm",
+            "Delete", function()
+                local keys = {}
+                for k, _ in pairs(adminSelectedItems) do
+                    table.insert(keys, k)
+                end
+
+                net.Start("BRS_UW.AdminDeleteItems")
+                    net.WriteString(steamID64)
+                    net.WriteUInt(#keys, 16)
+                    for _, key in ipairs(keys) do
+                        net.WriteString(key)
+                    end
+                net.SendToServer()
+
+                adminSelectedItems = {}
+                adminSelectMode = false
+                selectAllAdminBtn:SetVisible(false)
+                deselectAdminBtn:SetVisible(false)
+                adminCountLabel:SetVisible(false)
+                adminDeleteBtn:SetVisible(false)
+
+                -- Re-request player data to refresh
+                timer.Simple(0.5, function()
+                    net.Start("BRS.Net.RequestUnboxingAdminPlayerData")
+                        net.WriteString(steamID64)
+                    net.SendToServer()
+                end)
+            end,
+            "Cancel", function() end
+        )
+    end
+
+    manageToggle.DoClick = function()
+        adminSelectMode = not adminSelectMode
+        adminSelectedItems = {}
+        selectAllAdminBtn:SetVisible(adminSelectMode)
+        deselectAdminBtn:SetVisible(adminSelectMode)
+        adminCountLabel:SetVisible(adminSelectMode)
+        adminDeleteBtn:SetVisible(adminSelectMode)
+    end
+
     local inventoryGrid = vgui.Create( "DIconLayout", inventoryPanel )
     inventoryGrid:Dock( FILL )
     inventoryGrid:DockMargin( 10, 10, 10, 10 )
@@ -275,10 +396,22 @@ function PANEL:RefreshPanel( steamID64, playerData )
     table.SortByMember( sortedItems, 1, false )
 
     for k, v in pairs( sortedItems ) do
-        local slotBack = inventoryGrid:Add( "bricks_server_unboxingmenu_itemslot" )
+        local slotWrapper = inventoryGrid:Add( "DPanel" )
+        slotWrapper:SetSize( slotSize, slotSize*1.2 )
+        slotWrapper.Paint = function() end
+
+        local slotBack = vgui.Create( "bricks_server_unboxingmenu_itemslot", slotWrapper )
         slotBack:SetSize( slotSize, slotSize*1.2 )
         slotBack.themeNum = 1
         slotBack:FillPanel( v[2], v[3], function() 
+            if adminSelectMode then
+                if adminSelectedItems[v[2]] then
+                    adminSelectedItems[v[2]] = nil
+                else
+                    adminSelectedItems[v[2]] = true
+                end
+                return
+            end
             BRICKS_SERVER.Func.StringRequest( BRICKS_SERVER.Func.L( "admin" ), BRICKS_SERVER.Func.L( "unboxingTradeRemove" ), 1, function( text ) 
                 net.Start( "BRS.Net.AdminUnboxingPlayerInventoryChange" )
                     net.WriteString( steamID64 )
@@ -287,6 +420,30 @@ function PANEL:RefreshPanel( steamID64, playerData )
                 net.SendToServer()
             end, function() end, BRICKS_SERVER.Func.L( "ok" ), BRICKS_SERVER.Func.L( "cancel" ), true )
         end )
+
+        -- Checkbox overlay for admin select mode
+        local checkbox = vgui.Create( "DButton", slotWrapper )
+        checkbox:SetSize( 20, 20 )
+        checkbox:SetPos( slotSize - 24, 4 )
+        checkbox:SetText( "" )
+        checkbox:SetZPos( 100 )
+        checkbox.Paint = function( self2, w, h )
+            if not adminSelectMode then return end
+            local sel = adminSelectedItems[v[2]] or false
+            draw.RoundedBox( 3, 0, 0, w, h, sel and Color(200,50,50,220) or Color(30,30,30,180) )
+            draw.RoundedBox( 2, 1, 1, w-2, h-2, sel and Color(220,60,60) or Color(50,50,50,200) )
+            if sel then
+                draw.SimpleText( "✓", "BRS_UW_Font12B", w/2, h/2, Color(255,255,255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+            end
+        end
+        checkbox.DoClick = function()
+            if not adminSelectMode then return end
+            if adminSelectedItems[v[2]] then
+                adminSelectedItems[v[2]] = nil
+            else
+                adminSelectedItems[v[2]] = true
+            end
+        end
     end
 
     local addMat = Material( "bricks_server/unboxing_add_64.png" )
@@ -419,7 +576,7 @@ function PANEL:RefreshPanel( steamID64, playerData )
         end
     end
 
-    inventoryPanel:SetExpandedTall( (math.ceil( (table.Count( sortedItems )+1)/slotsWide )*((slotSize*1.2)+spacing))+spacing )
+    inventoryPanel:SetExpandedTall( (math.ceil( (table.Count( sortedItems )+1)/slotsWide )*((slotSize*1.2)+spacing))+spacing+42 )
 end
 
 function PANEL:CreateCategory( title )

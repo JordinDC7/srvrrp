@@ -557,17 +557,18 @@ net.Receive("BRS_UW.RequestInspect", function(len, ply)
 end)
 
 -- ============================================================
--- HANDLE DELETE WEAPONS (bulk or single)
+-- HANDLE DELETE ITEMS (bulk - supports ALL item types)
 -- ============================================================
-util.AddNetworkString("BRS_UW.DeleteWeapons")
-net.Receive("BRS_UW.DeleteWeapons", function(len, ply)
+util.AddNetworkString("BRS_UW.DeleteItems")
+util.AddNetworkString("BRS_UW.DeleteItemsConfirm")
+net.Receive("BRS_UW.DeleteItems", function(len, ply)
     local count = net.ReadUInt(16)
     if not count or count < 1 or count > 500 then return end
 
     local keysToDelete = {}
     for i = 1, count do
         local globalKey = net.ReadString()
-        if globalKey and BRS_UW.IsUniqueWeapon(globalKey) then
+        if globalKey and (string.StartWith(globalKey, "ITEM_") or string.StartWith(globalKey, "CASE_") or string.StartWith(globalKey, "KEY_")) then
             table.insert(keysToDelete, globalKey)
         end
     end
@@ -579,28 +580,103 @@ net.Receive("BRS_UW.DeleteWeapons", function(len, ply)
     local deleteCount = 0
 
     for _, globalKey in ipairs(keysToDelete) do
-        -- Remove from bricks inventory
         local inventory = ply:GetUnboxingInventory()
         if inventory[globalKey] then
             ply:RemoveUnboxingInventoryItem(globalKey, inventory[globalKey])
         end
 
-        -- Remove from MySQL
-        local baseNum, uid = BRS_UW.ParseUniqueKey(globalKey)
-        if uid then
-            BRS_UW.DeleteWeaponDB(uid)
-        end
-
-        -- Remove from server cache
-        if cache[globalKey] then
-            cache[globalKey] = nil
+        -- If unique weapon, also clean MySQL + cache
+        if BRS_UW.IsUniqueWeapon(globalKey) then
+            local baseNum, uid = BRS_UW.ParseUniqueKey(globalKey)
+            if uid then
+                BRS_UW.DeleteWeaponDB(uid)
+            end
+            if cache[globalKey] then
+                cache[globalKey] = nil
+            end
         end
 
         deleteCount = deleteCount + 1
     end
 
-    BRICKS_SERVER.Func.SendTopNotification(ply, "Deleted " .. deleteCount .. " weapon(s)", 3, BRICKS_SERVER.DEVCONFIG.BaseThemes.Green)
-    print("[BRS UW] " .. ply:Nick() .. " deleted " .. deleteCount .. " weapons")
+    BRICKS_SERVER.Func.SendTopNotification(ply, "Deleted " .. deleteCount .. " item(s)", 3, BRICKS_SERVER.DEVCONFIG.BaseThemes.Green)
+    print("[BRS UW] " .. ply:Nick() .. " deleted " .. deleteCount .. " items")
+
+    -- Send confirmation so client refreshes immediately
+    net.Start("BRS_UW.DeleteItemsConfirm")
+        net.WriteUInt(deleteCount, 16)
+    net.Send(ply)
+end)
+
+-- ============================================================
+-- ADMIN: BULK DELETE FROM PLAYER INVENTORY
+-- ============================================================
+util.AddNetworkString("BRS_UW.AdminDeleteItems")
+net.Receive("BRS_UW.AdminDeleteItems", function(len, ply)
+    if not BRICKS_SERVER.Func.HasAdminAccess(ply) then return end
+
+    local targetSteamID64 = net.ReadString()
+    local count = net.ReadUInt(16)
+    if not count or count < 1 or count > 500 then return end
+
+    local keysToDelete = {}
+    for i = 1, count do
+        local globalKey = net.ReadString()
+        if globalKey then
+            table.insert(keysToDelete, globalKey)
+        end
+    end
+
+    if #keysToDelete == 0 then return end
+
+    local targetPly = player.GetBySteamID64(targetSteamID64)
+    local deleteCount = 0
+
+    if IsValid(targetPly) then
+        -- Player is online
+        local cache = BRS_UW.ServerCache[targetSteamID64] or {}
+        for _, globalKey in ipairs(keysToDelete) do
+            local inventory = targetPly:GetUnboxingInventory()
+            if inventory[globalKey] then
+                targetPly:RemoveUnboxingInventoryItem(globalKey, inventory[globalKey])
+            end
+
+            if BRS_UW.IsUniqueWeapon(globalKey) then
+                local baseNum, uid = BRS_UW.ParseUniqueKey(globalKey)
+                if uid then BRS_UW.DeleteWeaponDB(uid) end
+                if cache[globalKey] then cache[globalKey] = nil end
+            end
+
+            deleteCount = deleteCount + 1
+        end
+    else
+        -- Player is offline - update DB directly
+        BRICKS_SERVER.UNBOXING.Func.FetchInventoryDB(targetSteamID64, function(data)
+            local inventoryTable = util.JSONToTable((data or {}).inventory or "") or {}
+
+            for _, globalKey in ipairs(keysToDelete) do
+                if inventoryTable[globalKey] then
+                    inventoryTable[globalKey] = nil
+
+                    if BRS_UW.IsUniqueWeapon(globalKey) then
+                        local baseNum, uid = BRS_UW.ParseUniqueKey(globalKey)
+                        if uid then BRS_UW.DeleteWeaponDB(uid) end
+                    end
+                end
+            end
+
+            BRICKS_SERVER.UNBOXING.Func.UpdateInventoryDB(targetSteamID64, inventoryTable)
+        end)
+        deleteCount = #keysToDelete
+    end
+
+    BRICKS_SERVER.Func.SendTopNotification(ply, "Admin deleted " .. deleteCount .. " item(s) from player", 3, BRICKS_SERVER.DEVCONFIG.BaseThemes.Green)
+    print("[BRS UW] ADMIN " .. ply:Nick() .. " deleted " .. deleteCount .. " items from " .. targetSteamID64)
+
+    -- Refresh admin panel
+    net.Start("BRS_UW.DeleteItemsConfirm")
+        net.WriteUInt(deleteCount, 16)
+    net.Send(ply)
 end)
 
 -- ============================================================

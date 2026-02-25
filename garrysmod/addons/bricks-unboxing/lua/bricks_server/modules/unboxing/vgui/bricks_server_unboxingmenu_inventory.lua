@@ -9,7 +9,7 @@ function PANEL:FillPanel()
     self.slotsWide = math.floor( gridWide/BRICKS_SERVER.Func.ScreenScale( 200 ) )
     self.spacing = 10
     self.slotSize = (gridWide-((self.slotsWide-1)*self.spacing))/self.slotsWide
-    self.selectedItems = {} -- track selected items for deletion
+    self.selectedItems = {}
     self.selectMode = false
     
     self.topBar = vgui.Create( "DPanel", self )
@@ -30,7 +30,7 @@ function PANEL:FillPanel()
         self:FillInventory()
     end
 
-    -- ====== FILTER TABS ======
+    -- Filter tabs
     self.filterChoice = "all"
     local filterPanel = vgui.Create( "DPanel", self.topBar )
     filterPanel:Dock( LEFT )
@@ -51,13 +51,10 @@ function PANEL:FillPanel()
         btn:SetWide( 72 )
         btn:DockMargin( 0, 0, 5, 0 )
         btn:SetText( "" )
-        btn.filterKey = f.key
         btn.Paint = function( self2, w, h )
             local isActive = (self.filterChoice == f.key)
             local bgCol = isActive and BRICKS_SERVER.Func.GetTheme( 0 ) or BRICKS_SERVER.Func.GetTheme( 1 )
-            if self2:IsHovered() and not isActive then
-                bgCol = BRICKS_SERVER.Func.GetTheme( 0, 100 )
-            end
+            if self2:IsHovered() and not isActive then bgCol = BRICKS_SERVER.Func.GetTheme( 0, 100 ) end
             draw.RoundedBox( 6, 0, 0, w, h, bgCol )
             local textCol = isActive and Color(255,255,255) or BRICKS_SERVER.Func.GetTheme( 6, 150 )
             draw.SimpleText( f.label, "BRICKS_SERVER_Font18", w/2, h/2, textCol, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
@@ -68,7 +65,7 @@ function PANEL:FillPanel()
         end
     end
 
-    -- ====== MANAGE BUTTON (toggle select mode) ======
+    -- Manage button
     self.manageBtn = vgui.Create( "DButton", self.topBar )
     self.manageBtn:Dock( RIGHT )
     self.manageBtn:DockMargin( 5, 10, 25, 10 )
@@ -78,22 +75,16 @@ function PANEL:FillPanel()
         local bgCol = self.selectMode and Color(200,50,50) or BRICKS_SERVER.Func.GetTheme( 1 )
         if self2:IsHovered() then bgCol = self.selectMode and Color(220,70,70) or BRICKS_SERVER.Func.GetTheme( 0, 100 ) end
         draw.RoundedBox( 6, 0, 0, w, h, bgCol )
-        local txt = self.selectMode and "Cancel" or "Manage"
-        draw.SimpleText( txt, "BRICKS_SERVER_Font18", w/2, h/2, Color(255,255,255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+        draw.SimpleText( self.selectMode and "Cancel" or "Manage", "BRICKS_SERVER_Font18", w/2, h/2, Color(255,255,255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
     end
     self.manageBtn.DoClick = function()
         self.selectMode = not self.selectMode
         self.selectedItems = {}
-        if self.selectMode then
-            self.actionBar:SetVisible(true)
-        else
-            self.actionBar:SetVisible(false)
-        end
+        self.actionBar:SetVisible(self.selectMode)
         self:FillInventory()
     end
 
     self.sortChoice = "rarity_high_to_low"
-
     self.sortBy = vgui.Create( "bricks_server_combo", self.topBar )
     self.sortBy:Dock( RIGHT )
     self.sortBy:DockMargin( 5, 10, 5, 10 )
@@ -108,7 +99,7 @@ function PANEL:FillPanel()
         self:FillInventory()
     end
 
-    -- ====== ACTION BAR (shown in select mode) ======
+    -- Action bar (select mode)
     self.actionBar = vgui.Create( "DPanel", self )
     self.actionBar:Dock( TOP )
     self.actionBar:SetTall( 40 )
@@ -117,30 +108,36 @@ function PANEL:FillPanel()
         draw.RoundedBox( 0, 0, 0, w, h, Color(40, 20, 20) )
     end
 
-    -- Select All button
     local selectAllBtn = vgui.Create( "DButton", self.actionBar )
     selectAllBtn:Dock( LEFT )
     selectAllBtn:DockMargin( 25, 5, 5, 5 )
     selectAllBtn:SetWide( 90 )
     selectAllBtn:SetText( "" )
     selectAllBtn.Paint = function( self2, w, h )
-        local bgCol = self2:IsHovered() and Color(60,63,75) or Color(45,48,58)
-        draw.RoundedBox( 6, 0, 0, w, h, bgCol )
+        draw.RoundedBox( 6, 0, 0, w, h, self2:IsHovered() and Color(60,63,75) or Color(45,48,58) )
         draw.SimpleText( "Select All", "BRS_UW_Font12B", w/2, h/2, Color(200,200,200), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
     end
     selectAllBtn.DoClick = function()
-        self:SelectAllVisible()
+        for k, v in pairs( LocalPlayer():GetUnboxingInventory() ) do
+            -- Respect current filter
+            local isItem = string.StartWith(k, "ITEM_")
+            local isCase = string.StartWith(k, "CASE_")
+            local isKey = string.StartWith(k, "KEY_")
+            if self.filterChoice == "weapons" and not isItem then continue end
+            if self.filterChoice == "cases" and not isCase then continue end
+            if self.filterChoice == "keys" and not isKey then continue end
+            self.selectedItems[k] = true
+        end
+        self:FillInventory()
     end
 
-    -- Deselect All button
     local deselectBtn = vgui.Create( "DButton", self.actionBar )
     deselectBtn:Dock( LEFT )
     deselectBtn:DockMargin( 0, 5, 5, 5 )
     deselectBtn:SetWide( 90 )
     deselectBtn:SetText( "" )
     deselectBtn.Paint = function( self2, w, h )
-        local bgCol = self2:IsHovered() and Color(60,63,75) or Color(45,48,58)
-        draw.RoundedBox( 6, 0, 0, w, h, bgCol )
+        draw.RoundedBox( 6, 0, 0, w, h, self2:IsHovered() and Color(60,63,75) or Color(45,48,58) )
         draw.SimpleText( "Deselect All", "BRS_UW_Font12B", w/2, h/2, Color(200,200,200), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
     end
     deselectBtn.DoClick = function()
@@ -148,17 +145,14 @@ function PANEL:FillPanel()
         self:FillInventory()
     end
 
-    -- Selected count label
     self.selectedLabel = vgui.Create( "DPanel", self.actionBar )
     self.selectedLabel:Dock( LEFT )
     self.selectedLabel:DockMargin( 10, 5, 5, 5 )
     self.selectedLabel:SetWide( 120 )
     self.selectedLabel.Paint = function( self2, w, h )
-        local count = table.Count(self.selectedItems)
-        draw.SimpleText( count .. " selected", "BRS_UW_Font14", w/2, h/2, Color(180,180,180), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+        draw.SimpleText( table.Count(self.selectedItems) .. " selected", "BRS_UW_Font14", w/2, h/2, Color(180,180,180), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
     end
 
-    -- DELETE button
     local deleteBtn = vgui.Create( "DButton", self.actionBar )
     deleteBtn:Dock( RIGHT )
     deleteBtn:DockMargin( 5, 5, 25, 5 )
@@ -174,7 +168,6 @@ function PANEL:FillPanel()
         local count = table.Count(self.selectedItems)
         if count == 0 then return end
 
-        -- Confirm
         Derma_Query("Delete " .. count .. " item(s)? This cannot be undone.", "Confirm Delete",
             "Delete", function()
                 local keys = {}
@@ -182,7 +175,7 @@ function PANEL:FillPanel()
                     table.insert(keys, k)
                 end
 
-                net.Start("BRS_UW.DeleteWeapons")
+                net.Start("BRS_UW.DeleteItems")
                     net.WriteUInt(#keys, 16)
                     for _, key in ipairs(keys) do
                         net.WriteString(key)
@@ -192,14 +185,18 @@ function PANEL:FillPanel()
                 self.selectedItems = {}
                 self.selectMode = false
                 self.actionBar:SetVisible(false)
-
-                timer.Simple(0.5, function()
-                    if IsValid(self) then self:FillInventory() end
-                end)
             end,
             "Cancel", function() end
         )
     end
+
+    -- Listen for server confirmation to refresh
+    net.Receive("BRS_UW.DeleteItemsConfirm", function()
+        local deleted = net.ReadUInt(16)
+        if IsValid(self) then
+            self:FillInventory()
+        end
+    end)
 
     -- Item count footer
     self.itemCountBar = vgui.Create( "DPanel", self )
@@ -226,16 +223,6 @@ function PANEL:FillPanel()
     end )
 end
 
-function PANEL:SelectAllVisible()
-    -- Select all currently visible items that are unique weapons
-    for k, v in pairs( LocalPlayer():GetUnboxingInventory() ) do
-        if BRS_UW and BRS_UW.IsUniqueWeapon and BRS_UW.IsUniqueWeapon(k) then
-            self.selectedItems[k] = true
-        end
-    end
-    self:FillInventory()
-end
-
 function PANEL:AddSlot( globalKey, amount, actions )
     local slotWrapper = self.grid:Add( "DPanel" )
     slotWrapper:SetSize( self.slotSize, self.slotSize*1.2 )
@@ -249,10 +236,8 @@ function PANEL:AddSlot( globalKey, amount, actions )
         slotBack:AddTopInfo( "Equipped", Color(200, 50, 50, 200), Color(255,255,255), true )
     end
 
-    -- ====== SELECTION CHECKBOX OVERLAY ======
-    if self.selectMode and BRS_UW and BRS_UW.IsUniqueWeapon and BRS_UW.IsUniqueWeapon(globalKey) then
-        local isSelected = self.selectedItems[globalKey] or false
-
+    -- Selection checkbox in manage mode
+    if self.selectMode then
         local checkbox = vgui.Create( "DButton", slotWrapper )
         checkbox:SetSize( 22, 22 )
         checkbox:SetPos( self.slotSize - 26, 4 )
@@ -282,7 +267,6 @@ function PANEL:FillInventory()
     local sortedItems = {}
     for k, v in pairs( LocalPlayer():GetUnboxingInventory() ) do
         local configItemTable, itemKey2, isItem, isCase, isKey = BRICKS_SERVER.UNBOXING.Func.GetItemFromGlobalKey( k )
-
         if( not configItemTable ) then continue end
 
         if self.filterChoice == "weapons" and not isItem then continue end
@@ -301,9 +285,7 @@ function PANEL:FillInventory()
         end
         
         local sortRarity = configItemTable.Rarity or ""
-        if uwData and uwData.rarity then
-            sortRarity = uwData.rarity
-        end
+        if uwData and uwData.rarity then sortRarity = uwData.rarity end
         local rarityInfo, rarityKey = BRICKS_SERVER.Func.GetRarityInfo( sortRarity )
         
         if uwData and BRS_UW.RarityOrder and BRS_UW.RarityOrder[uwData.rarity] then
@@ -326,11 +308,11 @@ function PANEL:FillInventory()
         local globalKey, itemAmount = v[2], v[3]
         local configItemTable, itemKey2, isItem, isCase, isKey = BRICKS_SERVER.UNBOXING.Func.GetItemFromGlobalKey( globalKey )
 
-        local actions = {}
+        local actions
         local isUW = BRS_UW and BRS_UW.IsUniqueWeapon and BRS_UW.IsUniqueWeapon(globalKey)
 
-        -- In select mode, clicking selects instead of showing actions
-        if self.selectMode and isUW then
+        -- In select mode, clicking toggles selection
+        if self.selectMode then
             actions = function(ax, ay, aw, ah)
                 if self.selectedItems[globalKey] then
                     self.selectedItems[globalKey] = nil
@@ -339,6 +321,7 @@ function PANEL:FillInventory()
                 end
             end
         elseif( isItem ) then
+            actions = {}
             local devConfigItemTable = BRICKS_SERVER.DEVCONFIG.UnboxingItemTypes[configItemTable.Type] or {}
 
             if( devConfigItemTable.UseFunction ) then
@@ -386,6 +369,7 @@ function PANEL:FillInventory()
             end
 
         elseif( isCase ) then
+            actions = {}
             table.insert( actions, { BRICKS_SERVER.Func.L( "view" ), function()
                 self.popoutPanel = vgui.Create( "bricks_server_unboxingmenu_caseview_popup", self )
                 self.popoutPanel:SetPos( 0, 0 )
@@ -408,6 +392,7 @@ function PANEL:FillInventory()
                 net.SendToServer()
             end } )
         elseif( isKey ) then
+            actions = {}
             table.insert( actions, { BRICKS_SERVER.Func.L( "view" ), function()
                 self.popoutPanel = vgui.Create( "bricks_server_unboxingmenu_keyview_popup", self )
                 self.popoutPanel:SetPos( 0, 0 )
