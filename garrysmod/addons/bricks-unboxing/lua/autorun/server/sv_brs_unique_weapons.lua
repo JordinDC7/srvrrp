@@ -482,3 +482,4 @@ hook.Add("EntityTakeDamage", "BRS_UniqueWeapons_DamageBoost", function(target, d
 end)
 
 print("[BRS UniqueWeapons] Server system loaded!")
+-- deployed

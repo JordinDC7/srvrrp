@@ -675,3 +675,4 @@ table.insert( BRICKS_SERVER.BASECONFIG.NPCS, {
     Name = "Unboxing",
     Type = "Unboxing"
 } )
+

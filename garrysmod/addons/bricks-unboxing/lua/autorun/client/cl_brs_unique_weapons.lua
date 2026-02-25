@@ -346,3 +346,4 @@ hook.Add("PostRender", "BRS_UniqueWeapons_InitUI", function()
 end)
 
 print("[BRS UniqueWeapons] Client system loaded!")
+-- deployed
