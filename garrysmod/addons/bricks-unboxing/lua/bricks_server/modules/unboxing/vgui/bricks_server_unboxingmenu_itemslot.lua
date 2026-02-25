@@ -14,37 +14,37 @@ function PANEL:AddTopInfo( textOrMat, color, textColor, left )
         text = ""
     end
 
-    surface.SetFont( "BRICKS_SERVER_Font20B" )
+    surface.SetFont( "BRS_UW_Font10B" )
     local topX, topY = surface.GetTextSize( isfunction( text ) and text() or text )
     
-    local boxW, boxH = topX+15, topY+5
+    local boxW, boxH = topX+8, topY+4
 
     self.topBar:SetTall( math.max( self.topBar:GetTall(), boxH ) )
 
     local infoEntry = vgui.Create( "DPanel", self.topBar )
     infoEntry:Dock( not left and RIGHT or LEFT )
-    infoEntry:DockMargin( not left and 5 or 0, 0, left and 5 or 0, 0 )
+    infoEntry:DockMargin( not left and 3 or 0, 0, left and 3 or 0, 0 )
     infoEntry:SetWide( isMaterial and boxH or boxW )
     infoEntry.Paint = function( self2, w, h ) 
-        draw.RoundedBox( 8, 0, 0, w, h, (istable( color or "" ) and color) or BRICKS_SERVER.Func.GetTheme( (self.themeNum or 2)-1, self.themeNum == 1 and 125 ) )
+        draw.RoundedBox( 4, 0, 0, w, h, (istable( color or "" ) and color) or BRICKS_SERVER.Func.GetTheme( (self.themeNum or 2)-1, self.themeNum == 1 and 125 ) )
 
         if( not isMaterial ) then
             if( not isfunction( text ) ) then
-                draw.SimpleText( text, "BRICKS_SERVER_Font20B", w/2, (h/2)-1, textColor or BRICKS_SERVER.Func.GetTheme( 6, 75 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+                draw.SimpleText( text, "BRS_UW_Font10B", w/2, (h/2), textColor or BRICKS_SERVER.Func.GetTheme( 6, 75 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
             else
                 local finalText = text()
-                surface.SetFont( "BRICKS_SERVER_Font20B" )
-                local topX2, topY2 = surface.GetTextSize( finalText )
-                local boxW2 = topX2+15
+                surface.SetFont( "BRS_UW_Font10B" )
+                local topX2 = surface.GetTextSize( finalText )
+                local boxW2 = topX2+8
                 if( w ~= boxW2 ) then
                     self2:SetWide( boxW2 )
                 end
-                draw.SimpleText( finalText, "BRICKS_SERVER_Font20B", w/2, (h/2)-1, textColor or BRICKS_SERVER.Func.GetTheme( 6, 75 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+                draw.SimpleText( finalText, "BRS_UW_Font10B", w/2, (h/2), textColor or BRICKS_SERVER.Func.GetTheme( 6, 75 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
             end
         else
             surface.SetDrawColor( textColor or BRICKS_SERVER.Func.GetTheme( 6, 75 ) )
             surface.SetMaterial( textOrMat )
-            local iconSize = 16
+            local iconSize = 12
             surface.DrawTexturedRect( (w/2)-(iconSize/2), (h/2)-(iconSize/2), iconSize, iconSize )
         end
     end
@@ -79,7 +79,6 @@ function PANEL:FillPanel( data, amount, actions )
     self.panelInfo:Dock( FILL )
 
     if( configItemTable ) then
-        -- Use unique weapon rarity if available
         local displayRarity = configItemTable.Rarity
         if uwData and uwData.rarity then
             displayRarity = uwData.rarity
@@ -87,11 +86,12 @@ function PANEL:FillPanel( data, amount, actions )
 
         local rarityInfo = BRICKS_SERVER.Func.GetRarityInfo( displayRarity )
 
+        -- Use smaller fonts for weapon name
         local textFonts = { 
-            { "BRICKS_SERVER_Font23", "BRICKS_SERVER_Font20" }, 
-            { "BRICKS_SERVER_Font22", "BRICKS_SERVER_Font19" }, 
-            { "BRICKS_SERVER_Font21", "BRICKS_SERVER_Font18" }, 
-            { "BRICKS_SERVER_Font20", "BRICKS_SERVER_Font17" }
+            { "BRICKS_SERVER_Font22", "BRICKS_SERVER_Font18" }, 
+            { "BRICKS_SERVER_Font21", "BRICKS_SERVER_Font17" }, 
+            { "BRICKS_SERVER_Font20", "BRICKS_SERVER_Font17" }, 
+            { "BRICKS_SERVER_Font19", "BRICKS_SERVER_Font17" }
         }
         
         local function CheckNameSize( fontNum )
@@ -109,8 +109,9 @@ function PANEL:FillPanel( data, amount, actions )
         surface.SetFont( rarityFont )
         local rarityX, rarityY = surface.GetTextSize( displayRarity or "" )
     
-        local infoH = (nameY+rarityY)-4-4
-        local statAreaH = isUniqueWeapon and 42 or 0
+        local infoH = (nameY+rarityY)-6
+        -- Stat area: quality row + 5 stat bars
+        local statAreaH = isUniqueWeapon and 40 or 0
 
         self.panelInfo.Paint = function( self2, w, h )
             local toScreenX, toScreenY = self2:LocalToScreen( 0, 0 )
@@ -121,14 +122,14 @@ function PANEL:FillPanel( data, amount, actions )
             -- Base background
             draw.RoundedBox( 8, 0, 0, w, h, BRICKS_SERVER.Func.GetTheme( self.themeNum or 2 ) )
 
-            -- ====== UNIQUE WEAPON RARITY BORDER ======
+            -- ====== RARITY BORDER (2px colored border like MUTINY) ======
             if isUniqueWeapon and uwData and BRS_UW.GetBorderColor then
                 local borderColor = BRS_UW.GetBorderColor(uwData.rarity)
                 local bT = 2
-                -- Top
                 surface.SetDrawColor(borderColor)
+                -- Top
                 surface.DrawRect(bT, 0, w - bT*2, bT)
-                -- Bottom
+                -- Bottom  
                 surface.DrawRect(bT, h - bT, w - bT*2, bT)
                 -- Left
                 surface.DrawRect(0, 0, bT, h)
@@ -147,99 +148,103 @@ function PANEL:FillPanel( data, amount, actions )
                 BRICKS_SERVER.Func.DrawClickCircle( self.button, w, h, BRICKS_SERVER.Func.GetTheme( (self.themeNum or 2)+1 ), 8 )
             end
 
-            -- Weapon name
-            local nameY_pos = h - 10 - 25 - statAreaH
-            draw.SimpleText( configItemTable.Name or "NIL", nameFont, w/2, nameY_pos+2, BRICKS_SERVER.Func.GetTheme( 6, 75 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM )
+            -- ====== NAME + RARITY TEXT ======
+            local nameY_pos = h - 8 - statAreaH - 10
             
-            -- Rarity text with custom color for unique weapons
+            -- Weapon name
+            draw.SimpleText( configItemTable.Name or "NIL", nameFont, w/2, nameY_pos, BRICKS_SERVER.Func.GetTheme( 6, 75 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM )
+            
+            -- Rarity text (small, right under name)
             local rarityDrawColor = BRICKS_SERVER.Func.GetRarityColor( rarityInfo )
             if isUniqueWeapon and uwData and BRS_UW.GetRarityColor then
                 rarityDrawColor = BRS_UW.GetRarityColor(uwData.rarity)
             end
-            draw.SimpleText( (displayRarity or ""), rarityFont, w/2, nameY_pos-2, rarityDrawColor, TEXT_ALIGN_CENTER, 0 )
+            draw.SimpleText( (displayRarity or ""), rarityFont, w/2, nameY_pos + 1, rarityDrawColor, TEXT_ALIGN_CENTER, 0 )
 
-            -- ====== STAT BARS & QUALITY FOR UNIQUE WEAPONS ======
+            -- ====== UNIQUE WEAPON: QUALITY + STATS OVERLAY ======
             if isUniqueWeapon and uwData and uwData.stats and BRS_UW.Stats then
-                local statsY = h - 10 - statAreaH + 2
-                local statsX = 6
-                local statsW = w - 12
+                local bottomY = h - 10
+                local statsX = 5
+                local statsW = w - 10
 
-                -- Quality badge (bottom-left)
+                -- Quality badge (small, bottom-left) 
                 local qualityInfo = BRS_UW.GetQualityInfo and BRS_UW.GetQualityInfo(uwData.quality or "Junk")
                 if qualityInfo then
-                    draw.RoundedBox(4, statsX, statsY - 1, 52, 14, ColorAlpha(qualityInfo.color, 160))
-                    draw.SimpleText(uwData.quality or "Junk", "BRS_UW_Font8", statsX + 26, statsY + 6, Color(255,255,255,220), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+                    draw.RoundedBox(3, statsX, bottomY - 38, 44, 12, ColorAlpha(qualityInfo.color, 160))
+                    draw.SimpleText(uwData.quality or "Junk", "BRS_UW_Font8", statsX + 22, bottomY - 32, Color(255,255,255,230), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
                 end
 
-                -- Avg boost (bottom-right)
+                -- Avg boost (small, bottom-right)
                 local avgBoost = uwData.avgBoost or 0
-                local avgCol = avgBoost >= 50 and Color(80,255,120) or (avgBoost >= 25 and Color(255,200,40) or Color(200,200,200))
-                draw.SimpleText("Avg +" .. string.format("%.0f", avgBoost) .. "%", "BRS_UW_Font8", w - 6, statsY + 6, avgCol, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER)
+                local avgCol = avgBoost >= 50 and Color(80,255,120) or (avgBoost >= 25 and Color(255,200,40) or Color(180,180,180))
+                draw.SimpleText("Avg +" .. string.format("%.1f", avgBoost) .. "%", "BRS_UW_Font8", w - 5, bottomY - 32, avgCol, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER)
 
-                -- 5 mini stat bars
-                local barStartY = statsY + 16
+                -- 5 compact stat bars
+                local barStartY = bottomY - 24
                 local barH = 3
-                local barSpacing = 2
-                local labelW = 24
+                local barSpacing = 1
+                local labelW = 22
                 local barW = statsW - labelW - 4
 
                 for i, statDef in ipairs(BRS_UW.Stats) do
                     local val = uwData.stats[statDef.key] or 0
                     local barY = barStartY + (i - 1) * (barH + barSpacing)
                     
-                    -- Label
-                    draw.SimpleText(statDef.shortName, "BRS_UW_Font8", statsX + labelW - 2, barY + 1, statDef.color, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER)
+                    -- Colored label
+                    draw.SimpleText(statDef.shortName, "BRS_UW_Font8", statsX + labelW - 1, barY + 1, statDef.color, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER)
                     
                     -- Bar bg
                     local barX = statsX + labelW + 2
-                    draw.RoundedBox(1, barX, barY, barW, barH, Color(20,20,20,200))
+                    draw.RoundedBox(1, barX, barY, barW, barH, Color(15,15,15,220))
                     
                     -- Bar fill
                     local fillW = math.Clamp(val / 100, 0, 1) * barW
                     if fillW > 1 then
-                        draw.RoundedBox(1, barX, barY, fillW, barH, ColorAlpha(statDef.color, 220))
+                        draw.RoundedBox(1, barX, barY, fillW, barH, ColorAlpha(statDef.color, 200))
                     end
                 end
             end
         end
         
-        -- Rarity color bar at bottom
+        -- Rarity color strip at very bottom
         local rarityBox = vgui.Create( "bricks_server_raritybox", self.panelInfo )
-        rarityBox:SetSize( self:GetWide(), 10 )
+        rarityBox:SetSize( self:GetWide(), 8 )
         rarityBox:SetPos( 0, self:GetTall()-rarityBox:GetTall() )
         rarityBox:SetRarityName( displayRarity or "" )
         rarityBox:SetCornerRadius( 8 )
         rarityBox:SetRoundedBoxDimensions( false, -10, false, 20 )
 
-        -- Item model display
-        local displayH = self:GetTall()-(infoH+(25-(rarityY-2))+10) - statAreaH
+        -- Item model display (takes up most of card)
+        local displayH = self:GetTall() - infoH - 10 - statAreaH
         self.itemDisplay = vgui.Create( "bricks_server_unboxing_itemdisplay", self.panelInfo )
         self.itemDisplay:SetPos( 0, 0 )
         self.itemDisplay:SetSize( self:GetWide(), displayH )
         self.itemDisplay:SetItemData( (isItem and "ITEM") or (isCase and "CASE") or (isKey and "KEY") or "", configItemTable )
         self.itemDisplay:SetIconSizeAdjust( 0.75 )
 
-        -- Top info bar
+        -- Top info bar (for Equipped tag, amount, etc - NOT rarity)
         self.topBar = vgui.Create( "DPanel", self.panelInfo )
-        self.topBar:SetPos( 5, 5 )
-        self.topBar:SetWide( self:GetWide()-10 )
+        self.topBar:SetPos( 4, 4 )
+        self.topBar:SetWide( self:GetWide()-8 )
         self.topBar.Paint = function( self2, w2, h2 ) end
 
+        -- Amount badge
         if( amount and amount > 1 ) then
             self:AddTopInfo( string.Comma( amount ) .. "X" )
         end
 
-        if( isItem ) then
+        -- Permanent tag (only for non-unique, keep it subtle)
+        if( isItem and not isUniqueWeapon ) then
             local devConfigTable = BRICKS_SERVER.DEVCONFIG.UnboxingItemTypes[configItemTable.Type]
             if( devConfigTable and devConfigTable.TagName ) then
                 self:AddTopInfo( devConfigTable.TagName, devConfigTable.TagColor, devConfigTable.TagTextColor, true )
             end
         end
 
-        -- Rarity tag badge for unique weapons (top-right)
+        -- For unique weapons: small rarity tag in top-right (like MUTINY's "Glitched" text)
         if isUniqueWeapon and uwData then
             local rCol = BRS_UW.GetRarityColor and BRS_UW.GetRarityColor(uwData.rarity) or Color(200,200,200)
-            self:AddTopInfo(uwData.rarity, rCol, Color(255,255,255))
+            self:AddTopInfo(uwData.rarity, ColorAlpha(rCol, 180), Color(255,255,255))
         end
     else
         -- Deleted/missing item

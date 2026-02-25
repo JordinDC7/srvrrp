@@ -105,7 +105,7 @@ function PANEL:AddSlot( globalKey, amount, actions )
     slotBack:FillPanel( globalKey, amount, actions )
 
     if( LocalPlayer():UnboxingIsItemEquipped( globalKey ) ) then
-        slotBack:AddTopInfo( "Equipped", false, false, true )
+        slotBack:AddTopInfo( "Equipped", Color(200, 50, 50, 200), Color(255,255,255), true )
     end
 end
 
