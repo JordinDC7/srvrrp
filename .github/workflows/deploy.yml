@@ -5,6 +5,10 @@ on:
     branches:
       - main
 
+concurrency:
+  group: physgun-prod-deploy
+  cancel-in-progress: true
+
 jobs:
   deploy:
     name: Deploy to Game Server
@@ -23,12 +27,14 @@ jobs:
           SFTP_HOST: ${{ secrets.SFTP_HOST }}
           SFTP_PORT: ${{ secrets.SFTP_PORT }}
           SFTP_USER: ${{ secrets.SFTP_USER }}
-          LFTP_PASSWORD: ${{ secrets.SFTP_PASS }}
+          SFTP_PASS: ${{ secrets.SFTP_PASS }}
           REMOTE_DIR: ${{ secrets.SFTP_REMOTE_DIR }}
+        shell: bash
         run: |
+          set -euo pipefail
+
           BEFORE="${{ github.event.before }}"
 
-          # First push: upload everything. Otherwise: only changed files.
           if [ "$BEFORE" = "0000000000000000000000000000000000000000" ]; then
             echo "=== Initial deploy - uploading all tracked files ==="
             CHANGED=$(find garrysmod/ -type f)
@@ -44,31 +50,48 @@ jobs:
             exit 0
           fi
 
-          # Build lftp command script
-          SCRIPT=""
+          # Build lftp script file (avoids quoting issues)
+          SCRIPT_FILE=$(mktemp /tmp/lftp_script.XXXXXX)
 
-          while IFS= read -r file; do
-            [ -z "$file" ] && continue
-            remote="${REMOTE_DIR}${file#garrysmod/}"
-            SCRIPT="${SCRIPT}put \"${file}\" -o \"${remote}\";"$'\n'
-            echo "  UPLOAD: $file -> $remote"
-          done <<< "$CHANGED"
+          {
+            echo "set sftp:auto-confirm yes"
+            echo "set net:max-retries 3"
+            echo "set net:reconnect-interval-base 5"
+            echo "open -u $SFTP_USER,$SFTP_PASS sftp://$SFTP_HOST:$SFTP_PORT"
 
-          while IFS= read -r file; do
-            [ -z "$file" ] && continue
-            remote="${REMOTE_DIR}${file#garrysmod/}"
-            SCRIPT="${SCRIPT}rm -f \"${remote}\";"$'\n'
-            echo "  DELETE: $remote"
-          done <<< "$DELETED"
+            # Deletes first
+            if [ -n "$DELETED" ]; then
+              while IFS= read -r file; do
+                [ -z "$file" ] && continue
+                rel="${file#garrysmod/}"
+                [ -z "$rel" ] && continue
+                echo "rm -f $REMOTE_DIR$rel"
+              done <<< "$DELETED"
+            fi
 
-          # Execute deploy
-          lftp -u "${SFTP_USER}" "sftp://${SFTP_HOST}:${SFTP_PORT}" -e "
-            set sftp:auto-confirm yes;
-            set xfer:auto-mkdir yes;
-            set net:max-retries 3;
-            set net:reconnect-interval-base 5;
-            ${SCRIPT}
-            quit
-          "
+            # Uploads
+            if [ -n "$CHANGED" ]; then
+              while IFS= read -r file; do
+                [ -z "$file" ] && continue
+                rel="${file#garrysmod/}"
+                [ -z "$rel" ] && continue
+                remote_dir=$(dirname "$REMOTE_DIR$rel")
+                echo "mkdir -p $remote_dir"
+                echo "put $file -o $REMOTE_DIR$rel"
+              done <<< "$CHANGED"
+            fi
 
+            echo "bye"
+          } > "$SCRIPT_FILE"
+
+          # Log what we're deploying (mask password)
+          echo "=== Deploy manifest ==="
+          grep -c "^put " "$SCRIPT_FILE" | xargs -I{} echo "Files to upload: {}"
+          grep -c "^rm " "$SCRIPT_FILE" 2>/dev/null | xargs -I{} echo "Files to delete: {}" || true
+          grep "^put " "$SCRIPT_FILE" | sed "s|put |  UPLOAD: |; s| -o | -> |" || true
+
+          echo "=== Executing lftp ==="
+          lftp -f "$SCRIPT_FILE"
+
+          rm -f "$SCRIPT_FILE"
           echo "=== Deploy complete ==="
