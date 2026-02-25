@@ -1,3 +1,7 @@
+-- ============================================================
+-- SmG RP - Custom Inventory Page
+-- Dark tactical theme with enhanced management tools
+-- ============================================================
 local PANEL = {}
 
 function PANEL:Init()
@@ -5,59 +9,78 @@ function PANEL:Init()
 end
 
 function PANEL:FillPanel()
-    local gridWide = self.panelWide-50-20
-    self.slotsWide = math.floor( gridWide/BRICKS_SERVER.Func.ScreenScale( 200 ) )
-    self.spacing = 10
-    self.slotSize = (gridWide-((self.slotsWide-1)*self.spacing))/self.slotsWide
+    local gridWide = self.panelWide - 50 - 20
+    self.slotsWide = math.floor( gridWide / BRICKS_SERVER.Func.ScreenScale( 200 ) )
+    self.spacing = 8
+    self.slotSize = (gridWide - ((self.slotsWide - 1) * self.spacing)) / self.slotsWide
     self.selectedItems = {}
     self.selectMode = false
     
+    local C = SMGRP and SMGRP.UI and SMGRP.UI.Colors or {}
+
+    -- ====== TOP BAR ======
     self.topBar = vgui.Create( "DPanel", self )
     self.topBar:Dock( TOP )
-    self.topBar:SetTall( 60 )
+    self.topBar:SetTall( 52 )
     self.topBar.Paint = function( self2, w, h ) 
-        surface.SetDrawColor( BRICKS_SERVER.Func.GetTheme( 2 ) )
-        surface.DrawRect( 0, 0, w, h )
+        draw.RoundedBox( 0, 0, 0, w, h, C.bg_dark or Color(18,18,26) )
+        -- Bottom divider line
+        surface.SetDrawColor(C.border or Color(50,52,65))
+        surface.DrawRect(0, h - 1, w, 1)
     end 
 
+    -- Search bar
     self.searchBar = vgui.Create( "bricks_server_searchbar", self.topBar )
     self.searchBar:Dock( LEFT )
-    self.searchBar:DockMargin( 25, 10, 10, 10 )
-    self.searchBar:SetWide( ScrW()*0.12 )
-    self.searchBar:SetBackColor( BRICKS_SERVER.Func.GetTheme( 1 ) )
-    self.searchBar:SetHighlightColor( BRICKS_SERVER.Func.GetTheme( 0 ) )
+    self.searchBar:DockMargin( 20, 8, 8, 8 )
+    self.searchBar:SetWide( ScrW() * 0.12 )
+    self.searchBar:SetBackColor( C.bg_input or Color(22,23,30) )
+    self.searchBar:SetHighlightColor( C.accent_dim or Color(0,160,128) )
     self.searchBar.OnChange = function()
         self:FillInventory()
     end
 
-    -- Filter tabs
+    -- ====== FILTER TABS ======
     self.filterChoice = "all"
     local filterPanel = vgui.Create( "DPanel", self.topBar )
     filterPanel:Dock( LEFT )
-    filterPanel:DockMargin( 5, 10, 10, 10 )
-    filterPanel:SetWide( 310 )
+    filterPanel:DockMargin( 4, 8, 8, 8 )
+    filterPanel:SetWide( 290 )
     filterPanel.Paint = function() end
 
     local filters = {
-        { key = "all",     label = "All Items" },
-        { key = "weapons", label = "Weapons" },
-        { key = "cases",   label = "Cases" },
-        { key = "keys",    label = "Keys" },
+        { key = "all",     label = "ALL" },
+        { key = "weapons", label = "WEAPONS" },
+        { key = "cases",   label = "CASES" },
+        { key = "keys",    label = "KEYS" },
     }
 
     for _, f in ipairs(filters) do
         local btn = vgui.Create( "DButton", filterPanel )
         btn:Dock( LEFT )
-        btn:SetWide( 72 )
-        btn:DockMargin( 0, 0, 5, 0 )
+        btn:SetWide( 68 )
+        btn:DockMargin( 0, 0, 4, 0 )
         btn:SetText( "" )
+        btn.hoverAlpha = 0
         btn.Paint = function( self2, w, h )
             local isActive = (self.filterChoice == f.key)
-            local bgCol = isActive and BRICKS_SERVER.Func.GetTheme( 0 ) or BRICKS_SERVER.Func.GetTheme( 1 )
-            if self2:IsHovered() and not isActive then bgCol = BRICKS_SERVER.Func.GetTheme( 0, 100 ) end
-            draw.RoundedBox( 6, 0, 0, w, h, bgCol )
-            local textCol = isActive and Color(255,255,255) or BRICKS_SERVER.Func.GetTheme( 6, 150 )
-            draw.SimpleText( f.label, "BRICKS_SERVER_Font18", w/2, h/2, textCol, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+            
+            if self2:IsHovered() and not isActive then
+                self2.hoverAlpha = math.Clamp(self2.hoverAlpha + 8, 0, 255)
+            else
+                self2.hoverAlpha = math.Clamp(self2.hoverAlpha - 8, 0, 255)
+            end
+
+            if isActive then
+                draw.RoundedBox( 4, 0, 0, w, h, C.accent_dim or Color(0,160,128) )
+                draw.SimpleText( f.label, "SMGRP_Bold11", w/2, h/2, Color(255,255,255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+            else
+                draw.RoundedBox( 4, 0, 0, w, h, C.bg_light or Color(34,36,46) )
+                if self2.hoverAlpha > 0 then
+                    draw.RoundedBox( 4, 0, 0, w, h, Color(255,255,255, math.floor(self2.hoverAlpha * 0.08)) )
+                end
+                draw.SimpleText( f.label, "SMGRP_Bold11", w/2, h/2, C.text_secondary or Color(140,144,160), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+            end
         end
         btn.DoClick = function()
             self.filterChoice = f.key
@@ -65,17 +88,30 @@ function PANEL:FillPanel()
         end
     end
 
-    -- Manage button
+    -- ====== MANAGE BUTTON ======
     self.manageBtn = vgui.Create( "DButton", self.topBar )
     self.manageBtn:Dock( RIGHT )
-    self.manageBtn:DockMargin( 5, 10, 25, 10 )
+    self.manageBtn:DockMargin( 4, 8, 20, 8 )
     self.manageBtn:SetWide( 80 )
     self.manageBtn:SetText( "" )
+    self.manageBtn.hoverAlpha = 0
     self.manageBtn.Paint = function( self2, w, h )
-        local bgCol = self.selectMode and Color(200,50,50) or BRICKS_SERVER.Func.GetTheme( 1 )
-        if self2:IsHovered() then bgCol = self.selectMode and Color(220,70,70) or BRICKS_SERVER.Func.GetTheme( 0, 100 ) end
-        draw.RoundedBox( 6, 0, 0, w, h, bgCol )
-        draw.SimpleText( self.selectMode and "Cancel" or "Manage", "BRICKS_SERVER_Font18", w/2, h/2, Color(255,255,255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+        if self2:IsHovered() then
+            self2.hoverAlpha = math.Clamp(self2.hoverAlpha + 8, 0, 255)
+        else
+            self2.hoverAlpha = math.Clamp(self2.hoverAlpha - 8, 0, 255)
+        end
+
+        if self.selectMode then
+            draw.RoundedBox( 4, 0, 0, w, h, C.red or Color(220,60,60) )
+            draw.SimpleText( "CANCEL", "SMGRP_Bold11", w/2, h/2, Color(255,255,255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+        else
+            draw.RoundedBox( 4, 0, 0, w, h, C.bg_light or Color(34,36,46) )
+            if self2.hoverAlpha > 0 then
+                draw.RoundedBox( 4, 0, 0, w, h, Color(255,255,255, math.floor(self2.hoverAlpha * 0.08)) )
+            end
+            draw.SimpleText( "MANAGE", "SMGRP_Bold11", w/2, h/2, C.text_secondary or Color(140,144,160), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+        end
     end
     self.manageBtn.DoClick = function()
         self.selectMode = not self.selectMode
@@ -84,13 +120,14 @@ function PANEL:FillPanel()
         self:FillInventory()
     end
 
+    -- ====== SORT DROPDOWN ======
     self.sortChoice = "rarity_high_to_low"
     self.sortBy = vgui.Create( "bricks_server_combo", self.topBar )
     self.sortBy:Dock( RIGHT )
-    self.sortBy:DockMargin( 5, 10, 5, 10 )
-    self.sortBy:SetWide( 140 )
-    self.sortBy:SetBackColor( BRICKS_SERVER.Func.GetTheme( 1 ) )
-    self.sortBy:SetHighlightColor( BRICKS_SERVER.Func.GetTheme( 0 ) )
+    self.sortBy:DockMargin( 4, 8, 4, 8 )
+    self.sortBy:SetWide( 130 )
+    self.sortBy:SetBackColor( C.bg_input or Color(22,23,30) )
+    self.sortBy:SetHighlightColor( C.accent_dim or Color(0,160,128) )
     self.sortBy:SetValue( BRICKS_SERVER.Func.L( "unboxingHighestRarity" ) )
     self.sortBy:AddChoice( BRICKS_SERVER.Func.L( "unboxingHighestRarity" ), "rarity_high_to_low" )
     self.sortBy:AddChoice( BRICKS_SERVER.Func.L( "unboxingLowestRarity" ), "rarity_low_to_high" )
@@ -99,30 +136,33 @@ function PANEL:FillPanel()
         self:FillInventory()
     end
 
-    -- Action bar (select mode)
+    -- ====== ACTION BAR (select mode) ======
     self.actionBar = vgui.Create( "DPanel", self )
     self.actionBar:Dock( TOP )
-    self.actionBar:SetTall( 40 )
+    self.actionBar:SetTall( 38 )
     self.actionBar:SetVisible(false)
     self.actionBar.Paint = function( self2, w, h )
-        draw.RoundedBox( 0, 0, 0, w, h, Color(40, 20, 20) )
+        draw.RoundedBox( 0, 0, 0, w, h, C.bg_darkest or Color(12,12,18) )
+        surface.SetDrawColor(C.red_bg or Color(220,60,60,20))
+        surface.DrawRect(0, 0, w, h)
+        surface.SetDrawColor(C.border or Color(50,52,65))
+        surface.DrawRect(0, h - 1, w, 1)
     end
 
     local selectAllBtn = vgui.Create( "DButton", self.actionBar )
     selectAllBtn:Dock( LEFT )
-    selectAllBtn:DockMargin( 25, 5, 5, 5 )
-    selectAllBtn:SetWide( 90 )
+    selectAllBtn:DockMargin( 20, 5, 4, 5 )
+    selectAllBtn:SetWide( 85 )
     selectAllBtn:SetText( "" )
     selectAllBtn.Paint = function( self2, w, h )
-        draw.RoundedBox( 6, 0, 0, w, h, self2:IsHovered() and Color(60,63,75) or Color(45,48,58) )
-        draw.SimpleText( "Select All", "BRS_UW_Font12B", w/2, h/2, Color(200,200,200), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+        draw.RoundedBox( 4, 0, 0, w, h, self2:IsHovered() and (C.bg_lighter or Color(44,46,58)) or (C.bg_light or Color(34,36,46)) )
+        draw.SimpleText( "Select All", "SMGRP_Bold11", w/2, h/2, C.text_secondary or Color(140,144,160), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
     end
     selectAllBtn.DoClick = function()
         for k, v in pairs( LocalPlayer():GetUnboxingInventory() ) do
-            -- Respect current filter
-            local isItem = string.StartWith(k, "ITEM_")
-            local isCase = string.StartWith(k, "CASE_")
-            local isKey = string.StartWith(k, "KEY_")
+            local isItem = isstring(k) and string.StartWith(k, "ITEM_")
+            local isCase = isstring(k) and string.StartWith(k, "CASE_")
+            local isKey = isstring(k) and string.StartWith(k, "KEY_")
             if self.filterChoice == "weapons" and not isItem then continue end
             if self.filterChoice == "cases" and not isCase then continue end
             if self.filterChoice == "keys" and not isKey then continue end
@@ -133,36 +173,43 @@ function PANEL:FillPanel()
 
     local deselectBtn = vgui.Create( "DButton", self.actionBar )
     deselectBtn:Dock( LEFT )
-    deselectBtn:DockMargin( 0, 5, 5, 5 )
-    deselectBtn:SetWide( 90 )
+    deselectBtn:DockMargin( 0, 5, 4, 5 )
+    deselectBtn:SetWide( 85 )
     deselectBtn:SetText( "" )
     deselectBtn.Paint = function( self2, w, h )
-        draw.RoundedBox( 6, 0, 0, w, h, self2:IsHovered() and Color(60,63,75) or Color(45,48,58) )
-        draw.SimpleText( "Deselect All", "BRS_UW_Font12B", w/2, h/2, Color(200,200,200), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+        draw.RoundedBox( 4, 0, 0, w, h, self2:IsHovered() and (C.bg_lighter or Color(44,46,58)) or (C.bg_light or Color(34,36,46)) )
+        draw.SimpleText( "Deselect", "SMGRP_Bold11", w/2, h/2, C.text_secondary or Color(140,144,160), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
     end
     deselectBtn.DoClick = function()
         self.selectedItems = {}
         self:FillInventory()
     end
 
+    -- Selected count label
     self.selectedLabel = vgui.Create( "DPanel", self.actionBar )
     self.selectedLabel:Dock( LEFT )
-    self.selectedLabel:DockMargin( 10, 5, 5, 5 )
-    self.selectedLabel:SetWide( 120 )
+    self.selectedLabel:DockMargin( 10, 5, 4, 5 )
+    self.selectedLabel:SetWide( 100 )
     self.selectedLabel.Paint = function( self2, w, h )
-        draw.SimpleText( table.Count(self.selectedItems) .. " selected", "BRS_UW_Font14", w/2, h/2, Color(180,180,180), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+        local count = table.Count(self.selectedItems)
+        draw.SimpleText( count .. " selected", "SMGRP_Body13", 0, h/2, C.text_muted or Color(90,94,110), 0, TEXT_ALIGN_CENTER )
     end
 
+    -- Delete button
     local deleteBtn = vgui.Create( "DButton", self.actionBar )
     deleteBtn:Dock( RIGHT )
-    deleteBtn:DockMargin( 5, 5, 25, 5 )
-    deleteBtn:SetWide( 120 )
+    deleteBtn:DockMargin( 4, 5, 20, 5 )
+    deleteBtn:SetWide( 110 )
     deleteBtn:SetText( "" )
     deleteBtn.Paint = function( self2, w, h )
         local count = table.Count(self.selectedItems)
-        local bgCol = count > 0 and (self2:IsHovered() and Color(220,40,40) or Color(180,30,30)) or Color(80,30,30)
-        draw.RoundedBox( 6, 0, 0, w, h, bgCol )
-        draw.SimpleText( "Delete (" .. count .. ")", "BRS_UW_Font14B", w/2, h/2, Color(255,255,255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+        if count > 0 then
+            draw.RoundedBox( 4, 0, 0, w, h, self2:IsHovered() and (C.red or Color(220,60,60)) or (C.red_dim or Color(160,40,40)) )
+            draw.SimpleText( "DELETE (" .. count .. ")", "SMGRP_Bold11", w/2, h/2, Color(255,255,255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+        else
+            draw.RoundedBox( 4, 0, 0, w, h, C.bg_light or Color(34,36,46) )
+            draw.SimpleText( "DELETE (0)", "SMGRP_Bold11", w/2, h/2, C.text_muted or Color(90,94,110), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+        end
     end
     deleteBtn.DoClick = function()
         local count = table.Count(self.selectedItems)
@@ -175,15 +222,15 @@ function PANEL:FillPanel()
                     table.insert(keys, k)
                 end
 
-                -- Batch delete in chunks of 100 to prevent client net overflow
-                local chunkSize = 100
+                -- Batch delete in chunks of 50
+                local chunkSize = 50
                 local totalChunks = math.ceil(#keys / chunkSize)
                 for chunk = 1, totalChunks do
                     local startIdx = (chunk - 1) * chunkSize + 1
                     local endIdx = math.min(chunk * chunkSize, #keys)
                     local batchCount = endIdx - startIdx + 1
 
-                    timer.Simple((chunk - 1) * 0.3, function()
+                    timer.Simple((chunk - 1) * 0.2, function()
                         net.Start("BRS_UW.DeleteItems")
                             net.WriteUInt(batchCount, 16)
                             for i = startIdx, endIdx do
@@ -197,8 +244,7 @@ function PANEL:FillPanel()
                 self.selectMode = false
                 self.actionBar:SetVisible(false)
 
-                -- Refresh after all batches sent
-                timer.Simple(totalChunks * 0.3 + 0.5, function()
+                timer.Simple(totalChunks * 0.2 + 0.5, function()
                     if IsValid(self) then self:FillInventory() end
                 end)
             end,
@@ -206,7 +252,7 @@ function PANEL:FillPanel()
         )
     end
 
-    -- Listen for server confirmation to refresh
+    -- Delete confirm listener
     net.Receive("BRS_UW.DeleteItemsConfirm", function()
         local deleted = net.ReadUInt(16)
         if IsValid(self) then
@@ -214,18 +260,22 @@ function PANEL:FillPanel()
         end
     end)
 
-    -- Item count footer
+    -- ====== ITEM COUNT FOOTER ======
     self.itemCountBar = vgui.Create( "DPanel", self )
     self.itemCountBar:Dock( BOTTOM )
-    self.itemCountBar:SetTall( 24 )
+    self.itemCountBar:SetTall( 22 )
     self.itemCountBar.Paint = function( self2, w, h )
-        draw.SimpleText( (self.itemCount or 0) .. " items", "BRS_UW_Font12B", w/2, h/2, BRICKS_SERVER.Func.GetTheme( 6, 100 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+        draw.RoundedBox( 0, 0, 0, w, h, C.bg_dark or Color(18,18,26) )
+        surface.SetDrawColor(C.border or Color(50,52,65))
+        surface.DrawRect(0, 0, w, 1)
+        draw.SimpleText( (self.itemCount or 0) .. " items", "SMGRP_Body12", w/2, h/2, C.text_muted or Color(90,94,110), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
     end
 
+    -- ====== SCROLL PANEL ======
     self.scrollPanel = vgui.Create( "bricks_server_scrollpanel_bar", self )
     self.scrollPanel:Dock( FILL )
-    self.scrollPanel:DockMargin( 25, 25, 25, 25 )
-    self.scrollPanel.Paint = function( self2, w, h ) end 
+    self.scrollPanel:DockMargin( 20, 16, 20, 8 )
+    self.scrollPanel.Paint = function() end
 
     self.grid = vgui.Create( "DIconLayout", self.scrollPanel )
     self.grid:Dock( TOP )
@@ -241,30 +291,34 @@ end
 
 function PANEL:AddSlot( globalKey, amount, actions )
     local slotWrapper = self.grid:Add( "DPanel" )
-    slotWrapper:SetSize( self.slotSize, self.slotSize*1.2 )
+    slotWrapper:SetSize( self.slotSize, self.slotSize * 1.2 )
     slotWrapper.Paint = function() end
 
     local slotBack = vgui.Create( "bricks_server_unboxingmenu_itemslot", slotWrapper )
-    slotBack:SetSize( self.slotSize, self.slotSize*1.2 )
+    slotBack:SetSize( self.slotSize, self.slotSize * 1.2 )
     slotBack:FillPanel( globalKey, amount, actions )
 
     if( LocalPlayer():UnboxingIsItemEquipped( globalKey ) ) then
-        slotBack:AddTopInfo( "Equipped", Color(200, 50, 50, 200), Color(255,255,255), true )
+        slotBack:AddTopInfo( "EQUIPPED", SMGRP.UI.Colors.accent_dim or Color(0,160,128), Color(255,255,255), true )
     end
 
     -- Selection checkbox in manage mode
     if self.selectMode then
+        local C = SMGRP.UI.Colors or {}
         local checkbox = vgui.Create( "DButton", slotWrapper )
-        checkbox:SetSize( 22, 22 )
-        checkbox:SetPos( self.slotSize - 26, 4 )
+        checkbox:SetSize( 20, 20 )
+        checkbox:SetPos( self.slotSize - 24, 4 )
         checkbox:SetText( "" )
         checkbox:SetZPos( 100 )
         checkbox.Paint = function( self2, w, h )
             local sel = self.selectedItems[globalKey] or false
-            draw.RoundedBox( 4, 0, 0, w, h, sel and Color(200,50,50,220) or Color(30,30,30,180) )
-            draw.RoundedBox( 3, 1, 1, w-2, h-2, sel and Color(220,60,60) or Color(50,50,50,200) )
             if sel then
-                draw.SimpleText( "✓", "BRS_UW_Font14B", w/2, h/2, Color(255,255,255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+                draw.RoundedBox( 4, 0, 0, w, h, C.accent or Color(0,212,170) )
+                draw.SimpleText( "✓", "SMGRP_Bold12", w/2, h/2, Color(255,255,255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+            else
+                draw.RoundedBox( 4, 0, 0, w, h, Color(0,0,0,140) )
+                surface.SetDrawColor(C.border or Color(50,52,65))
+                surface.DrawOutlinedRect(0, 0, w, h, 1)
             end
         end
         checkbox.DoClick = function()
@@ -317,7 +371,7 @@ function PANEL:FillInventory()
         table.SortByMember( sortedItems, 1, true )
     end
 
-    self.grid:SetTall( (math.ceil(#sortedItems/self.slotsWide)*(self.slotSize*1.2+self.spacing))-self.spacing )
+    self.grid:SetTall( (math.ceil(#sortedItems / self.slotsWide) * (self.slotSize * 1.2 + self.spacing)) - self.spacing )
     self.itemCount = #sortedItems
 
     for k2, v in pairs( sortedItems ) do
@@ -423,7 +477,8 @@ function PANEL:FillInventory()
 end
 
 function PANEL:Paint( w, h )
-
+    local C = SMGRP and SMGRP.UI and SMGRP.UI.Colors or {}
+    draw.RoundedBox( 0, 0, 0, w, h, C.bg_darkest or Color(12,12,18) )
 end
 
 vgui.Register( "bricks_server_unboxingmenu_inventory", PANEL, "DPanel" )
