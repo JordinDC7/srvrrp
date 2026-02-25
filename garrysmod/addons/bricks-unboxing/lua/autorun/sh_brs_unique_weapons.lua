@@ -7,265 +7,199 @@
 BRS_WEAPONS = BRS_WEAPONS or {}
 
 -- ============================================================
--- RARITY TIERS (least to greatest)
--- Each tier defines the min/max percentage boost for stat rolls
+-- RARITY TIERS
 -- ============================================================
 BRS_WEAPONS.Rarities = {
     ["Common"] = {
-        Order = 1,
-        Color = Color(154, 154, 154),
-        GradientFrom = Color(154, 154, 154),
-        GradientTo = Color(200, 200, 200),
-        MinBoost = 0.00,
-        MaxBoost = 0.10,
-        StatSlots = { min = 1, max = 2 },
-        GlowAlpha = 0,
+        Order = 1, Color = Color(154, 154, 154),
+        GradientFrom = Color(154, 154, 154), GradientTo = Color(200, 200, 200),
+        MinBoost = 0.00, MaxBoost = 0.10, StatSlots = { min = 1, max = 2 }, GlowAlpha = 0,
     },
     ["Uncommon"] = {
-        Order = 2,
-        Color = Color(104, 255, 104),
-        GradientFrom = Color(104, 255, 104),
-        GradientTo = Color(156, 255, 156),
-        MinBoost = 0.05,
-        MaxBoost = 0.20,
-        StatSlots = { min = 2, max = 3 },
-        GlowAlpha = 30,
+        Order = 2, Color = Color(104, 255, 104),
+        GradientFrom = Color(104, 255, 104), GradientTo = Color(156, 255, 156),
+        MinBoost = 0.05, MaxBoost = 0.20, StatSlots = { min = 2, max = 3 }, GlowAlpha = 30,
     },
     ["Rare"] = {
-        Order = 3,
-        Color = Color(42, 133, 219),
-        GradientFrom = Color(42, 133, 219),
-        GradientTo = Color(63, 200, 255),
-        MinBoost = 0.10,
-        MaxBoost = 0.35,
-        StatSlots = { min = 2, max = 4 },
-        GlowAlpha = 60,
+        Order = 3, Color = Color(42, 133, 219),
+        GradientFrom = Color(42, 133, 219), GradientTo = Color(100, 180, 255),
+        MinBoost = 0.10, MaxBoost = 0.35, StatSlots = { min = 2, max = 4 }, GlowAlpha = 60,
     },
     ["Epic"] = {
-        Order = 4,
-        Color = Color(152, 68, 255),
-        GradientFrom = Color(152, 68, 255),
-        GradientTo = Color(200, 120, 255),
-        MinBoost = 0.20,
-        MaxBoost = 0.50,
-        StatSlots = { min = 3, max = 4 },
-        GlowAlpha = 90,
+        Order = 4, Color = Color(152, 68, 255),
+        GradientFrom = Color(152, 68, 255), GradientTo = Color(200, 140, 255),
+        MinBoost = 0.20, MaxBoost = 0.50, StatSlots = { min = 3, max = 4 }, GlowAlpha = 90,
     },
     ["Legendary"] = {
-        Order = 5,
-        Color = Color(253, 191, 45),
-        GradientFrom = Color(253, 191, 45),
-        GradientTo = Color(255, 220, 100),
-        MinBoost = 0.35,
-        MaxBoost = 0.75,
-        StatSlots = { min = 3, max = 5 },
-        GlowAlpha = 120,
+        Order = 5, Color = Color(253, 191, 45),
+        GradientFrom = Color(253, 191, 45), GradientTo = Color(255, 220, 100),
+        MinBoost = 0.35, MaxBoost = 0.75, StatSlots = { min = 3, max = 5 }, GlowAlpha = 120,
     },
     ["Glitched"] = {
-        Order = 6,
-        Color = Color(255, 50, 50),
-        GradientFrom = Color(255, 50, 50),
-        GradientTo = Color(50, 255, 50),
-        MinBoost = 0.50,
-        MaxBoost = 1.00,
-        StatSlots = { min = 4, max = 5 },
-        GlowAlpha = 160,
-        CanNegative = true, -- Glitched can roll negative modifiers too
+        Order = 6, Color = Color(255, 50, 50),
+        GradientFrom = Color(255, 50, 50), GradientTo = Color(255, 120, 50),
+        MinBoost = 0.50, MaxBoost = 1.00, StatSlots = { min = 4, max = 5 }, GlowAlpha = 160,
+        CanRollNegative = true,
     },
     ["Mythical"] = {
-        Order = 7,
-        Color = Color(255, 0, 200),
-        GradientFrom = Color(255, 0, 200),
-        GradientTo = Color(0, 200, 255),
-        MinBoost = 0.75,
-        MaxBoost = 1.50,
-        StatSlots = { min = 5, max = 6 },
-        GlowAlpha = 200,
+        Order = 7, Color = Color(255, 0, 200),
+        GradientFrom = Color(255, 0, 200), GradientTo = Color(255, 100, 255),
+        MinBoost = 0.75, MaxBoost = 1.50, StatSlots = { min = 5, max = 6 }, GlowAlpha = 200,
     },
 }
 
 -- ============================================================
 -- STAT BOOSTER DEFINITIONS
--- These are the weapon stats that can be randomly boosted
 -- ============================================================
 BRS_WEAPONS.StatDefs = {
     ["DMG"] = {
-        Name = "Damage",
-        ShortName = "DMG",
-        Icon = "☠",
-        Description = "Increases bullet damage",
+        Name = "Damage", ShortName = "DMG",
+        Color = Color(255, 60, 60),
         WeaponKey = "Primary.Damage",
-        IsPositive = true,
-        FormatFunc = function(base, boost) return string.format("+%d%%", boost * 100) end,
-        ApplyFunc = function(wep, base, boost)
-            return math.floor(base * (1 + boost))
-        end,
-    },
-    ["MAG"] = {
-        Name = "Magazine",
-        ShortName = "MAG",
-        Icon = "🔋",
-        Description = "Increases magazine capacity",
-        WeaponKey = "Primary.ClipSize",
-        IsPositive = true,
-        FormatFunc = function(base, boost) return string.format("+%d%%", boost * 100) end,
-        ApplyFunc = function(wep, base, boost)
-            return math.floor(base * (1 + boost))
-        end,
-    },
-    ["RPM"] = {
-        Name = "Fire Rate",
-        ShortName = "RPM",
-        Icon = "⚡",
-        Description = "Increases rate of fire",
-        WeaponKey = "Primary.RPM",
-        IsPositive = true,
-        FormatFunc = function(base, boost) return string.format("+%d%%", boost * 100) end,
-        ApplyFunc = function(wep, base, boost)
-            return math.floor(base * (1 + boost))
-        end,
+        ApplyFunc = function(wep, base, boost) return math.Round(base * (1 + boost)) end,
     },
     ["ACC"] = {
-        Name = "Accuracy",
-        ShortName = "ACC",
-        Icon = "🎯",
-        Description = "Reduces bullet spread",
+        Name = "Accuracy", ShortName = "ACC",
+        Color = Color(255, 220, 50),
         WeaponKey = "Primary.Spread",
-        IsPositive = false, -- Lower spread = better
-        FormatFunc = function(base, boost) return string.format("+%d%%", boost * 100) end,
-        ApplyFunc = function(wep, base, boost)
-            return base * (1 - boost * 0.5) -- Cap at 50% reduction
-        end,
+        ApplyFunc = function(wep, base, boost) return base * (1 - boost * 0.5) end,
     },
-    ["RCL"] = {
-        Name = "Recoil Control",
-        ShortName = "RCL",
-        Icon = "🔧",
-        Description = "Reduces weapon recoil",
+    ["MAG"] = {
+        Name = "Magazine", ShortName = "MAG",
+        Color = Color(50, 255, 80),
+        WeaponKey = "Primary.ClipSize",
+        ApplyFunc = function(wep, base, boost) return math.Round(base * (1 + boost)) end,
+    },
+    ["RPM"] = {
+        Name = "Fire Rate", ShortName = "RPM",
+        Color = Color(50, 150, 255),
+        WeaponKey = "Primary.RPM",
+        ApplyFunc = function(wep, base, boost) return math.Round(base * (1 + boost * 0.5)) end,
+    },
+    ["SPD"] = {
+        Name = "Speed", ShortName = "SPD",
+        Color = Color(200, 50, 255),
         WeaponKey = "Primary.Recoil",
-        IsPositive = false, -- Lower recoil = better
-        FormatFunc = function(base, boost) return string.format("+%d%%", boost * 100) end,
-        ApplyFunc = function(wep, base, boost)
-            return base * (1 - boost * 0.5)
-        end,
-    },
-    ["RNG"] = {
-        Name = "Range",
-        ShortName = "RNG",
-        Icon = "📏",
-        Description = "Increases effective range",
-        WeaponKey = "Primary.Range",
-        IsPositive = true,
-        FormatFunc = function(base, boost) return string.format("+%d%%", boost * 100) end,
-        ApplyFunc = function(wep, base, boost)
-            return math.floor(base * (1 + boost))
-        end,
+        ApplyFunc = function(wep, base, boost) return base * (1 - boost * 0.4) end,
     },
 }
 
+-- All stat keys for iteration
+BRS_WEAPONS.StatKeys = { "DMG", "ACC", "MAG", "RPM", "SPD" }
+
 -- ============================================================
--- COMPLETE M9K WEAPON DATABASE
--- All weapons from M9K Small Arms, Assault Rifles, Heavy Weapons, Specialties
+-- QUALITY NAMES (based on average boost %)
+-- ============================================================
+BRS_WEAPONS.Qualities = {
+    { name = "Junk",      minAvg = 0,    maxAvg = 0.08,  color = Color(120, 120, 120) },
+    { name = "Raw",       minAvg = 0.08, maxAvg = 0.20,  color = Color(180, 180, 180) },
+    { name = "Standard",  minAvg = 0.20, maxAvg = 0.40,  color = Color(104, 255, 104) },
+    { name = "Refined",   minAvg = 0.40, maxAvg = 0.60,  color = Color(42, 180, 255) },
+    { name = "Forged",    minAvg = 0.60, maxAvg = 0.85,  color = Color(255, 165, 0) },
+    { name = "Perfected", minAvg = 0.85, maxAvg = 1.20,  color = Color(255, 50, 50) },
+    { name = "Ascended",  minAvg = 1.20, maxAvg = 99,    color = Color(255, 0, 200) },
+}
+
+function BRS_WEAPONS.GetQuality(statBoosters)
+    if not statBoosters or table.Count(statBoosters) == 0 then
+        return BRS_WEAPONS.Qualities[1]
+    end
+    local total, count = 0, 0
+    for _, v in pairs(statBoosters) do
+        total = total + math.abs(v)
+        count = count + 1
+    end
+    local avg = total / count
+    for _, q in ipairs(BRS_WEAPONS.Qualities) do
+        if avg >= q.minAvg and avg < q.maxAvg then
+            return q, avg
+        end
+    end
+    return BRS_WEAPONS.Qualities[#BRS_WEAPONS.Qualities], total / count
+end
+
+-- ============================================================
+-- WEAPON DATABASE (78 weapons, ordered by category)
 -- ============================================================
 BRS_WEAPONS.AllWeapons = {
-    -- ========================
-    -- M9K SMALL ARMS (Pistols & SMGs)
-    -- ========================
-    { class = "m9k_colt1911",           name = "Colt 1911",              model = "models/weapons/w_1911.mdl",                  category = "Pistol" },
-    { class = "m9k_model3russian",          name = "S&W Model 3 Russian",      model = "models/weapons/w_browning_hp.mdl",           category = "Pistol" },
-    { class = "m9k_coltpython",          name = "Colt Python",            model = "models/weapons/w_colt_python.mdl",           category = "Pistol" },
-    { class = "m9k_deagle",              name = "Desert Eagle",           model = "models/weapons/w_tcom_deagle.mdl",           category = "Pistol" },
-    { class = "m9k_glock",               name = "Glock 18",              model = "models/weapons/w_dmg_glock.mdl",             category = "Pistol" },
-    { class = "m9k_hk45",               name = "HK45C",                 model = "models/weapons/w_hk45c.mdl",                 category = "Pistol" },
-    { class = "m9k_luger",               name = "Luger P08",             model = "models/weapons/w_luger_p08.mdl",             category = "Pistol" },
-    { class = "m9k_m29satan",            name = "S&W Model 29 Satan",    model = "models/weapons/w_sw_model_29.mdl",           category = "Pistol" },
-    { class = "m9k_m92baretta",          name = "Beretta M92",           model = "models/weapons/w_beretta_m92.mdl",           category = "Pistol" },
-    { class = "m9k_model500",            name = "S&W Model 500",         model = "models/weapons/w_sw_model_500.mdl",          category = "Pistol" },
-    { class = "m9k_model627",            name = "S&W Model 627",         model = "models/weapons/w_sw_model_627.mdl",          category = "Pistol" },
-    { class = "m9k_ragingbull",          name = "Taurus Raging Bull",    model = "models/weapons/w_taurus_raging_bull.mdl",    category = "Pistol" },
-    { class = "m9k_remington1858",       name = "Remington 1858",        model = "models/weapons/w_remington_1858.mdl",        category = "Pistol" },
-    { class = "m9k_dbarrel",       name = "Double Barrel Shotgun",         model = "models/weapons/w_raging_bull_scoped.mdl",    category = "Pistol" },
-    { class = "m9k_sig_p229r",           name = "SIG P229R",             model = "models/weapons/w_sig_229r.mdl",              category = "Pistol" },
-    { class = "m9k_usp",                 name = "HK USP",                model = "models/weapons/w_pist_fokkususp.mdl",        category = "Pistol" },
-    { class = "m9k_tec9",                name = "TEC-9",                 model = "models/weapons/w_intratec_tec9.mdl",         category = "Pistol" },
-
-    -- SMGs
-    { class = "m9k_bizonp19",            name = "Bizon PP-19",           model = "models/weapons/w_pp19_bizon.mdl",            category = "SMG" },
-    { class = "m9k_honeybadger",         name = "Honey Badger",          model = "models/weapons/w_aac_honeybadger.mdl",       category = "SMG" },
-    { class = "m9k_mac10",               name = "MAC-10",                model = "models/weapons/w_mac_10.mdl",                category = "SMG" },
-    { class = "m9k_mp5",                 name = "MP5",                   model = "models/weapons/w_hk_mp5.mdl",               category = "SMG" },
-    { class = "m9k_mp5sd",               name = "MP5SD",                 model = "models/weapons/w_hk_mp5sd.mdl",             category = "SMG" },
-    { class = "m9k_mp7",                 name = "MP7",                   model = "models/weapons/w_mp7_silenced.mdl",          category = "SMG" },
-    { class = "m9k_mp9",                 name = "MP9",                   model = "models/weapons/w_brugger_thomet_mp9.mdl",    category = "SMG" },
-    { class = "m9k_sten",                name = "Sten",                  model = "models/weapons/w_mp40_ww2.mdl",              category = "SMG" },
-    { class = "m9k_magpulpdr",                name = "Magpul PDR",               model = "models/weapons/w_ppsh_41_ww2.mdl",           category = "SMG" },
-    { class = "m9k_smgp90",              name = "FN P90",                model = "models/weapons/w_fn_p90.mdl",                category = "SMG" },
-    { class = "m9k_thompson",            name = "Thompson M1A1",         model = "models/weapons/w_m1a1_thompson.mdl",         category = "SMG" },
-    { class = "m9k_uzi",                 name = "Uzi",                   model = "models/weapons/w_uzi_imi.mdl",              category = "SMG" },
-    { class = "m9k_ump45",               name = "UMP-45",                model = "models/weapons/w_hk_ump45.mdl",             category = "SMG" },
-    { class = "m9k_vector",              name = "Kriss Vector",          model = "models/weapons/w_kriss_vector.mdl",          category = "SMG" },
-
-    -- ========================
-    -- M9K ASSAULT RIFLES
-    -- ========================
-    { class = "m9k_acr",                 name = "Remington ACR",         model = "models/weapons/w_masada_acr.mdl",            category = "Rifle" },
-    { class = "m9k_ak47",               name = "AK-47",                 model = "models/weapons/w_ak47_m9k.mdl",              category = "Rifle" },
-    { class = "m9k_ak74",               name = "AK-74",                 model = "models/weapons/w_tct_ak74.mdl",              category = "Rifle" },
-    { class = "m9k_amd65",              name = "AMD-65",                model = "models/weapons/w_amd_65.mdl",                category = "Rifle" },
-    { class = "m9k_an94",               name = "AN-94",                 model = "models/weapons/w_an_94.mdl",                 category = "Rifle" },
-    { class = "m9k_m416",               name = "HK416",                 model = "models/weapons/w_hk_416.mdl",                category = "Rifle" },
-    { class = "m9k_fal",                name = "FN FAL",                model = "models/weapons/w_fn_fal.mdl",                category = "Rifle" },
-    { class = "m9k_g3a3",               name = "G3A3",                  model = "models/weapons/w_hk_g3.mdl",                 category = "Rifle" },
-    { class = "m9k_g36",                name = "G36",                   model = "models/weapons/w_hk_g36.mdl",                category = "Rifle" },
-    { class = "m9k_l85",                name = "L85A2",                 model = "models/weapons/w_l85a2.mdl",                 category = "Rifle" },
-    { class = "m9k_m14sp",              name = "M14 SP",                model = "models/weapons/w_snip_m14sp.mdl",            category = "Rifle" },
-    { class = "m9k_m16a4_acog",         name = "M16A4 ACOG",           model = "models/weapons/w_m16a4_acog.mdl",            category = "Rifle" },
-    { class = "m9k_m4a1",               name = "M4A1",                  model = "models/weapons/w_m4a1_iron.mdl",             category = "Rifle" },
-    { class = "m9k_scar",               name = "SCAR-H",               model = "models/weapons/w_fn_scar_h.mdl",             category = "Rifle" },
-    { class = "m9k_val",              name = "AS VAL",               model = "models/weapons/w_fn_scar_l.mdl",             category = "Rifle" },
-    { class = "m9k_sig_sg552",          name = "SIG SG552",            model = "models/weapons/w_sig_sg552.mdl",             category = "Rifle" },
-    { class = "m9k_tar21",              name = "TAR-21",                model = "models/weapons/w_imi_tar21.mdl",             category = "Rifle" },
-    { class = "m9k_vikhr",              name = "SR-3M Vikhr",           model = "models/weapons/w_sr3m_vikhr.mdl",            category = "Rifle" },
-    { class = "m9k_winchester73",       name = "Winchester 1873",       model = "models/weapons/w_winchester_1873.mdl",       category = "Rifle" },
-
-    -- ========================
-    -- M9K HEAVY WEAPONS
-    -- ========================
-    -- Shotguns
-    { class = "m9k_ares_shrike",        name = "Ares Shrike",           model = "models/weapons/w_ares_shrike.mdl",           category = "LMG" },
-    { class = "m9k_browningauto5",      name = "Browning Auto-5",       model = "models/weapons/w_browning_auto_5.mdl",       category = "Shotgun" },
-    { class = "m9k_dao12",              name = "DAO-12",                model = "models/weapons/w_dao12.mdl",                 category = "Shotgun" },
-    { class = "m9k_ithacam37",          name = "Ithaca M37",            model = "models/weapons/w_ithaca_m37.mdl",            category = "Shotgun" },
-    { class = "m9k_jackhammer",         name = "Pancor Jackhammer",     model = "models/weapons/w_pancor_jackhammer.mdl",     category = "Shotgun" },
-    { class = "m9k_m3",                 name = "Benelli M3",            model = "models/weapons/w_benelli_m3.mdl",            category = "Shotgun" },
-    { class = "m9k_mossberg590",        name = "Mossberg 590",          model = "models/weapons/w_mossberg_590.mdl",          category = "Shotgun" },
-    { class = "m9k_remington870",       name = "Remington 870",         model = "models/weapons/w_remington_870_tact.mdl",    category = "Shotgun" },
-    { class = "m9k_spas12",             name = "SPAS-12",               model = "models/weapons/w_spas_12.mdl",               category = "Shotgun" },
-    { class = "m9k_striker12",          name = "Striker-12",            model = "models/weapons/w_striker_12g.mdl",            category = "Shotgun" },
-    { class = "m9k_usas",               name = "USAS-12",               model = "models/weapons/w_usas_12.mdl",               category = "Shotgun" },
-
-    -- Snipers
-    { class = "m9k_aw50",               name = "AW50",                  model = "models/weapons/w_acc_int_aw50.mdl",          category = "Sniper" },
-    { class = "m9k_barret_m82",         name = "Barrett M82",           model = "models/weapons/w_barrett_m82.mdl",           category = "Sniper" },
-    { class = "m9k_contender",          name = "Contender G2",          model = "models/weapons/w_g2_contender.mdl",          category = "Sniper" },
-    { class = "m9k_dragunov",           name = "SVD Dragunov",          model = "models/weapons/w_svd_dragunov.mdl",          category = "Sniper" },
-    { class = "m9k_intervention",       name = "Intervention",          model = "models/weapons/w_cheytac_m200.mdl",          category = "Sniper" },
-    { class = "m9k_m24",                name = "M24",                   model = "models/weapons/w_remington_m24.mdl",         category = "Sniper" },
-    { class = "m9k_m98b",               name = "M98B",                  model = "models/weapons/w_barrett_m98b.mdl",          category = "Sniper" },
-    { class = "m9k_psg1",               name = "PSG-1",                 model = "models/weapons/w_hk_psg1.mdl",              category = "Sniper" },
-    { class = "m9k_remington7615p",     name = "Remington 7615P",       model = "models/weapons/w_remington_7615p.mdl",       category = "Sniper" },
-    { class = "m9k_sl8",                name = "HK SL8",                model = "models/weapons/w_hk_sl8.mdl",               category = "Sniper" },
-    { class = "m9k_svt40",              name = "SVT-40",                model = "models/weapons/w_svt_40.mdl",                category = "Sniper" },
-
-    -- LMGs
-    { class = "m9k_m60",                name = "M60",                   model = "models/weapons/w_m60_machine_gun.mdl",       category = "LMG" },
-    { class = "m9k_m249lmg",            name = "M249 SAW",              model = "models/weapons/w_m249_machine_gun.mdl",      category = "LMG" },
-    { class = "m9k_pkm",                name = "PKM",                   model = "models/weapons/w_pkm_mg.mdl",               category = "LMG" },
-
-    -- Explosives & Specials
-    { class = "m9k_milkormgl",          name = "Milkor MGL",            model = "models/weapons/w_milkor_mgl.mdl",            category = "Explosive" },
-    { class = "m9k_m202",               name = "M202 Flash",            model = "models/weapons/w_m202_flash.mdl",            category = "Explosive" },
-    { class = "m9k_minigun",            name = "Minigun",               model = "models/weapons/w_m134_minigun.mdl",          category = "LMG" },
+    { class = "m9k_colt1911", name = "Colt 1911", category = "Pistol" },
+    { class = "m9k_model3russian", name = "S&W Model 3 Russian", category = "Pistol" },
+    { class = "m9k_glock", name = "Glock 18", category = "Pistol" },
+    { class = "m9k_hk45", name = "HK45C", category = "Pistol" },
+    { class = "m9k_luger", name = "Luger P08", category = "Pistol" },
+    { class = "m9k_m92baretta", name = "Beretta M92", category = "Pistol" },
+    { class = "m9k_sig_p229r", name = "SIG P229R", category = "Pistol" },
+    { class = "m9k_usp", name = "HK USP", category = "Pistol" },
+    { class = "m9k_remington1858", name = "Remington 1858", category = "Pistol" },
+    { class = "m9k_deagle", name = "Desert Eagle", category = "Pistol" },
+    { class = "m9k_coltpython", name = "Colt Python", category = "Pistol" },
+    { class = "m9k_model627", name = "S&W Model 627", category = "Pistol" },
+    { class = "m9k_m29satan", name = "S&W Model 29 Satan", category = "Pistol" },
+    { class = "m9k_model500", name = "S&W Model 500", category = "Pistol" },
+    { class = "m9k_ragingbull", name = "Taurus Raging Bull", category = "Pistol" },
+    { class = "m9k_tec9", name = "TEC-9", category = "Pistol" },
+    { class = "m9k_mac10", name = "MAC-10", category = "SMG" },
+    { class = "m9k_mp5", name = "MP5", category = "SMG" },
+    { class = "m9k_mp5sd", name = "MP5SD", category = "SMG" },
+    { class = "m9k_mp7", name = "MP7", category = "SMG" },
+    { class = "m9k_mp9", name = "MP9", category = "SMG" },
+    { class = "m9k_sten", name = "Sten", category = "SMG" },
+    { class = "m9k_ump45", name = "UMP-45", category = "SMG" },
+    { class = "m9k_bizonp19", name = "Bizon PP-19", category = "SMG" },
+    { class = "m9k_thompson", name = "Thompson M1A1", category = "SMG" },
+    { class = "m9k_magpulpdr", name = "Magpul PDR", category = "SMG" },
+    { class = "m9k_smgp90", name = "FN P90", category = "SMG" },
+    { class = "m9k_uzi", name = "Uzi", category = "SMG" },
+    { class = "m9k_vector", name = "Kriss Vector", category = "SMG" },
+    { class = "m9k_honeybadger", name = "Honey Badger", category = "SMG" },
+    { class = "m9k_ak47", name = "AK-47", category = "Rifle" },
+    { class = "m9k_ak74", name = "AK-74", category = "Rifle" },
+    { class = "m9k_m4a1", name = "M4A1", category = "Rifle" },
+    { class = "m9k_acr", name = "Remington ACR", category = "Rifle" },
+    { class = "m9k_m416", name = "HK416", category = "Rifle" },
+    { class = "m9k_fal", name = "FN FAL", category = "Rifle" },
+    { class = "m9k_g3a3", name = "G3A3", category = "Rifle" },
+    { class = "m9k_g36", name = "G36", category = "Rifle" },
+    { class = "m9k_l85", name = "L85A2", category = "Rifle" },
+    { class = "m9k_amd65", name = "AMD-65", category = "Rifle" },
+    { class = "m9k_an94", name = "AN-94", category = "Rifle" },
+    { class = "m9k_scar", name = "SCAR-H", category = "Rifle" },
+    { class = "m9k_val", name = "AS VAL", category = "Rifle" },
+    { class = "m9k_sig_sg552", name = "SIG SG552", category = "Rifle" },
+    { class = "m9k_tar21", name = "TAR-21", category = "Rifle" },
+    { class = "m9k_vikhr", name = "SR-3M Vikhr", category = "Rifle" },
+    { class = "m9k_m14sp", name = "M14 SP", category = "Rifle" },
+    { class = "m9k_m16a4_acog", name = "M16A4 ACOG", category = "Rifle" },
+    { class = "m9k_winchester73", name = "Winchester 1873", category = "Rifle" },
+    { class = "m9k_browningauto5", name = "Browning Auto-5", category = "Shotgun" },
+    { class = "m9k_ithacam37", name = "Ithaca M37", category = "Shotgun" },
+    { class = "m9k_mossberg590", name = "Mossberg 590", category = "Shotgun" },
+    { class = "m9k_remington870", name = "Remington 870", category = "Shotgun" },
+    { class = "m9k_spas12", name = "SPAS-12", category = "Shotgun" },
+    { class = "m9k_m3", name = "Benelli M3", category = "Shotgun" },
+    { class = "m9k_dao12", name = "DAO-12", category = "Shotgun" },
+    { class = "m9k_jackhammer", name = "Pancor Jackhammer", category = "Shotgun" },
+    { class = "m9k_striker12", name = "Striker-12", category = "Shotgun" },
+    { class = "m9k_usas", name = "USAS-12", category = "Shotgun" },
+    { class = "m9k_dbarrel", name = "Double Barrel", category = "Shotgun" },
+    { class = "m9k_m24", name = "M24", category = "Sniper" },
+    { class = "m9k_psg1", name = "PSG-1", category = "Sniper" },
+    { class = "m9k_dragunov", name = "SVD Dragunov", category = "Sniper" },
+    { class = "m9k_svt40", name = "SVT-40", category = "Sniper" },
+    { class = "m9k_remington7615p", name = "Remington 7615P", category = "Sniper" },
+    { class = "m9k_sl8", name = "HK SL8", category = "Sniper" },
+    { class = "m9k_contender", name = "Contender G2", category = "Sniper" },
+    { class = "m9k_intervention", name = "Intervention", category = "Sniper" },
+    { class = "m9k_m98b", name = "M98B", category = "Sniper" },
+    { class = "m9k_aw50", name = "AW50", category = "Sniper" },
+    { class = "m9k_barret_m82", name = "Barrett M82", category = "Sniper" },
+    { class = "m9k_m249lmg", name = "M249 SAW", category = "LMG" },
+    { class = "m9k_m60", name = "M60", category = "LMG" },
+    { class = "m9k_pkm", name = "PKM", category = "LMG" },
+    { class = "m9k_ares_shrike", name = "Ares Shrike", category = "LMG" },
+    { class = "m9k_minigun", name = "Minigun", category = "LMG" },
+    { class = "m9k_milkormgl", name = "Milkor MGL", category = "Explosive" },
+    { class = "m9k_m202", name = "M202 Flash", category = "Explosive" },
 }
 
 -- Build lookup tables
@@ -278,10 +212,9 @@ for i, wep in ipairs(BRS_WEAPONS.AllWeapons) do
 end
 
 -- ============================================================
--- STAT ROLLING FUNCTIONS
+-- HELPER FUNCTIONS
 -- ============================================================
 
---- Generate a unique weapon ID
 function BRS_WEAPONS.GenerateUID()
     local chars = "abcdefghijklmnopqrstuvwxyz0123456789"
     local uid = ""
@@ -292,78 +225,53 @@ function BRS_WEAPONS.GenerateUID()
     return uid
 end
 
---- Roll random stat boosters for a weapon based on rarity
 function BRS_WEAPONS.RollStatBoosters(rarity)
     local rarityDef = BRS_WEAPONS.Rarities[rarity]
-    if not rarityDef then return {} end
+    if not rarityDef then rarityDef = BRS_WEAPONS.Rarities["Common"] end
 
-    local statKeys = {}
-    for k, _ in pairs(BRS_WEAPONS.StatDefs) do
-        table.insert(statKeys, k)
-    end
-
-    -- Determine how many stats to boost
-    local numStats = math.random(rarityDef.StatSlots.min, rarityDef.StatSlots.max)
-    numStats = math.min(numStats, #statKeys)
-
-    -- Shuffle and pick stats
-    for i = #statKeys, 2, -1 do
-        local j = math.random(1, i)
-        statKeys[i], statKeys[j] = statKeys[j], statKeys[i]
-    end
-
+    local numSlots = math.random(rarityDef.StatSlots.min, rarityDef.StatSlots.max)
+    local available = table.Copy(BRS_WEAPONS.StatKeys)
     local boosters = {}
-    for i = 1, numStats do
-        local statKey = statKeys[i]
-        local boost = rarityDef.MinBoost + math.random() * (rarityDef.MaxBoost - rarityDef.MinBoost)
 
-        -- Glitched rarity can roll negative modifiers on some stats
-        if rarityDef.CanNegative and math.random() < 0.25 then
-            boost = -boost * 0.5 -- Negative but less severe
+    for i = 1, math.min(numSlots, #available) do
+        local idx = math.random(1, #available)
+        local statKey = available[idx]
+        table.remove(available, idx)
+
+        local boost = math.Rand(rarityDef.MinBoost, rarityDef.MaxBoost)
+
+        if rarityDef.CanRollNegative and math.random() < 0.15 then
+            boost = -boost * 0.5
         end
 
-        -- Round to 2 decimal places
-        boost = math.Round(boost, 2)
-
-        boosters[statKey] = boost
+        boosters[statKey] = math.Round(boost, 4)
     end
 
     return boosters
 end
 
---- Get formatted stat boost text
 function BRS_WEAPONS.FormatBoost(statKey, boostValue)
-    local def = BRS_WEAPONS.StatDefs[statKey]
-    if not def then return "" end
-
-    local pct = math.Round(boostValue * 100)
-    if pct >= 0 then
-        return "+" .. pct .. "%"
-    else
-        return pct .. "%"
-    end
-end
-
---- Get boost color (green for positive, red for negative)
-function BRS_WEAPONS.GetBoostColor(statKey, boostValue)
     if boostValue >= 0 then
-        return Color(100, 255, 100)
+        return "+" .. math.Round(boostValue * 100, 1) .. "%"
     else
-        return Color(255, 100, 100)
+        return math.Round(boostValue * 100, 1) .. "%"
     end
 end
 
---- Get rarity sort order
+function BRS_WEAPONS.GetBoostColor(statKey, boostValue)
+    local statDef = BRS_WEAPONS.StatDefs[statKey]
+    if boostValue < 0 then return Color(255, 50, 50) end
+    return statDef and statDef.Color or Color(255, 255, 255)
+end
+
 function BRS_WEAPONS.GetRarityOrder(rarity)
     local def = BRS_WEAPONS.Rarities[rarity]
     return def and def.Order or 0
 end
 
---- Get rarity color
 function BRS_WEAPONS.GetRarityColor(rarity)
     local def = BRS_WEAPONS.Rarities[rarity]
     return def and def.Color or Color(255, 255, 255)
 end
 
-print("[BRS UniqueWeapons] Shared definitions loaded - " .. #BRS_WEAPONS.AllWeapons .. " weapons, 7 rarity tiers")
--- Force redeploy Wed Feb 25 01:01:54 UTC 2026
+print("[BRS UniqueWeapons] Shared definitions loaded - " .. #BRS_WEAPONS.AllWeapons .. " weapons, 6 stat types, 7 qualities")

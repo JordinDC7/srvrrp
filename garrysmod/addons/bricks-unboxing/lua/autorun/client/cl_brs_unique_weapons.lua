@@ -1,168 +1,188 @@
 --[[
     UNIQUE WEAPON SYSTEM - Client Side
-    Handles: Receiving weapon data, enhanced UI rendering,
-    stat booster display, rarity glow effects, inspect popup
+    Stat booster display on inventory items, quality system, inspect popup
 ]]--
 
 if not CLIENT then return end
 
 BRS_WEAPONS = BRS_WEAPONS or {}
-BRS_WEAPONS.PlayerWeapons = BRS_WEAPONS.PlayerWeapons or {} -- uid -> weapon data
+BRS_WEAPONS.PlayerWeapons = BRS_WEAPONS.PlayerWeapons or {}
+
+-- ============================================================
+-- FONTS
+-- ============================================================
+surface.CreateFont("BRS_WEP_8",  { font = "Roboto", size = 8,  weight = 600 })
+surface.CreateFont("BRS_WEP_10", { font = "Roboto", size = 10, weight = 500 })
+surface.CreateFont("BRS_WEP_11", { font = "Roboto", size = 11, weight = 600 })
+surface.CreateFont("BRS_WEP_12", { font = "Roboto", size = 12, weight = 400 })
+surface.CreateFont("BRS_WEP_14", { font = "Roboto", size = 14, weight = 700 })
+surface.CreateFont("BRS_WEP_16", { font = "Roboto", size = 16, weight = 500 })
+surface.CreateFont("BRS_WEP_20", { font = "Roboto", size = 20, weight = 700 })
+surface.CreateFont("BRS_WEP_24", { font = "Roboto", size = 24, weight = 700 })
 
 -- ============================================================
 -- NETWORK RECEIVERS
 -- ============================================================
-
--- Full sync of all player weapons
 net.Receive("BRS.UniqueWeapons.Sync", function()
     local len = net.ReadUInt(32)
     local compressed = net.ReadData(len)
     local jsonData = util.Decompress(compressed)
     if not jsonData then return end
-
     local weapons = util.JSONToTable(jsonData)
     if not weapons then return end
-
     BRS_WEAPONS.PlayerWeapons = weapons
-
     print("[BRS UniqueWeapons] Synced " .. table.Count(weapons) .. " unique weapons")
 end)
 
--- New weapon notification
 net.Receive("BRS.UniqueWeapons.NewWeapon", function()
     local jsonData = net.ReadString()
     local weaponData = util.JSONToTable(jsonData)
     if not weaponData then return end
-
     BRS_WEAPONS.PlayerWeapons[weaponData.weapon_uid] = weaponData
-
-    -- TODO: Could trigger a special unbox animation/sound here
 end)
 
--- Inspect response
 net.Receive("BRS.UniqueWeapons.Inspect", function()
     local jsonData = net.ReadString()
     local weaponData = util.JSONToTable(jsonData)
     if not weaponData then return end
-
     BRS_WEAPONS.OpenInspectPopup(weaponData)
 end)
 
 -- ============================================================
--- HELPER: Get unique weapon data from a globalKey
+-- FIND UNIQUE WEAPON DATA FOR AN INVENTORY ITEM
+-- Match by weapon class - find best unique weapon for this class
 -- ============================================================
-function BRS_WEAPONS.GetUniqueData(globalKey)
-    if not globalKey or not string.StartWith(globalKey, "ITEM_") then return nil end
-
-    local uid = string.match(globalKey, "^ITEM_%d+_(.+)$")
-    if not uid then return nil end
-
-    return BRS_WEAPONS.PlayerWeapons[uid], uid
+function BRS_WEAPONS.FindForClass(weaponClass)
+    local bestUID, bestTotal = nil, -1
+    for uid, data in pairs(BRS_WEAPONS.PlayerWeapons) do
+        if data.weapon_class == weaponClass then
+            local total = 0
+            for _, v in pairs(data.stat_boosters or {}) do
+                total = total + math.abs(v)
+            end
+            if total > bestTotal then
+                bestUID = uid
+                bestTotal = total
+            end
+        end
+    end
+    if bestUID then
+        return BRS_WEAPONS.PlayerWeapons[bestUID]
+    end
+    return nil
 end
 
 -- ============================================================
--- ENHANCED ITEM DISPLAY HOOK
--- Override the itemslot panel's FillPanel to add stat boosters
+-- INVENTORY ITEM OVERLAY
+-- Hooks into bricks_server_unboxingmenu_itemslot to add stat bars
 -- ============================================================
+local function DrawStatOverlay(panel, w, h, itemTable)
+    if not itemTable or (itemTable.Type ~= "PermWeapon" and itemTable.Type ~= "Weapon") then return end
 
--- Rarity gradient animation materials
-local glowMat = Material("vgui/white")
+    local weaponClass = itemTable.ReqInfo and itemTable.ReqInfo[1]
+    if not weaponClass then return end
 
---- Draw a rarity-colored gradient border
-function BRS_WEAPONS.DrawRarityBorder(x, y, w, h, rarity, alpha)
-    local rarityDef = BRS_WEAPONS.Rarities[rarity]
-    if not rarityDef then return end
+    local weaponData = BRS_WEAPONS.FindForClass(weaponClass)
+    if not weaponData or not weaponData.stat_boosters then return end
 
-    local col1 = rarityDef.GradientFrom
-    local col2 = rarityDef.GradientTo
-    local glowA = (rarityDef.GlowAlpha or 0) * (alpha or 1)
+    local boosters = weaponData.stat_boosters
+    if table.Count(boosters) == 0 then return end
 
-    if glowA <= 0 then return end
+    local quality, avg = BRS_WEAPONS.GetQuality(boosters)
 
-    -- Animated shimmer
-    local time = CurTime() * 2
-    local shimmer = (math.sin(time) + 1) * 0.5
-
-    local borderSize = 2
-    local r = Lerp(shimmer, col1.r, col2.r)
-    local g = Lerp(shimmer, col1.g, col2.g)
-    local b = Lerp(shimmer, col1.b, col2.b)
-
-    surface.SetDrawColor(r, g, b, glowA)
-    surface.SetMaterial(glowMat)
-
-    -- Top
-    surface.DrawTexturedRect(x, y, w, borderSize)
-    -- Bottom
-    surface.DrawTexturedRect(x, y + h - borderSize, w, borderSize)
-    -- Left
-    surface.DrawTexturedRect(x, y, borderSize, h)
-    -- Right
-    surface.DrawTexturedRect(x + w - borderSize, y, borderSize, h)
-
-    -- Corner glow
-    local glowSize = 6
-    for i = 1, glowSize do
-        local a = glowA * (1 - (i / glowSize))
-        surface.SetDrawColor(r, g, b, a)
-        surface.DrawTexturedRect(x - i, y - i, w + i * 2, 1)
-        surface.DrawTexturedRect(x - i, y + h - 1 + i, w + i * 2, 1)
-        surface.DrawTexturedRect(x - i, y - i, 1, h + i * 2)
-        surface.DrawTexturedRect(x + w - 1 + i, y - i, 1, h + i * 2)
+    -- Quality label + average boost
+    local qualY = h - 48
+    draw.SimpleText(quality.name, "BRS_WEP_11", 6, qualY, quality.color, TEXT_ALIGN_LEFT)
+    if avg then
+        draw.SimpleText("Avg +" .. math.Round(avg * 100, 1) .. "%", "BRS_WEP_10", w - 6, qualY, Color(200, 200, 200, 200), TEXT_ALIGN_RIGHT)
     end
-end
 
---- Draw stat booster bars on an item panel
-function BRS_WEAPONS.DrawStatBoosters(x, y, w, h, boosters, rarity)
-    if not boosters or table.Count(boosters) == 0 then return end
+    -- Stat bars
+    local barY = qualY + 14
+    local barH = 4
+    local barW = (w - 12) / 5
+    local gap = 0
 
-    local rarityColor = BRS_WEAPONS.GetRarityColor(rarity)
-    local barH = 12
-    local padding = 2
-    local startY = y + h - (table.Count(boosters) * (barH + padding)) - 4
-    local barW = w - 10
-
-    local i = 0
-    -- Sort boosters by stat key for consistent display
-    local sortedStats = {}
-    for statKey, boost in pairs(boosters) do
-        table.insert(sortedStats, { key = statKey, boost = boost })
-    end
-    table.sort(sortedStats, function(a, b) return a.key < b.key end)
-
-    for _, stat in ipairs(sortedStats) do
-        local statDef = BRS_WEAPONS.StatDefs[stat.key]
+    local statOrder = { "DMG", "ACC", "MAG", "RPM", "SPD" }
+    for i, statKey in ipairs(statOrder) do
+        local statDef = BRS_WEAPONS.StatDefs[statKey]
         if not statDef then continue end
 
-        local barY = startY + i * (barH + padding)
-        local boostColor = BRS_WEAPONS.GetBoostColor(stat.key, stat.boost)
-        local boostText = BRS_WEAPONS.FormatBoost(stat.key, stat.boost)
-        local fillW = math.abs(stat.boost) / 1.5 * barW -- Normalize to max 150%
+        local x = 6 + (i - 1) * (barW + gap)
+        local boost = boosters[statKey]
 
-        -- Background
-        draw.RoundedBox(4, x + 5, barY, barW, barH, Color(0, 0, 0, 150))
+        -- Background bar
+        draw.RoundedBox(2, x, barY, barW - 2, barH, Color(40, 40, 40, 200))
 
-        -- Fill bar
-        draw.RoundedBox(4, x + 5, barY, math.min(fillW, barW), barH, ColorAlpha(boostColor, 120))
+        -- Fill bar (if this stat has a boost)
+        if boost then
+            local fillFrac = math.Clamp(math.abs(boost) / 1.0, 0, 1)
+            local col = boost >= 0 and statDef.Color or Color(255, 50, 50)
+            draw.RoundedBox(2, x, barY, (barW - 2) * fillFrac, barH, ColorAlpha(col, 220))
+        end
 
-        -- Stat label + value
-        draw.SimpleText(
-            statDef.ShortName .. " " .. boostText,
-            "BRS_WEAPONS_Font10",
-            x + 8, barY + barH / 2,
-            Color(255, 255, 255, 230),
-            TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER
-        )
-
-        i = i + 1
+        -- Label underneath
+        local labelCol = boost and ColorAlpha(statDef.Color, 220) or Color(60, 60, 60, 150)
+        draw.SimpleText(statDef.ShortName, "BRS_WEP_8", x + (barW - 2) / 2, barY + barH + 1, labelCol, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
     end
+
+    -- Rarity color top border
+    local rarityColor = BRS_WEAPONS.GetRarityColor(weaponData.rarity)
+    surface.SetDrawColor(rarityColor.r, rarityColor.g, rarityColor.b, 200)
+    surface.DrawRect(0, 0, w, 2)
 end
+
+-- ============================================================
+-- HOOK INTO BRICKS INVENTORY RENDERING
+-- ============================================================
+hook.Add("Initialize", "BRS_UniqueWeapons_HookInventory", function()
+    timer.Simple(8, function()
+        if not vgui or not vgui.GetControlTable then return end
+
+        -- Hook into itemslot panel
+        local itemslot = vgui.GetControlTable("bricks_server_unboxingmenu_itemslot")
+        if not itemslot then
+            print("[BRS UniqueWeapons] Could not find itemslot panel - will use Think hook")
+            return
+        end
+
+        local origPaint = itemslot.Paint
+        itemslot.Paint = function(self, w, h)
+            if origPaint then origPaint(self, w, h) end
+
+            -- Draw our stat overlay on top
+            if self.itemTable then
+                DrawStatOverlay(self, w, h, self.itemTable)
+            end
+        end
+
+        print("[BRS UniqueWeapons] Inventory overlay hooked!")
+    end)
+end)
+
+-- Fallback: periodically try to hook panels
+timer.Create("BRS_UniqueWeapons_HookRetry", 5, 12, function()
+    if not vgui or not vgui.GetControlTable then return end
+
+    local itemslot = vgui.GetControlTable("bricks_server_unboxingmenu_itemslot")
+    if not itemslot or itemslot._BRS_HOOKED then return end
+
+    local origPaint = itemslot.Paint
+    itemslot.Paint = function(self, w, h)
+        if origPaint then origPaint(self, w, h) end
+        if self.itemTable then
+            DrawStatOverlay(self, w, h, self.itemTable)
+        end
+    end
+
+    itemslot._BRS_HOOKED = true
+    timer.Remove("BRS_UniqueWeapons_HookRetry")
+    print("[BRS UniqueWeapons] Inventory overlay hooked (retry)!")
+end)
 
 -- ============================================================
 -- INSPECT POPUP
--- Full-screen weapon inspection with 3D model and stat details
 -- ============================================================
-
 function BRS_WEAPONS.OpenInspectPopup(weaponData)
     if IsValid(BRS_WEAPONS.InspectFrame) then
         BRS_WEAPONS.InspectFrame:Remove()
@@ -170,12 +190,13 @@ function BRS_WEAPONS.OpenInspectPopup(weaponData)
 
     local rarityDef = BRS_WEAPONS.Rarities[weaponData.rarity] or BRS_WEAPONS.Rarities["Common"]
     local rarityColor = rarityDef.Color
+    local quality, avg = BRS_WEAPONS.GetQuality(weaponData.stat_boosters or {})
 
     local scrW, scrH = ScrW(), ScrH()
-    local frameW, frameH = math.min(600, scrW * 0.45), math.min(500, scrH * 0.6)
+    local fw, fh = math.min(550, scrW * 0.4), math.min(420, scrH * 0.5)
 
     local frame = vgui.Create("DFrame")
-    frame:SetSize(frameW, frameH)
+    frame:SetSize(fw, fh)
     frame:Center()
     frame:SetTitle("")
     frame:SetDraggable(true)
@@ -183,167 +204,80 @@ function BRS_WEAPONS.OpenInspectPopup(weaponData)
     frame:ShowCloseButton(false)
     BRS_WEAPONS.InspectFrame = frame
 
-    frame.Paint = function(self2, w, h)
-        -- Dark background
-        draw.RoundedBox(12, 0, 0, w, h, Color(18, 18, 24, 245))
-
-        -- Rarity accent line at top
-        local time = CurTime() * 1.5
-        local shimmer = (math.sin(time) + 1) * 0.5
-        local accentCol = Color(
-            Lerp(shimmer, rarityDef.GradientFrom.r, rarityDef.GradientTo.r),
-            Lerp(shimmer, rarityDef.GradientFrom.g, rarityDef.GradientTo.g),
-            Lerp(shimmer, rarityDef.GradientFrom.b, rarityDef.GradientTo.b),
-            230
-        )
-        draw.RoundedBoxEx(12, 0, 0, w, 4, accentCol, true, true, false, false)
-
-        -- Inner border glow
-        BRS_WEAPONS.DrawRarityBorder(2, 2, w - 4, h - 4, weaponData.rarity, 0.6)
+    frame.Paint = function(_, w, h)
+        draw.RoundedBox(10, 0, 0, w, h, Color(18, 18, 24, 245))
+        -- Top accent
+        local t = CurTime() * 1.5
+        local s = (math.sin(t) + 1) * 0.5
+        draw.RoundedBoxEx(10, 0, 0, w, 3, Color(
+            Lerp(s, rarityDef.GradientFrom.r, rarityDef.GradientTo.r),
+            Lerp(s, rarityDef.GradientFrom.g, rarityDef.GradientTo.g),
+            Lerp(s, rarityDef.GradientFrom.b, rarityDef.GradientTo.b), 230
+        ), true, true, false, false)
     end
 
-    -- Close button (top right)
-    local closeBtn = vgui.Create("DButton", frame)
-    closeBtn:SetSize(30, 30)
-    closeBtn:SetPos(frameW - 38, 8)
-    closeBtn:SetText("")
-    closeBtn.Paint = function(self2, w, h)
-        local col = self2:IsHovered() and Color(255, 80, 80) or Color(180, 180, 180)
-        draw.SimpleText("✕", "BRS_WEAPONS_Font16", w / 2, h / 2, col, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+    -- Close button
+    local cb = vgui.Create("DButton", frame)
+    cb:SetSize(28, 28); cb:SetPos(fw - 34, 6); cb:SetText("")
+    cb.Paint = function(s, w, h)
+        draw.SimpleText("✕", "BRS_WEP_14", w/2, h/2, s:IsHovered() and Color(255,80,80) or Color(180,180,180), 1, 1)
     end
-    closeBtn.DoClick = function() frame:Remove() end
+    cb.DoClick = function() frame:Remove() end
 
-    -- Weapon Name
-    local nameLabel = vgui.Create("DPanel", frame)
-    nameLabel:SetPos(20, 14)
-    nameLabel:SetSize(frameW - 60, 32)
-    nameLabel.Paint = function(self2, w, h)
-        draw.SimpleText(weaponData.weapon_name or "Unknown", "BRS_WEAPONS_Font24B", 0, 0, Color(255, 255, 255), TEXT_ALIGN_LEFT)
-    end
-
-    -- Rarity badge
-    local rarityLabel = vgui.Create("DPanel", frame)
-    rarityLabel:SetPos(20, 44)
-    rarityLabel:SetSize(frameW - 40, 22)
-    rarityLabel.Paint = function(self2, w, h)
-        draw.SimpleText(weaponData.rarity, "BRS_WEAPONS_Font16", 0, 0, rarityColor, TEXT_ALIGN_LEFT)
-        draw.SimpleText("UID: " .. weaponData.weapon_uid, "BRS_WEAPONS_Font12", w, 0, Color(120, 120, 120), TEXT_ALIGN_RIGHT)
+    -- Weapon name + quality
+    local np = vgui.Create("DPanel", frame)
+    np:SetPos(16, 10); np:SetSize(fw - 50, 50)
+    np.Paint = function(_, w, h)
+        draw.SimpleText(weaponData.weapon_name or "Unknown", "BRS_WEP_24", 0, 0, Color(255,255,255))
+        draw.SimpleText(weaponData.rarity, "BRS_WEP_14", 0, 28, rarityColor)
+        draw.SimpleText(quality.name .. " Quality", "BRS_WEP_12", 120, 30, quality.color)
+        if avg then
+            draw.SimpleText("Avg +" .. math.Round(avg*100,1) .. "%", "BRS_WEP_12", w, 30, Color(180,180,180), TEXT_ALIGN_RIGHT)
+        end
     end
 
-    -- 3D Model panel
-    local wepDef = BRS_WEAPONS.WeaponByClass and BRS_WEAPONS.WeaponByClass[weaponData.weapon_class]
-    local modelPath = wepDef and wepDef.model or "models/weapons/w_rif_ak47.mdl"
-
-    local modelPanel = vgui.Create("DModelPanel", frame)
-    modelPanel:SetPos(20, 72)
-    modelPanel:SetSize(frameW * 0.5 - 30, frameH * 0.45)
-    modelPanel:SetModel(modelPath)
-    modelPanel:SetCursor("none")
-    function modelPanel:LayoutEntity(ent)
-        ent:SetAngles(Angle(0, CurTime() * 30, 0))
-    end
-
-    local mdlEnt = modelPanel.Entity
-    if mdlEnt and IsValid(mdlEnt) then
-        local mn, mx = mdlEnt:GetRenderBounds()
-        local size = 0
-        size = math.max(size, math.abs(mn.x) + math.abs(mx.x))
-        size = math.max(size, math.abs(mn.y) + math.abs(mx.y))
-        size = math.max(size, math.abs(mn.z) + math.abs(mx.z))
-        modelPanel:SetFOV(50)
-        modelPanel:SetCamPos(Vector(size, size, size))
-        modelPanel:SetLookAt((mn + mx) * 0.5)
-    end
-
-    -- Stat Boosters Panel
-    local statsPanel = vgui.Create("DPanel", frame)
-    statsPanel:SetPos(frameW * 0.5 + 10, 72)
-    statsPanel:SetSize(frameW * 0.5 - 30, frameH - 90)
-    statsPanel.Paint = function(self2, w, h)
-        draw.RoundedBox(8, 0, 0, w, h, Color(30, 30, 40, 200))
-        draw.SimpleText("STAT BOOSTERS", "BRS_WEAPONS_Font14B", 12, 10, Color(200, 200, 200), TEXT_ALIGN_LEFT)
-    end
-
-    -- Individual stat entries
+    -- Stat boosters
     local sortedStats = {}
-    for statKey, boost in pairs(weaponData.stat_boosters or {}) do
-        table.insert(sortedStats, { key = statKey, boost = boost })
+    for k, v in pairs(weaponData.stat_boosters or {}) do
+        table.insert(sortedStats, {key = k, boost = v})
     end
     table.sort(sortedStats, function(a, b) return a.key < b.key end)
 
-    local statStartY = 34
-    local statH = 42
-    local statW = frameW * 0.5 - 54
+    local sy = 70
+    local sh = 46
+    local sw = fw - 32
 
     for i, stat in ipairs(sortedStats) do
         local statDef = BRS_WEAPONS.StatDefs[stat.key]
         if not statDef then continue end
 
-        local boostColor = BRS_WEAPONS.GetBoostColor(stat.key, stat.boost)
-        local boostText = BRS_WEAPONS.FormatBoost(stat.key, stat.boost)
+        local ep = vgui.Create("DPanel", frame)
+        ep:SetPos(16, sy + (i-1) * (sh + 3)); ep:SetSize(sw, sh)
+        local boostCol = BRS_WEAPONS.GetBoostColor(stat.key, stat.boost)
+        local boostTxt = BRS_WEAPONS.FormatBoost(stat.key, stat.boost)
         local pct = math.abs(stat.boost)
 
-        local entry = vgui.Create("DPanel", statsPanel)
-        entry:SetPos(12, statStartY + (i - 1) * (statH + 4))
-        entry:SetSize(statW, statH)
-        entry.Paint = function(self2, w, h)
-            -- Background
-            draw.RoundedBox(6, 0, 0, w, h, Color(20, 20, 28, 200))
-
-            -- Stat name
-            draw.SimpleText(statDef.Name, "BRS_WEAPONS_Font14B", 10, 6, Color(220, 220, 220), TEXT_ALIGN_LEFT)
-
-            -- Boost value
-            draw.SimpleText(boostText, "BRS_WEAPONS_Font16", w - 10, 6, boostColor, TEXT_ALIGN_RIGHT)
-
-            -- Progress bar
-            local barX, barY, barW2, barH2 = 10, h - 14, w - 20, 8
-            draw.RoundedBox(4, barX, barY, barW2, barH2, Color(40, 40, 50))
-
-            local fillFrac = math.Clamp(pct / 1.5, 0, 1)
-            if fillFrac > 0 then
-                draw.RoundedBox(4, barX, barY, barW2 * fillFrac, barH2, ColorAlpha(boostColor, 180))
+        ep.Paint = function(_, w, h)
+            draw.RoundedBox(6, 0, 0, w, h, Color(25, 25, 35, 220))
+            draw.SimpleText(statDef.Name, "BRS_WEP_14", 10, 6, Color(220,220,220))
+            draw.SimpleText(boostTxt, "BRS_WEP_16", w - 10, 6, boostCol, TEXT_ALIGN_RIGHT)
+            -- Bar
+            local bx, by, bw, bh = 10, h - 14, w - 20, 8
+            draw.RoundedBox(4, bx, by, bw, bh, Color(40,40,50))
+            local fill = math.Clamp(pct / 1.2, 0, 1)
+            if fill > 0 then
+                draw.RoundedBox(4, bx, by, bw * fill, bh, ColorAlpha(boostCol, 180))
             end
         end
     end
 
-    -- Weapon class label at bottom of model area
-    local classLabel = vgui.Create("DPanel", frame)
-    classLabel:SetPos(20, 72 + frameH * 0.45 + 4)
-    classLabel:SetSize(frameW * 0.5 - 30, 20)
-    classLabel.Paint = function(self2, w, h)
-        draw.SimpleText(weaponData.weapon_class or "", "BRS_WEAPONS_Font12", w / 2, h / 2, Color(100, 100, 120), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+    -- UID at bottom
+    local uid_p = vgui.Create("DPanel", frame)
+    uid_p:SetPos(16, fh - 24); uid_p:SetSize(fw - 32, 20)
+    uid_p.Paint = function(_, w, h)
+        draw.SimpleText("UID: " .. (weaponData.weapon_uid or "?"), "BRS_WEP_10", 0, 0, Color(80,80,100))
+        draw.SimpleText(weaponData.weapon_class or "", "BRS_WEP_10", w, 0, Color(80,80,100), TEXT_ALIGN_RIGHT)
     end
 end
 
--- ============================================================
--- CUSTOM FONTS
--- ============================================================
-surface.CreateFont("BRS_WEAPONS_Font10", { font = "Roboto", size = 10, weight = 500 })
-surface.CreateFont("BRS_WEAPONS_Font12", { font = "Roboto", size = 12, weight = 400 })
-surface.CreateFont("BRS_WEAPONS_Font14B", { font = "Roboto", size = 14, weight = 700 })
-surface.CreateFont("BRS_WEAPONS_Font16", { font = "Roboto", size = 16, weight = 500 })
-surface.CreateFont("BRS_WEAPONS_Font24B", { font = "Roboto", size = 24, weight = 700 })
-
--- ============================================================
--- HOOK INTO ITEMSLOT RENDERING
--- Add stat booster overlays and rarity borders to item cards
--- ============================================================
-hook.Add("PostRender", "BRS_UniqueWeapons_InitUI", function()
-    hook.Remove("PostRender", "BRS_UniqueWeapons_InitUI")
-
-    -- Override the itemslot's FillPanel after one frame to ensure it's loaded
-    timer.Simple(3, function()
-        -- We'll hook into the paint of any bricks_server_unboxingmenu_itemslot
-        -- by adding a paint-over hook
-        local oldPaintOver
-
-        hook.Add("Think", "BRS_UniqueWeapons_PatchItemSlots", function()
-            -- Find all active itemslot panels and add our overlay
-            -- This runs every frame but only modifies new panels
-        end)
-    end)
-end)
-
-print("[BRS UniqueWeapons] Client system loaded!")
--- deployed
+print("[BRS UniqueWeapons] Client system loaded (v3 - stat overlay)")
