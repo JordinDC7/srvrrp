@@ -7,7 +7,36 @@
 
 BRICKS_SERVER = BRICKS_SERVER or {}
 BRICKS_SERVER.BASECONFIG = BRICKS_SERVER.BASECONFIG or {}
+
+-- ============================================================
+-- MODULE ENABLEMENT (required for bricks framework to load unboxing)
+-- ============================================================
+BRICKS_SERVER.BASECONFIG.MODULES = BRICKS_SERVER.BASECONFIG.MODULES or {}
+BRICKS_SERVER.BASECONFIG.MODULES["unboxing"] = { true, {
+    ["marketplace"] = true,
+    ["rewards"] = true,
+    ["trading"] = true,
+} }
+
+-- ============================================================
+-- UNBOXING CONFIG
+-- ============================================================
 BRICKS_SERVER.BASECONFIG.UNBOXING = BRICKS_SERVER.BASECONFIG.UNBOXING or {}
+
+-- Core settings
+BRICKS_SERVER.BASECONFIG.UNBOXING["Case UI Open Time"] = BRICKS_SERVER.BASECONFIG.UNBOXING["Case UI Open Time"] or 5
+BRICKS_SERVER.BASECONFIG.UNBOXING["Case Open Time"] = BRICKS_SERVER.BASECONFIG.UNBOXING["Case Open Time"] or 5
+BRICKS_SERVER.BASECONFIG.UNBOXING["Activity Entry Limit"] = BRICKS_SERVER.BASECONFIG.UNBOXING["Activity Entry Limit"] or 25
+BRICKS_SERVER.BASECONFIG.UNBOXING["Auction Minimum Starting Price"] = BRICKS_SERVER.BASECONFIG.UNBOXING["Auction Minimum Starting Price"] or 1000
+BRICKS_SERVER.BASECONFIG.UNBOXING["Auction Maximum Starting Price"] = BRICKS_SERVER.BASECONFIG.UNBOXING["Auction Maximum Starting Price"] or 1000000000
+BRICKS_SERVER.BASECONFIG.UNBOXING["Auction Minimum Duration"] = BRICKS_SERVER.BASECONFIG.UNBOXING["Auction Minimum Duration"] or 600
+BRICKS_SERVER.BASECONFIG.UNBOXING["Auction Maximum Duration"] = BRICKS_SERVER.BASECONFIG.UNBOXING["Auction Maximum Duration"] or 604800
+BRICKS_SERVER.BASECONFIG.UNBOXING["Auctions Per Page"] = BRICKS_SERVER.BASECONFIG.UNBOXING["Auctions Per Page"] or 12
+BRICKS_SERVER.BASECONFIG.UNBOXING["Auctions Minimum Bid Increase"] = BRICKS_SERVER.BASECONFIG.UNBOXING["Auctions Minimum Bid Increase"] or 1.1
+BRICKS_SERVER.BASECONFIG.UNBOXING["Dead Auction Remove Time"] = BRICKS_SERVER.BASECONFIG.UNBOXING["Dead Auction Remove Time"] or 259200
+BRICKS_SERVER.BASECONFIG.UNBOXING["Cases Leaderboard Limit"] = BRICKS_SERVER.BASECONFIG.UNBOXING["Cases Leaderboard Limit"] or 10
+BRICKS_SERVER.BASECONFIG.UNBOXING["Disable Item Halos"] = BRICKS_SERVER.BASECONFIG.UNBOXING["Disable Item Halos"] or false
+BRICKS_SERVER.BASECONFIG.UNBOXING["Disable Case Collisions"] = BRICKS_SERVER.BASECONFIG.UNBOXING["Disable Case Collisions"] or false
 
 -- ============================================================
 -- 546 ITEMS (78 weapons × 7 rarities)
@@ -1202,3 +1231,93 @@ BRICKS_SERVER.BASECONFIG.UNBOXING.Keys = {
     [5] = { Name = "Sniper Key", Model = 1, Rarity = "Legendary", Color = Color(180,100,255) },
     [6] = { Name = "Heavy Key", Model = 1, Rarity = "Glitched", Color = Color(255,80,80) },
 }
+
+-- ============================================================
+-- STORE
+-- ============================================================
+BRICKS_SERVER.BASECONFIG.UNBOXING.Store = BRICKS_SERVER.BASECONFIG.UNBOXING.Store or {}
+BRICKS_SERVER.BASECONFIG.UNBOXING.Store.Featured = BRICKS_SERVER.BASECONFIG.UNBOXING.Store.Featured or {}
+BRICKS_SERVER.BASECONFIG.UNBOXING.Store.Categories = BRICKS_SERVER.BASECONFIG.UNBOXING.Store.Categories or {
+    [1] = { Name = "Weapons", SortOrder = 1 },
+    [2] = { Name = "Cases", SortOrder = 2 },
+    [3] = { Name = "Keys", SortOrder = 3 },
+}
+BRICKS_SERVER.BASECONFIG.UNBOXING.Store.Items = BRICKS_SERVER.BASECONFIG.UNBOXING.Store.Items or {
+    [1] = { GlobalKey = "CASE_1", Category = 2, SortOrder = 1, Price = 2000 },
+    [2] = { GlobalKey = "CASE_2", Category = 2, SortOrder = 2, Price = 3000 },
+    [3] = { GlobalKey = "CASE_3", Category = 2, SortOrder = 3, Price = 5000 },
+    [4] = { GlobalKey = "CASE_4", Category = 2, SortOrder = 4, Price = 5000 },
+    [5] = { GlobalKey = "CASE_5", Category = 2, SortOrder = 5, Price = 7500 },
+    [6] = { GlobalKey = "CASE_6", Category = 2, SortOrder = 6, Price = 10000 },
+    [7] = { GlobalKey = "KEY_1", Category = 3, SortOrder = 1, Price = 1000 },
+    [8] = { GlobalKey = "KEY_2", Category = 3, SortOrder = 2, Price = 1500 },
+    [9] = { GlobalKey = "KEY_3", Category = 3, SortOrder = 3, Price = 2500 },
+    [10] = { GlobalKey = "KEY_4", Category = 3, SortOrder = 4, Price = 2500 },
+    [11] = { GlobalKey = "KEY_5", Category = 3, SortOrder = 5, Price = 3750 },
+    [12] = { GlobalKey = "KEY_6", Category = 3, SortOrder = 6, Price = 5000 },
+}
+
+-- ============================================================
+-- MARKETPLACE
+-- ============================================================
+BRICKS_SERVER.BASECONFIG.UNBOXING.Marketplace = BRICKS_SERVER.BASECONFIG.UNBOXING.Marketplace or {}
+BRICKS_SERVER.BASECONFIG.UNBOXING.Marketplace.Slots = BRICKS_SERVER.BASECONFIG.UNBOXING.Marketplace.Slots or {
+    [1] = {},
+}
+
+-- ============================================================
+-- REWARDS (daily login rewards)
+-- ============================================================
+BRICKS_SERVER.BASECONFIG.UNBOXING.Rewards = BRICKS_SERVER.BASECONFIG.UNBOXING.Rewards or {
+    [1] = { GlobalKey = "KEY_1", Amount = 1 },
+    [2] = { GlobalKey = "KEY_2", Amount = 1 },
+    [3] = { GlobalKey = "KEY_3", Amount = 1 },
+    [4] = { GlobalKey = "CASE_1", Amount = 1 },
+    [5] = { GlobalKey = "KEY_4", Amount = 1 },
+    [6] = { GlobalKey = "KEY_5", Amount = 1 },
+    [7] = { GlobalKey = "CASE_3", Amount = 1 },
+}
+
+-- ============================================================
+-- NOTIFICATION RARITIES (announce to server)
+-- ============================================================
+BRICKS_SERVER.BASECONFIG.UNBOXING.NotificationRarities = BRICKS_SERVER.BASECONFIG.UNBOXING.NotificationRarities or {
+    ["Rare"] = true,
+    ["Epic"] = true,
+    ["Legendary"] = true,
+    ["Glitched"] = true,
+    ["Mythical"] = true,
+}
+
+-- ============================================================
+-- DROPS (timed random drops while playing)
+-- ============================================================
+BRICKS_SERVER.BASECONFIG.UNBOXING.Drops = BRICKS_SERVER.BASECONFIG.UNBOXING.Drops or {}
+BRICKS_SERVER.BASECONFIG.UNBOXING.Drops.TimeInterval = BRICKS_SERVER.BASECONFIG.UNBOXING.Drops.TimeInterval or 900
+BRICKS_SERVER.BASECONFIG.UNBOXING.Drops.Items = BRICKS_SERVER.BASECONFIG.UNBOXING.Drops.Items or {
+    [1] = { "CASE_1", 30 },
+    [2] = { "CASE_2", 25 },
+    [3] = { "CASE_3", 20 },
+    [4] = { "CASE_4", 20 },
+    [5] = { "CASE_5", 15 },
+    [6] = { "CASE_6", 10 },
+}
+
+-- ============================================================
+-- NPCS
+-- ============================================================
+BRICKS_SERVER.BASECONFIG.NPCS = BRICKS_SERVER.BASECONFIG.NPCS or {}
+
+local hasUnboxingNPC = false
+for _, npcData in ipairs(BRICKS_SERVER.BASECONFIG.NPCS) do
+    if istable(npcData) and npcData.Type == "Unboxing" then
+        hasUnboxingNPC = true
+        break
+    end
+end
+if not hasUnboxingNPC then
+    table.insert(BRICKS_SERVER.BASECONFIG.NPCS, {
+        Name = "Unboxing",
+        Type = "Unboxing",
+    })
+end
