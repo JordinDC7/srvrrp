@@ -72,8 +72,15 @@ function PANEL:Init()
         -- Wallet balance
         local balance = ""
         if BRICKS_SERVER and BRICKS_SERVER.UNBOXING and BRICKS_SERVER.UNBOXING.Func and BRICKS_SERVER.UNBOXING.Func.FormatCurrency then
-            local money = LocalPlayer():getDarkRPVar and LocalPlayer():getDarkRPVar("money") or 0
-            balance = DarkRP and DarkRP.formatMoney and DarkRP.formatMoney(money) or ("$" .. string.Comma(money))
+            local money = 0
+            if LocalPlayer().getDarkRPVar then
+                money = LocalPlayer():getDarkRPVar("money") or 0
+            end
+            if DarkRP and DarkRP.formatMoney then
+                balance = DarkRP.formatMoney(money)
+            else
+                balance = "$" .. string.Comma(money)
+            end
         end
         draw.SimpleText( balance, "SMGRP_Body12", w - avatarSize - 8, h/2 - 1, C.accent or Color(0,212,170), TEXT_ALIGN_RIGHT, 0 )
     end
