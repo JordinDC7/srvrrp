@@ -1,15 +1,14 @@
 --[[
-    UNIQUE WEAPON SYSTEM - Client Side (v4 - robust panel scanning)
-    Stat booster display on inventory items, quality system, inspect popup
-
-    Instead of hooking a specific panel name (which fails with DRM-delivered code),
-    this version scans for open bricks panels and attaches overlays dynamically.
+    UNIQUE WEAPON SYSTEM - Client Side (v5 - discovery mode)
+    First run: discovers bricks panel structure and properties
+    Then hooks into the correct panels for stat overlay display
 ]]--
 
 if not CLIENT then return end
 
 BRS_WEAPONS = BRS_WEAPONS or {}
 BRS_WEAPONS.PlayerWeapons = BRS_WEAPONS.PlayerWeapons or {}
+BRS_WEAPONS._discoveredProp = BRS_WEAPONS._discoveredProp or nil
 
 -- ============================================================
 -- FONTS
@@ -75,18 +74,15 @@ end
 -- ============================================================
 -- STAT OVERLAY DRAWING
 -- ============================================================
-local function DrawStatOverlay(panel, w, h, itemTable)
-    if not itemTable then return end
-    if itemTable.Type ~= "PermWeapon" and itemTable.Type ~= "Weapon" then return end
-
-    local weaponClass = itemTable.ReqInfo and itemTable.ReqInfo[1]
-    if not weaponClass then return end
-
+local function DrawStatOverlay(panel, w, h, weaponClass)
     local weaponData = BRS_WEAPONS.FindForClass(weaponClass)
     if not weaponData or not weaponData.stat_boosters then return end
 
     local boosters = weaponData.stat_boosters
     if table.Count(boosters) == 0 then return end
+
+    if not BRS_WEAPONS.StatDefs then return end
+    if not BRS_WEAPONS.GetQuality then return end
 
     local quality, avg = BRS_WEAPONS.GetQuality(boosters)
 
@@ -104,7 +100,7 @@ local function DrawStatOverlay(panel, w, h, itemTable)
 
     local statOrder = { "DMG", "ACC", "MAG", "RPM", "SPD" }
     for i, statKey in ipairs(statOrder) do
-        local statDef = BRS_WEAPONS.StatDefs and BRS_WEAPONS.StatDefs[statKey]
+        local statDef = BRS_WEAPONS.StatDefs[statKey]
         if not statDef then continue end
 
         local x = 6 + (i - 1) * barW
@@ -113,7 +109,7 @@ local function DrawStatOverlay(panel, w, h, itemTable)
         draw.RoundedBox(2, x, barY, barW - 2, barH, Color(40, 40, 40, 200))
 
         if boost then
-            local fillFrac = math.Clamp(math.abs(boost) / 1.0, 0, 1)
+            local fillFrac = math.Clamp(math.abs(boost) / 0.5, 0, 1)
             local col = boost >= 0 and statDef.Color or Color(255, 50, 50)
             draw.RoundedBox(2, x, barY, (barW - 2) * fillFrac, barH, ColorAlpha(col, 220))
         end
@@ -123,89 +119,254 @@ local function DrawStatOverlay(panel, w, h, itemTable)
     end
 
     -- Rarity top border
-    local rarityColor = BRS_WEAPONS.GetRarityColor(weaponData.rarity)
-    if rarityColor then
-        surface.SetDrawColor(rarityColor.r, rarityColor.g, rarityColor.b, 200)
-        surface.DrawRect(0, 0, w, 2)
+    if BRS_WEAPONS.GetRarityColor then
+        local rarityColor = BRS_WEAPONS.GetRarityColor(weaponData.rarity)
+        if rarityColor then
+            surface.SetDrawColor(rarityColor.r, rarityColor.g, rarityColor.b, 200)
+            surface.DrawRect(0, 0, w, 2)
+        end
     end
 end
 
 -- ============================================================
--- PANEL SCANNER - Find bricks item panels and hook their Paint
+-- EXTRACT WEAPON CLASS FROM ANY PANEL
+-- Tries every possible way bricks might store item data
 -- ============================================================
+local function ExtractWeaponClass(panel)
+    -- Check for direct item table with various property names
+    local propNames = {
+        "itemTable", "ItemTable", "item", "Item",
+        "itemData", "ItemData", "data", "Data",
+        "configItem", "ConfigItem", "config",
+        "inventoryItem", "InventoryItem",
+        "slotItem", "SlotItem"
+    }
 
-local function GetItemFromPanel(panel)
-    if panel.itemTable then return panel.itemTable end
-    if panel.ItemTable then return panel.ItemTable end
-    if panel.item then return panel.item end
-    if panel.Item then return panel.Item end
-    if panel.globalKey and BRICKS_SERVER and BRICKS_SERVER.CONFIG then
-        local cfg = BRICKS_SERVER.CONFIG.UNBOXING
-        if cfg and cfg.Items then
-            local num = string.match(tostring(panel.globalKey), "^ITEM_(%d+)")
-            if num then return cfg.Items[tonumber(num)] end
+    for _, prop in ipairs(propNames) do
+        local val = rawget(panel:GetTable(), prop)
+        if istable(val) then
+            -- Look for weapon class in the table
+            if val.ReqInfo and val.ReqInfo[1] then
+                if (val.Type == "PermWeapon" or val.Type == "Weapon") then
+                    return val.ReqInfo[1]
+                end
+            end
+            -- Maybe ReqInfo is stored differently
+            if val.weaponClass then return val.weaponClass end
+            if val.WeaponClass then return val.WeaponClass end
+            if val.class then return val.class end
+            if val.Class then return val.Class end
         end
     end
+
+    -- Check globalKey -> config lookup
+    local globalKey = rawget(panel:GetTable(), "globalKey") or rawget(panel:GetTable(), "GlobalKey") or rawget(panel:GetTable(), "key") or rawget(panel:GetTable(), "Key")
+    if globalKey and isstring(globalKey) and string.StartWith(globalKey, "ITEM_") then
+        local itemKey = tonumber(string.match(globalKey, "ITEM_(%d+)"))
+        if itemKey and BRICKS_SERVER and BRICKS_SERVER.CONFIG and
+           BRICKS_SERVER.CONFIG.UNBOXING and BRICKS_SERVER.CONFIG.UNBOXING.Items then
+            local configItem = BRICKS_SERVER.CONFIG.UNBOXING.Items[itemKey]
+            if configItem and configItem.ReqInfo and configItem.ReqInfo[1] then
+                if configItem.Type == "PermWeapon" or configItem.Type == "Weapon" then
+                    return configItem.ReqInfo[1]
+                end
+            end
+        end
+    end
+
     return nil
 end
 
-local function ScanChildren(parent)
+-- ============================================================
+-- PANEL DISCOVERY & HOOKING
+-- ============================================================
+local _discovered = false
+local _scannedPanels = {}
+
+local function ScanAndHook(parent, depth)
     if not IsValid(parent) then return end
+    if depth > 8 then return end -- don't go too deep
+
     for _, child in ipairs(parent:GetChildren()) do
-        if IsValid(child) then
-            local itemTable = GetItemFromPanel(child)
-            if itemTable and not child._BRS_OVR then
-                child._BRS_OVR = true
-                local origPaint = child.Paint
-                child.Paint = function(self, ww, hh)
-                    if origPaint then origPaint(self, ww, hh) end
-                    local it = GetItemFromPanel(self)
-                    if it then DrawStatOverlay(self, ww, hh, it) end
+        if not IsValid(child) then continue end
+
+        -- Skip already hooked panels
+        local panelID = tostring(child)
+        if _scannedPanels[panelID] then continue end
+
+        local weaponClass = ExtractWeaponClass(child)
+        if weaponClass then
+            _scannedPanels[panelID] = true
+
+            -- Hook PaintOver so we draw ON TOP of everything
+            local origPaintOver = child.PaintOver
+            child.PaintOver = function(self, w, h)
+                if origPaintOver then origPaintOver(self, w, h) end
+                -- Re-extract each frame in case panel data changes
+                local wc = ExtractWeaponClass(self)
+                if wc then
+                    DrawStatOverlay(self, w, h, wc)
                 end
             end
-            ScanChildren(child)
+
+            if not _discovered then
+                _discovered = true
+                -- Log what we found for debugging
+                print("[BRS UniqueWeapons] Found item panel! Class: " .. child:GetClassName())
+                print("[BRS UniqueWeapons] Weapon: " .. weaponClass)
+                local tbl = child:GetTable()
+                for k, v in pairs(tbl) do
+                    if istable(v) and v.Type then
+                        print("[BRS UniqueWeapons] Item property: '" .. k .. "' Type=" .. tostring(v.Type) .. " Name=" .. tostring(v.Name))
+                    end
+                end
+            end
         end
+
+        -- Recurse
+        ScanAndHook(child, depth + 1)
     end
 end
 
+-- Scan whenever unboxing menu is likely open
 local nextScan = 0
 hook.Add("Think", "BRS_UniqueWeapons_Scanner", function()
     if CurTime() < nextScan then return end
-    nextScan = CurTime() + 0.5
+    nextScan = CurTime() + 0.3
 
+    -- Must have weapon data and stat defs
     if table.Count(BRS_WEAPONS.PlayerWeapons) == 0 then return end
     if not BRS_WEAPONS.StatDefs then return end
 
+    -- Scan all top-level visible panels
     for _, panel in ipairs(vgui.GetWorldPanel():GetChildren()) do
-        if IsValid(panel) and panel:IsVisible() and panel:GetWide() > 500 and panel:GetTall() > 300 then
-            ScanChildren(panel)
+        if IsValid(panel) and panel:IsVisible() then
+            local w, h = panel:GetSize()
+            if w > 400 and h > 250 then
+                ScanAndHook(panel, 0)
+            end
         end
     end
 end)
 
--- Also try control table approach
-timer.Create("BRS_UniqueWeapons_CtrlHook", 3, 20, function()
-    if not vgui or not vgui.GetControlTable then return end
-    local names = {
-        "bricks_server_unboxingmenu_itemslot",
-        "bricks_server_unboxing_itemslot",
-        "BricksServerUnboxingItemSlot",
-    }
-    for _, name in ipairs(names) do
-        local slot = vgui.GetControlTable(name)
-        if slot and not slot._BRS_CTL then
-            slot._BRS_CTL = true
-            local origPaint = slot.Paint
-            slot.Paint = function(self, ww, hh)
-                if origPaint then origPaint(self, ww, hh) end
-                local it = GetItemFromPanel(self)
-                if it then DrawStatOverlay(self, ww, hh, it) end
-            end
-            timer.Remove("BRS_UniqueWeapons_CtrlHook")
-            print("[BRS UniqueWeapons] Overlay hooked via: " .. name)
-            return
+-- Clear scanned panels cache when menu closes/reopens
+hook.Add("Think", "BRS_UniqueWeapons_ClearCache", function()
+    -- Every 2 seconds, clean up invalid panels from cache
+    if CurTime() % 2 > 0.05 then return end
+    for panelID, _ in pairs(_scannedPanels) do
+        -- Panel IDs include memory addresses, can't validate them
+        -- Just clear periodically to re-scan
+    end
+end)
+
+-- Force clear cache every 5 seconds so new panels get picked up
+timer.Create("BRS_UniqueWeapons_ResetScan", 5, 0, function()
+    _scannedPanels = {}
+end)
+
+-- ============================================================
+-- DEEP DISCOVERY DEBUG COMMAND
+-- Dumps ALL properties of ALL panels in the bricks menu
+-- ============================================================
+concommand.Add("brs_discover", function()
+    print("=== BRS Panel Discovery ===")
+    print("Weapons in cache: " .. table.Count(BRS_WEAPONS.PlayerWeapons))
+    print("StatDefs loaded: " .. tostring(BRS_WEAPONS.StatDefs ~= nil))
+    print("GetQuality loaded: " .. tostring(BRS_WEAPONS.GetQuality ~= nil))
+    print("BRICKS_SERVER exists: " .. tostring(BRICKS_SERVER ~= nil))
+
+    if BRICKS_SERVER and BRICKS_SERVER.CONFIG and BRICKS_SERVER.CONFIG.UNBOXING then
+        print("CONFIG.UNBOXING.Items: " .. tostring(BRICKS_SERVER.CONFIG.UNBOXING.Items ~= nil))
+        if BRICKS_SERVER.CONFIG.UNBOXING.Items then
+            local count = 0
+            for _ in pairs(BRICKS_SERVER.CONFIG.UNBOXING.Items) do count = count + 1 end
+            print("  Item count: " .. count)
         end
     end
+
+    local panelCount = 0
+    local itemPanelCount = 0
+
+    local function DumpPanel(panel, depth, maxDepth)
+        if not IsValid(panel) then return end
+        if depth > maxDepth then return end
+
+        local indent = string.rep("  ", depth)
+        local className = panel:GetClassName()
+        local w, h = panel:GetSize()
+
+        -- Check for any table properties that might be item data
+        local tbl = panel:GetTable()
+        local interesting = {}
+        for k, v in pairs(tbl) do
+            if istable(v) then
+                -- Check if this table looks like item config
+                if v.Name or v.Type or v.Rarity or v.ReqInfo or v.globalKey then
+                    interesting[k] = v
+                end
+            elseif isstring(v) and (string.StartWith(v, "ITEM_") or string.find(v, "m9k_")) then
+                interesting[k] = v
+            end
+        end
+
+        if table.Count(interesting) > 0 or string.find(className, "ricks") or string.find(className, "nboxing") or string.find(className, "lot") then
+            panelCount = panelCount + 1
+            print(indent .. className .. " [" .. w .. "x" .. h .. "]")
+            for k, v in pairs(interesting) do
+                if istable(v) then
+                    itemPanelCount = itemPanelCount + 1
+                    print(indent .. "  ." .. k .. " = {")
+                    for k2, v2 in pairs(v) do
+                        if istable(v2) then
+                            print(indent .. "    " .. tostring(k2) .. " = {" .. table.concat(v2, ", ") .. "}")
+                        else
+                            print(indent .. "    " .. tostring(k2) .. " = " .. tostring(v2))
+                        end
+                    end
+                    print(indent .. "  }")
+                else
+                    print(indent .. "  ." .. k .. " = " .. tostring(v))
+                end
+            end
+        end
+
+        for _, child in ipairs(panel:GetChildren()) do
+            DumpPanel(child, depth + 1, maxDepth)
+        end
+    end
+
+    for _, panel in ipairs(vgui.GetWorldPanel():GetChildren()) do
+        if IsValid(panel) and panel:IsVisible() then
+            local w, h = panel:GetSize()
+            if w > 400 and h > 250 then
+                print("\n--- Top-level panel: " .. panel:GetClassName() .. " [" .. w .. "x" .. h .. "] ---")
+                DumpPanel(panel, 0, 6)
+            end
+        end
+    end
+
+    print("\nTotal interesting panels: " .. panelCount)
+    print("Panels with item data: " .. itemPanelCount)
+    print("===========================")
+end)
+
+-- ============================================================
+-- QUICK DEBUG
+-- ============================================================
+concommand.Add("brs_debug", function()
+    print("=== BRS UniqueWeapons Debug ===")
+    print("Weapons synced: " .. table.Count(BRS_WEAPONS.PlayerWeapons))
+    for uid, data in pairs(BRS_WEAPONS.PlayerWeapons) do
+        local boosters = {}
+        for k, v in pairs(data.stat_boosters or {}) do
+            table.insert(boosters, k .. ":" .. math.Round(v*100,1) .. "%")
+        end
+        print("  " .. (data.weapon_name or "?") .. " [" .. (data.rarity or "?") .. "] " .. table.concat(boosters, " "))
+    end
+    print("StatDefs: " .. tostring(BRS_WEAPONS.StatDefs ~= nil))
+    print("GetQuality: " .. tostring(BRS_WEAPONS.GetQuality ~= nil))
+    print("Panels scanned: " .. table.Count(_scannedPanels))
+    print("===============================")
 end)
 
 -- ============================================================
@@ -296,21 +457,4 @@ function BRS_WEAPONS.OpenInspectPopup(weaponData)
     end
 end
 
--- ============================================================
--- DEBUG COMMAND
--- ============================================================
-concommand.Add("brs_debug", function()
-    print("=== BRS UniqueWeapons Debug ===")
-    print("Weapons synced: " .. table.Count(BRS_WEAPONS.PlayerWeapons))
-    for uid, data in pairs(BRS_WEAPONS.PlayerWeapons) do
-        local boosters = {}
-        for k, v in pairs(data.stat_boosters or {}) do
-            table.insert(boosters, k .. ":" .. math.Round(v*100,1) .. "%")
-        end
-        print("  " .. (data.weapon_name or "?") .. " [" .. (data.rarity or "?") .. "] " .. table.concat(boosters, " "))
-    end
-    print("StatDefs: " .. tostring(BRS_WEAPONS.StatDefs ~= nil))
-    print("===============================")
-end)
-
-print("[BRS UniqueWeapons] Client system loaded (v4 - robust panel scanning)")
+print("[BRS UniqueWeapons] Client system loaded (v5 - discovery mode)")

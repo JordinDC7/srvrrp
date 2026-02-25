@@ -320,58 +320,6 @@ local function TryHookBricksFunc()
     return false
 end
 
--- STRATEGY 3: Hook the inventory DB update to detect new weapons added
-local function TryHookInventoryDB()
-    if not BRICKS_SERVER then return false end
-    if not BRICKS_SERVER.UNBOXING then return false end
-    if not BRICKS_SERVER.UNBOXING.Func then return false end
-    if not BRICKS_SERVER.UNBOXING.Func.UpdateInventoryDB then return false end
-    if BRICKS_SERVER.UNBOXING.Func._BRS_ORIG_UpdateInventoryDB then return true end
-
-    BRICKS_SERVER.UNBOXING.Func._BRS_ORIG_UpdateInventoryDB = BRICKS_SERVER.UNBOXING.Func.UpdateInventoryDB
-    BRICKS_SERVER.UNBOXING.Func.UpdateInventoryDB = function(steamID64, inventory)
-        -- Call original
-        BRICKS_SERVER.UNBOXING.Func._BRS_ORIG_UpdateInventoryDB(steamID64, inventory)
-
-        -- Scan inventory for weapons we haven't tracked yet
-        if not inventory then return end
-
-        local ply = nil
-        for _, p in ipairs(player.GetAll()) do
-            if p:SteamID64() == steamID64 then
-                ply = p
-                break
-            end
-        end
-        if not IsValid(ply) then return end
-
-        -- Track known items to detect new ones
-        ply._BRS_KNOWN_ITEMS = ply._BRS_KNOWN_ITEMS or {}
-
-        for globalKey, amount in pairs(inventory) do
-            if isstring(globalKey) and string.StartWith(globalKey, "ITEM_") then
-                local configItem = GetConfigItem(globalKey)
-                if configItem and (configItem.Type == "PermWeapon" or configItem.Type == "Weapon") then
-                    local prevAmount = ply._BRS_KNOWN_ITEMS[globalKey] or 0
-                    local currentAmount = tonumber(amount) or 0
-
-                    if currentAmount > prevAmount then
-                        local newCount = currentAmount - prevAmount
-                        for n = 1, newCount do
-                            OnWeaponUnboxed(ply, globalKey, configItem)
-                        end
-                    end
-
-                    ply._BRS_KNOWN_ITEMS[globalKey] = currentAmount
-                end
-            end
-        end
-    end
-
-    print("[BRS UniqueWeapons] HOOK INSTALLED via UpdateInventoryDB wrapper!")
-    return true
-end
-
 -- Master hook installer - tries all strategies repeatedly
 timer.Create("BRS_UniqueWeapons_InstallHook", 2, 60, function()
     if _hookInstalled then
@@ -389,8 +337,6 @@ timer.Create("BRS_UniqueWeapons_InstallHook", 2, 60, function()
     if TryHookPlayerMeta() then
         _hookInstalled = true
     elseif TryHookBricksFunc() then
-        _hookInstalled = true
-    elseif TryHookInventoryDB() then
         _hookInstalled = true
     else
         -- Print debug info every 10 seconds (every 5th attempt)
