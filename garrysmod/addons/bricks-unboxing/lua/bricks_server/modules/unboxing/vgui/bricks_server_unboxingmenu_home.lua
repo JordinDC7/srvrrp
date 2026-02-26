@@ -170,7 +170,20 @@ function PANEL:FillPanel()
         centerSlot()
         wrapper.PerformLayout = function() centerSlot() end
 
-        slot:FillPanel(storeItem.GlobalKey, 1)
+        local isCase = string.StartWith(storeItem.GlobalKey or "", "CASE_")
+        local clickAction = nil
+        if isCase then
+            clickAction = function()
+                local itmKey = tonumber(string.Replace(storeItem.GlobalKey, "CASE_", ""))
+                local popup = vgui.Create("bricks_server_unboxingmenu_caseview_popup", self)
+                popup:SetPos(0, 0)
+                popup:SetSize(self.panelWide or ScrW() * 0.72, self.panelTall or ScrH() * 0.6)
+                popup:CreatePopout()
+                popup:FillPanel(itmKey)
+            end
+        end
+
+        slot:FillPanel(storeItem.GlobalKey, 1, clickAction)
         slot:AddTopInfo(BRICKS_SERVER.UNBOXING.Func.FormatCurrency(storeItem.Price or 0, storeItem.Currency), C.accent_dim or Color(0, 160, 128), Color(255, 255, 255))
 
         if storeItem.Group then

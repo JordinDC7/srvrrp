@@ -319,8 +319,23 @@ function PANEL:AddStoreItem( storeTable, itemKey, grid, itemWidth, itemHeight )
     local slotBack = grid:Add( "bricks_server_unboxingmenu_itemslot" )
     slotBack:SetSize( itemWidth, itemHeight )
     slotBack:FillPanel( storeTable.GlobalKey, 1, function( ax, ay, aw, ah )
-        -- Single click = add 1 to cart
-        addToCart(1)
+        local isCase = string.StartWith( storeTable.GlobalKey, "CASE_" )
+        if isCase then
+            -- Open case contents popup with Add to Cart button
+            local itmKey = tonumber( string.Replace( storeTable.GlobalKey, "CASE_", "" ) )
+            self.popoutPanel = vgui.Create( "bricks_server_unboxingmenu_caseview_popup", self )
+            self.popoutPanel:SetPos( 0, 0 )
+            self.popoutPanel:SetSize( self.panelWide, self.panelTall )
+            self.popoutPanel:CreatePopout()
+            self.popoutPanel:FillPanel( itmKey, function()
+                addToCart(1)
+                if( IsValid( self.popoutPanel ) and IsValid( self.popoutPanel.popoutPanel ) ) then
+                    self.popoutPanel.popoutPanel.ClosePopout()
+                end
+            end )
+        else
+            addToCart(1)
+        end
     end )
 
     local C = SMGRP and SMGRP.UI and SMGRP.UI.Colors or {}
