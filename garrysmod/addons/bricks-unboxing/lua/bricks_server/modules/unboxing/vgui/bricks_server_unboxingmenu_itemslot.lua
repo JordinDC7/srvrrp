@@ -187,7 +187,7 @@ function PANEL:FillPanel( data, amount, actions )
         local rarityX, rarityY = surface.GetTextSize( displayRarity or "" )
     
         local infoH = (nameY + rarityY) - 4
-        local statAreaH = isUniqueWeapon and 58 or 0
+        local statAreaH = isUniqueWeapon and 74 or 0
 
         local rarityColor = (SMGRP and SMGRP.UI and SMGRP.UI.GetRarityColor) and SMGRP.UI.GetRarityColor(displayRarity or "Common") or Color(160,165,175)
 
@@ -342,30 +342,18 @@ function PANEL:FillPanel( data, amount, actions )
 
             -- ====== UNIQUE WEAPON STATS ======
             if isUniqueWeapon and uwData and uwData.stats and BRS_UW and BRS_UW.Stats then
-                local bottomY = h - stripH - 5
+                local bottomY = h - stripH - 6
                 local sX = 8
                 local sW = w - 16
 
-                local qualityInfo = BRS_UW.GetQualityInfo and BRS_UW.GetQualityInfo(uwData.quality or "Junk")
-                if qualityInfo then
-                    surface.SetFont("SMGRP_Bold10")
-                    local qTW = surface.GetTextSize(uwData.quality or "Junk")
-                    local pW, pH = qTW + 12, 16
-                    local pY = bottomY - 38
-                    draw.RoundedBox(3, sX, pY, pW, pH, ColorAlpha(qualityInfo.color, 140))
-                    draw.SimpleText(uwData.quality or "Junk", "SMGRP_Bold10", sX + pW/2, pY + pH/2, Color(255,255,255,220), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
-                end
-
-                local avg = uwData.avgBoost or 0
-                local avgCol = avg >= 50 and (C.green or Color(60,200,120)) or (avg >= 25 and (C.amber or Color(255,185,50)) or (C.text_muted or Color(90,94,110)))
-                draw.SimpleText("+" .. string.format("%.1f", avg) .. "%", "SMGRP_Bold10", w - 8, bottomY - 38 + 7, avgCol, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER)
-
-                local barY0 = bottomY - 22
-                local barH = 4
-                local barGap = 3
+                -- ====== STAT BARS (bottom section) ======
+                local barH = 5
+                local barGap = 5
                 local lblW = 32
                 local bX = sX + lblW + 4
                 local bW = sW - lblW - 4
+                local totalBarsH = #BRS_UW.Stats * (barH + barGap) - barGap
+                local barY0 = bottomY - totalBarsH
 
                 for i, statDef in ipairs(BRS_UW.Stats) do
                     local val = uwData.stats[statDef.key] or 0
@@ -381,6 +369,21 @@ function PANEL:FillPanel( data, amount, actions )
                         end
                     end
                 end
+
+                -- ====== QUALITY BADGE + AVG BOOST (above bars with gap) ======
+                local qualityRowY = barY0 - 20
+                local qualityInfo = BRS_UW.GetQualityInfo and BRS_UW.GetQualityInfo(uwData.quality or "Junk")
+                if qualityInfo then
+                    surface.SetFont("SMGRP_Bold10")
+                    local qTW = surface.GetTextSize(uwData.quality or "Junk")
+                    local pW, pH = qTW + 12, 16
+                    draw.RoundedBox(3, sX, qualityRowY, pW, pH, ColorAlpha(qualityInfo.color, 140))
+                    draw.SimpleText(uwData.quality or "Junk", "SMGRP_Bold10", sX + pW/2, qualityRowY + pH/2, Color(255,255,255,220), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+                end
+
+                local avg = uwData.avgBoost or 0
+                local avgCol = avg >= 50 and (C.green or Color(60,200,120)) or (avg >= 25 and (C.amber or Color(255,185,50)) or (C.text_muted or Color(90,94,110)))
+                draw.SimpleText("+" .. string.format("%.1f", avg) .. "%", "SMGRP_Bold10", w - 8, qualityRowY + 8, avgCol, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER)
             end
         end
         
