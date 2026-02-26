@@ -197,34 +197,28 @@ function SMGRP.UI.GetRarityColor(rarityKey)
     return map[rarityKey] or C.rarity_common
 end
 
--- Animated glowing border for high-tier items
-SMGRP.UI._glowPhase = 0
-hook.Add("Think", "SMGRP_UI_AnimPhase", function()
-    SMGRP.UI._glowPhase = (SMGRP.UI._glowPhase + FrameTime() * 2) % (math.pi * 2)
-end)
-
+-- Animated glowing border for high-tier items (no Think hook needed)
 function SMGRP.UI.GetGlowAlpha()
-    return 160 + math.sin(SMGRP.UI._glowPhase) * 60
+    return 160 + math.sin(CurTime() * 2) * 60
 end
 
--- Rainbow cycle for Glitched rarity
+-- Rainbow cycle for Glitched rarity (reuses color object)
+local _glitchCol = Color(128, 128, 128, 255)
 function SMGRP.UI.GetGlitchedColor()
     local t = CurTime() * 0.8
-    return Color(
-        128 + math.sin(t) * 127,
-        128 + math.sin(t + 2.094) * 127,
-        128 + math.sin(t + 4.189) * 127
-    )
+    _glitchCol.r = 128 + math.sin(t) * 127
+    _glitchCol.g = 128 + math.sin(t + 2.094) * 127
+    _glitchCol.b = 128 + math.sin(t + 4.189) * 127
+    return _glitchCol
 end
 
--- Hot cycle for Mythical rarity  
+-- Hot cycle for Mythical rarity (reuses color object)
+local _mythCol = Color(200, 30, 30, 255)
 function SMGRP.UI.GetMythicalColor()
     local t = CurTime() * 1.2
-    return Color(
-        200 + math.sin(t) * 55,
-        30 + math.abs(math.sin(t * 0.7)) * 50,
-        30
-    )
+    _mythCol.r = 200 + math.sin(t) * 55
+    _mythCol.g = 30 + math.abs(math.sin(t * 0.7)) * 50
+    return _mythCol
 end
 
 print("[SmG RP] Custom UI theme loaded")

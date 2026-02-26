@@ -1,22 +1,38 @@
 -- ============================================================
--- BRS Unique Weapons - RPM Polish System
---
--- PHILOSOPHY: Make boosted weapons feel BETTER than stock,
--- not worse. Stock M9K has a natural rhythm. Our job is to
--- preserve that rhythm at higher speed and add premium feel.
---
--- APPROACH:
---   1. Continuously sync Primary.Delay/RPM to client (core fix)
---   2. Pitch randomization on fire sounds (natural variation)
---   3. Smooth recoil dampening (not sharp per-shot override)
---   4. Let animations interrupt naturally (no forced playback)
---   5. Subtle camera smoothing during rapid fire
+-- BRS Unique Weapons - RPM Polish System (OPTIMIZED)
+-- Key optimization: NW2 values cached per weapon, not read per frame
 -- ============================================================
 
 -- ============================================================
--- 1. CORE: Continuous Primary.Delay/RPM sync
--- This is non-negotiable. Without it, client predicts at wrong rate.
--- Runs every frame on active weapon only.
+-- CACHED MULTIPLIER: Read NW2 once on equip, cache on weapon
+-- ============================================================
+local _cachedWep = nil
+local _cachedMult = 0
+local _cachedOrigRPM = 0
+local _cachedOrigDelay = 0
+local _lastCacheCheck = 0
+
+local function GetCachedMult(wep)
+    if not IsValid(wep) then
+        _cachedMult = 0
+        return 0
+    end
+
+    -- Recheck NW2 every 0.2s or on weapon change (not every frame)
+    local ct = CurTime()
+    if wep ~= _cachedWep or ct - _lastCacheCheck > 0.2 then
+        _cachedWep = wep
+        _lastCacheCheck = ct
+        _cachedMult = wep:GetNW2Float("BRS_UW_RPMMultiplier", 0)
+        _cachedOrigRPM = wep:GetNW2Float("BRS_UW_OrigRPM", 0)
+        _cachedOrigDelay = wep:GetNW2Float("BRS_UW_OrigDelay", 0.1)
+    end
+
+    return _cachedMult
+end
+
+-- ============================================================
+-- 1. CORE: Continuous Primary.Delay/RPM sync (cached NW2)
 -- ============================================================
 hook.Add("Think", "BRS_UW_ClientSync", function()
     local ply = LocalPlayer()
@@ -25,10 +41,9 @@ hook.Add("Think", "BRS_UW_ClientSync", function()
     local wep = ply:GetActiveWeapon()
     if not IsValid(wep) or not wep.Primary then return end
 
-    local mult = wep:GetNW2Float("BRS_UW_RPMMultiplier", 0)
+    local mult = GetCachedMult(wep)
 
     if mult <= 1.0 then
-        -- Restore originals if we modified this weapon
         if wep.BRS_UW_CL_Orig then
             local o = wep.BRS_UW_CL_Orig
             wep.Primary.Delay = o.Delay
@@ -42,14 +57,13 @@ hook.Add("Think", "BRS_UW_ClientSync", function()
         return
     end
 
-    local origRPM = wep:GetNW2Float("BRS_UW_OrigRPM", 0)
-    if origRPM <= 0 then return end
+    if _cachedOrigRPM <= 0 then return end
 
     -- Save originals once
     if not wep.BRS_UW_CL_Orig then
         wep.BRS_UW_CL_Orig = {
-            Delay = 60 / origRPM,
-            RPM = origRPM,
+            Delay = 60 / _cachedOrigRPM,
+            RPM = _cachedOrigRPM,
             Recoil = wep.Primary.Recoil,
             KickUp = wep.Primary.KickUp,
             KickDown = wep.Primary.KickDown,
@@ -57,8 +71,8 @@ hook.Add("Think", "BRS_UW_ClientSync", function()
         }
     end
 
-    -- Enforce boosted values every frame
-    local targetRPM = math.Round(origRPM * mult)
+    -- Enforce boosted values
+    local targetRPM = math.Round(_cachedOrigRPM * mult)
     wep.Primary.RPM = targetRPM
     wep.Primary.Delay = 60 / targetRPM
 
@@ -72,16 +86,12 @@ hook.Add("Think", "BRS_UW_ClientSync", function()
 end)
 
 -- ============================================================
--- 2. SOUND: Natural pitch variation instead of channel rotation
---
--- Channel rotation causes robotic feel because each channel
--- has slightly different spatialization. Instead: let Source
--- handle channels naturally and add random pitch variation
--- so each shot sounds slightly different (like a real gun).
--- Source may drop an occasional sound at very high RPM - 
--- the pitch variation masks this perfectly.
+-- 2. SOUND: Natural pitch variation (cached mult check)
 -- ============================================================
 hook.Add("EntityEmitSound", "BRS_UW_RPMSoundFix", function(data)
+    -- Fast reject: if no cached boosted weapon, skip entirely
+    if _cachedMult <= 1.0 then return end
+
     local ent = data.Entity
     if not IsValid(ent) then return end
 
@@ -91,75 +101,42 @@ hook.Add("EntityEmitSound", "BRS_UW_RPMSoundFix", function(data)
     elseif ent:IsPlayer() then
         wep = ent:GetActiveWeapon()
     end
-    if not IsValid(wep) then return end
+    if not IsValid(wep) or wep ~= _cachedWep then return end
 
-    local mult = wep:GetNW2Float("BRS_UW_RPMMultiplier", 0)
-    if mult <= 1.0 then return end
-
-    -- Only touch the weapon's fire sound
+    -- Only touch fire sound
     local fireSound = wep.Primary and wep.Primary.Sound
     if not fireSound or data.SoundName ~= fireSound then return end
 
-    -- Pitch variation: ±4% random per shot
-    -- This makes sustained fire sound natural instead of a loop
-    local basePitch = data.Pitch or 100
-    local variation = math.Rand(-4, 4)
-    data.Pitch = math.Clamp(basePitch + variation, 85, 115)
-
-    -- Slight volume variation for realism (±5%)
-    local baseVol = data.Volume or 1
-    data.Volume = math.Clamp(baseVol + math.Rand(-0.05, 0.05), 0.85, 1.0)
-
+    data.Pitch = math.Clamp((data.Pitch or 100) + math.Rand(-4, 4), 85, 115)
+    data.Volume = math.Clamp((data.Volume or 1) + math.Rand(-0.05, 0.05), 0.85, 1.0)
     return true
 end)
 
 -- ============================================================
--- 3. RECOIL: Smooth dampening instead of sharp ViewPunch override
---
--- Problem: ViewPunch applies instant angular kick. At high RPM
--- these stack into a vibrating mess even when scaled down.
---
--- Fix: Dampen ViewPunch recovery speed so the camera smoothly
--- settles between shots instead of snapping back and forth.
--- Also slightly randomize kick direction for natural spray.
+-- 3. RECOIL: Smooth dampening (cached mult)
 -- ============================================================
 local playerMeta = FindMetaTable("Player")
 if playerMeta and playerMeta.ViewPunch then
     local origViewPunch = playerMeta.ViewPunch
 
     playerMeta.ViewPunch = function(self, ang)
-        if not IsValid(self) or not ang then
+        if not ang or _cachedMult <= 1.0 then
             return origViewPunch(self, ang)
         end
 
-        local wep = self:GetActiveWeapon()
-        if not IsValid(wep) then return origViewPunch(self, ang) end
-
-        local mult = wep:GetNW2Float("BRS_UW_RPMMultiplier", 0)
-        if mult <= 1.0 then return origViewPunch(self, ang) end
-
-        -- Scale magnitude by sqrt
-        local s = 1 / math.sqrt(mult)
-
-        -- Add slight random variation to horizontal kick
-        -- Makes spray feel organic instead of a perfect line
+        local s = 1 / math.sqrt(_cachedMult)
         local horizJitter = math.Rand(-0.15, 0.15) * math.abs(ang.p)
 
         return origViewPunch(self, Angle(
             ang.p * s,
             ang.y * s + horizJitter,
-            ang.r * s * 0.5  -- reduce roll even more, it causes nausea at high RPM
+            ang.r * s * 0.5
         ))
     end
 end
 
 -- ============================================================
--- 4. ANIMATION: Gentle speed scaling with natural cap
---
--- At 1.3x RPM, play anim at 1.3x - looks fine.
--- Above 1.6x, cap anim speed and let shots interrupt naturally.
--- Fast-interrupting fire anim looks like a real fast gun.
--- Raw 2.5x playback looks like a sped-up video = bad.
+-- 4. ANIMATION: Fire anim speed scaling (cached mult)
 -- ============================================================
 local fireActivities = {
     [ACT_VM_PRIMARYATTACK] = true,
@@ -174,10 +151,8 @@ local fireSeqNames = {
 }
 
 hook.Add("PostDrawViewModel", "BRS_UW_RPMAnimFix", function(vm, ply, wep)
-    if not IsValid(wep) or not IsValid(vm) then return end
-
-    local mult = wep:GetNW2Float("BRS_UW_RPMMultiplier", 0)
-    if mult <= 1.0 then return end
+    if not IsValid(vm) or _cachedMult <= 1.0 then return end
+    if wep ~= _cachedWep then return end
 
     local seq = vm:GetSequence()
     if not seq or seq < 0 then return end
@@ -194,105 +169,100 @@ hook.Add("PostDrawViewModel", "BRS_UW_RPMAnimFix", function(vm, ply, wep)
         end
     end
 
-    if isFiring then
-        vm:SetPlaybackRate(mult)
-    else
-        vm:SetPlaybackRate(1.0)
-    end
+    vm:SetPlaybackRate(isFiring and _cachedMult or 1.0)
 end)
 
 -- ============================================================
--- 5. CAMERA: Subtle smooth shake during sustained rapid fire
--- Adds a gentle camera sway that builds during sustained fire
--- and fades out when you stop. Feels premium and physical.
+-- 5. CAMERA: Subtle sustained fire sway (cached mult)
 -- ============================================================
 local sustainedFireTime = 0
 local lastShotTime = 0
-local smoothShake = Angle(0, 0, 0)
+local smoothP, smoothY, smoothR = 0, 0, 0  -- avoid Angle allocation
 
 hook.Add("CalcView", "BRS_UW_CameraSmooth", function(ply, pos, ang, fov)
+    if _cachedMult <= 1.0 then
+        smoothP, smoothY, smoothR = 0, 0, 0
+        return
+    end
     if not IsValid(ply) then return end
-    local wep = ply:GetActiveWeapon()
-    if not IsValid(wep) then
-        smoothShake = Angle(0, 0, 0)
-        return
-    end
-
-    local mult = wep:GetNW2Float("BRS_UW_RPMMultiplier", 0)
-    if mult <= 1.0 then
-        smoothShake = Angle(0, 0, 0)
-        return
-    end
 
     local now = CurTime()
+    local dt = FrameTime()
+    local wep = ply:GetActiveWeapon()
+    if not IsValid(wep) then
+        smoothP, smoothY, smoothR = 0, 0, 0
+        return
+    end
+
     local shooting = ply:KeyDown(IN_ATTACK) and wep:Clip1() > 0
 
     if shooting then
-        -- Build up sustained fire timer
         if now - lastShotTime > 0.3 then
-            sustainedFireTime = 0  -- reset if gap between bursts
+            sustainedFireTime = 0
         end
-        sustainedFireTime = sustainedFireTime + FrameTime()
+        sustainedFireTime = sustainedFireTime + dt
         lastShotTime = now
 
-        -- Intensity builds over ~0.5 seconds of sustained fire
-        local intensity = math.Clamp(sustainedFireTime / 0.5, 0, 1)
-        intensity = intensity * (mult - 1) * 0.3  -- scale with RPM boost
-
-        -- Smooth organic camera sway using perlin-like noise
+        local intensity = math.Clamp(sustainedFireTime / 0.5, 0, 1) * (_cachedMult - 1) * 0.3
         local t = now * 8
-        local targetShake = Angle(
-            math.sin(t * 1.1) * intensity * 0.15,
-            math.cos(t * 0.9) * intensity * 0.12,
-            math.sin(t * 1.3) * intensity * 0.05
-        )
 
-        -- Smooth interpolation
-        smoothShake = LerpAngle(FrameTime() * 12, smoothShake, targetShake)
+        local tp = math.sin(t * 1.1) * intensity * 0.15
+        local ty = math.cos(t * 0.9) * intensity * 0.12
+        local tr = math.sin(t * 1.3) * intensity * 0.05
+
+        local lerp = dt * 12
+        smoothP = smoothP + (tp - smoothP) * lerp
+        smoothY = smoothY + (ty - smoothY) * lerp
+        smoothR = smoothR + (tr - smoothR) * lerp
     else
-        -- Fade out smoothly
-        smoothShake = LerpAngle(FrameTime() * 8, smoothShake, Angle(0, 0, 0))
-        local mag = math.abs(smoothShake.p) + math.abs(smoothShake.y) + math.abs(smoothShake.r)
-        if mag < 0.01 then
-            smoothShake = Angle(0, 0, 0)
+        local lerp = dt * 8
+        smoothP = smoothP * (1 - lerp)
+        smoothY = smoothY * (1 - lerp)
+        smoothR = smoothR * (1 - lerp)
+
+        if math.abs(smoothP) + math.abs(smoothY) + math.abs(smoothR) < 0.005 then
+            smoothP, smoothY, smoothR = 0, 0, 0
             return
         end
     end
 
-    local mag = math.abs(smoothShake.p) + math.abs(smoothShake.y) + math.abs(smoothShake.r)
-    if mag > 0.01 then
+    if math.abs(smoothP) + math.abs(smoothY) + math.abs(smoothR) > 0.005 then
         return {
             origin = pos,
-            angles = ang + smoothShake,
+            angles = ang + Angle(smoothP, smoothY, smoothR),
             fov = fov,
         }
     end
 end)
 
 -- ============================================================
--- 6. SHELLS: Throttle at high RPM
+-- 6. SHELLS: Throttle at high RPM (no NW2 reads, no regex)
 -- ============================================================
 local lastShellTime = 0
+local shellNames = {}  -- cache checked names
+
 if util and util.Effect then
     local origEffect = util.Effect
     util.Effect = function(name, effectData, ...)
-        if name and (string.find(name, "[Ss]hell") or string.find(name, "[Bb]rass") or string.find(name, "[Ee]ject")) then
-            local ply = LocalPlayer()
-            if IsValid(ply) then
-                local wep = ply:GetActiveWeapon()
-                if IsValid(wep) then
-                    local mult = wep:GetNW2Float("BRS_UW_RPMMultiplier", 0)
-                    if mult > 1.3 then
-                        local now = CurTime()
-                        local origDelay = wep:GetNW2Float("BRS_UW_OrigDelay", 0.1)
-                        if now - lastShellTime < origDelay * 0.7 then return end
-                        lastShellTime = now
-                    end
-                end
+        if _cachedMult > 1.3 and name then
+            -- Cache whether this effect name is a shell type
+            local isShell = shellNames[name]
+            if isShell == nil then
+                local lower = string.lower(name)
+                isShell = string.find(lower, "shell", 1, true) ~= nil
+                    or string.find(lower, "brass", 1, true) ~= nil
+                    or string.find(lower, "eject", 1, true) ~= nil
+                shellNames[name] = isShell
+            end
+
+            if isShell then
+                local now = CurTime()
+                if now - lastShellTime < _cachedOrigDelay * 0.7 then return end
+                lastShellTime = now
             end
         end
         return origEffect(name, effectData, ...)
     end
 end
 
-print("[BRS UW] RPM polish system loaded")
+print("[BRS UW] RPM polish system (optimized) loaded")
