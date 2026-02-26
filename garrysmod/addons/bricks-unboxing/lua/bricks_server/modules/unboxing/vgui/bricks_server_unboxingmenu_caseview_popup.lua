@@ -155,7 +155,20 @@ function PANEL:FillPanel( caseKey, buttonFunc, inventoryView )
     local rarityBuckets = {}
     for k, v in pairs( caseItems ) do
         totalChanceInfo = totalChanceInfo + v[1]
-        local configItem = BRICKS_SERVER.UNBOXING.Func.GetItemFromGlobalKey(k)
+
+        -- Resolve item config directly (same approach as FillCaseItems)
+        local configItem
+        if( string.StartWith( k, "ITEM_" ) ) then
+            local actualKey = tonumber( string.Replace( k, "ITEM_", "" ) )
+            configItem = BRICKS_SERVER.CONFIG.UNBOXING.Items[actualKey]
+        elseif( string.StartWith( k, "CASE_" ) ) then
+            local actualKey = tonumber( string.Replace( k, "CASE_", "" ) )
+            configItem = BRICKS_SERVER.CONFIG.UNBOXING.Cases[actualKey]
+        elseif( string.StartWith( k, "KEY_" ) ) then
+            local actualKey = tonumber( string.Replace( k, "KEY_", "" ) )
+            configItem = BRICKS_SERVER.CONFIG.UNBOXING.Keys[actualKey]
+        end
+
         if configItem then
             local rar = configItem.Rarity or "Common"
             rarityBuckets[rar] = (rarityBuckets[rar] or 0) + v[1]
@@ -180,7 +193,7 @@ function PANEL:FillPanel( caseKey, buttonFunc, inventoryView )
     statsPanel:DockPadding( 10, headerH, 10, 4 )
     statsPanel.Paint = function( self2, w, h )
         draw.RoundedBox( 6, 0, 0, w, h, BRICKS_SERVER.Func.GetTheme( 2 ) )
-        draw.SimpleText( "DROP RATES", "SMGRP_Bold13", w/2, 18, BRICKS_SERVER.Func.GetTheme( 6, 120 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+        draw.SimpleText( "DROP RATES", "BRICKS_SERVER_Font20", w/2, 18, BRICKS_SERVER.Func.GetTheme( 6, 120 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
         surface.SetDrawColor(BRICKS_SERVER.Func.GetTheme( 3 ))
         surface.DrawRect(10, headerH - 2, w - 20, 1)
     end
@@ -188,7 +201,8 @@ function PANEL:FillPanel( caseKey, buttonFunc, inventoryView )
     for i, entry in ipairs( sortedRarities ) do
         local rar, chance = entry[1], entry[2]
         local pct = totalChanceInfo > 0 and (chance / totalChanceInfo * 100) or 0
-        local rarCol = (SMGRP and SMGRP.UI and SMGRP.UI.GetRarityColor) and SMGRP.UI.GetRarityColor(rar) or Color(160,165,175)
+        local rarInfo = BRICKS_SERVER.Func.GetRarityInfo( rar )
+        local rarCol = BRICKS_SERVER.Func.GetRarityColor( rarInfo ) or Color(160,165,175)
 
         local row = vgui.Create( "DPanel", statsPanel )
         row:Dock( TOP )
@@ -197,9 +211,9 @@ function PANEL:FillPanel( caseKey, buttonFunc, inventoryView )
             -- Rarity dot
             draw.RoundedBox( 4, 2, h/2 - 4, 8, 8, rarCol )
             -- Rarity name
-            draw.SimpleText( rar, "SMGRP_Bold12", 16, h/2, rarCol, 0, TEXT_ALIGN_CENTER )
+            draw.SimpleText( rar, "BRICKS_SERVER_Font17", 16, h/2, rarCol, 0, TEXT_ALIGN_CENTER )
             -- Percentage
-            draw.SimpleText( string.format("%.1f%%", pct), "SMGRP_Bold12", w - 2, h/2, BRICKS_SERVER.Func.GetTheme( 6, 160 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )
+            draw.SimpleText( string.format("%.1f%%", pct), "BRICKS_SERVER_Font17", w - 2, h/2, BRICKS_SERVER.Func.GetTheme( 6, 160 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )
         end
     end
 
@@ -211,7 +225,7 @@ function PANEL:FillPanel( caseKey, buttonFunc, inventoryView )
     local itemCount = table.Count( caseItems )
     countPanel.Paint = function( self2, w, h )
         draw.RoundedBox( 6, 0, 0, w, h, BRICKS_SERVER.Func.GetTheme( 2 ) )
-        draw.SimpleText( itemCount .. " POSSIBLE DROPS", "SMGRP_Bold13", w/2, h/2, BRICKS_SERVER.Func.GetTheme( 6, 100 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+        draw.SimpleText( itemCount .. " POSSIBLE DROPS", "BRICKS_SERVER_Font20", w/2, h/2, BRICKS_SERVER.Func.GetTheme( 6, 100 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
     end
 
     local rarityInfo = BRICKS_SERVER.Func.GetRarityInfo( caseTable.Rarity )
