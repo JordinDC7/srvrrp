@@ -1,7 +1,7 @@
 local PANEL = {}
 
 function PANEL:Init()
-    self.panelTall = ScrH()*0.65-40
+    self.panelTall = self.panelTall or (ScrH()*0.75-90)
 
     self.RefreshCategory = function()
         self:Clear()

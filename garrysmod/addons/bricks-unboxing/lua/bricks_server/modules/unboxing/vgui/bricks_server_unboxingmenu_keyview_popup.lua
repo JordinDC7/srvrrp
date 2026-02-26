@@ -5,7 +5,7 @@ function PANEL:Init()
 end
 
 function PANEL:CreatePopout()
-    self.panelWide, self.panelTall = self:GetWide(), ScrH()*0.65-40
+    self.panelTall = self.panelTall or (ScrH()*0.75-90); self.panelWide = self.panelWide or self:GetWide()
 
     self.popoutWide, self.popoutTall = self.panelWide*0.4, self.panelTall*0.9
 

@@ -5,7 +5,7 @@ function PANEL:Init()
 end
 
 function PANEL:FillPanel()
-    self.panelTall = ScrH()*0.65-40
+    self.panelTall = self.panelTall or (ScrH()*0.75-90)
 
     self.playersPanel = vgui.Create( "DPanel", self )
     self.playersPanel:SetPos( 0, 0 )
@@ -257,8 +257,16 @@ function PANEL:RefreshPlayers()
                 BRICKS_SERVER.BSHADOWS.EndShadow(2, 2, 1, 255, 0, 0, false )
             end
             self2.popoutPanel.Think = function( self3 )
-                if( not IsValid( self2 ) or not self:GetParent():GetParent():GetParent():GetParent():IsVisible() or not self3:IsMouseInputEnabled() ) then
+                if( not IsValid( self2 ) or not self3:IsMouseInputEnabled() ) then
                     self3:Remove()
+                    return
+                end
+                -- Walk up parent chain safely to check if main menu is still visible
+                local p = self
+                for i = 1, 6 do
+                    if not IsValid(p) then break end
+                    if not p:IsVisible() then self3:Remove() return end
+                    p = p:GetParent()
                 end
             end
 

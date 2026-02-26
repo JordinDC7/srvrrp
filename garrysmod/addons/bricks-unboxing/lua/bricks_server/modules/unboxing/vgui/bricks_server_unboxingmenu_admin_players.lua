@@ -5,7 +5,7 @@ function PANEL:Init()
 end
 
 function PANEL:FillPanel()
-    self.panelWide, self.panelTall = self:GetWide(), ScrH()*0.65-40
+    self.panelTall = self.panelTall or (ScrH()*0.75-90); self.panelWide = self.panelWide or self:GetWide()
 
     self.searchBar = vgui.Create( "bricks_server_searchbar", self:GetParent().topBarContent )
     self.searchBar:Dock( LEFT )

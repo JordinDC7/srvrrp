@@ -3,7 +3,7 @@ local PANEL = {}
 function PANEL:Init()
     self.animTime = 0.2
 
-    self.panelTall = ScrH()*0.65-40
+    self.panelTall = self.panelTall or (ScrH()*0.75-90)
 
     self.topBar = vgui.Create( "DPanel", self )
     self.topBar:Dock( TOP )

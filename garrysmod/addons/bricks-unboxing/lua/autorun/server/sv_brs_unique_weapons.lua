@@ -543,7 +543,7 @@ function BRS_UW.ApplyBoostsToWeapon(ply, wep)
             table.insert(applied, "DMG:" .. orig .. "->" .. wep.Primary.Damage)
         end
 
-        -- SPREAD boost (reduce spread - lower = more accurate, max 50% reduction)
+        -- ACCURACY boost (reduce spread - lower spread = more accurate, max 50% reduction)
         if stats.spd and stats.spd > 0 and wep.Primary.Spread then
             local orig = wep.Primary.Spread
             wep.Primary.Spread = orig * (1 - math.min(stats.spd, 100) / 100 * 0.5)

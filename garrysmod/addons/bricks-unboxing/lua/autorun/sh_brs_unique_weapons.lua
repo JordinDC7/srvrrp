@@ -127,7 +127,7 @@ end
 -- ============================================================
 BRS_UW.Stats = {
     { key = "dmg",  name = "DAMAGE",   shortName = "DMG",  color = Color(255, 80, 80),   applyKey = "Damage" },
-    { key = "spd",  name = "SPREAD",   shortName = "SPD",  color = Color(80, 200, 255),  applyKey = "Spread" },
+    { key = "spd",  name = "ACCURACY", shortName = "ACC",  color = Color(80, 200, 255),  applyKey = "Spread", inverted = true },
     { key = "rpm",  name = "RPM",      shortName = "RPM",  color = Color(80, 255, 120),  applyKey = "RPM" },
     { key = "mag",  name = "MAGAZINE", shortName = "MAG",  color = Color(220, 80, 255),  applyKey = "ClipSize" },
 }
