@@ -1,7 +1,7 @@
 -- ============================================================
--- SmG RP - Home Page (v4 - deferred build)
--- FillPanel defers content build by 1 frame so all sizes
--- are resolved by the dock system before we compute layout.
+-- SmG RP - Home Page v5
+-- Matches working store page pattern exactly:
+-- self.panelWide for widths, Dock() for layout
 -- ============================================================
 local PANEL = {}
 
@@ -11,32 +11,16 @@ function PANEL:Init()
     end)
 end
 
--- FillPanel is called by SwitchToPage immediately after SetSize.
--- But dock children (Dock TOP/LEFT/FILL) won't know their real width
--- until the next layout pass. Deferring by 1 frame fixes this.
 function PANEL:FillPanel()
-    if self._buildScheduled then return end
-    self._buildScheduled = true
-    timer.Simple(0, function()
-        if not IsValid(self) then return end
-        self._buildScheduled = false
-        self:BuildContent()
-    end)
-end
-
-function PANEL:BuildContent()
     self:Clear()
+
+    -- Match store page pattern exactly
+    self.panelTall = self.panelTall or self:GetTall()
+    self.panelWide = self.panelWide or self:GetWide()
+
     local C = SMGRP and SMGRP.UI and SMGRP.UI.Colors or {}
-
-    -- Reliable dimensions: use GetWide/GetTall (resolved after 1 frame)
-    -- with panelWide/panelTall as fallback
-    local W = self:GetWide()
-    local H = self:GetTall()
-    if W < 100 then W = self.panelWide or (ScrW() * 0.72) end
-    if H < 100 then H = self.panelTall or (ScrH() * 0.6) end
-
-    local pad = 20
-    local innerW = W - (pad * 2)
+    local pw = self.panelWide
+    local ph = self.panelTall
 
     -- ====== STATISTICS DATA ======
     local statistics = {
@@ -45,20 +29,22 @@ function PANEL:BuildContent()
         { Title = BRICKS_SERVER.Func.L("unboxingItemsPurchased"),   Value = function() return LocalPlayer():GetUnboxingStat("items") end },
     }
 
-    -- ====== TOP ROW: STAT CARDS ======
-    local cardSpacing = 10
-    local cardH = 110
-    local cardW = math.floor((innerW - (cardSpacing * (#statistics - 1))) / #statistics)
-
+    -- ====== TOP: STAT CARDS ======
     local topBack = vgui.Create("DPanel", self)
-    topBack:SetPos(pad, pad)
-    topBack:SetSize(innerW, cardH)
+    topBack:Dock(TOP)
+    topBack:DockMargin(20, 16, 20, 0)
+    topBack:SetTall(110)
     topBack.Paint = function() end
+
+    local cardSpacing = 10
+    local topInner = pw - 40 -- 20 margin each side
+    local cardW = math.floor((topInner - (cardSpacing * (#statistics - 1))) / #statistics)
 
     for k, v in ipairs(statistics) do
         local card = vgui.Create("DPanel", topBack)
-        card:SetPos((k - 1) * (cardW + cardSpacing), 0)
-        card:SetSize(cardW, cardH)
+        card:Dock(LEFT)
+        card:DockMargin(0, 0, k < #statistics and cardSpacing or 0, 0)
+        card:SetWide(cardW)
 
         local animValue = 0
         card.Paint = function(self2, w, h)
@@ -72,25 +58,110 @@ function PANEL:BuildContent()
         end
     end
 
-    -- ====== BOTTOM AREA ======
-    local bottomY = pad + cardH + 10
-    local bottomH = H - bottomY - pad
-    if bottomH < 50 then bottomH = 400 end -- safety
+    -- ====== BOTTOM: 3-COLUMN LAYOUT ======
+    local bottomBack = vgui.Create("DPanel", self)
+    bottomBack:Dock(FILL)
+    bottomBack:DockMargin(20, 10, 20, 16)
+    bottomBack.Paint = function() end
 
-    -- Column widths (absolute, computed from innerW)
-    local lbW = math.floor(innerW * 0.28)
-    local actW = math.floor(innerW * 0.36)
-    local featW = innerW - lbW - actW - 20 -- 2 gaps of 10px
+    -- Column widths computed from panelWide
+    local bottomInner = pw - 40
     local colGap = 10
+    local lbW = math.floor(bottomInner * 0.28)
+    local actW = math.floor(bottomInner * 0.36)
 
-    local lbX = pad
-    local featX = lbX + lbW + colGap
-    local actX = featX + featW + colGap
+    -- ====== RIGHT COLUMN: ACTIVITY FEED ======
+    -- (must be created before FILL so FILL gets remaining space)
+    local actPanel = vgui.Create("DPanel", bottomBack)
+    actPanel:Dock(RIGHT)
+    actPanel:SetWide(actW)
+    actPanel.Paint = function(self2, w, h)
+        draw.RoundedBox(6, 0, 0, w, h, C.bg_mid or Color(26, 27, 35))
+        surface.SetDrawColor(C.border or Color(50, 52, 65))
+        surface.DrawOutlinedRect(0, 0, w, h, 1)
+        draw.RoundedBoxEx(6, 0, 0, w, 36, C.bg_light or Color(34, 36, 46), true, true, false, false)
+        draw.SimpleText("LIVE ACTIVITY", "SMGRP_Bold12", 12, 18, C.text_secondary or Color(140, 144, 160), 0, TEXT_ALIGN_CENTER)
+    end
 
-    -- ====== COLUMN 1: LEADERBOARD ======
-    local lbPanel = vgui.Create("DPanel", self)
-    lbPanel:SetPos(lbX, bottomY)
-    lbPanel:SetSize(lbW, bottomH)
+    local actScroll = vgui.Create("bricks_server_scrollpanel_bar", actPanel)
+    actScroll:Dock(FILL)
+    actScroll:DockMargin(10, 44, 10, 10)
+    actScroll:SetBarBackColor(C.bg_darkest or Color(12, 12, 18))
+
+    local scrollH = 0
+    actScroll.pnlCanvas.Paint = function(self2, w, h)
+        if scrollH ~= h then scrollH = h actScroll.VBar:AnimateTo(scrollH, 0) end
+    end
+
+    -- Compute available scroll height for activity filler
+    local bottomH = ph - 110 - 16 - 10 - 16 -- topBack height + margins
+    local actScrollH = bottomH - 54
+    if actScrollH < 100 then actScrollH = 400 end
+
+    actScroll.Filler = vgui.Create("DPanel", actScroll)
+    actScroll.Filler:Dock(TOP)
+    actScroll.Filler:SetTall(actScrollH)
+    actScroll.Filler.Paint = function() end
+
+    self.activitySlots = 0
+
+    function self.AddActivityEntry(plyName, rarityName, itemName)
+        self.activitySlots = self.activitySlots + 1
+
+        surface.SetFont("SMGRP_Body12")
+        local _, textY = surface.GetTextSize("Ay")
+
+        local rarityInfo = BRICKS_SERVER.Func.GetRarityInfo(rarityName)
+        local rarityColor = (SMGRP and SMGRP.UI and SMGRP.UI.GetRarityColor) and SMGRP.UI.GetRarityColor(rarityName) or BRICKS_SERVER.Func.GetRarityColor(rarityInfo)
+        local curSlot = self.activitySlots
+
+        local entry = vgui.Create("DPanel", actScroll)
+        entry:Dock(TOP)
+        entry:DockMargin(0, curSlot > 1 and 4 or 0, 4, 0)
+        entry:SetTall(34)
+        entry.Paint = function(self2, w, h)
+            draw.RoundedBox(4, 0, 0, w, h, C.bg_light or Color(34, 36, 46))
+            surface.SetFont("SMGRP_Body12")
+            surface.SetTextPos(10, (h / 2) - (textY / 2))
+            local tc = C.text_secondary or Color(140, 144, 160)
+            surface.SetTextColor(tc.r, tc.g, tc.b)
+            surface.DrawText(BRICKS_SERVER.Func.L("unboxingPlyUnboxedA1", plyName))
+            surface.SetTextColor(rarityColor.r, rarityColor.g, rarityColor.b)
+            surface.DrawText("'" .. itemName .. "'")
+        end
+
+        if IsValid(actScroll.Filler) then
+            actScroll.Filler:SetTall(math.max(0, actScroll.Filler:GetTall() - 38))
+        end
+        return entry
+    end
+
+    function self.RefreshActivity()
+        if not IsValid(actScroll) then return end
+        actScroll:Clear()
+        self.activitySlots = 0
+
+        actScroll.Filler = vgui.Create("DPanel", actScroll)
+        actScroll.Filler:Dock(TOP)
+        actScroll.Filler:SetTall(actScrollH)
+        actScroll.Filler.Paint = function() end
+
+        for _, v in ipairs(BRS_UNBOXING_ACTIVITY or {}) do
+            self.AddActivityEntry(v[1], v[2], v[3])
+        end
+    end
+    self.RefreshActivity()
+
+    hook.Add("BRS.Hooks.InsertUnboxingAlert", self, function(self2, activityKey)
+        local t = (BRS_UNBOXING_ACTIVITY or {})[activityKey]
+        if t then self.AddActivityEntry(t[1], t[2], t[3]) end
+    end)
+
+    -- ====== LEFT COLUMN: LEADERBOARD ======
+    local lbPanel = vgui.Create("DPanel", bottomBack)
+    lbPanel:Dock(LEFT)
+    lbPanel:DockMargin(0, 0, colGap, 0)
+    lbPanel:SetWide(lbW)
     lbPanel.Paint = function(self2, w, h)
         draw.RoundedBox(6, 0, 0, w, h, C.bg_mid or Color(26, 27, 35))
         surface.SetDrawColor(C.border or Color(50, 52, 65))
@@ -100,8 +171,8 @@ function PANEL:BuildContent()
     end
 
     local lbScroll = vgui.Create("bricks_server_scrollpanel_bar", lbPanel)
-    lbScroll:SetPos(8, 42)
-    lbScroll:SetSize(lbW - 16, bottomH - 50)
+    lbScroll:Dock(FILL)
+    lbScroll:DockMargin(10, 44, 10, 10)
     lbScroll:SetBarBackColor(C.bg_darkest or Color(12, 12, 18))
 
     local medalColors = { Color(255, 200, 50), Color(190, 195, 205), Color(200, 145, 60) }
@@ -149,10 +220,10 @@ function PANEL:BuildContent()
         end)
     end
 
-    -- ====== COLUMN 2: FEATURED ======
-    local featPanel = vgui.Create("DPanel", self)
-    featPanel:SetPos(featX, bottomY)
-    featPanel:SetSize(featW, bottomH)
+    -- ====== CENTER COLUMN: FEATURED (fills remaining space) ======
+    local featPanel = vgui.Create("DPanel", bottomBack)
+    featPanel:Dock(FILL)
+    featPanel:DockMargin(0, 0, colGap, 0)
     featPanel.Paint = function(self2, w, h)
         draw.RoundedBox(6, 0, 0, w, h, C.bg_mid or Color(26, 27, 35))
         surface.SetDrawColor(C.border or Color(50, 52, 65))
@@ -162,8 +233,8 @@ function PANEL:BuildContent()
     end
 
     local featScroll = vgui.Create("bricks_server_scrollpanel_bar", featPanel)
-    featScroll:SetPos(8, 42)
-    featScroll:SetSize(featW - 16, bottomH - 50)
+    featScroll:Dock(FILL)
+    featScroll:DockMargin(10, 44, 10, 10)
     featScroll:SetBarBackColor(C.bg_darkest or Color(12, 12, 18))
 
     for i = 1, BRICKS_SERVER.DEVCONFIG.UnboxingFeaturedAmount do
@@ -185,88 +256,6 @@ function PANEL:BuildContent()
             slot:AddTopInfo(storeItem.Group, groupTable[3], BRICKS_SERVER.Func.GetTheme(6))
         end
     end
-
-    -- ====== COLUMN 3: ACTIVITY FEED ======
-    local actPanel = vgui.Create("DPanel", self)
-    actPanel:SetPos(actX, bottomY)
-    actPanel:SetSize(actW, bottomH)
-    actPanel.Paint = function(self2, w, h)
-        draw.RoundedBox(6, 0, 0, w, h, C.bg_mid or Color(26, 27, 35))
-        surface.SetDrawColor(C.border or Color(50, 52, 65))
-        surface.DrawOutlinedRect(0, 0, w, h, 1)
-        draw.RoundedBoxEx(6, 0, 0, w, 36, C.bg_light or Color(34, 36, 46), true, true, false, false)
-        draw.SimpleText("LIVE ACTIVITY", "SMGRP_Bold12", 12, 18, C.text_secondary or Color(140, 144, 160), 0, TEXT_ALIGN_CENTER)
-    end
-
-    local actScroll = vgui.Create("bricks_server_scrollpanel_bar", actPanel)
-    actScroll:SetPos(8, 42)
-    actScroll:SetSize(actW - 16, bottomH - 50)
-    actScroll:SetBarBackColor(C.bg_darkest or Color(12, 12, 18))
-
-    local scrollH = 0
-    actScroll.pnlCanvas.Paint = function(self2, w, h)
-        if scrollH ~= h then scrollH = h actScroll.VBar:AnimateTo(scrollH, 0) end
-    end
-
-    local fillerH = bottomH - 50
-    actScroll.Filler = vgui.Create("DPanel", actScroll)
-    actScroll.Filler:Dock(TOP)
-    actScroll.Filler:SetTall(fillerH)
-    actScroll.Filler.Paint = function() end
-
-    self.activitySlots = 0
-
-    function self.AddActivityEntry(plyName, rarityName, itemName)
-        self.activitySlots = self.activitySlots + 1
-
-        surface.SetFont("SMGRP_Body12")
-        local _, textY = surface.GetTextSize("Ay")
-
-        local rarityInfo = BRICKS_SERVER.Func.GetRarityInfo(rarityName)
-        local rarityColor = (SMGRP and SMGRP.UI and SMGRP.UI.GetRarityColor) and SMGRP.UI.GetRarityColor(rarityName) or BRICKS_SERVER.Func.GetRarityColor(rarityInfo)
-        local curSlot = self.activitySlots
-
-        local entry = vgui.Create("DPanel", actScroll)
-        entry:Dock(TOP)
-        entry:DockMargin(0, curSlot > 1 and 4 or 0, 4, 0)
-        entry:SetTall(34)
-        entry.Paint = function(self2, w, h)
-            draw.RoundedBox(4, 0, 0, w, h, C.bg_light or Color(34, 36, 46))
-            surface.SetFont("SMGRP_Body12")
-            surface.SetTextPos(10, (h / 2) - (textY / 2))
-            local tc = C.text_secondary or Color(140, 144, 160)
-            surface.SetTextColor(tc.r, tc.g, tc.b)
-            surface.DrawText(BRICKS_SERVER.Func.L("unboxingPlyUnboxedA1", plyName))
-            surface.SetTextColor(rarityColor.r, rarityColor.g, rarityColor.b)
-            surface.DrawText("'" .. itemName .. "'")
-        end
-
-        if IsValid(actScroll.Filler) then
-            actScroll.Filler:SetTall(math.max(0, actScroll.Filler:GetTall() - 38))
-        end
-        return entry
-    end
-
-    function self.RefreshActivity()
-        if not IsValid(actScroll) then return end
-        actScroll:Clear()
-        self.activitySlots = 0
-
-        actScroll.Filler = vgui.Create("DPanel", actScroll)
-        actScroll.Filler:Dock(TOP)
-        actScroll.Filler:SetTall(fillerH)
-        actScroll.Filler.Paint = function() end
-
-        for _, v in ipairs(BRS_UNBOXING_ACTIVITY or {}) do
-            self.AddActivityEntry(v[1], v[2], v[3])
-        end
-    end
-    self.RefreshActivity()
-
-    hook.Add("BRS.Hooks.InsertUnboxingAlert", self, function(self2, activityKey)
-        local t = (BRS_UNBOXING_ACTIVITY or {})[activityKey]
-        if t then self.AddActivityEntry(t[1], t[2], t[3]) end
-    end)
 end
 
 function PANEL:Paint(w, h)

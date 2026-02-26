@@ -77,39 +77,7 @@ function PANEL:Init()
         surface.DrawRect(0, h-1, w, 1)
     end
 
-    -- Player avatar in header
-    local avatarSize = 32
-    local avatarPanel = vgui.Create( "DPanel", self.headerBar )
-    avatarPanel:Dock( RIGHT )
-    avatarPanel:DockMargin( 0, 8, 52, 8 )
-    avatarPanel:SetWide( 200 )
-    avatarPanel.Paint = function( self2, w, h )
-        local C = SMGRP and SMGRP.UI and SMGRP.UI.Colors or {}
-        -- Player name
-        draw.SimpleText( LocalPlayer():Nick(), "SMGRP_Bold13", w - avatarSize - 8, h/2 + 1, C.text_primary or Color(220,222,230), TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM )
-        -- Wallet balance
-        local balance = ""
-        if BRICKS_SERVER and BRICKS_SERVER.UNBOXING and BRICKS_SERVER.UNBOXING.Func and BRICKS_SERVER.UNBOXING.Func.FormatCurrency then
-            local money = 0
-            if LocalPlayer().getDarkRPVar then
-                money = LocalPlayer():getDarkRPVar("money") or 0
-            end
-            if DarkRP and DarkRP.formatMoney then
-                balance = DarkRP.formatMoney(money)
-            else
-                balance = "$" .. string.Comma(money)
-            end
-        end
-        draw.SimpleText( balance, "SMGRP_Body12", w - avatarSize - 8, h/2 - 1, C.accent or Color(0,212,170), TEXT_ALIGN_RIGHT, 0 )
-    end
-
-    local avatar = vgui.Create( "AvatarImage", avatarPanel )
-    avatar:Dock( RIGHT )
-    avatar:SetWide( avatarSize )
-    avatar:DockMargin( 4, 0, 0, 0 )
-    avatar:SetPlayer( LocalPlayer(), 64 )
-
-    -- Close button
+    -- Close button (created FIRST so it docks to far right)
     local closeBtn = vgui.Create( "DButton", self.headerBar )
     closeBtn:Dock( RIGHT )
     closeBtn:DockMargin( 0, 8, 12, 8 )
@@ -138,6 +106,38 @@ function PANEL:Init()
     closeBtn.DoClick = function()
         self:Close()
     end
+
+    -- Player avatar in header
+    local avatarSize = 32
+    local avatarPanel = vgui.Create( "DPanel", self.headerBar )
+    avatarPanel:Dock( RIGHT )
+    avatarPanel:DockMargin( 0, 8, 8, 8 )
+    avatarPanel:SetWide( 200 )
+    avatarPanel.Paint = function( self2, w, h )
+        local C = SMGRP and SMGRP.UI and SMGRP.UI.Colors or {}
+        -- Player name
+        draw.SimpleText( LocalPlayer():Nick(), "SMGRP_Bold13", w - avatarSize - 8, h/2 + 1, C.text_primary or Color(220,222,230), TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM )
+        -- Wallet balance
+        local balance = ""
+        if BRICKS_SERVER and BRICKS_SERVER.UNBOXING and BRICKS_SERVER.UNBOXING.Func and BRICKS_SERVER.UNBOXING.Func.FormatCurrency then
+            local money = 0
+            if LocalPlayer().getDarkRPVar then
+                money = LocalPlayer():getDarkRPVar("money") or 0
+            end
+            if DarkRP and DarkRP.formatMoney then
+                balance = DarkRP.formatMoney(money)
+            else
+                balance = "$" .. string.Comma(money)
+            end
+        end
+        draw.SimpleText( balance, "SMGRP_Body12", w - avatarSize - 8, h/2 - 1, C.accent or Color(0,212,170), TEXT_ALIGN_RIGHT, 0 )
+    end
+
+    local avatar = vgui.Create( "AvatarImage", avatarPanel )
+    avatar:Dock( RIGHT )
+    avatar:SetWide( avatarSize )
+    avatar:DockMargin( 4, 0, 0, 0 )
+    avatar:SetPlayer( LocalPlayer(), 64 )
 
     -- ====== NAVIGATION BAR ======
     self.navBar = vgui.Create( "DPanel", self )

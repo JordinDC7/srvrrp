@@ -132,6 +132,7 @@ function PANEL:FillPanel()
     self.sortBy:AddChoice( BRICKS_SERVER.Func.L( "unboxingHighestRarity" ), "rarity_high_to_low" )
     self.sortBy:AddChoice( BRICKS_SERVER.Func.L( "unboxingLowestRarity" ), "rarity_low_to_high" )
     self.sortBy:AddChoice( "Highest Quality", "quality_high" )
+    self.sortBy:AddChoice( "Lowest Quality", "quality_low" )
     self.sortBy:AddChoice( "Highest Avg Boost", "avg_boost_high" )
     self.sortBy:AddChoice( "Highest DMG", "stat_dmg" )
     self.sortBy:AddChoice( "Highest SPD", "stat_spd" )
@@ -373,7 +374,7 @@ function PANEL:FillInventory()
             end
             sortVal = rarityKey or 0
 
-        elseif sortMode == "quality_high" then
+        elseif sortMode == "quality_high" or sortMode == "quality_low" then
             if uwData and uwData.quality and BRS_UW.QualityOrder then
                 sortVal = BRS_UW.QualityOrder[uwData.quality] or 0
             end
@@ -393,8 +394,8 @@ function PANEL:FillInventory()
         table.insert( sortedItems, { sortVal, k, v } )
     end
 
-    -- Sort direction: low_to_high sorts ascending, everything else descending
-    if self.sortChoice == "rarity_low_to_high" then
+    -- Sort direction: low sorts ascending, everything else descending
+    if self.sortChoice == "rarity_low_to_high" or self.sortChoice == "quality_low" then
         table.sort( sortedItems, function(a, b) return a[1] < b[1] end )
     else
         table.sort( sortedItems, function(a, b) return a[1] > b[1] end )
