@@ -68,9 +68,9 @@ local rarityBorderColors = {
         Color(0,200,40), Color(0,255,65), Color(0,180,30),
         Color(0,230,50), Color(0,150,25),
     },
-    Mythical  = { -- Angelic celestial cycle
-        Color(255,245,220), Color(255,230,180), Color(230,240,255),
-        Color(255,250,240), Color(200,220,255),
+    Mythical  = { -- Celestial gold cycle
+        Color(255,220,130), Color(255,210,100), Color(255,230,160),
+        Color(240,215,140), Color(255,225,120),
     },
 }
 
@@ -635,7 +635,7 @@ function BRS_UW.OpenInspectPopup(globalKey, data)
                 end
             end
 
-            -- DIVINE TRAIL: soft light tendrils (Mythical angelic)
+            -- DIVINE TRAIL: golden light tendrils (Mythical)
             if tracerTier.divineTrail then
                 for tendril = 0, 1 do
                     local phase = tendril * 3.14
@@ -645,7 +645,7 @@ function BRS_UW.OpenInspectPopup(globalKey, data)
                         local t = i / trailLen
                         local waveY = math.sin(elapsed * 2 + t * 6 + phase) * (3 + t * 2)
                         local fade = (1 - t) * 0.7
-                        surface.SetDrawColor(255, 248, 230, 50 * fade)
+                        surface.SetDrawColor(255, 215, 120, 60 * fade)
                         surface.DrawRect(x, cy + waveY - 0.5, 2, 1)
                     end
                 end
@@ -658,12 +658,12 @@ function BRS_UW.OpenInspectPopup(globalKey, data)
             draw.RoundedBox(outerSize/2, projX - outerSize/2, cy - outerSize/2, outerSize, outerSize,
                 ColorAlpha(gColor, 60))
 
-            -- DIVINE HALO: warm white glow (Mythical angelic)
+            -- DIVINE HALO: golden glow (Mythical)
             if tracerTier.divineTrail then
                 local haloSize = outerSize * 1.4
-                local haloAlpha = 40 + math.sin(elapsed * 3) * 15
+                local haloAlpha = 50 + math.sin(elapsed * 3) * 20
                 draw.RoundedBox(haloSize/2, projX - haloSize/2, cy - haloSize/2, haloSize, haloSize,
-                    Color(255, 248, 230, haloAlpha))
+                    Color(255, 215, 120, haloAlpha))
             end
 
             -- Spiral (Legendary comet)
@@ -693,9 +693,9 @@ function BRS_UW.OpenInspectPopup(globalKey, data)
                     -- Glitch: matrix green dots
                     if pType == "glitch" then
                         dotCol = (p % 2 == 0) and Color(0, 255, 65) or Color(0, 180, 40)
-                    -- Divine: warm white/gold motes
+                    -- Divine: golden motes
                     elseif pType == "divine" then
-                        dotCol = (p % 2 == 0) and Color(255, 245, 210) or Color(255, 230, 180)
+                        dotCol = (p % 2 == 0) and Color(255, 220, 120) or Color(255, 200, 90)
                     -- Comet: warm orange/yellow
                     elseif pType == "comet" then
                         dotCol = Color(255, math.random(140, 220), math.random(20, 60), 200)
@@ -711,12 +711,12 @@ function BRS_UW.OpenInspectPopup(globalKey, data)
                 local impCol = tracerTier.impactColor or tColor
                 local impSize = (tracerTier.impactSize or 1) * 12 * impFade
 
-                -- Divine impact: warm white radiance
+                -- Divine impact: golden radiance burst
                 if tracerTier.divineTrail then
                     draw.RoundedBox(impSize, endX - impSize, cy - impSize, impSize * 2, impSize * 2,
-                        Color(255, 248, 230, 160 * impFade))
+                        Color(255, 215, 120, 180 * impFade))
                     draw.RoundedBox(impSize * 0.6, endX - impSize * 0.6, cy - impSize * 0.6, impSize * 1.2, impSize * 1.2,
-                        Color(255, 255, 245, 200 * impFade))
+                        Color(255, 240, 180, 220 * impFade))
                 elseif tracerTier.glitchTrail then
                     -- Glitch impact: matrix green offset copies
                     for g = 0, 2 do

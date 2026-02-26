@@ -143,7 +143,7 @@ net.Receive("BRS_UW.ProjSpawn", function()
         right = ang:Right(),
         up = ang:Up(),
         trail = RingNew(),
-        lastTrail = 0,
+        lastTrail = CurTime(),  -- delay first trail point (prevents muzzle streak)
         lastPart = 0,
         seed = random(1000),
         alive = true,
@@ -184,12 +184,13 @@ net.Receive("BRS_UW.ProjHit", function()
             impacts[1] = impacts[#impacts]
             impacts[#impacts] = nil
         end
+        local iSize = (tier.impactSize or 1)
         impacts[#impacts + 1] = {
             pos = hitPos, normal = hitNormal,
             tier = tier, isAscended = isAsc,
             spawn = CurTime(),
-            life = 0.4 + (tier.impactSize or 1) * 0.2,
-            size = (tier.impactSize or 1) * 30,
+            life = 0.35 + iSize * 0.25,
+            size = iSize * 40,  -- bigger base (was 30)
         }
     end
 end)
@@ -261,9 +262,9 @@ hook.Add("Think", "BRS_UW_ProjThink", function()
                             pt:SetDieTime(Rand(0.05, 0.12)) pt:SetStartSize(Rand(1, 2)) pt:SetEndSize(0)
                             pt:SetVelocity(VectorRand() * 45)
                         elseif pType == "divine" then
-                            -- Angelic: warm white/gold motes drifting upward
-                            pt:SetColor(255, 240 + random(0, 15), 200 + random(0, 40))
-                            pt:SetDieTime(Rand(0.25, 0.45)) pt:SetStartSize(Rand(2, 3.5)) pt:SetEndSize(0.5)
+                            -- Divine: golden light motes drifting upward
+                            pt:SetColor(255, 210 + random(0, 30), 100 + random(0, 60))
+                            pt:SetDieTime(Rand(0.25, 0.45)) pt:SetStartSize(Rand(2.5, 4)) pt:SetEndSize(0.5)
                             pt:SetVelocity(-p.dir * 15 + VectorRand() * 8 + Vector(0, 0, 30))
                             pt:SetGravity(Vector(0, 0, 40))
                         elseif pType == "comet" then
@@ -355,6 +356,8 @@ hook.Add("PostDrawTranslucentRenderables", "BRS_UW_ProjRender", function(_, bSky
                 local p1 = RingGet(proj.trail, j - 1)
                 local p2 = RingGet(proj.trail, j)
                 if not p1 or not p2 then continue end
+                -- Skip overly long segments (muzzle flash prevention)
+                if p1.pos:DistToSqr(p2.pos) > 40000 then continue end
                 local age = 1 - Clamp((ct - p1.time) / fadeTime, 0, 1)
                 if age < 0.02 then continue end
                 -- Core trail
@@ -392,11 +395,11 @@ hook.Add("PostDrawTranslucentRenderables", "BRS_UW_ProjRender", function(_, bSky
             render.SetMaterial(matGlow)
             render.DrawSprite(curPos, tier.trailWidth * 2.2, tier.trailWidth * 2.2, C(br, bg, bb, 200))
 
-            -- Divine aura (Mythical) - soft warm white halo
+            -- Divine aura (Mythical) - golden halo
             if tier.divineTrail then
                 render.SetMaterial(matSoft)
                 local pulse = 0.7 + sin(elapsed * 2.5) * 0.2
-                render.DrawSprite(curPos, tier.trailWidth * 4, tier.trailWidth * 4, C(255, 248, 230, 40 * pulse))
+                render.DrawSprite(curPos, tier.trailWidth * 4.5, tier.trailWidth * 4.5, C(255, 215, 120, 50 * pulse))
             end
 
             -- Spiral flares (Legendary only, close)
@@ -422,21 +425,25 @@ hook.Add("PostDrawTranslucentRenderables", "BRS_UW_ProjRender", function(_, bSky
         local fade = 1 - frac
         local tier = imp.tier
         local ic = tier.impactColor or tier.color
-        local ringSize = imp.size * (0.3 + frac * 1.2)
+        local ringSize = imp.size * (0.4 + frac * 1.5)
 
+        -- Main impact ring
         render.SetMaterial(matSoft)
         if tier.divineTrail then
-            -- Angelic impact: warm white expanding ring
-            render.DrawSprite(imp.pos + imp.normal, ringSize * 1.2, ringSize * 1.2, C(255, 248, 230, fade * 180))
+            -- Divine: golden expanding burst
+            render.DrawSprite(imp.pos + imp.normal, ringSize * 1.3, ringSize * 1.3, C(255, 215, 120, fade * 200))
+            -- Inner bright core
+            render.DrawSprite(imp.pos + imp.normal, ringSize * 0.5, ringSize * 0.5, C(255, 240, 200, fade * 240))
         else
-            render.DrawSprite(imp.pos + imp.normal, ringSize, ringSize, C(ic.r, ic.g, ic.b, fade * 160))
+            render.DrawSprite(imp.pos + imp.normal, ringSize, ringSize, C(ic.r, ic.g, ic.b, fade * 180))
         end
 
-        -- Brief flash at start
-        if frac < 0.18 then
-            local ff = 1 - frac / 0.18
+        -- Bright initial flash (all tiers)
+        if frac < 0.2 then
+            local ff = 1 - frac / 0.2
             render.SetMaterial(matGlow)
-            render.DrawSprite(imp.pos + imp.normal, imp.size * 0.7 * ff, imp.size * 0.7 * ff, C(255, 255, 255, 120 * ff))
+            local flashSize = imp.size * 0.8 * ff
+            render.DrawSprite(imp.pos + imp.normal, flashSize, flashSize, C(255, 255, 255, 160 * ff))
         end
 
     end

@@ -89,13 +89,13 @@ BRS_UW.Tracers.Tiers = {
         description = "Matrix data stream",
     },
     Mythical = {
-        color = Color(255, 250, 240, 255), color2 = Color(200, 220, 255, 255),
-        glowColor = Color(255, 240, 200, 120),
+        color = Color(255, 225, 140, 255), color2 = Color(220, 200, 255, 255),
+        glowColor = Color(255, 210, 100, 130),
         trailWidth = 4, glowWidth = 16, lifetime = 0.4,
-        hasParticles = true, particleColor = Color(255, 245, 220, 240), particleType = "divine",
-        hasImpact = true, impactColor = Color(255, 250, 230, 250), impactSize = 1.8,
+        hasParticles = true, particleColor = Color(255, 220, 130, 240), particleType = "divine",
+        hasImpact = true, impactColor = Color(255, 225, 140, 250), impactSize = 2.0,
         divineTrail = true,
-        description = "Angelic radiance",
+        description = "Divine radiance",
     },
 }
 
