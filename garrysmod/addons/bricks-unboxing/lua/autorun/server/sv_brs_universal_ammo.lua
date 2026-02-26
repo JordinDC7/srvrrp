@@ -6,8 +6,9 @@
 -- ============================================================
 if not SERVER then return end
 
-local AMMO_MAX = 99999
-local AMMO_PRICE = 1000
+local AMMO_PER_BUY = 100
+local AMMO_MAX = 99999   -- max capacity so players can stockpile
+local AMMO_PRICE = 100
 local COOLDOWN = 1.0
 
 -- ============================================================
@@ -68,7 +69,7 @@ local function RefillAllWeapons(ply)
 
         local ammoType = wep:GetPrimaryAmmoType()
         if ammoType >= 0 then
-            ply:SetAmmo(AMMO_MAX, ammoType)
+            ply:GiveAmmo(AMMO_PER_BUY, ammoType, true)
             count = count + 1
         end
 
@@ -77,7 +78,7 @@ local function RefillAllWeapons(ply)
 
         local ammoType2 = wep:GetSecondaryAmmoType()
         if ammoType2 >= 0 then
-            ply:SetAmmo(AMMO_MAX, ammoType2)
+            ply:GiveAmmo(AMMO_PER_BUY, ammoType2, true)
         end
     end
     return count
@@ -98,21 +99,6 @@ hook.Add("PlayerSay", "BRS_UniversalAmmo", function(ply, text)
             return ""
         end
 
-        -- Check if any weapon needs ammo
-        local needsAmmo = false
-        for _, wep in ipairs(ply:GetWeapons()) do
-            if not IsValid(wep) then continue end
-            local clipMax = wep:GetMaxClip1()
-            if clipMax > 0 and wep:Clip1() < clipMax then needsAmmo = true break end
-            local ammoType = wep:GetPrimaryAmmoType()
-            if ammoType >= 0 and ply:GetAmmoCount(ammoType) < AMMO_MAX then needsAmmo = true break end
-        end
-
-        if not needsAmmo then
-            BRICKS_SERVER.Func.SendNotification(ply, 2, 3, "All your weapons are already fully loaded.")
-            return ""
-        end
-
         if not ply:canAfford(AMMO_PRICE) then
             BRICKS_SERVER.Func.SendNotification(ply, 2, 3, "You need $" .. string.Comma(AMMO_PRICE) .. " to buy ammo.")
             return ""
@@ -122,7 +108,7 @@ hook.Add("PlayerSay", "BRS_UniversalAmmo", function(ply, text)
         local count = RefillAllWeapons(ply)
         lastBuy[sid] = CurTime()
 
-        BRICKS_SERVER.Func.SendNotification(ply, 1, 3, "All " .. count .. " weapons fully loaded! (-$" .. string.Comma(AMMO_PRICE) .. ")")
+        BRICKS_SERVER.Func.SendNotification(ply, 1, 3, "+" .. AMMO_PER_BUY .. " rounds added to " .. count .. " weapons! (-$" .. string.Comma(AMMO_PRICE) .. ")")
         return ""
     end
 end)
@@ -131,4 +117,4 @@ hook.Add("PlayerDisconnected", "BRS_AmmoCleanup", function(ply)
     lastBuy[ply:SteamID64()] = nil
 end)
 
-print("[BRS] Universal Ammo System loaded - /buyammo ($" .. AMMO_PRICE .. ") | F4 Ammo Crate ($1000)")
+print("[BRS] Universal Ammo System loaded - /buyammo ($" .. AMMO_PRICE .. " for " .. AMMO_PER_BUY .. " rounds) | F4 Ammo Crate ($100)")

@@ -55,11 +55,13 @@ hook.Add("EntityFireBullets", "BRS_UW_ProjectileSystem", function(ent, data)
     end
     local bulletSpeed = phys.velocity * velMult
 
-    -- Apply DRP (stability) stat to reduce gravity
-    -- 50% DRP = 25% less gravity, 100% DRP = 50% less gravity (capped)
+    -- Apply DRP (bullet drop) stat to reduce gravity
+    -- 50% DRP = 25% less gravity, 100% DRP = 50% less, caps at effectively hitscan
+    -- Cannot exceed -100% (0 gravity)
     local gravMult = 1
     if uwData.stats and uwData.stats.drp and uwData.stats.drp > 0 then
-        gravMult = math.max(0.3, 1 - uwData.stats.drp / 200)
+        local drpVal = math.min(uwData.stats.drp, 200) -- hard cap
+        gravMult = math.max(0, 1 - drpVal / 200)
     end
     local bulletGravity = phys.gravity * gravMult
 

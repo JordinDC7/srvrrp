@@ -2,7 +2,7 @@ AddCSLuaFile()
 
 ENT.Type = "anim"
 ENT.Base = "base_gmodentity"
-ENT.PrintName = "Universal Ammo Crate"
+ENT.PrintName = "Universal Ammo (100 rounds)"
 ENT.Category = "SmG RP"
 ENT.Author = "SmG RP"
 ENT.Spawnable = false
@@ -12,7 +12,7 @@ function ENT:SetupDataTables()
 end
 
 if SERVER then
-    local AMMO_AMOUNT = 99999 -- essentially infinite
+    local AMMO_PER_BUY = 100
 
     function ENT:Initialize()
         self:SetModel("models/items/ammocrate_smg1.mdl")
@@ -42,10 +42,10 @@ if SERVER then
                 wep:SetClip1(clipMax)
             end
 
-            -- Set massive reserve ammo
+            -- Add 100 reserve rounds
             local ammoType = wep:GetPrimaryAmmoType()
             if ammoType >= 0 then
-                activator:SetAmmo(AMMO_AMOUNT, ammoType)
+                activator:GiveAmmo(AMMO_PER_BUY, ammoType, true)
                 count = count + 1
             end
 
@@ -56,14 +56,14 @@ if SERVER then
             end
             local ammoType2 = wep:GetSecondaryAmmoType()
             if ammoType2 >= 0 then
-                activator:SetAmmo(AMMO_AMOUNT, ammoType2)
+                activator:GiveAmmo(AMMO_PER_BUY, ammoType2, true)
             end
         end
 
         if BRICKS_SERVER and BRICKS_SERVER.Func and BRICKS_SERVER.Func.SendNotification then
-            BRICKS_SERVER.Func.SendNotification(activator, 1, 4, "Ammo crate used! All " .. count .. " weapons fully loaded.")
+            BRICKS_SERVER.Func.SendNotification(activator, 1, 4, "+" .. AMMO_PER_BUY .. " rounds added to " .. count .. " weapons!")
         else
-            activator:ChatPrint("Ammo crate used! All " .. count .. " weapons fully loaded.")
+            activator:ChatPrint("+" .. AMMO_PER_BUY .. " rounds added to " .. count .. " weapons!")
         end
 
         self:Remove()
@@ -80,7 +80,7 @@ if CLIENT then
         ang:RotateAroundAxis(ang:Up(), 180)
 
         cam.Start3D2D(pos, ang, 0.08)
-            draw.SimpleTextOutlined("UNIVERSAL AMMO", "DermaLarge", 0, 0, Color(255, 220, 60), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 1, Color(0, 0, 0))
+            draw.SimpleTextOutlined("AMMO (100 rounds)", "DermaLarge", 0, 0, Color(255, 220, 60), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 1, Color(0, 0, 0))
             draw.SimpleTextOutlined("Press E to use", "DermaDefault", 0, 30, Color(200, 200, 200), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 1, Color(0, 0, 0))
         cam.End3D2D()
     end

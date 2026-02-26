@@ -497,13 +497,15 @@ function PANEL:FillPanel( data, amount, actions )
                     local pW, pH = qTW + 12, 16
 
                     if isAscended then
-                        -- Ascended badge: golden pulsing with glow
                         local badgePulse = math.sin(ct * 2.5) * 0.3 + 0.7
-                        draw.RoundedBox(3, sX - 1, qualityRowY - 1, pW + 2, pH + 2, ColorAlpha(Color(255, 215, 60), 60 * badgePulse))
+                        -- Use direct draw to avoid ColorAlpha pool flicker
+                        draw.RoundedBox(3, sX - 1, qualityRowY - 1, pW + 2, pH + 2, Color(255, 215, 60, 60 * badgePulse))
                         draw.RoundedBox(3, sX, qualityRowY, pW, pH, Color(180, 140, 20, 220))
-                        draw.SimpleText(uwData.quality, "SMGRP_Bold10", sX + pW/2, qualityRowY + pH/2, Color(255, 245, 200, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+                        draw.SimpleText(uwData.quality, "SMGRP_Bold10", sX + pW/2, qualityRowY + pH/2, Color(255, 245, 200), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
                     else
-                        draw.RoundedBox(3, sX, qualityRowY, pW, pH, ColorAlpha(qualityInfo.color, 140))
+                        -- Direct color from quality definition (no ColorAlpha)
+                        local qc = qualityInfo.color
+                        draw.RoundedBox(3, sX, qualityRowY, pW, pH, Color(qc.r, qc.g, qc.b, 140))
                         draw.SimpleText(uwData.quality or "Junk", "SMGRP_Bold10", sX + pW/2, qualityRowY + pH/2, Color(255,255,255,220), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
                     end
                 end

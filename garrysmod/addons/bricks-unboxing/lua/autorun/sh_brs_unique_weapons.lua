@@ -123,15 +123,16 @@ for i, wep in ipairs(BRS_UW.Weapons) do
 end
 
 -- ============================================================
--- 6 STAT TYPES (4 M9K weapon properties + bullet velocity + drop)
+-- 6 STAT TYPES
+-- negative = display as "-X%" (lower = better), bar still fills normally
 -- ============================================================
 BRS_UW.Stats = {
-    { key = "dmg",  name = "DAMAGE",   shortName = "DMG",  color = Color(255, 80, 80),   applyKey = "Damage" },
-    { key = "spd",  name = "ACCURACY", shortName = "ACC",  color = Color(80, 200, 255),  applyKey = "Spread", inverted = true },
-    { key = "rpm",  name = "RPM",      shortName = "RPM",  color = Color(80, 255, 120),  applyKey = "RPM" },
-    { key = "mag",  name = "MAGAZINE", shortName = "MAG",  color = Color(220, 80, 255),  applyKey = "ClipSize" },
-    { key = "vel",  name = "VELOCITY", shortName = "VEL",  color = Color(255, 200, 60),  applyKey = "Velocity" },
-    { key = "drp",  name = "STABILITY",shortName = "STAB", color = Color(100, 220, 220), applyKey = "Drop" },
+    { key = "dmg",  name = "DAMAGE",      shortName = "DMG",  color = Color(255, 80, 80),   applyKey = "Damage" },
+    { key = "spd",  name = "SPREAD",      shortName = "SPD",  color = Color(80, 200, 255),  applyKey = "Spread",   negative = true },
+    { key = "rpm",  name = "RPM",         shortName = "RPM",  color = Color(80, 255, 120),  applyKey = "RPM" },
+    { key = "mag",  name = "MAGAZINE",    shortName = "MAG",  color = Color(220, 80, 255),  applyKey = "ClipSize" },
+    { key = "vel",  name = "VELOCITY",    shortName = "VEL",  color = Color(255, 200, 60),  applyKey = "Velocity" },
+    { key = "drp",  name = "BULLET DROP", shortName = "DROP", color = Color(100, 220, 220), applyKey = "Drop",     negative = true },
 }
 
 BRS_UW.StatByKey = {}

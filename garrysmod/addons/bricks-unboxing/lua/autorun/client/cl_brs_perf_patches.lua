@@ -4,12 +4,13 @@
 -- ============================================================
 
 -- ============================================================
--- 1. FAST ColorAlpha: Pool of 200 reusable Color objects
+-- 1. FAST ColorAlpha: Pool of 500 reusable Color objects
 -- Eliminates ~2,900 Color allocations per frame from item slots
+-- Pool must be large enough for all visible cards (40+ calls each)
 -- ============================================================
 local colorPool = {}
 local colorPoolIdx = 0
-local POOL_SIZE = 200
+local POOL_SIZE = 500
 
 for i = 1, POOL_SIZE do
     colorPool[i] = Color(255, 255, 255, 255)

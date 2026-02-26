@@ -74,13 +74,15 @@ local rarityBorderColors = {
     },
 }
 
+local _borderCol = Color(128, 128, 128, 255)
+
 function BRS_UW.GetBorderColor(rarityKey)
     local colors = rarityBorderColors[rarityKey]
     if not colors then return Color(100,100,100,150) end
 
     if #colors == 1 then return colors[1] end
 
-    -- Animated cycling
+    -- Animated cycling (reuses single Color object)
     local speed = 2
     local t = CurTime() * speed
     local idx = (t % #colors)
@@ -89,12 +91,11 @@ function BRS_UW.GetBorderColor(rarityKey)
     local frac = idx - math.floor(idx)
 
     local c1, c2 = colors[i1], colors[i2]
-    return Color(
-        Lerp(frac, c1.r, c2.r),
-        Lerp(frac, c1.g, c2.g),
-        Lerp(frac, c1.b, c2.b),
-        Lerp(frac, c1.a or 255, c2.a or 255)
-    )
+    _borderCol.r = Lerp(frac, c1.r, c2.r)
+    _borderCol.g = Lerp(frac, c1.g, c2.g)
+    _borderCol.b = Lerp(frac, c1.b, c2.b)
+    _borderCol.a = Lerp(frac, c1.a or 255, c2.a or 255)
+    return _borderCol
 end
 
 -- ============================================================
@@ -442,8 +443,9 @@ function BRS_UW.OpenInspectPopup(globalKey, data)
             -- Stat name
             draw.SimpleText(statDef.name, "SMGRP_Bold13", 0, 4, statDef.color, 0, 0)
 
-            -- Value text
-            draw.SimpleText("+" .. string.format("%.1f", animVal) .. "%", "SMGRP_Bold13", w, 4, C.text_primary or Color(220, 222, 230), TEXT_ALIGN_RIGHT, 0)
+            -- Value text (negative stats show as -X%)
+            local prefix = statDef.negative and "-" or "+"
+            draw.SimpleText(prefix .. string.format("%.1f", animVal) .. "%", "SMGRP_Bold13", w, 4, C.text_primary or Color(220, 222, 230), TEXT_ALIGN_RIGHT, 0)
 
             -- Bar track
             local barY = 24
