@@ -224,9 +224,9 @@ function BRS_UW.CreateUniqueWeapon(ply, baseItemKey)
 
     local uid = BRS_UW.GenerateUID()
     local globalKey = BRS_UW.MakeUniqueKey(baseItemKey, uid)
-    local stats = BRS_UW.GenerateStats(rarityKey)
+    local quality = BRS_UW.RollQuality()
+    local stats = BRS_UW.GenerateStats(rarityKey, quality)
     local avgBoost = BRS_UW.CalcAvgBoost(stats)
-    local quality = BRS_UW.GetQuality(avgBoost)
 
     local weaponData = {
         uid = uid,

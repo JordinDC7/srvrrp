@@ -144,13 +144,13 @@ end
 -- Below Legendary = weak, Legendary+ = strong, Glitched/Mythical = god tier
 -- ============================================================
 BRS_UW.Rarities = {
-    { key = "Common",    order = 1, color = Color(180,180,180), min = 1,  max = 10,  dropWeight = 40 },
-    { key = "Uncommon",  order = 2, color = Color(120,200,80),  min = 3,  max = 18,  dropWeight = 28 },
-    { key = "Rare",      order = 3, color = Color(42,133,219),  min = 5,  max = 28,  dropWeight = 16 },
-    { key = "Epic",      order = 4, color = Color(152,68,255),  min = 10, max = 42,  dropWeight = 9 },
-    { key = "Legendary", order = 5, color = Color(255,165,0),   min = 20, max = 60,  dropWeight = 4.5 },
-    { key = "Glitched",  order = 6, color = Color(0,255,200),   min = 30, max = 80,  dropWeight = 2 },
-    { key = "Mythical",  order = 7, color = Color(255,50,50),   min = 40, max = 100, dropWeight = 0.5 },
+    { key = "Common",    order = 1, color = Color(180,180,180), dropWeight = 40 },
+    { key = "Uncommon",  order = 2, color = Color(120,200,80),  dropWeight = 28 },
+    { key = "Rare",      order = 3, color = Color(42,133,219),  dropWeight = 16 },
+    { key = "Epic",      order = 4, color = Color(152,68,255),  dropWeight = 9 },
+    { key = "Legendary", order = 5, color = Color(255,165,0),   dropWeight = 4.5 },
+    { key = "Glitched",  order = 6, color = Color(0,255,200),   dropWeight = 2 },
+    { key = "Mythical",  order = 7, color = Color(255,50,50),   dropWeight = 0.5 },
 }
 
 BRS_UW.RarityByKey = {}
@@ -161,25 +161,64 @@ for i, r in ipairs(BRS_UW.Rarities) do
 end
 
 -- ============================================================
--- QUALITY LABELS (based on average boost %)
--- Quality = "forge tier" - how well the weapon actually rolled
--- A Mythical can roll Junk if unlucky, Ascended if lucky
+-- QUALITY SYSTEM (rolled independently of rarity)
+-- Every quality can appear on every rarity
+-- Quality + Rarity together determine stat boost ranges
+-- Ascended is the ONLY quality that can exceed 100% (up to 125%)
 -- ============================================================
 BRS_UW.Qualities = {
-    { key = "Junk",     minAvg = 0,  maxAvg = 4,   color = Color(120,120,120) },
-    { key = "Raw",      minAvg = 4,  maxAvg = 10,  color = Color(140,180,100) },
-    { key = "Standard", minAvg = 10, maxAvg = 20,  color = Color(80,160,220) },
-    { key = "Forged",   minAvg = 20, maxAvg = 38,  color = Color(180,120,255) },
-    { key = "Refined",  minAvg = 38, maxAvg = 60,  color = Color(255,180,40) },
-    { key = "Ascended", minAvg = 60, maxAvg = 101, color = Color(255,60,60) },
+    { key = "Junk",     order = 1, weight = 15, color = Color(120,120,120) },
+    { key = "Raw",      order = 2, weight = 25, color = Color(140,180,100) },
+    { key = "Standard", order = 3, weight = 30, color = Color(80,160,220) },
+    { key = "Forged",   order = 4, weight = 18, color = Color(180,120,255) },
+    { key = "Refined",  order = 5, weight = 8,  color = Color(255,180,40) },
+    { key = "Ascended", order = 6, weight = 4,  color = Color(255,60,60) },
 }
 
 BRS_UW.QualityByKey = {}
 BRS_UW.QualityOrder = {}
+BRS_UW.QualityTotalWeight = 0
 for i, q in ipairs(BRS_UW.Qualities) do
     BRS_UW.QualityByKey[q.key] = q
     BRS_UW.QualityOrder[q.key] = i
+    BRS_UW.QualityTotalWeight = BRS_UW.QualityTotalWeight + q.weight
 end
+
+-- ============================================================
+-- STAT RANGE MATRIX: StatRanges[rarity][quality] = {min, max}
+-- Both rarity and quality push stats higher
+-- Only Ascended can exceed 100% (caps at 125%)
+-- ============================================================
+BRS_UW.StatRanges = {
+    Common = {
+        Junk = {1, 5},       Raw = {2, 8},       Standard = {3, 14},
+        Forged = {6, 22},    Refined = {10, 32},  Ascended = {15, 42},
+    },
+    Uncommon = {
+        Junk = {2, 10},      Raw = {5, 16},      Standard = {8, 24},
+        Forged = {12, 34},   Refined = {18, 46},  Ascended = {24, 58},
+    },
+    Rare = {
+        Junk = {4, 16},      Raw = {8, 24},      Standard = {14, 36},
+        Forged = {20, 50},   Refined = {28, 64},  Ascended = {36, 78},
+    },
+    Epic = {
+        Junk = {6, 22},      Raw = {12, 34},     Standard = {20, 48},
+        Forged = {30, 64},   Refined = {40, 78},  Ascended = {50, 95},
+    },
+    Legendary = {
+        Junk = {10, 30},     Raw = {18, 44},     Standard = {28, 58},
+        Forged = {38, 74},   Refined = {50, 88},  Ascended = {62, 110},
+    },
+    Glitched = {
+        Junk = {14, 38},     Raw = {24, 52},     Standard = {34, 68},
+        Forged = {46, 82},   Refined = {58, 96},  Ascended = {72, 118},
+    },
+    Mythical = {
+        Junk = {20, 46},     Raw = {30, 62},     Standard = {42, 78},
+        Forged = {56, 92},   Refined = {68, 100}, Ascended = {82, 125},
+    },
+}
 
 -- ============================================================
 -- HELPER FUNCTIONS
@@ -215,14 +254,30 @@ function BRS_UW.MakeUniqueKey(baseItemNum, uid)
     return "ITEM_" .. baseItemNum .. "_" .. uid
 end
 
--- Get quality label from average boost
-function BRS_UW.GetQuality(avgBoost)
+-- Roll a random quality (independent of rarity)
+function BRS_UW.RollQuality()
+    local roll = math.Rand(0, BRS_UW.QualityTotalWeight)
+    local current = 0
     for _, q in ipairs(BRS_UW.Qualities) do
-        if avgBoost >= q.minAvg and avgBoost < q.maxAvg then
+        current = current + q.weight
+        if roll <= current then
             return q.key, q.color
         end
     end
     return "Junk", BRS_UW.Qualities[1].color
+end
+
+-- Get quality from average boost (legacy compat for old weapons)
+function BRS_UW.GetQuality(avgBoost)
+    -- Legacy thresholds for existing weapons in DB
+    local thresholds = {
+        { "Junk", 4 }, { "Raw", 10 }, { "Standard", 20 },
+        { "Forged", 38 }, { "Refined", 60 }, { "Ascended", 200 },
+    }
+    for _, t in ipairs(thresholds) do
+        if avgBoost < t[2] then return t[1] end
+    end
+    return "Ascended"
 end
 
 -- Get quality info by key
@@ -246,36 +301,41 @@ function BRS_UW.CalcAvgBoost(stats)
     return count > 0 and (total / count) or 0
 end
 
--- Generate random stats for a rarity
-function BRS_UW.GenerateStats(rarityKey)
-    local rarity = BRS_UW.RarityByKey[rarityKey]
-    if not rarity then rarity = BRS_UW.Rarities[1] end
+-- Generate random stats based on BOTH rarity and quality
+function BRS_UW.GenerateStats(rarityKey, qualityKey)
+    qualityKey = qualityKey or "Standard"
+
+    -- Look up stat range from 2D matrix
+    local rarityRanges = BRS_UW.StatRanges[rarityKey]
+    if not rarityRanges then rarityRanges = BRS_UW.StatRanges["Common"] end
+    local range = rarityRanges[qualityKey]
+    if not range then range = rarityRanges["Standard"] end
+
+    local statMin, statMax = range[1], range[2]
+    local span = statMax - statMin
 
     local stats = {}
-    local range = rarity.max - rarity.min
-
     for _, statDef in ipairs(BRS_UW.Stats) do
         -- Each stat rolls independently with variance
-        -- 70% chance: normal roll within range
-        -- 20% chance: low roll (bottom 40% of range)  
+        -- 70% chance: normal roll (mild bell curve)
+        -- 20% chance: low roll (bottom 40% of range)
         -- 10% chance: high roll (top 30% of range)
         local roll = math.random()
         local value
 
         if roll < 0.10 then
-            -- High roll - top end
-            value = rarity.min + range * math.Rand(0.70, 1.0)
+            value = statMin + span * math.Rand(0.70, 1.0)
         elseif roll < 0.30 then
-            -- Low roll - bottom end
-            value = rarity.min + range * math.Rand(0.0, 0.40)
+            value = statMin + span * math.Rand(0.0, 0.40)
         else
-            -- Normal roll - full range with slight center bias
             local r1 = math.Rand(0, 1)
             local r2 = math.Rand(0, 1)
-            value = rarity.min + range * ((r1 + r2) / 2) -- mild bell curve
+            value = statMin + span * ((r1 + r2) / 2)
         end
 
-        stats[statDef.key] = math.Round(math.Clamp(value, rarity.min, rarity.max), 1)
+        -- Cap: only Ascended can exceed 100%, hard cap at 125%
+        local cap = (qualityKey == "Ascended") and 125 or 100
+        stats[statDef.key] = math.Round(math.Clamp(value, statMin, math.min(statMax, cap)), 1)
     end
 
     return stats
