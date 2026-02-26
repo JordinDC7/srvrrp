@@ -377,6 +377,19 @@ hook.Add("PostDrawTranslucentRenderables", "BRS_UW_ProjRender", function(_, bSky
                 end
             end
 
+            -- ASCENDED: Wide golden outer trail glow (the "pop" - visible at distance)
+            if proj.isAscended then
+                local pulse = 0.7 + sin(elapsed * 4) * 0.3
+                for j = 2, trailN do
+                    local p1 = RingGet(proj.trail, j - 1)
+                    local p2 = RingGet(proj.trail, j)
+                    if not p1 or not p2 then continue end
+                    local age = 1 - Clamp((ct - p1.time) / fadeTime, 0, 1)
+                    if age < 0.02 then continue end
+                    render.DrawBeam(p1.pos, p2.pos, tier.glowWidth * 2.5, 0, 1, C(255, 215, 60, 45 * age * pulse))
+                end
+            end
+
             -- DETAIL EFFECTS (close only)
             if isClose then
                 -- Void tendrils (Mythical)
@@ -467,32 +480,12 @@ hook.Add("PostDrawTranslucentRenderables", "BRS_UW_ProjRender", function(_, bSky
                 end
             end
 
-            -- Ascended head effects (close only)
-            if proj.isAscended and ascOvr and isClose then
-                -- Halo ring
-                if ascOvr.hasHalo then
-                    local hc = ascOvr.haloColor
-                    render.SetMaterial(matFlare)
-                    for hp = 0, 7 do
-                        local a = hp * 0.785 + elapsed * 4
-                        local off = proj.right * cos(a) * ascOvr.haloRadius + proj.up * sin(a) * ascOvr.haloRadius
-                        render.DrawSprite(curPos + off, 3, 3, C(hc.r, hc.g, hc.b, hc.a))
-                    end
-                end
-                -- Divine rays
-                if ascOvr.hasDivineRays then
-                    local rc = ascOvr.rayColor
-                    render.SetMaterial(matBeam)
-                    for r = 0, ascOvr.rayCount - 1 do
-                        local a = r / ascOvr.rayCount * 6.283 + elapsed * 2
-                        local rd = proj.right * cos(a) + proj.up * sin(a)
-                        local rl = 15 + sin(elapsed * 5 + r) * 5
-                        render.DrawBeam(curPos, curPos + rd * rl, 1.5, 0, 1, C(rc.r, rc.g, rc.b, rc.a * (0.6 + sin(elapsed * 8 + r) * 0.4)))
-                    end
-                end
-                -- Golden core glow
-                render.SetMaterial(matGlow)
-                render.DrawSprite(curPos, tier.trailWidth * 6, tier.trailWidth * 6, C(255, 230, 100, 60 + sin(elapsed * 6) * 25))
+            -- Ascended head effects: clean golden aura (no clutter)
+            if proj.isAscended and isClose then
+                -- Subtle golden breathing core - NOT a ball of sparkles
+                local pulse = 0.6 + sin(elapsed * 3) * 0.25
+                render.SetMaterial(matSoft)
+                render.DrawSprite(curPos, tier.trailWidth * 5, tier.trailWidth * 5, C(255, 215, 60, 35 * pulse))
             end
         end
     end

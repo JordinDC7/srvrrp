@@ -457,8 +457,8 @@ function PANEL:FillPanel( data, amount, actions )
                 local sW = w - 16
 
                 -- ====== STAT BARS (bottom section) ======
-                local barH = 5
-                local barGap = 5
+                local barH = 4
+                local barGap = 3
                 local lblW = 32
                 local bX = sX + lblW + 4
                 local bW = sW - lblW - 4

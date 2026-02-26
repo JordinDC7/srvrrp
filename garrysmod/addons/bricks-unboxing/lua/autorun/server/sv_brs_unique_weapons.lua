@@ -38,6 +38,22 @@ function BRS_UW.MigrateStats(stats)
         end
     end
 
+    -- Migrate: add DRP (stability) stat for weapons that don't have it
+    if not stats.drp then
+        local sum, cnt = 0, 0
+        for _, k in ipairs({"dmg", "spd", "rpm", "mag"}) do
+            if stats[k] and stats[k] > 0 then
+                sum = sum + stats[k]
+                cnt = cnt + 1
+            end
+        end
+        if cnt > 0 then
+            stats.drp = math.Round(math.Clamp(sum / cnt * math.Rand(0.85, 1.15), 1, 125), 1)
+        else
+            stats.drp = 0
+        end
+    end
+
     return stats
 end
 

@@ -123,7 +123,7 @@ for i, wep in ipairs(BRS_UW.Weapons) do
 end
 
 -- ============================================================
--- 5 STAT TYPES (4 M9K weapon properties + bullet velocity)
+-- 6 STAT TYPES (4 M9K weapon properties + bullet velocity + drop)
 -- ============================================================
 BRS_UW.Stats = {
     { key = "dmg",  name = "DAMAGE",   shortName = "DMG",  color = Color(255, 80, 80),   applyKey = "Damage" },
@@ -131,6 +131,7 @@ BRS_UW.Stats = {
     { key = "rpm",  name = "RPM",      shortName = "RPM",  color = Color(80, 255, 120),  applyKey = "RPM" },
     { key = "mag",  name = "MAGAZINE", shortName = "MAG",  color = Color(220, 80, 255),  applyKey = "ClipSize" },
     { key = "vel",  name = "VELOCITY", shortName = "VEL",  color = Color(255, 200, 60),  applyKey = "Velocity" },
+    { key = "drp",  name = "STABILITY",shortName = "STAB", color = Color(100, 220, 220), applyKey = "Drop" },
 }
 
 BRS_UW.StatByKey = {}
@@ -168,12 +169,12 @@ end
 -- Quality + Rarity together determine stat boost ranges
 -- ============================================================
 BRS_UW.Qualities = {
-    { key = "Junk",     order = 1, weight = 10, color = Color(120,120,120) },
-    { key = "Raw",      order = 2, weight = 20, color = Color(140,180,100) },
-    { key = "Standard", order = 3, weight = 30, color = Color(80,160,220) },
-    { key = "Forged",   order = 4, weight = 22, color = Color(180,120,255) },
-    { key = "Refined",  order = 5, weight = 12, color = Color(255,180,40) },
-    { key = "Ascended", order = 6, weight = 10, color = Color(255,60,60) },
+    { key = "Junk",     order = 1, weight = 12, color = Color(120,120,120) },
+    { key = "Raw",      order = 2, weight = 23, color = Color(140,180,100) },
+    { key = "Standard", order = 3, weight = 32, color = Color(80,160,220) },
+    { key = "Forged",   order = 4, weight = 20, color = Color(180,120,255) },
+    { key = "Refined",  order = 5, weight = 8,  color = Color(255,180,40) },
+    { key = "Ascended", order = 6, weight = 5,  color = Color(255,60,60) },
 }
 
 BRS_UW.QualityByKey = {}

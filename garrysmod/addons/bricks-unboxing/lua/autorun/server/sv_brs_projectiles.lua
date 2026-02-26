@@ -55,6 +55,14 @@ hook.Add("EntityFireBullets", "BRS_UW_ProjectileSystem", function(ent, data)
     end
     local bulletSpeed = phys.velocity * velMult
 
+    -- Apply DRP (stability) stat to reduce gravity
+    -- 50% DRP = 25% less gravity, 100% DRP = 50% less gravity (capped)
+    local gravMult = 1
+    if uwData.stats and uwData.stats.drp and uwData.stats.drp > 0 then
+        gravMult = math.max(0.3, 1 - uwData.stats.drp / 200)
+    end
+    local bulletGravity = phys.gravity * gravMult
+
     -- Capture original bullet data
     local src = data.Src
     local dir = data.Dir
@@ -87,7 +95,7 @@ hook.Add("EntityFireBullets", "BRS_UW_ProjectileSystem", function(ent, data)
             filter = filter,
             pos = Vector(src.x, src.y, src.z),
             vel = vel,
-            gravity = phys.gravity,
+            gravity = bulletGravity,
             damage = damage,
             force = force,
             spawnTime = CurTime(),
@@ -98,7 +106,7 @@ hook.Add("EntityFireBullets", "BRS_UW_ProjectileSystem", function(ent, data)
         net.Start("BRS_UW.ProjSpawn", true)
             net.WriteVector(src)
             net.WriteVector(vel)
-            net.WriteFloat(phys.gravity)
+            net.WriteFloat(bulletGravity)
             net.WriteUInt(rarityIdx, 4)
             net.WriteEntity(ent)
             net.WriteBool(isAscended)
