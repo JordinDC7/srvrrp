@@ -215,6 +215,7 @@ function PANEL:BuildPages()
         page:SetPos( 0, 0 )
         page:SetSize( self.contentWide, self.contentTall )
         page.panelWide = self.contentWide
+        page.panelTall = self.contentTall
         page:SetVisible( false )
 
         if pageInfo.key == "coinflip" or pageInfo.key == "cfhistory" then
@@ -298,10 +299,10 @@ function PANEL:SwitchToPage( pageKey )
 
     -- Show and fill new page
     local page = pageData.page
-    -- Use actual content panel size (may differ from initial calc due to docking)
-    local cw, ch = self.contentPanel:GetSize()
-    if cw < 10 then cw = self.contentWide end
-    if ch < 10 then ch = self.contentTall end
+    -- ALWAYS use precomputed content dimensions. Do NOT use contentPanel:GetSize()
+    -- because Dock(FILL) hasn't resolved during Init->BuildPages->SwitchToPage.
+    local cw = self.contentWide
+    local ch = self.contentTall
     page:SetSize( cw, ch )
     page:SetVisible( true )
     page:SetPos( 0, 0 )
@@ -310,8 +311,6 @@ function PANEL:SwitchToPage( pageKey )
     page.panelTall = ch
 
     if not pageData.filled and page.FillPanel then
-        -- DEBUG: Remove after fixing
-        notification.AddLegacy("SwitchToPage(" .. pageKey .. "): cw=" .. cw .. " ch=" .. ch .. " contentWide=" .. tostring(self.contentWide) .. " contentTall=" .. tostring(self.contentTall), NOTIFY_HINT, 8)
         page:FillPanel()
         pageData.filled = true
 
