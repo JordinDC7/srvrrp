@@ -113,10 +113,17 @@ net.Receive("BRS_UW.ProjSpawn", function()
     local tier = BRS_UW.Tracers and BRS_UW.Tracers.GetTier(rarityKey)
     if not tier then return end
 
-    -- NOTE: Do NOT adjust src to viewmodel muzzle. The viewmodel muzzle
-    -- attachment is in viewmodel render space, NOT world space. Using it
-    -- causes the first trail segment to stretch sideways from the gun.
-    -- The server src (player eye pos) is the correct world-space origin.
+    -- Detect own bullets: entity check OR distance from eye (<80 units)
+    -- net.ReadEntity can fail on unreliable messages, so distance is backup
+    local lp = LocalPlayer()
+    local isLocal = (IsValid(shooter) and shooter == lp)
+        or (IsValid(lp) and src:DistToSqr(lp:EyePos()) < 6400)
+
+    -- For own bullets, snap to client EyePos to prevent any server/client
+    -- position mismatch that creates sideways flash streaks
+    if isLocal and IsValid(lp) then
+        src = lp:EyePos()
+    end
 
     -- Pool limit (swap-remove: O(1) instead of table.remove O(n))
     if #projectiles >= MAX_PROJ then
@@ -126,8 +133,6 @@ net.Receive("BRS_UW.ProjSpawn", function()
 
     local dir = vel:GetNormalized()
     local ang = dir:Angle()
-
-    local isLocal = IsValid(shooter) and shooter == LocalPlayer()
 
     projectiles[#projectiles + 1] = {
         pos = Vector(src.x, src.y, src.z),
