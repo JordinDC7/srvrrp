@@ -1,7 +1,7 @@
 local PANEL = {}
 
 function PANEL:Init()
-    if self.panelWide == nil or self.panelWide < 100 then self.panelWide = self:GetWide() end; if self.panelWide < 100 then self.panelWide = math.min(ScrW() * 0.72, 1280) - 220 end; if self.panelTall == nil or self.panelTall < 100 then self.panelTall = self:GetTall() end; if self.panelTall < 100 then self.panelTall = ScrH() * 0.75 - 130 end
+    if self.panelWide == nil or self.panelWide < 100 then self.panelWide = self:GetWide() end; if self.panelWide < 100 then self.panelWide = math.min(ScrW() * 0.72, 1280) - 220 end; if self.panelTall == nil or self.panelTall < 100 then self.panelTall = self:GetTall() end; if self.panelTall < 100 then self.panelTall = math.min(ScrH() * 0.75, 820) - 220 end
 
     self.popoutWide, self.popoutTall = self.panelWide*0.9, self.panelTall*0.9
 
