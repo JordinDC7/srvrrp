@@ -291,23 +291,27 @@ function PANEL:SwitchToPage( pageKey )
     if pageData.info.wideMode then
         local newW = frameW + 200
         self:SizeTo( newW, frameH, 0.2 )
+        self.contentWide = newW
+        self.contentTall = frameH - TOTAL_TOP
         pageData.page:SetSize( newW, frameH - TOTAL_TOP )
         pageData.page.panelWide = newW
-    elseif self:GetWide() ~= frameW then
-        self:SizeTo( frameW, frameH, 0.2 )
+    else
+        -- Always reset to standard frame size when leaving wideMode
+        self.contentWide = frameW
+        self.contentTall = frameH - TOTAL_TOP
+        if self:GetWide() ~= frameW then
+            self:SizeTo( frameW, frameH, 0.2 )
+        end
     end
 
     -- Show and fill new page
     local page = pageData.page
-    -- ALWAYS use precomputed content dimensions. Do NOT use contentPanel:GetSize()
-    -- because Dock(FILL) hasn't resolved during Init->BuildPages->SwitchToPage.
     local cw = self.contentWide
     local ch = self.contentTall
     page:SetSize( cw, ch )
     page:SetVisible( true )
     page:SetPos( 0, 0 )
     page.panelWide = cw
-    -- Set panelTall for pages that use it (marketplace, trading, store, etc.)
     page.panelTall = ch
 
     if not pageData.filled and page.FillPanel then
@@ -378,8 +382,8 @@ end
 
 function PANEL:OnSizeChanged(w, h)
     self:Center()
-    self.contentWide = w
-    self.contentTall = h - TOTAL_TOP
+    -- contentWide/contentTall are managed explicitly in SwitchToPage
+    -- to avoid SizeTo animation setting intermediate wrong values
 end
 
 -- CRITICAL: DFrame:PerformLayout resets DockPadding to (5, 24+, 5, 5) every frame
