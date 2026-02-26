@@ -14,7 +14,7 @@ local projectiles = {}
 local impacts = {}
 local MAX_PROJ = 32
 local MAX_IMPACTS = 16
-local MAX_TRAIL = 28
+local MAX_TRAIL = 40
 local TRAIL_DT = 0.014  -- ~71 points/sec
 
 local orderToRarity = {
@@ -244,7 +244,7 @@ hook.Add("Think", "BRS_UW_ProjThink", function()
         -- Particles (distance culled)
         if p.alive and p.tier.hasParticles then
             local dSq = p.pos:DistToSqr(eyePos)
-            if dSq < LOD_PARTICLE and ct - p.lastPart > 0.05 then
+            if dSq < LOD_PARTICLE and ct - p.lastPart > 0.04 then
                 p.lastPart = ct
                 local em = GetEmitter(p.pos)
                 if em then
@@ -258,18 +258,18 @@ hook.Add("Think", "BRS_UW_ProjThink", function()
                             -- Cyber teal
                             local g = 200 + random(0, 55)
                             pt:SetColor(0, g, math.floor(g * 0.75 + random(0, 20)))
-                            pt:SetDieTime(Rand(0.05, 0.12)) pt:SetStartSize(Rand(1, 2)) pt:SetEndSize(0)
-                            pt:SetVelocity(VectorRand() * 45)
+                            pt:SetDieTime(Rand(0.06, 0.15)) pt:SetStartSize(Rand(1.5, 2.5)) pt:SetEndSize(0)
+                            pt:SetVelocity(VectorRand() * 50)
                         elseif pType == "divine" then
                             -- Heavenly: icy blue motes drifting upward
                             pt:SetColor(160 + random(0, 40), 210 + random(0, 25), 255)
-                            pt:SetDieTime(Rand(0.25, 0.45)) pt:SetStartSize(Rand(2.5, 4)) pt:SetEndSize(0.5)
-                            pt:SetVelocity(-p.dir * 15 + VectorRand() * 8 + Vector(0, 0, 30))
-                            pt:SetGravity(Vector(0, 0, 40))
+                            pt:SetDieTime(Rand(0.3, 0.55)) pt:SetStartSize(Rand(3, 5)) pt:SetEndSize(0.5)
+                            pt:SetVelocity(-p.dir * 15 + VectorRand() * 10 + Vector(0, 0, 35))
+                            pt:SetGravity(Vector(0, 0, 45))
                         elseif pType == "comet" then
                             pt:SetColor(255, 140 + random(0, 80), random(20, 60))
-                            pt:SetDieTime(Rand(0.15, 0.3)) pt:SetStartSize(Rand(1.5, 3)) pt:SetEndSize(0)
-                            pt:SetVelocity(-p.dir * 45 + VectorRand() * 18) pt:SetGravity(Vector(0, 0, -120))
+                            pt:SetDieTime(Rand(0.2, 0.4)) pt:SetStartSize(Rand(2, 4)) pt:SetEndSize(0)
+                            pt:SetVelocity(-p.dir * 50 + VectorRand() * 20) pt:SetGravity(Vector(0, 0, -120))
                         elseif pType == "energy" then
                             pt:SetColor(200, 120, 255)
                             pt:SetDieTime(Rand(0.12, 0.25)) pt:SetStartSize(Rand(1.5, 2.5)) pt:SetEndSize(0.5)
@@ -362,24 +362,24 @@ hook.Add("PostDrawTranslucentRenderables", "BRS_UW_ProjRender", function(_, bSky
                 -- Core trail
                 render.DrawBeam(p1.pos, p2.pos, tier.trailWidth, 0, 1, C(br, bg, bb, ba * age))
                 -- Outer glow
-                render.DrawBeam(p1.pos, p2.pos, tier.glowWidth, 0, 1, C(gr, gg, gb, ga * age * 0.35))
+                render.DrawBeam(p1.pos, p2.pos, tier.glowWidth, 0, 1, C(gr, gg, gb, ga * age * 0.45))
             end
 
             -- DETAIL EFFECTS (close only, one effect per tier max)
             if isClose then
-                -- Glitched: sparse offset fragments only
+                -- Glitched: offset data fragments
                 if tier.glitchTrail then
                     local right = proj.right
-                    for j = 3, trailN, 3 do
+                    for j = 2, trailN, 2 do
                         local p1 = RingGet(proj.trail, j - 1)
                         local p2 = RingGet(proj.trail, j)
                         if not p1 or not p2 then continue end
                         local age = 1 - Clamp((ct - p1.time) / fadeTime, 0, 1)
                         if age < 0.1 then continue end
                         local segHash = j + floor(elapsed * 15)
-                        if segHash % 4 == 0 then
-                            local off = sin(segHash * 97.3) * 4
-                            render.DrawBeam(p1.pos + right * off, p2.pos + right * off, 1, 0, 1, C(0, 220, 180, 120 * age))
+                        if segHash % 3 == 0 then
+                            local off = sin(segHash * 97.3) * 6
+                            render.DrawBeam(p1.pos + right * off, p2.pos + right * off, 1.5, 0, 1, C(0, 240, 190, 150 * age))
                         end
                     end
                 end
@@ -394,23 +394,23 @@ hook.Add("PostDrawTranslucentRenderables", "BRS_UW_ProjRender", function(_, bSky
             if not proj.isLocal or elapsed > 0.04 then
                 -- Head glow
                 render.SetMaterial(matGlow)
-                render.DrawSprite(curPos, tier.trailWidth * 2.2, tier.trailWidth * 2.2, C(br, bg, bb, 200))
+                render.DrawSprite(curPos, tier.trailWidth * 2.5, tier.trailWidth * 2.5, C(br, bg, bb, 210))
 
                 -- Divine aura (Mythical) - ethereal icy halo
                 if tier.divineTrail then
                     render.SetMaterial(matSoft)
                     local pulse = 0.7 + sin(elapsed * 2.5) * 0.2
-                    render.DrawSprite(curPos, tier.trailWidth * 4.5, tier.trailWidth * 4.5, C(160, 210, 255, 50 * pulse))
+                    render.DrawSprite(curPos, tier.trailWidth * 5, tier.trailWidth * 5, C(160, 210, 255, 60 * pulse))
                 end
 
                 -- Spiral flares (Legendary only, close)
                 if tier.hasSpiral and isClose then
                     render.SetMaterial(matFlare)
-                    local sR = tier.spiralRadius or 2.5
+                    local sR = tier.spiralRadius or 3
                     for s = 0, 1 do
                         local a = elapsed * (tier.spiralSpeed or 5) * 6.283 + s * 3.14
                         local off = proj.right * cos(a) * sR + proj.up * sin(a) * sR
-                        render.DrawSprite(curPos + off, tier.trailWidth, tier.trailWidth, C(br, bg, bb, 120))
+                        render.DrawSprite(curPos + off, tier.trailWidth * 1.2, tier.trailWidth * 1.2, C(br, bg, bb, 140))
                     end
                 end
             end
