@@ -455,4 +455,24 @@ hook.Add("PostDrawTranslucentRenderables", "BRS_UW_ProjRender", function(_, bSky
     end
 end)
 
+-- ============================================================
+-- SUPPRESS DEFAULT TRACERS for boosted weapons
+-- M9K runs FireBullets on both server AND client. The server hook
+-- returns false (suppresses hitscan). But without a client hook,
+-- the client-side FireBullets creates standard Source engine tracers
+-- (those bright orange/white lines shooting from the gun).
+-- This hook kills those default tracers on the client.
+-- ============================================================
+hook.Add("EntityFireBullets", "BRS_UW_SuppressClientTracers", function(ent, data)
+    if not IsValid(ent) or not ent:IsPlayer() then return end
+    local wep = ent:GetActiveWeapon()
+    if not IsValid(wep) then return end
+    if wep:GetNWBool("BRS_UW_Boosted", false) then
+        -- Kill default tracers - our custom projectile system handles visuals
+        data.Tracer = 0
+        data.TracerName = ""
+        return true  -- return true = fire bullet with modified data (no tracers)
+    end
+end)
+
 print("[BRS UW] Projectile client loaded")

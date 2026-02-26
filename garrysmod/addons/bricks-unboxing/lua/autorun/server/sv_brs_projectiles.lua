@@ -108,9 +108,9 @@ hook.Add("EntityFireBullets", "BRS_UW_ProjectileSystem", function(ent, data)
         }
 
         -- Network to clients (unreliable for perf)
-        -- Push visual src forward 60 units along bullet direction
-        -- so trail starts AHEAD of the player, never at their face
-        local visualSrc = src + bulletDir * 60
+        -- Push visual src forward 200 units along bullet direction
+        -- Trail starts well ahead of player, no muzzle streak possible
+        local visualSrc = src + bulletDir * 200
         net.Start("BRS_UW.ProjSpawn", true)
             net.WriteVector(visualSrc)
             net.WriteVector(vel)

@@ -42,12 +42,6 @@ if SERVER then
         for _, wep in ipairs(weapons) do
             if not IsValid(wep) then continue end
 
-            -- Fill magazine
-            local clipMax = wep:GetMaxClip1()
-            if clipMax > 0 then
-                wep:SetClip1(clipMax)
-            end
-
             -- Give reserve ammo (false = show HUD pickup popup)
             local ammoType = wep:GetPrimaryAmmoType()
             if ammoType >= 0 then
@@ -60,10 +54,6 @@ if SERVER then
             end
 
             -- Secondary ammo too
-            local clipMax2 = wep:GetMaxClip2()
-            if clipMax2 > 0 then
-                wep:SetClip2(clipMax2)
-            end
             local ammoType2 = wep:GetSecondaryAmmoType()
             if ammoType2 >= 0 then
                 local ammoName2 = game.GetAmmoName(ammoType2)
@@ -76,9 +66,9 @@ if SERVER then
 
         if count > 0 then
             if BRICKS_SERVER and BRICKS_SERVER.Func and BRICKS_SERVER.Func.SendNotification then
-                BRICKS_SERVER.Func.SendNotification(ply, 1, 4, "+" .. AMMO_PER_BUY .. " rounds - all magazines refilled!")
+                BRICKS_SERVER.Func.SendNotification(ply, 1, 4, "+" .. AMMO_PER_BUY .. " reserve rounds added!")
             else
-                ply:ChatPrint("+" .. AMMO_PER_BUY .. " rounds - all magazines refilled!")
+                ply:ChatPrint("+" .. AMMO_PER_BUY .. " reserve rounds added!")
             end
         else
             ply:ChatPrint("No weapons to give ammo to!")

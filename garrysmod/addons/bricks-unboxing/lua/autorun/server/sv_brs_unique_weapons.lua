@@ -728,6 +728,7 @@ function BRS_UW.ApplyBoostsToWeapon(ply, wep)
         end
 
         wep.BRS_UW_Boosted = true
+        wep:SetNWBool("BRS_UW_Boosted", true)
         wep.BRS_UW_GlobalKey = globalKey
         wep.BRS_UW_Data = uwData
 
