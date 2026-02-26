@@ -5,7 +5,7 @@ function PANEL:Init()
     self.mainPanel:Dock( FILL )
     self.mainPanel.Paint = function( self2, w, h ) end
 
-    self.pageWide = ScrW()*0.6-BRICKS_SERVER.DEVCONFIG.MainNavWidth
+    self.pageWide = self.panelWide or self:GetWide()
 end
 
 function PANEL:Refresh()

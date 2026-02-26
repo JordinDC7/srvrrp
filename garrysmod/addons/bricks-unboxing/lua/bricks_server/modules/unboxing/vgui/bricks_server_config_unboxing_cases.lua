@@ -5,7 +5,7 @@ function PANEL:Init()
 end
 
 function PANEL:FillPanel()
-    self.panelWide, self.panelTall = ScrW()*0.6-BRICKS_SERVER.DEVCONFIG.MainNavWidth, ScrH()*0.65-40
+    self.panelWide = self.panelWide or self:GetWide(); self.panelTall = self.panelTall or self:GetTall()
 
     self.topBar = vgui.Create( "DPanel", self )
     self.topBar:Dock( TOP )
@@ -102,7 +102,7 @@ function PANEL:Refresh()
         slotBack:FillPanel( { "CASE_" .. k, v }, 1, function()
             self.popoutPanel = vgui.Create( "bricks_server_config_unboxing_cases_popup", self )
             self.popoutPanel:SetPos( 0, 0 )
-            self.popoutPanel:SetSize( ScrW()*0.6-BRICKS_SERVER.DEVCONFIG.MainNavWidth, ScrH()*0.65-40 )
+            self.popoutPanel:SetSize( self.panelWide or self:GetWide(), self.panelTall or self:GetTall() )
             self.popoutPanel:SetItemTable( k, v, function( valueChanged, newItemTable )
                 if( valueChanged ) then
                     BS_ConfigCopyTable.UNBOXING.Cases[k] = newItemTable

@@ -757,3 +757,53 @@ hook.Add("PlayerDisconnected", "BRS_UW_Cleanup", function(ply)
 end)
 
 print("[BRS UW] Server system loaded")
+
+-- ============================================================
+-- DEBUG COMMANDS
+-- ============================================================
+concommand.Add("brs_uw_debug", function(ply)
+    if not IsValid(ply) then return end
+    if not BRICKS_SERVER.Func.HasAdminAccess(ply) then return end
+
+    local steamid64 = ply:SteamID64()
+    local cache = BRS_UW.ServerCache[steamid64]
+    local inv = ply:GetUnboxingInventory()
+    local invData = ply:GetUnboxingInventoryData()
+
+    print("=== BRS UW DEBUG for " .. ply:Nick() .. " ===")
+    print("Cache entries: " .. (cache and table.Count(cache) or "NIL"))
+    print("Inventory items: " .. (inv and table.Count(inv) or "NIL"))
+
+    if cache then
+        for gk, uwData in pairs(cache) do
+            local equipped = invData[gk] and invData[gk].Equipped
+            print("  " .. gk .. " | class=" .. (uwData.weaponClass or "?") .. " | " .. (uwData.rarity or "?") .. " " .. (uwData.quality or "?") .. " | equipped=" .. tostring(equipped))
+            if uwData.stats then
+                local parts = {}
+                for statKey, val in pairs(uwData.stats) do
+                    table.insert(parts, statKey .. "=" .. string.format("%.1f", val))
+                end
+                print("    stats: " .. table.concat(parts, ", "))
+            end
+        end
+    end
+
+    -- Check current weapons
+    print("--- Current weapons ---")
+    for _, wep in ipairs(ply:GetWeapons()) do
+        local boosted = wep.BRS_UW_Boosted and "YES" or "no"
+        local dmg = wep.Primary and wep.Primary.Damage or "?"
+        local spread = wep.Primary and wep.Primary.Spread or "?"
+        local rpm = wep.Primary and wep.Primary.RPM or "?"
+        local clip = wep.Primary and wep.Primary.ClipSize or "?"
+        local origDmg = wep.BRS_UW_OriginalStats and wep.BRS_UW_OriginalStats.Damage or "?"
+        print("  " .. wep:GetClass() .. " | boosted=" .. boosted .. " | DMG:" .. tostring(origDmg) .. "->" .. tostring(dmg) .. " | SPD:" .. tostring(spread) .. " | RPM:" .. tostring(rpm) .. " | MAG:" .. tostring(clip))
+    end
+
+    -- Try forcing application now
+    print("--- Forcing boost application ---")
+    for _, wep in ipairs(ply:GetWeapons()) do
+        wep.BRS_UW_Boosted = nil -- reset so it re-applies
+        BRS_UW.ApplyBoostsToWeapon(ply, wep)
+    end
+end)

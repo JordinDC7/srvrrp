@@ -5,7 +5,7 @@ function PANEL:Init()
 end
 
 function PANEL:FillPanel()
-    self.panelWide, self.panelTall = ScrW()*0.6-BRICKS_SERVER.DEVCONFIG.MainNavWidth, ScrH()*0.65-40
+    self.panelWide = self.panelWide or self:GetWide(); self.panelTall = self.panelTall or self:GetTall()
     self.gridWide = self.panelWide-50-10-10
 
     self.topBar = vgui.Create( "DPanel", self )

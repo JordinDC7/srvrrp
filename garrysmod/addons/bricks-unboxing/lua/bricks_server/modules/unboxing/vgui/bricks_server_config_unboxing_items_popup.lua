@@ -1,7 +1,7 @@
 local PANEL = {}
 
 function PANEL:Init()
-    self.panelWide, self.panelTall = ScrW()*0.6-BRICKS_SERVER.DEVCONFIG.MainNavWidth, ScrH()*0.65-40
+    self.panelWide = self.panelWide or self:GetWide(); self.panelTall = self.panelTall or self:GetTall()
 
     self.popoutWide, self.popoutTall = self.panelWide*0.9, self.panelTall*0.9
 
