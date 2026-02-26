@@ -201,6 +201,7 @@ function PANEL:FillPanel( caseKey, buttonFunc, inventoryView )
     for i, entry in ipairs( sortedRarities ) do
         local rar, chance = entry[1], entry[2]
         local pct = totalChanceInfo > 0 and (chance / totalChanceInfo * 100) or 0
+        local oneInX = pct > 0 and math.Round(100 / pct) or 0
         local rarInfo = BRICKS_SERVER.Func.GetRarityInfo( rar )
         local rarCol = BRICKS_SERVER.Func.GetRarityColor( rarInfo ) or Color(160,165,175)
 
@@ -212,6 +213,9 @@ function PANEL:FillPanel( caseKey, buttonFunc, inventoryView )
             draw.RoundedBox( 4, 2, h/2 - 4, 8, 8, rarCol )
             -- Rarity name
             draw.SimpleText( rar, "BRICKS_SERVER_Font17", 16, h/2, rarCol, 0, TEXT_ALIGN_CENTER )
+            -- 1 in X odds
+            local oddsStr = oneInX > 1 and ("1 in " .. oneInX) or "—"
+            draw.SimpleText( oddsStr, "BRICKS_SERVER_Font17", w - 50, h/2, BRICKS_SERVER.Func.GetTheme( 6, 100 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )
             -- Percentage
             draw.SimpleText( string.format("%.1f%%", pct), "BRICKS_SERVER_Font17", w - 2, h/2, BRICKS_SERVER.Func.GetTheme( 6, 160 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )
         end
