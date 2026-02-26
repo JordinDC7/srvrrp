@@ -310,6 +310,8 @@ function PANEL:SwitchToPage( pageKey )
     page.panelTall = ch
 
     if not pageData.filled and page.FillPanel then
+        -- DEBUG: Remove after fixing
+        notification.AddLegacy("SwitchToPage(" .. pageKey .. "): cw=" .. cw .. " ch=" .. ch .. " contentWide=" .. tostring(self.contentWide) .. " contentTall=" .. tostring(self.contentTall), NOTIFY_HINT, 8)
         page:FillPanel()
         pageData.filled = true
 
