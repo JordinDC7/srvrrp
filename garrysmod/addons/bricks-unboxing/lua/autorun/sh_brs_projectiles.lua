@@ -81,14 +81,15 @@ BRS_UW.Tracers.Tiers = {
         description = "Golden comet",
     },
     Glitched = {
-        color = Color(32, 255, 32, 255), color2 = Color(0, 80, 0, 255),
-        glowColor = Color(20, 200, 20, 180),
-        trailWidth = 4, glowWidth = 20, lifetime = 0.35,
-        hasParticles = true, particleColor = Color(32, 255, 32, 240), particleType = "glitch",
-        hasImpact = true, impactColor = Color(32, 255, 32, 255), impactSize = 2.0,
+        color = Color(0, 255, 65, 255), color2 = Color(0, 180, 40, 255),
+        glowColor = Color(0, 200, 30, 140),
+        trailWidth = 3, glowWidth = 14, lifetime = 0.35,
+        hasParticles = true, particleColor = Color(0, 255, 65, 240), particleType = "glitch",
+        hasImpact = true, impactColor = Color(0, 255, 65, 255), impactSize = 1.8,
         glitchTrail = true, chromatic = false,
-        hasAfterimage = true, afterimageColor = Color(0, 120, 0, 50),
-        description = "Matrix corruption",
+        matrixTrail = true,  -- new: digital fragmentation segments
+        hasAfterimage = true, afterimageColor = Color(0, 100, 20, 40),
+        description = "Matrix data stream",
     },
     Mythical = {
         color = Color(220, 0, 0, 255), color2 = Color(60, 0, 60, 255),

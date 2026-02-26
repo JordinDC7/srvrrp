@@ -328,7 +328,7 @@ hook.Add("PostDrawTranslucentRenderables", "BRS_UW_ProjRender", function(_, bSky
         -- Resolve color (avoid allocations)
         local br, bg, bb, ba, gr, gg, gb, ga
         if tier.chromatic then
-            if GlitchIsCyan(elapsed + proj.seed) then
+            if GlitchIsBright(elapsed + proj.seed) then
                 br, bg, bb = tier.color.r, tier.color.g, tier.color.b
             else
                 local c2 = tier.color2 or tier.color
@@ -418,20 +418,39 @@ hook.Add("PostDrawTranslucentRenderables", "BRS_UW_ProjRender", function(_, bSky
                     end
                 end
 
-                -- Glitch trail offset segments
+                -- Matrix data stream trail (Glitched)
                 if tier.glitchTrail then
                     local right, up = proj.right, proj.up
+                    -- Digital fragment segments - appear/disappear like corrupted data
                     for j = 2, trailN, 2 do
                         local p1 = RingGet(proj.trail, j - 1)
                         local p2 = RingGet(proj.trail, j)
                         if not p1 or not p2 then continue end
                         local age = 1 - Clamp((ct - p1.time) / fadeTime, 0, 1)
-                        local segHash = j + floor(elapsed * 30)
-                        if segHash % 3 == 0 then
-                            local off = sin(segHash * 137.5 + elapsed * 50) * 8
-                            local isBright = GlitchIsBright(elapsed + j * 0.1)
-                            local fc = isBright and tier.color or (tier.color2 or tier.color)
-                            render.DrawBeam(p1.pos + right * off + up * off * 0.5, p2.pos + right * off + up * off * 0.5, tier.trailWidth * 0.8, 0, 1, C(fc.r, fc.g, fc.b, 200 * age))
+                        local segHash = j + floor(elapsed * 20)
+                        -- Only 40% of segments visible at any time (digital corruption)
+                        if (segHash * 137 + floor(elapsed * 15)) % 5 < 2 then
+                            local off = sin(segHash * 97.3) * 6
+                            local g = 180 + sin(elapsed * 8 + j) * 75
+                            render.DrawBeam(p1.pos + right * off, p2.pos + right * off, tier.trailWidth * 0.6, 0, 1, C(0, Clamp(g, 100, 255), 0, 200 * age))
+                        end
+                    end
+
+                    -- Vertical "falling code" drops perpendicular to trail
+                    if tier.matrixTrail then
+                        for j = 3, trailN, 3 do
+                            local pt = RingGet(proj.trail, j)
+                            if not pt then continue end
+                            local age = 1 - Clamp((ct - pt.time) / fadeTime, 0, 1)
+                            if age < 0.1 then continue end
+                            local dropHash = j * 31 + floor(elapsed * 12)
+                            if dropHash % 4 == 0 then
+                                local dropLen = 8 + sin(dropHash * 0.7) * 4
+                                local dropOff = sin(dropHash * 2.3) * 5
+                                local dropPos = pt.pos + right * dropOff
+                                local dropEnd = dropPos - up * dropLen
+                                render.DrawBeam(dropPos, dropEnd, 0.8, 0, 1, C(0, 255, 50, 120 * age))
+                            end
                         end
                     end
                 end
@@ -515,6 +534,11 @@ hook.Add("PostDrawTranslucentRenderables", "BRS_UW_ProjRender", function(_, bSky
             render.SetMaterial(matGlow)
             render.DrawSprite(imp.pos + imp.normal * 0.5, ringSize, ringSize, C(0, 0, 0, fade * 180))
             render.DrawSprite(imp.pos + imp.normal * 0.5, ringSize * 1.3, ringSize * 1.3, C(200, 0, 0, fade * 120))
+        elseif tier.glitchTrail then
+            -- Matrix impact: bright green core + scattered data fragments
+            render.DrawSprite(imp.pos + imp.normal, ringSize, ringSize, C(0, 255, 50, fade * 220))
+            render.SetMaterial(matGlow)
+            render.DrawSprite(imp.pos + imp.normal, ringSize * 0.5, ringSize * 0.5, C(200, 255, 200, fade * 255))
         else
             render.DrawSprite(imp.pos + imp.normal, ringSize, ringSize, C(ic.r, ic.g, ic.b, fade * 200))
         end

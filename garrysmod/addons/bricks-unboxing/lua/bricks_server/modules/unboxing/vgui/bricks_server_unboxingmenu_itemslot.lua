@@ -13,29 +13,33 @@ local _statBg    = Color(10, 10, 15, 200)
 local _whiteA220 = Color(255, 255, 255, 220)
 local _dc        = Color(0, 0, 0, 0) -- reusable scratch color
 
+-- Ascended: clean premium identity colors
+local _ascBorderCol = Color(255, 215, 60, 90)   -- subtle gold border
+local _ascCorner    = Color(255, 215, 60, 180)   -- corner diamond
+local _ascInnerLine = Color(255, 215, 60, 40)    -- faint inner line
+
 -- ============================================================
 -- PARTICLE SYSTEM (swap-remove, pre-alloc colors, capped)
 -- ============================================================
 local cardParticles = {}
-local MAX_PARTICLES = 8
+local MAX_PARTICLES = 6
 
-local _pcolGold = {}
+-- Glitched: matrix green falling chars
 local _pcolGlitch = {}
+for i = 1, 6 do _pcolGlitch[i] = Color(0, 140 + i * 18, 0) end
+-- Mythical: dimmer fire embers
 local _pcolMyth = {}
-for i = 1, 5 do _pcolGold[i] = Color(255, 190 + i * 12, 60 + i * 15) end
-for i = 0, 11 do _pcolGlitch[i + 1] = Color(0, 120 + i * 11, 0) end
 for i = 1, 5 do _pcolMyth[i] = Color(255, 80 + i * 24, 0) end
 
-local function SpawnParticle(panelID, w, h, rarity, isAscended)
+local function SpawnParticle(panelID, w, h, rarity)
     cardParticles[panelID] = cardParticles[panelID] or {}
     local ps = cardParticles[panelID]
     if #ps >= MAX_PARTICLES then return end
-    if isAscended then
-        ps[#ps + 1] = { x = math.Rand(4, w-4), y = h - math.Rand(0,10), vx = math.Rand(-6,6), vy = math.Rand(-50,-90), size = math.Rand(1.5,3), life = 0, maxLife = math.Rand(0.8,1.6), color = _pcolGold[math.random(5)], ascended = true }
-    elseif rarity == "Glitched" then
-        ps[#ps + 1] = { x = math.Rand(4,w-4), y = math.Rand(4,h-4), size = math.Rand(1.5,3.5), life = 0, maxLife = math.Rand(0.4,1.0), color = _pcolGlitch[math.random(12)] }
+    if rarity == "Glitched" then
+        -- Matrix: characters fall from top
+        ps[#ps + 1] = { x = math.Rand(6,w-6), y = -math.Rand(2,10), vy = math.Rand(30,70), size = math.Rand(2,4), life = 0, maxLife = math.Rand(0.6,1.4), color = _pcolGlitch[math.random(6)] }
     elseif rarity == "Mythical" then
-        ps[#ps + 1] = { x = math.Rand(8,w-8), y = h - math.Rand(5,15), vx = math.Rand(-8,8), vy = math.Rand(-40,-80), size = math.Rand(1.5,3), life = 0, maxLife = math.Rand(0.6,1.2), color = _pcolMyth[math.random(5)] }
+        ps[#ps + 1] = { x = math.Rand(8,w-8), y = h - math.Rand(5,15), vx = math.Rand(-4,4), vy = math.Rand(-25,-50), size = math.Rand(1,2.5), life = 0, maxLife = math.Rand(0.5,1.0), color = _pcolMyth[math.random(5)] }
     end
 end
 
@@ -50,18 +54,12 @@ local function UpdateAndDrawParticles(panelID, dt)
             ps[i] = ps[n]; ps[n] = nil; n = n - 1
         else
             local frac = p.life / p.maxLife
-            local a = (frac < 0.3) and (frac / 0.3 * 255) or ((1 - (frac - 0.3) / 0.7) * 255)
-            if p.vx then p.x = p.x + p.vx * dt; p.y = p.y + p.vy * dt end
+            local a = (frac < 0.2) and (frac / 0.2 * 200) or ((1 - (frac - 0.2) / 0.8) * 200)
+            if p.vx then p.x = p.x + p.vx * dt end
+            if p.vy then p.y = p.y + p.vy * dt end
             _dc.r, _dc.g, _dc.b, _dc.a = p.color.r, p.color.g, p.color.b, a
             surface.SetDrawColor(_dc)
-            if p.ascended then
-                local sz = p.size * (1 + frac * 0.5)
-                surface.DrawRect(p.x - 1, p.y - sz*2, 2, sz*4)
-                surface.DrawRect(p.x - sz*2, p.y - 1, sz*4, 2)
-            else
-                local sz = p.size * (1 + frac * 0.3)
-                surface.DrawRect(p.x - sz/2, p.y - sz/2, sz, sz)
-            end
+            surface.DrawRect(p.x - p.size/2, p.y - p.size/2, p.size, p.size)
         end
     end
 end
@@ -217,19 +215,19 @@ function PANEL:FillPanel( data, amount, actions )
                 borderCol = BRS_UW.GetBorderColor(displayRarity) or rarityColor
             end
 
-            -- ====== OUTER GLOW (high tier only - 1 draw) ======
-            if isHighTier then
-                local pulse = math.sin(ct * 2.5) * 0.4 + 0.6
-                local glowA = isMythical and (22 * pulse) or (isGlitched and (18 * pulse) or (14 * pulse))
+            -- ====== OUTER GLOW (high tier - subtle, skip for Ascended) ======
+            if isHighTier and not isAscended then
+                local pulse = math.sin(ct * 2) * 0.3 + 0.7
+                local glowA = isMythical and (12 * pulse) or (isGlitched and (10 * pulse) or (8 * pulse))
                 draw.RoundedBox(8, -2, -2, w + 4, h + 4, ColorAlpha(borderCol, glowA))
             end
 
             -- ====== CARD BACKGROUND ======
             draw.RoundedBox( 6, 0, 0, w, h, C.bg_mid or Color(26,27,35) )
 
-            -- ====== RARITY TOP GRADIENT (5 bands instead of 41 px) ======
+            -- ====== RARITY TOP GRADIENT (reduced alpha) ======
             if isUniqueWeapon then
-                local gradA = isHighTier and 18 or (isEpic and 12 or 8)
+                local gradA = isHighTier and 12 or (isEpic and 8 or 5)
                 for i = 0, 4 do
                     _dc.r, _dc.g, _dc.b, _dc.a = borderCol.r, borderCol.g, borderCol.b, gradA * (1 - i/5)
                     surface.SetDrawColor(_dc)
@@ -250,110 +248,64 @@ function PANEL:FillPanel( data, amount, actions )
                 surface.DrawOutlinedRect(0, 0, w, h, 1)
             end
 
-            -- ====== MATRIX DIGITAL RAIN (Glitched) ======
+            -- ====== MATRIX DIGITAL RAIN (Glitched) - toned down ======
             if isGlitched then
                 local toSX, toSY = self2:LocalToScreen(0, 0)
                 render.SetScissorRect(toSX, toSY, toSX + w, toSY + h, true)
-
-                -- Dark overlay to make green pop
-                _dc.r, _dc.g, _dc.b, _dc.a = 0, 0, 0, 8
-                surface.SetDrawColor(_dc)
-                surface.DrawRect(1, 1, w - 2, h - 2)
-
-                -- Falling green "characters" in 8 columns
-                local cols = 8
-                local charW = 3
-                local charH = 6
+                local cols = 6
+                local charH = 4
                 local spacing = (w - 8) / cols
                 for col = 0, cols - 1 do
                     local seed = shimmerPhase + col * 7.3
-                    local speed = 30 + math.sin(seed) * 15
-                    local colX = 4 + col * spacing + math.sin(seed * 0.5) * 3
-
-                    -- 5 chars per column at staggered heights
-                    for ch = 0, 4 do
-                        local baseY = ((ct * speed + ch * (h / 4) + seed * 20) % (h + 30)) - 15
-                        local brightness = 0.3 + 0.7 * ((ch == 0) and 1 or (0.4 + math.sin(ct * 4 + col + ch) * 0.3))
-                        local g = math.floor(180 * brightness + 40)
-                        local a = math.floor(20 * brightness)
-                        -- Bright leading char, dimmer trail
-                        if ch == 0 then a = 30 end
-                        _dc.r, _dc.g, _dc.b, _dc.a = 0, g, 0, a
+                    local speed = 25 + math.sin(seed) * 10
+                    local colX = 4 + col * spacing
+                    for ch = 0, 3 do
+                        local baseY = ((ct * speed + ch * (h / 3) + seed * 20) % (h + 20)) - 10
+                        local brightness = (ch == 0) and 1 or (0.3 + math.sin(ct * 3 + col + ch) * 0.2)
+                        _dc.r, _dc.g, _dc.b, _dc.a = 0, math.floor(160 * brightness + 40), 0, (ch == 0) and 18 or 10
                         surface.SetDrawColor(_dc)
-                        surface.DrawRect(colX, baseY, charW, charH)
-                        -- Dim trail behind
-                        if ch == 0 then
-                            _dc.a = 12
-                            surface.SetDrawColor(_dc)
-                            surface.DrawRect(colX, baseY + charH, charW, charH * 3)
-                        end
+                        surface.DrawRect(colX, baseY, 2, charH)
                     end
                 end
-
-                -- Subtle green scanline sweep
-                local scanY = ((ct * 40 + shimmerPhase * 10) % (h + 20)) - 10
-                _dc.r, _dc.g, _dc.b, _dc.a = 0, 255, 0, 6
-                surface.SetDrawColor(_dc)
-                surface.DrawRect(1, scanY, w - 2, 3)
-
                 render.SetScissorRect(0, 0, 0, 0, false)
-
-                if math.random() < 0.1 then SpawnParticle(panelID, w, h, "Glitched") end
+                if math.random() < 0.06 then SpawnParticle(panelID, w, h, "Glitched") end
             end
 
-            -- ====== FIRE RADIANCE (Mythical) - 10 bands ======
+            -- ====== FIRE RADIANCE (Mythical) - reduced height + opacity ======
             if isMythical then
-                local fireH = h * 0.6
-                local bandH = fireH / 10
-                for i = 0, 9 do
-                    local frac = i / 10
-                    local baseA = (1 - frac) * 20
-                    local flicker = math.sin(ct * 3 + i * 0.8) * 0.3 + 0.7
+                local fireH = h * 0.4
+                local bandH = fireH / 6
+                for i = 0, 5 do
+                    local frac = i / 6
+                    local baseA = (1 - frac) * 12
+                    local flicker = math.sin(ct * 2.5 + i * 0.8) * 0.3 + 0.7
                     _dc.r, _dc.g, _dc.b, _dc.a = 255, math.floor(60 + frac * 140), 0, baseA * flicker
                     surface.SetDrawColor(_dc)
                     surface.DrawRect(1, h - 1 - (i+1)*bandH, w - 2, bandH)
                 end
-                if math.random() < 0.08 then SpawnParticle(panelID, w, h, "Mythical") end
+                if math.random() < 0.05 then SpawnParticle(panelID, w, h, "Mythical") end
             end
 
-            -- ====== DRAW PARTICLES ======
-            if isGlitched or isMythical or isAscended then
+            -- ====== DRAW PARTICLES (Glitched + Mythical only) ======
+            if isGlitched or isMythical then
                 UpdateAndDrawParticles(panelID, dt)
             end
 
-            -- ====== ASCENDED QUALITY EFFECTS (simplified - 8 draws) ======
+            -- ====== ASCENDED IDENTITY (clean premium - no particles/glow) ======
             if isAscended then
-                local ascT = ct * 1.8
-                local breathe = math.sin(ascT) * 0.3 + 0.7
-
-                -- Golden border overlay (4 draws)
-                local bA = 80 + 50 * breathe
-                _dc.r, _dc.g, _dc.b, _dc.a = 255, 215, 60, bA
+                -- Thin gold inner border (1px, subtle breathing)
+                local ascA = 45 + math.sin(ct * 1.5) * 12
+                _dc.r, _dc.g, _dc.b, _dc.a = 255, 215, 60, ascA
                 surface.SetDrawColor(_dc)
-                surface.DrawRect(0, 0, w, 2)
-                surface.DrawRect(0, h - 2, w, 2)
-                surface.DrawRect(0, 2, 1, h - 4)
-                surface.DrawRect(w - 1, 2, 1, h - 4)
+                surface.DrawOutlinedRect(2, 2, w - 4, h - 4, 1)
 
-                -- Outer glow (1 draw)
-                draw.RoundedBox(8, -2, -2, w + 4, h + 4, ColorAlpha(_gold, 12 * breathe))
-
-                -- Sweeping highlight (1 rect instead of 4000 pixels)
-                local shimCycle = ((ascT * 0.5 + shimmerPhase) % 4.0) / 4.0
-                local shimW = w * 0.3
-                local sx = Lerp(shimCycle, -shimW, w + shimW)
-                if sx > -shimW and sx < w + shimW then
-                    local toSX2, toSY2 = self2:LocalToScreen(0, 0)
-                    render.SetScissorRect(toSX2, toSY2, toSX2 + w, toSY2 + h, true)
-                    _dc.r, _dc.g, _dc.b, _dc.a = 255, 230, 120, 10 * breathe
-                    surface.SetDrawColor(_dc)
-                    surface.DrawRect(sx, 0, shimW, h)
-                    render.SetScissorRect(0, 0, 0, 0, false)
-                end
-
-                if math.random() < 0.08 then
-                    SpawnParticle(panelID, w, h, nil, true)
-                end
+                -- Small diamond markers in 4 corners
+                _dc.a = 130
+                surface.SetDrawColor(_dc)
+                surface.DrawRect(4, 4, 3, 3)
+                surface.DrawRect(w - 7, 4, 3, 3)
+                surface.DrawRect(4, h - 7, 3, 3)
+                surface.DrawRect(w - 7, h - 7, 3, 3)
             end
 
             -- ====== HOVER EFFECT ======
@@ -386,7 +338,16 @@ function PANEL:FillPanel( data, amount, actions )
             -- ====== NAME + RARITY ======
             local textBaseY = h - 8 - statAreaH
             draw.SimpleText( configItemTable.Name or "NIL", nameFont, w/2, textBaseY - rarityY + 2, C.text_primary or Color(220,222,230), TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM )
-            draw.SimpleText( displayRarity or "", rarityFont, w/2, textBaseY - rarityY + 4, rarityColor, TEXT_ALIGN_CENTER, 0 )
+
+            -- Glitched rarity label: matrix flicker effect
+            if isGlitched then
+                local flkG = 160 + math.sin(ct * 12) * 60 + math.sin(ct * 31) * 35
+                local flkA = 180 + math.sin(ct * 7) * 40
+                _dc.r, _dc.g, _dc.b, _dc.a = 0, math.floor(math.Clamp(flkG, 100, 255)), 0, math.floor(math.Clamp(flkA, 140, 255))
+                draw.SimpleText( displayRarity or "", rarityFont, w/2, textBaseY - rarityY + 4, _dc, TEXT_ALIGN_CENTER, 0 )
+            else
+                draw.SimpleText( displayRarity or "", rarityFont, w/2, textBaseY - rarityY + 4, rarityColor, TEXT_ALIGN_CENTER, 0 )
+            end
 
             -- ====== UNIQUE WEAPON STATS ======
             if isUniqueWeapon and uwData and uwData.stats and BRS_UW and BRS_UW.Stats then
@@ -488,8 +449,12 @@ function PANEL:FillPanel( data, amount, actions )
 
         if isUniqueWeapon and uwData then
             local rCol = SMGRP.UI.GetRarityColor(uwData.rarity)
-            -- Use direct Color() not ColorAlpha() — pool colors get overwritten before Paint runs
-            self:AddTopInfo(uwData.rarity, Color(rCol.r, rCol.g, rCol.b, 160), Color(255,255,255))
+            if isGlitched then
+                -- Matrix-style: dark pill with green text
+                self:AddTopInfo(uwData.rarity, Color(5, 20, 5, 200), Color(0, 255, 65))
+            else
+                self:AddTopInfo(uwData.rarity, Color(rCol.r, rCol.g, rCol.b, 160), Color(255,255,255))
+            end
         end
     else
         self.panelInfo.Paint = function( self2, w, h )

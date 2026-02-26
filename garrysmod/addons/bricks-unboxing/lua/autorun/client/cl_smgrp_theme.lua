@@ -47,7 +47,7 @@ SMGRP.UI.Colors = {
     rarity_rare      = Color(50, 140, 230),
     rarity_epic      = Color(155, 70, 255),
     rarity_legendary = Color(255, 170, 20),
-    rarity_glitched  = Color(32, 255, 32),
+    rarity_glitched  = Color(0, 255, 65),
     rarity_mythical  = Color(255, 50, 50),
 }
 

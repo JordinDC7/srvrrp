@@ -64,9 +64,9 @@ local rarityBorderColors = {
     Rare      = { Color(30,120,210,220) },
     Epic      = { Color(140,50,240,230) },
     Legendary = { Color(255,150,0,240) },
-    Glitched  = { -- Rainbow cycle
-        Color(255,0,0), Color(255,127,0), Color(255,255,0),
-        Color(0,255,0), Color(0,255,255), Color(0,0,255), Color(255,0,255)
+    Glitched  = { -- Matrix green cycle
+        Color(0,200,40), Color(0,255,65), Color(0,180,30),
+        Color(0,230,50), Color(0,150,25),
     },
     Mythical  = { -- Hot cycle
         Color(255,0,50), Color(255,50,0), Color(255,200,0),
