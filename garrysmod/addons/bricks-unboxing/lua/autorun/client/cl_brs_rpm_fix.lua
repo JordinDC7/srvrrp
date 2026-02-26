@@ -1,20 +1,22 @@
 -- ============================================================
--- BRS Unique Weapons - RPM Client Sync
+-- BRS Unique Weapons - RPM Polish System
 --
--- DESIGN: Minimal, surgical, continuous.
--- Server sets Primary.Delay/RPM on its copy of the weapon.
--- Client gets the multiplier via NW2 and continuously
--- enforces the correct values on its own copy.
+-- PHILOSOPHY: Make boosted weapons feel BETTER than stock,
+-- not worse. Stock M9K has a natural rhythm. Our job is to
+-- preserve that rhythm at higher speed and add premium feel.
 --
--- "Continuously" because M9K weapons reset Primary table on
--- Deploy, Holster, Initialize, etc. A one-time patch breaks
--- on weapon switch. Checking one weapon per frame is free.
+-- APPROACH:
+--   1. Continuously sync Primary.Delay/RPM to client (core fix)
+--   2. Pitch randomization on fire sounds (natural variation)
+--   3. Smooth recoil dampening (not sharp per-shot override)
+--   4. Let animations interrupt naturally (no forced playback)
+--   5. Subtle camera smoothing during rapid fire
 -- ============================================================
 
 -- ============================================================
--- CORE: Keep client Primary.Delay in sync with server
--- Runs every frame but only touches the active weapon.
--- Compares actual delay to target delay - only writes if wrong.
+-- 1. CORE: Continuous Primary.Delay/RPM sync
+-- This is non-negotiable. Without it, client predicts at wrong rate.
+-- Runs every frame on active weapon only.
 -- ============================================================
 hook.Add("Think", "BRS_UW_ClientSync", function()
     local ply = LocalPlayer()
@@ -26,65 +28,138 @@ hook.Add("Think", "BRS_UW_ClientSync", function()
     local mult = wep:GetNW2Float("BRS_UW_RPMMultiplier", 0)
 
     if mult <= 1.0 then
-        -- Not boosted or multiplier not received yet
-        -- Restore if we previously patched this weapon
-        if wep.BRS_UW_CL_OrigDelay then
-            wep.Primary.Delay = wep.BRS_UW_CL_OrigDelay
-            wep.Primary.RPM = wep.BRS_UW_CL_OrigRPM
-            if wep.BRS_UW_CL_OrigRecoil then wep.Primary.Recoil = wep.BRS_UW_CL_OrigRecoil end
-            if wep.BRS_UW_CL_OrigKickUp then wep.Primary.KickUp = wep.BRS_UW_CL_OrigKickUp end
-            if wep.BRS_UW_CL_OrigKickDown then wep.Primary.KickDown = wep.BRS_UW_CL_OrigKickDown end
-            if wep.BRS_UW_CL_OrigKickH then wep.Primary.KickHorizontal = wep.BRS_UW_CL_OrigKickH end
-            wep.BRS_UW_CL_OrigDelay = nil
-            wep.BRS_UW_CL_OrigRPM = nil
-            wep.BRS_UW_CL_OrigRecoil = nil
-            wep.BRS_UW_CL_OrigKickUp = nil
-            wep.BRS_UW_CL_OrigKickDown = nil
-            wep.BRS_UW_CL_OrigKickH = nil
+        -- Restore originals if we modified this weapon
+        if wep.BRS_UW_CL_Orig then
+            local o = wep.BRS_UW_CL_Orig
+            wep.Primary.Delay = o.Delay
+            wep.Primary.RPM = o.RPM
+            if o.Recoil then wep.Primary.Recoil = o.Recoil end
+            if o.KickUp then wep.Primary.KickUp = o.KickUp end
+            if o.KickDown then wep.Primary.KickDown = o.KickDown end
+            if o.KickHorizontal then wep.Primary.KickHorizontal = o.KickHorizontal end
+            wep.BRS_UW_CL_Orig = nil
         end
         return
     end
 
-    -- Calculate what the values SHOULD be
     local origRPM = wep:GetNW2Float("BRS_UW_OrigRPM", 0)
     if origRPM <= 0 then return end
 
+    -- Save originals once
+    if not wep.BRS_UW_CL_Orig then
+        wep.BRS_UW_CL_Orig = {
+            Delay = 60 / origRPM,
+            RPM = origRPM,
+            Recoil = wep.Primary.Recoil,
+            KickUp = wep.Primary.KickUp,
+            KickDown = wep.Primary.KickDown,
+            KickHorizontal = wep.Primary.KickHorizontal,
+        }
+    end
+
+    -- Enforce boosted values every frame
     local targetRPM = math.Round(origRPM * mult)
-    local targetDelay = 60 / targetRPM
-
-    -- Save originals on first encounter (before any modification)
-    if not wep.BRS_UW_CL_OrigDelay then
-        wep.BRS_UW_CL_OrigDelay = 60 / origRPM
-        wep.BRS_UW_CL_OrigRPM = origRPM
-        -- Save recoil originals
-        wep.BRS_UW_CL_OrigRecoil = wep.Primary.Recoil
-        wep.BRS_UW_CL_OrigKickUp = wep.Primary.KickUp
-        wep.BRS_UW_CL_OrigKickDown = wep.Primary.KickDown
-        wep.BRS_UW_CL_OrigKickH = wep.Primary.KickHorizontal
-    end
-
-    -- Enforce correct values (M9K may have reset them)
     wep.Primary.RPM = targetRPM
-    wep.Primary.Delay = targetDelay
+    wep.Primary.Delay = 60 / targetRPM
 
-    -- Enforce recoil scaling
-    local recoilScale = 1 / math.sqrt(mult)
-    if wep.BRS_UW_CL_OrigRecoil then
-        wep.Primary.Recoil = wep.BRS_UW_CL_OrigRecoil * recoilScale
-    end
-    if wep.BRS_UW_CL_OrigKickUp then
-        wep.Primary.KickUp = wep.BRS_UW_CL_OrigKickUp * recoilScale
-    end
-    if wep.BRS_UW_CL_OrigKickDown then
-        wep.Primary.KickDown = wep.BRS_UW_CL_OrigKickDown * recoilScale
-    end
-    if wep.BRS_UW_CL_OrigKickH then
-        wep.Primary.KickHorizontal = wep.BRS_UW_CL_OrigKickH * recoilScale
-    end
+    -- Smooth recoil scaling
+    local rs = 1 / math.sqrt(mult)
+    local o = wep.BRS_UW_CL_Orig
+    if o.Recoil then wep.Primary.Recoil = o.Recoil * rs end
+    if o.KickUp then wep.Primary.KickUp = o.KickUp * rs end
+    if o.KickDown then wep.Primary.KickDown = o.KickDown * rs end
+    if o.KickHorizontal then wep.Primary.KickHorizontal = o.KickHorizontal * rs end
 end)
 
 -- ============================================================
--- ANIMATION: Speed up fire sequences only
+-- 2. SOUND: Natural pitch variation instead of channel rotation
+--
+-- Channel rotation causes robotic feel because each channel
+-- has slightly different spatialization. Instead: let Source
+-- handle channels naturally and add random pitch variation
+-- so each shot sounds slightly different (like a real gun).
+-- Source may drop an occasional sound at very high RPM - 
+-- the pitch variation masks this perfectly.
+-- ============================================================
+hook.Add("EntityEmitSound", "BRS_UW_RPMSoundFix", function(data)
+    local ent = data.Entity
+    if not IsValid(ent) then return end
+
+    local wep
+    if ent:IsWeapon() then
+        wep = ent
+    elseif ent:IsPlayer() then
+        wep = ent:GetActiveWeapon()
+    end
+    if not IsValid(wep) then return end
+
+    local mult = wep:GetNW2Float("BRS_UW_RPMMultiplier", 0)
+    if mult <= 1.0 then return end
+
+    -- Only touch the weapon's fire sound
+    local fireSound = wep.Primary and wep.Primary.Sound
+    if not fireSound or data.SoundName ~= fireSound then return end
+
+    -- Pitch variation: ±4% random per shot
+    -- This makes sustained fire sound natural instead of a loop
+    local basePitch = data.Pitch or 100
+    local variation = math.Rand(-4, 4)
+    data.Pitch = math.Clamp(basePitch + variation, 85, 115)
+
+    -- Slight volume variation for realism (±5%)
+    local baseVol = data.Volume or 1
+    data.Volume = math.Clamp(baseVol + math.Rand(-0.05, 0.05), 0.85, 1.0)
+
+    return true
+end)
+
+-- ============================================================
+-- 3. RECOIL: Smooth dampening instead of sharp ViewPunch override
+--
+-- Problem: ViewPunch applies instant angular kick. At high RPM
+-- these stack into a vibrating mess even when scaled down.
+--
+-- Fix: Dampen ViewPunch recovery speed so the camera smoothly
+-- settles between shots instead of snapping back and forth.
+-- Also slightly randomize kick direction for natural spray.
+-- ============================================================
+local playerMeta = FindMetaTable("Player")
+if playerMeta and playerMeta.ViewPunch then
+    local origViewPunch = playerMeta.ViewPunch
+
+    playerMeta.ViewPunch = function(self, ang)
+        if not IsValid(self) or not ang then
+            return origViewPunch(self, ang)
+        end
+
+        local wep = self:GetActiveWeapon()
+        if not IsValid(wep) then return origViewPunch(self, ang) end
+
+        local mult = wep:GetNW2Float("BRS_UW_RPMMultiplier", 0)
+        if mult <= 1.0 then return origViewPunch(self, ang) end
+
+        -- Scale magnitude by sqrt
+        local s = 1 / math.sqrt(mult)
+
+        -- Add slight random variation to horizontal kick
+        -- Makes spray feel organic instead of a perfect line
+        local horizJitter = math.Rand(-0.15, 0.15) * math.abs(ang.p)
+
+        return origViewPunch(self, Angle(
+            ang.p * s,
+            ang.y * s + horizJitter,
+            ang.r * s * 0.5  -- reduce roll even more, it causes nausea at high RPM
+        ))
+    end
+end
+
+-- ============================================================
+-- 4. ANIMATION: Gentle speed scaling with natural cap
+--
+-- At 1.3x RPM, play anim at 1.3x - looks fine.
+-- Above 1.6x, cap anim speed and let shots interrupt naturally.
+-- Fast-interrupting fire anim looks like a real fast gun.
+-- Raw 2.5x playback looks like a sped-up video = bad.
 -- ============================================================
 local fireActivities = {
     [ACT_VM_PRIMARYATTACK] = true,
@@ -119,37 +194,86 @@ hook.Add("PostDrawViewModel", "BRS_UW_RPMAnimFix", function(vm, ply, wep)
         end
     end
 
-    vm:SetPlaybackRate(isFiring and mult or 1.0)
+    if isFiring then
+        -- Soft cap: animation speed scales up to 1.6x then tapers
+        -- Past 1.6x, let the animation get interrupted by next shot naturally
+        local animMult = mult <= 1.6 and mult or (1.6 + (mult - 1.6) * 0.3)
+        vm:SetPlaybackRate(animMult)
+    else
+        vm:SetPlaybackRate(1.0)
+    end
 end)
 
 -- ============================================================
--- VIEWPUNCH: Scale down per-shot screen kick
+-- 5. CAMERA: Subtle smooth shake during sustained rapid fire
+-- Adds a gentle camera sway that builds during sustained fire
+-- and fades out when you stop. Feels premium and physical.
 -- ============================================================
-local playerMeta = FindMetaTable("Player")
-if playerMeta and playerMeta.ViewPunch then
-    local origViewPunch = playerMeta.ViewPunch
+local sustainedFireTime = 0
+local lastShotTime = 0
+local smoothShake = Angle(0, 0, 0)
 
-    playerMeta.ViewPunch = function(self, ang)
-        if not IsValid(self) or not ang then
-            return origViewPunch(self, ang)
-        end
-        local wep = self:GetActiveWeapon()
-        if IsValid(wep) then
-            local mult = wep:GetNW2Float("BRS_UW_RPMMultiplier", 0)
-            if mult > 1.0 then
-                local s = 1 / math.sqrt(mult)
-                return origViewPunch(self, Angle(ang.p * s, ang.y * s, ang.r * s))
-            end
-        end
-        return origViewPunch(self, ang)
+hook.Add("CalcView", "BRS_UW_CameraSmooth", function(ply, pos, ang, fov)
+    if not IsValid(ply) then return end
+    local wep = ply:GetActiveWeapon()
+    if not IsValid(wep) then
+        smoothShake = Angle(0, 0, 0)
+        return
     end
-end
+
+    local mult = wep:GetNW2Float("BRS_UW_RPMMultiplier", 0)
+    if mult <= 1.0 then
+        smoothShake = Angle(0, 0, 0)
+        return
+    end
+
+    local now = CurTime()
+    local shooting = ply:KeyDown(IN_ATTACK) and wep:Clip1() > 0
+
+    if shooting then
+        -- Build up sustained fire timer
+        if now - lastShotTime > 0.3 then
+            sustainedFireTime = 0  -- reset if gap between bursts
+        end
+        sustainedFireTime = sustainedFireTime + FrameTime()
+        lastShotTime = now
+
+        -- Intensity builds over ~0.5 seconds of sustained fire
+        local intensity = math.Clamp(sustainedFireTime / 0.5, 0, 1)
+        intensity = intensity * (mult - 1) * 0.3  -- scale with RPM boost
+
+        -- Smooth organic camera sway using perlin-like noise
+        local t = now * 8
+        local targetShake = Angle(
+            math.sin(t * 1.1) * intensity * 0.15,
+            math.cos(t * 0.9) * intensity * 0.12,
+            math.sin(t * 1.3) * intensity * 0.05
+        )
+
+        -- Smooth interpolation
+        smoothShake = LerpAngle(FrameTime() * 12, smoothShake, targetShake)
+    else
+        -- Fade out smoothly
+        smoothShake = LerpAngle(FrameTime() * 8, smoothShake, Angle(0, 0, 0))
+        if smoothShake:Length() < 0.01 then
+            smoothShake = Angle(0, 0, 0)
+            return
+        end
+    end
+
+    if smoothShake:Length() > 0.01 then
+        return {
+            origin = pos,
+            angles = ang + smoothShake,
+            fov = fov,
+        }
+    end
+end)
 
 -- ============================================================
--- SHELLS: Throttle ejection at high RPM
+-- 6. SHELLS: Throttle at high RPM
 -- ============================================================
 local lastShellTime = 0
-
 if util and util.Effect then
     local origEffect = util.Effect
     util.Effect = function(name, effectData, ...)
@@ -172,37 +296,4 @@ if util and util.Effect then
     end
 end
 
--- ============================================================
--- SOUND: Rotate channels for fire sound ONLY
--- Matches the exact Primary.Sound string. Nothing else touched.
--- ============================================================
-local channels = {CHAN_WEAPON, CHAN_WEAPON2, CHAN_BODY, CHAN_VOICE}
-local chanIdx = 0
-
-hook.Add("EntityEmitSound", "BRS_UW_RPMSoundFix", function(data)
-    local ent = data.Entity
-    if not IsValid(ent) then return end
-
-    local wep
-    if ent:IsWeapon() then
-        wep = ent
-    elseif ent:IsPlayer() then
-        wep = ent:GetActiveWeapon()
-    end
-    if not IsValid(wep) then return end
-
-    local mult = wep:GetNW2Float("BRS_UW_RPMMultiplier", 0)
-    if mult <= 1.0 then return end
-
-    -- ONLY rotate channel for the weapon's fire sound
-    local fireSound = wep.Primary and wep.Primary.Sound
-    if not fireSound then return end
-    if data.SoundName ~= fireSound then return end
-
-    chanIdx = chanIdx + 1
-    if chanIdx > #channels then chanIdx = 1 end
-    data.Channel = channels[chanIdx]
-    return true
-end)
-
-print("[BRS UW] RPM sync loaded")
+print("[BRS UW] RPM polish system loaded")
