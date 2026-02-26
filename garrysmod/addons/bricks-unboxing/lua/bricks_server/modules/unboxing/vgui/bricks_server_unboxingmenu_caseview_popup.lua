@@ -173,14 +173,16 @@ function PANEL:FillPanel( caseKey, buttonFunc, inventoryView )
     end
     table.sort(sortedRarities, function(a, b) return a[2] > b[2] end)
 
-    local entryH = 28
-    local statsH = #sortedRarities * entryH + 50
+    local entryH = 30
+    local headerH = 36
+    local statsH = #sortedRarities * entryH + headerH + 8
     statsPanel:SetTall( statsH )
+    statsPanel:DockPadding( 10, headerH, 10, 4 )
     statsPanel.Paint = function( self2, w, h )
         draw.RoundedBox( 6, 0, 0, w, h, BRICKS_SERVER.Func.GetTheme( 2 ) )
-        draw.SimpleText( "DROP RATES", "SMGRP_Bold11", w/2, 14, BRICKS_SERVER.Func.GetTheme( 6, 120 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+        draw.SimpleText( "DROP RATES", "SMGRP_Bold13", w/2, 18, BRICKS_SERVER.Func.GetTheme( 6, 120 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
         surface.SetDrawColor(BRICKS_SERVER.Func.GetTheme( 3 ))
-        surface.DrawRect(10, 28, w - 20, 1)
+        surface.DrawRect(10, headerH - 2, w - 20, 1)
     end
 
     for i, entry in ipairs( sortedRarities ) do
@@ -189,15 +191,15 @@ function PANEL:FillPanel( caseKey, buttonFunc, inventoryView )
         local rarCol = (SMGRP and SMGRP.UI and SMGRP.UI.GetRarityColor) and SMGRP.UI.GetRarityColor(rar) or Color(160,165,175)
 
         local row = vgui.Create( "DPanel", statsPanel )
-        row:SetPos( 8, 32 + (i - 1) * entryH )
-        row:SetSize( statsPanel:GetWide() - 16, entryH )
+        row:Dock( TOP )
+        row:SetTall( entryH )
         row.Paint = function( self2, w, h )
             -- Rarity dot
-            draw.RoundedBox( 3, 4, h/2 - 3, 6, 6, rarCol )
+            draw.RoundedBox( 4, 2, h/2 - 4, 8, 8, rarCol )
             -- Rarity name
-            draw.SimpleText( rar, "SMGRP_Bold10", 16, h/2, rarCol, 0, TEXT_ALIGN_CENTER )
+            draw.SimpleText( rar, "SMGRP_Bold12", 16, h/2, rarCol, 0, TEXT_ALIGN_CENTER )
             -- Percentage
-            draw.SimpleText( string.format("%.1f%%", pct), "SMGRP_Bold10", w - 4, h/2, BRICKS_SERVER.Func.GetTheme( 6, 140 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )
+            draw.SimpleText( string.format("%.1f%%", pct), "SMGRP_Bold12", w - 2, h/2, BRICKS_SERVER.Func.GetTheme( 6, 160 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )
         end
     end
 
@@ -205,11 +207,11 @@ function PANEL:FillPanel( caseKey, buttonFunc, inventoryView )
     local countPanel = vgui.Create( "DPanel", self.leftPanel )
     countPanel:Dock( TOP )
     countPanel:DockMargin( 12, 8, 12, 0 )
-    countPanel:SetTall( 36 )
+    countPanel:SetTall( 40 )
     local itemCount = table.Count( caseItems )
     countPanel.Paint = function( self2, w, h )
         draw.RoundedBox( 6, 0, 0, w, h, BRICKS_SERVER.Func.GetTheme( 2 ) )
-        draw.SimpleText( itemCount .. " POSSIBLE DROPS", "SMGRP_Bold11", w/2, h/2, BRICKS_SERVER.Func.GetTheme( 6, 100 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+        draw.SimpleText( itemCount .. " POSSIBLE DROPS", "SMGRP_Bold13", w/2, h/2, BRICKS_SERVER.Func.GetTheme( 6, 100 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
     end
 
     local rarityInfo = BRICKS_SERVER.Func.GetRarityInfo( caseTable.Rarity )

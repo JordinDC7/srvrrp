@@ -107,7 +107,7 @@ function BRS_UW.DrawMiniStatBars(x, y, w, h, stats, rarity)
 
     local barH = math.max(3, math.floor(h / (#BRS_UW.Stats + 1)))
     local barSpacing = 1
-    local labelW = 28
+    local labelW = 32
     local barW = w - labelW - 8
     local totalH = #BRS_UW.Stats * (barH + barSpacing)
     local startY = y
@@ -532,15 +532,15 @@ end
 local fontBase = "Montserrat"
 local fontFallback = "Segoe UI"
 local fontDefs = {
-    {"BRS_UW_Font8",   10, 700},
-    {"BRS_UW_Font10",  12, 500},
-    {"BRS_UW_Font10B", 12, 700},
-    {"BRS_UW_Font12B", 14, 700},
-    {"BRS_UW_Font14",  16, 500},
-    {"BRS_UW_Font14B", 16, 700},
-    {"BRS_UW_Font16",  18, 500},
-    {"BRS_UW_Font18B", 20, 700},
-    {"BRS_UW_Font22B", 24, 700},
+    {"BRS_UW_Font8",   12, 700},
+    {"BRS_UW_Font10",  14, 500},
+    {"BRS_UW_Font10B", 14, 700},
+    {"BRS_UW_Font12B", 16, 700},
+    {"BRS_UW_Font14",  18, 500},
+    {"BRS_UW_Font14B", 18, 700},
+    {"BRS_UW_Font16",  20, 500},
+    {"BRS_UW_Font18B", 22, 700},
+    {"BRS_UW_Font22B", 26, 700},
 }
 for _, def in ipairs(fontDefs) do
     surface.CreateFont(def[1], { font = fontBase, size = def[2], weight = def[3], antialias = true })

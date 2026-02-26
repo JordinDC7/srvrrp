@@ -65,32 +65,32 @@ local C = SMGRP.UI.Colors -- shorthand
 local function CreateFonts()
     local fonts = {
         -- Headers
-        { name = "SMGRP_Title",     size = 28, weight = 700 },
-        { name = "SMGRP_Header",    size = 22, weight = 700 },
-        { name = "SMGRP_SubHeader", size = 18, weight = 600 },
+        { name = "SMGRP_Title",     size = 30, weight = 700 },
+        { name = "SMGRP_Header",    size = 24, weight = 700 },
+        { name = "SMGRP_SubHeader", size = 20, weight = 600 },
 
         -- Body text
-        { name = "SMGRP_Body16",    size = 16, weight = 500 },
-        { name = "SMGRP_Body14",    size = 14, weight = 500 },
-        { name = "SMGRP_Body13",    size = 13, weight = 500 },
-        { name = "SMGRP_Body12",    size = 12, weight = 500 },
+        { name = "SMGRP_Body16",    size = 18, weight = 500 },
+        { name = "SMGRP_Body14",    size = 16, weight = 500 },
+        { name = "SMGRP_Body13",    size = 15, weight = 500 },
+        { name = "SMGRP_Body12",    size = 14, weight = 500 },
 
         -- Bold variants
-        { name = "SMGRP_Bold16",    size = 16, weight = 700 },
-        { name = "SMGRP_Bold14",    size = 14, weight = 700 },
-        { name = "SMGRP_Bold13",    size = 13, weight = 700 },
-        { name = "SMGRP_Bold12",    size = 12, weight = 700 },
-        { name = "SMGRP_Bold11",    size = 11, weight = 700 },
-        { name = "SMGRP_Bold10",    size = 10, weight = 700 },
+        { name = "SMGRP_Bold16",    size = 18, weight = 700 },
+        { name = "SMGRP_Bold14",    size = 16, weight = 700 },
+        { name = "SMGRP_Bold13",    size = 15, weight = 700 },
+        { name = "SMGRP_Bold12",    size = 14, weight = 700 },
+        { name = "SMGRP_Bold11",    size = 13, weight = 700 },
+        { name = "SMGRP_Bold10",    size = 12, weight = 700 },
 
         -- Numbers / Stats
-        { name = "SMGRP_Stat48",    size = 48, weight = 800 },
-        { name = "SMGRP_Stat32",    size = 32, weight = 800 },
-        { name = "SMGRP_Stat20",    size = 20, weight = 700 },
+        { name = "SMGRP_Stat48",    size = 50, weight = 800 },
+        { name = "SMGRP_Stat32",    size = 34, weight = 800 },
+        { name = "SMGRP_Stat20",    size = 22, weight = 700 },
 
         -- Tiny
-        { name = "SMGRP_Tiny9",     size = 9,  weight = 600 },
-        { name = "SMGRP_Tiny8",     size = 8,  weight = 600 },
+        { name = "SMGRP_Tiny9",     size = 11, weight = 600 },
+        { name = "SMGRP_Tiny8",     size = 10, weight = 600 },
     }
 
     for _, f in ipairs(fonts) do

@@ -187,7 +187,7 @@ function PANEL:FillPanel( data, amount, actions )
         local rarityX, rarityY = surface.GetTextSize( displayRarity or "" )
     
         local infoH = (nameY + rarityY) - 4
-        local statAreaH = isUniqueWeapon and 52 or 0
+        local statAreaH = isUniqueWeapon and 58 or 0
 
         local rarityColor = (SMGRP and SMGRP.UI and SMGRP.UI.GetRarityColor) and SMGRP.UI.GetRarityColor(displayRarity or "Common") or Color(160,165,175)
 
@@ -350,7 +350,7 @@ function PANEL:FillPanel( data, amount, actions )
                 if qualityInfo then
                     surface.SetFont("SMGRP_Bold10")
                     local qTW = surface.GetTextSize(uwData.quality or "Junk")
-                    local pW, pH = qTW + 10, 14
+                    local pW, pH = qTW + 12, 16
                     local pY = bottomY - 38
                     draw.RoundedBox(3, sX, pY, pW, pH, ColorAlpha(qualityInfo.color, 140))
                     draw.SimpleText(uwData.quality or "Junk", "SMGRP_Bold10", sX + pW/2, pY + pH/2, Color(255,255,255,220), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
@@ -363,7 +363,7 @@ function PANEL:FillPanel( data, amount, actions )
                 local barY0 = bottomY - 22
                 local barH = 4
                 local barGap = 3
-                local lblW = 28
+                local lblW = 32
                 local bX = sX + lblW + 4
                 local bW = sW - lblW - 4
 
