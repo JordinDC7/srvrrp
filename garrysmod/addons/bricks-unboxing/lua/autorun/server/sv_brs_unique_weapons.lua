@@ -550,29 +550,38 @@ function BRS_UW.ApplyBoostsToWeapon(ply, wep)
             table.insert(applied, "SPD:" .. string.format("%.4f", orig) .. "->" .. string.format("%.4f", wep.Primary.Spread))
         end
 
-        -- RPM boost (with minimum delay floor for engine stability)
+        -- RPM boost (TRUE percentage boost - no caps)
         if stats.rpm and stats.rpm > 0 and wep.Primary.RPM then
             local orig = wep.Primary.RPM
             local rpmMultiplier = 1 + stats.rpm / 100
             local newRPM = math.Round(orig * rpmMultiplier)
             local newDelay = 60 / newRPM
 
-            -- Engine minimum: Source at 66 tick = 0.015s per tick
-            -- Need at least 3 ticks per shot for reliable firing (0.045s)
-            -- This caps effective RPM at ~1333 regardless of boost
-            local MIN_DELAY = 0.045
-            if newDelay < MIN_DELAY then
-                newRPM = math.floor(60 / MIN_DELAY)
-                newDelay = MIN_DELAY
-                rpmMultiplier = newRPM / orig
-            end
-
             wep.Primary.RPM = newRPM
             wep.Primary.Delay = newDelay
+
             -- Network multiplier for client-side animation fix
             wep:SetNW2Float("BRS_UW_RPMMultiplier", rpmMultiplier)
             wep:SetNW2Float("BRS_UW_BaseDelay", 60 / orig)
-            table.insert(applied, "RPM:" .. orig .. "->" .. newRPM .. " (delay:" .. string.format("%.3f", newDelay) .. "s)")
+
+            -- Wrap PrimaryAttack to stop previous sound before M9K plays new one
+            -- This prevents sound stacking/buzzing at high RPM
+            if not wep.BRS_UW_OrigPrimaryAttack then
+                wep.BRS_UW_OrigPrimaryAttack = wep.PrimaryAttack
+
+                wep.PrimaryAttack = function(self2)
+                    -- Stop previous firing sound so it doesn't overlap
+                    if self2.Primary and self2.Primary.Sound then
+                        self2:StopSound(self2.Primary.Sound)
+                    end
+                    -- Call original M9K PrimaryAttack (handles bullets, ammo, anim, etc.)
+                    if self2.BRS_UW_OrigPrimaryAttack then
+                        self2:BRS_UW_OrigPrimaryAttack()
+                    end
+                end
+            end
+
+            table.insert(applied, "RPM:" .. orig .. "->" .. newRPM .. " (" .. string.format("%.1f", stats.rpm) .. "% boost, delay:" .. string.format("%.3f", newDelay) .. "s)")
         end
 
         -- MAGAZINE boost (clip size)
@@ -826,6 +835,11 @@ concommand.Add("brs_uw_debug", function(ply)
             if wep.Primary.RPM and wep.Primary.RPM > 0 then
                 wep.Primary.Delay = 60 / wep.Primary.RPM
             end
+        end
+        -- Restore original PrimaryAttack before re-wrapping
+        if wep.BRS_UW_OrigPrimaryAttack then
+            wep.PrimaryAttack = wep.BRS_UW_OrigPrimaryAttack
+            wep.BRS_UW_OrigPrimaryAttack = nil
         end
         wep.BRS_UW_Boosted = nil -- reset so it re-applies
         BRS_UW.ApplyBoostsToWeapon(ply, wep)
