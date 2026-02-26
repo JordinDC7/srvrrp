@@ -86,13 +86,40 @@ BRICKS_SERVER.DEVCONFIG.UnboxingItemTypes = {
         },
         EquipFunction = function( ply, reqInfo )
             if( not BRICKS_SERVER.UNBOXING.LUACFG.TTT ) then
-                ply:Give( reqInfo[1] or "", true )
-                ply:SelectWeapon( reqInfo[1] or "" )
+                local wepClass = reqInfo[1] or ""
+                ply:Give( wepClass, true )
 
-                local ammoType = ply:GetActiveWeapon():GetPrimaryAmmoType()
-                if( ply:GetAmmoCount( ammoType ) <= 0 ) then
-                    ply:GiveAmmo( 50, ammoType, true )
-                end
+                -- Delay to let weapon fully initialize before filling ammo
+                timer.Simple(0.15, function()
+                    if not IsValid(ply) then return end
+                    local wep = ply:GetWeapon(wepClass)
+                    if not IsValid(wep) then
+                        ply:SelectWeapon(wepClass)
+                        return
+                    end
+
+                    ply:SelectWeapon(wepClass)
+
+                    -- Fill the clip to max
+                    local clipMax = wep:GetMaxClip1()
+                    if clipMax > 0 then
+                        wep:SetClip1(clipMax)
+                    end
+
+                    -- Give starter reserve ammo ONLY if they have 0
+                    -- (prevents exploit: unequip/re-equip for free ammo)
+                    local ammoType = wep:GetPrimaryAmmoType()
+                    if ammoType >= 0 and ply:GetAmmoCount(ammoType) <= 0 then
+                        local starterAmmo = math.max(clipMax or 30, 30)
+                        ply:GiveAmmo(starterAmmo, ammoType, true)
+                    end
+
+                    -- Secondary clip
+                    local clipMax2 = wep:GetMaxClip2()
+                    if clipMax2 > 0 then
+                        wep:SetClip2(clipMax2)
+                    end
+                end)
             end
             
             return "Weapon equipped from inventory!"

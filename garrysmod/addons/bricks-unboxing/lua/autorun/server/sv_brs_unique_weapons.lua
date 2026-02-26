@@ -390,17 +390,57 @@ function BRS_UW.SyncAllWeaponsToClient(ply)
 
         print("[BRS UW] Synced " .. table.Count(allData) .. " unique weapons to " .. ply:Nick())
 
-        -- RE-APPLY BOOSTS: Cache is now populated, apply to all current weapons
-        -- This ensures VEL/DROP and all stats work after reload/rejoin
+        -- RE-APPLY BOOSTS + RE-EQUIP: Cache is now populated
+        -- This ensures weapons are actually given AND boosted after reload/rejoin
         timer.Simple(0.5, function()
             if not IsValid(ply) then return end
-            for _, wep in ipairs(ply:GetWeapons()) do
-                if IsValid(wep) then
-                    wep.BRS_UW_Boosted = nil -- reset so boost re-applies
-                    wep.BRS_UW_Data = nil
-                    BRS_UW.ApplyBoostsToWeapon(ply, wep)
+
+            -- First: ensure all equipped weapons are actually given to the player
+            local inventory = ply:GetUnboxingInventory()
+            local inventoryData = ply:GetUnboxingInventoryData()
+
+            if inventory and inventoryData then
+                for globalKey, invData in pairs(inventoryData) do
+                    if not invData.Equipped then continue end
+                    if not inventory[globalKey] then continue end
+                    if not string.StartWith(globalKey, "ITEM_") then continue end
+
+                    -- Find the weapon class from our cache
+                    local uwData = BRS_UW.ServerCache[ply:SteamID64()] and BRS_UW.ServerCache[ply:SteamID64()][globalKey]
+                    if uwData and uwData.weaponClass then
+                        -- Only Give if player doesn't already have it
+                        if not ply:HasWeapon(uwData.weaponClass) then
+                            ply:Give(uwData.weaponClass, true)
+                            print("[BRS UW] Re-equipped " .. uwData.weaponName .. " for " .. ply:Nick() .. " (post-sync)")
+                        end
+                    end
                 end
             end
+
+            -- Then: apply boosts + fill clips
+            timer.Simple(0.2, function()
+                if not IsValid(ply) then return end
+                for _, wep in ipairs(ply:GetWeapons()) do
+                    if not IsValid(wep) then continue end
+                    -- Re-apply boosts
+                    wep.BRS_UW_Boosted = nil
+                    wep.BRS_UW_Data = nil
+                    BRS_UW.ApplyBoostsToWeapon(ply, wep)
+
+                    -- Fill clips
+                    local clipMax = wep:GetMaxClip1()
+                    if clipMax > 0 then
+                        wep:SetClip1(clipMax)
+                    end
+
+                    -- Starter ammo if player has 0
+                    local ammoType = wep:GetPrimaryAmmoType()
+                    if ammoType >= 0 and ply:GetAmmoCount(ammoType) <= 0 then
+                        local starterAmmo = math.max(clipMax or 30, 30)
+                        ply:GiveAmmo(starterAmmo, ammoType, true)
+                    end
+                end
+            end)
         end)
     end)
 end
@@ -535,13 +575,37 @@ hook.Add("WeaponEquip", "BRS_UW_ApplyStatBoosts", function(wep, ply)
 end)
 
 -- Also apply on PlayerLoadout (for permanent weapons after spawn)
+-- Fill clips + apply boosts + starter ammo if empty
 hook.Add("PlayerLoadout", "BRS_UW_ApplyOnLoadout", function(ply)
-    -- Single delayed pass after loadout completes (DB sync also re-applies)
+    -- Single delayed pass after loadout completes
     timer.Create("BRS_UW_Loadout_" .. ply:EntIndex(), 1.0, 1, function()
         if not IsValid(ply) then return end
         for _, wep in ipairs(ply:GetWeapons()) do
-            if IsValid(wep) and not wep.BRS_UW_Boosted then
+            if not IsValid(wep) then continue end
+
+            -- Apply stat boosts if not done yet
+            if not wep.BRS_UW_Boosted then
                 BRS_UW.ApplyBoostsToWeapon(ply, wep)
+            end
+
+            -- Fill clips for all equipped weapons on spawn
+            local clipMax = wep:GetMaxClip1()
+            if clipMax > 0 then
+                wep:SetClip1(clipMax)
+            end
+
+            -- Give starter reserve ammo ONLY if they have 0
+            -- (player keeps whatever ammo they bought/had before death)
+            local ammoType = wep:GetPrimaryAmmoType()
+            if ammoType >= 0 and ply:GetAmmoCount(ammoType) <= 0 then
+                local starterAmmo = math.max(clipMax or 30, 30)
+                ply:GiveAmmo(starterAmmo, ammoType, true)
+            end
+
+            -- Secondary clip
+            local clipMax2 = wep:GetMaxClip2()
+            if clipMax2 > 0 then
+                wep:SetClip2(clipMax2)
             end
         end
     end)
