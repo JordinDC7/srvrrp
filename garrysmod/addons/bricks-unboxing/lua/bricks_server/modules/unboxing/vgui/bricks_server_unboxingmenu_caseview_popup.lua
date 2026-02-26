@@ -28,8 +28,7 @@ function PANEL:CreatePopout()
     infoHeader:SetTall( 60 )
     infoHeader.Paint = function( self2, w, h )
         draw.RoundedBoxEx( 8, 0, 0, w, h, BRICKS_SERVER.Func.GetTheme( 2 ), true, false, false, false )
-
-        draw.SimpleText( BRICKS_SERVER.Func.L( "unboxingInformation" ), "BRICKS_SERVER_Font21", w/2, h/2, BRICKS_SERVER.Func.GetTheme( 6, 75 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+        draw.SimpleText( "CASE DETAILS", "BRICKS_SERVER_Font21", w/2, h/2, BRICKS_SERVER.Func.GetTheme( 6, 75 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
     end
 
     self.mainPanel = vgui.Create( "DPanel", self.popoutPanel )
@@ -100,8 +99,8 @@ function PANEL:FillPanel( caseKey, buttonFunc, inventoryView )
 
     local bottomButton = vgui.Create( "DButton", self.leftPanel )
     bottomButton:Dock( BOTTOM )
-    bottomButton:DockMargin( 25, 0, 25, 25 )
-    bottomButton:SetTall( 40 )
+    bottomButton:DockMargin( 12, 0, 12, 12 )
+    bottomButton:SetTall( 44 )
     bottomButton:SetText( "" )
     local alpha = 0
     local bottomButtonMat = self.inventoryView and Material( "bricks_server/unboxing_unlock_16.png" ) or Material( "bricks_server/unboxing_cart_16.png" ) 
@@ -112,20 +111,25 @@ function PANEL:FillPanel( caseKey, buttonFunc, inventoryView )
             alpha = math.Clamp( alpha-10, 0, 255 )
         end
 
-        draw.RoundedBox( 8, 0, 0, w, h, BRICKS_SERVER.Func.GetTheme( 2 ) )
+        local C = SMGRP and SMGRP.UI and SMGRP.UI.Colors or {}
+        -- Base: accent colored button
+        local baseCol = self.inventoryView and (C.accent or Color(0, 212, 170)) or (C.accent or Color(0, 212, 170))
+        local hoverCol = self.inventoryView and (C.accent_hover or Color(0, 235, 190)) or (C.accent_hover or Color(0, 235, 190))
+        
+        draw.RoundedBox( 6, 0, 0, w, h, baseCol )
 
         surface.SetAlphaMultiplier( alpha/255 )
-        draw.RoundedBox( 8, 0, 0, w, h, BRICKS_SERVER.Func.GetTheme( 1 ) )
+        draw.RoundedBox( 6, 0, 0, w, h, hoverCol )
         surface.SetAlphaMultiplier( 1 )
 
-        BRICKS_SERVER.Func.DrawClickCircle( self2, w, h, BRICKS_SERVER.Func.GetTheme( 1 ), 8 )
+        BRICKS_SERVER.Func.DrawClickCircle( self2, w, h, hoverCol, 6 )
 
-        surface.SetDrawColor( BRICKS_SERVER.Func.GetTheme( 6 ) )
+        surface.SetDrawColor( Color(255,255,255) )
         surface.SetMaterial( bottomButtonMat )
         local iconSize = 16
         surface.DrawTexturedRect( (w/2)-(totalContentW/2), (h/2)-(iconSize/2), iconSize, iconSize )
 
-        draw.SimpleText( buttonText, "BRICKS_SERVER_Font21", (w/2)-(totalContentW/2)+iconSize+5, h/2-1, BRICKS_SERVER.Func.GetTheme( 6 ), 0, TEXT_ALIGN_CENTER )
+        draw.SimpleText( buttonText, "BRICKS_SERVER_Font21", (w/2)-(totalContentW/2)+iconSize+5, h/2-1, Color(255,255,255), 0, TEXT_ALIGN_CENTER )
     end
     bottomButton.DoClick = function()
         if( not self.inventoryView ) then
@@ -142,59 +146,70 @@ function PANEL:FillPanel( caseKey, buttonFunc, inventoryView )
     end
 
     if( table.Count( caseTable.Keys or {} ) > 0 ) then
-        local keysRequired = vgui.Create( "DPanel", self.leftPanel )
-        keysRequired:Dock( TOP )
-        keysRequired:DockMargin( 15, 15, 15, 0 )
-        keysRequired:DockPadding( 10, 40, 10, 0 )
-        keysRequired:SetTall( 40 )
-        keysRequired.Paint = function( self2, w, h )
-            draw.RoundedBox( 8, 0, 0, w, h, BRICKS_SERVER.Func.GetTheme( 2 ) )
+        -- Keys are no longer required - section removed
+    end
 
-            draw.RoundedBoxEx( 8, 0, 40, w, h-40, BRICKS_SERVER.Func.GetTheme( 3, 75 ), false, false, true, true )
-
-            draw.SimpleText( BRICKS_SERVER.Func.L( "unboxingKeyRequired" ), "BRICKS_SERVER_Font21", w/2, 40/2, BRICKS_SERVER.Func.GetTheme( 6 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+    -- ====== CASE STATS: Rarity breakdown ======
+    local caseItems = caseTable.Items or {}
+    local totalChanceInfo = 0
+    local rarityBuckets = {}
+    for k, v in pairs( caseItems ) do
+        totalChanceInfo = totalChanceInfo + v[1]
+        local configItem = BRICKS_SERVER.UNBOXING.Func.GetItemFromGlobalKey(k)
+        if configItem then
+            local rar = configItem.Rarity or "Common"
+            rarityBuckets[rar] = (rarityBuckets[rar] or 0) + v[1]
         end
+    end
 
-        for k, v in pairs( caseTable.Keys or {} ) do
-            local keyTable = BRICKS_SERVER.CONFIG.UNBOXING.Keys[k]
+    local statsPanel = vgui.Create( "DPanel", self.leftPanel )
+    statsPanel:Dock( TOP )
+    statsPanel:DockMargin( 12, 12, 12, 0 )
+    
+    -- Sort rarities by drop chance (highest first)
+    local sortedRarities = {}
+    for rar, chance in pairs( rarityBuckets ) do
+        table.insert(sortedRarities, { rar, chance })
+    end
+    table.sort(sortedRarities, function(a, b) return a[2] > b[2] end)
 
-            if( not keyTable ) then continue end
+    local entryH = 28
+    local statsH = #sortedRarities * entryH + 50
+    statsPanel:SetTall( statsH )
+    statsPanel.Paint = function( self2, w, h )
+        draw.RoundedBox( 6, 0, 0, w, h, BRICKS_SERVER.Func.GetTheme( 2 ) )
+        draw.SimpleText( "DROP RATES", "SMGRP_Bold11", w/2, 14, BRICKS_SERVER.Func.GetTheme( 6, 120 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+        surface.SetDrawColor(BRICKS_SERVER.Func.GetTheme( 3 ))
+        surface.DrawRect(10, 28, w - 20, 1)
+    end
 
-            local rarityInfo, rarityKey = BRICKS_SERVER.Func.GetRarityInfo( keyTable.Rarity or "" )
+    for i, entry in ipairs( sortedRarities ) do
+        local rar, chance = entry[1], entry[2]
+        local pct = totalChanceInfo > 0 and (chance / totalChanceInfo * 100) or 0
+        local rarCol = (SMGRP and SMGRP.UI and SMGRP.UI.GetRarityColor) and SMGRP.UI.GetRarityColor(rar) or Color(160,165,175)
 
-            local itemBack = vgui.Create( "DPanel", keysRequired )
-            itemBack:Dock( TOP )
-            itemBack:SetTall( 70 )
-            local displaySize = itemBack:GetTall()-10
-            itemBack:DockMargin( 0, 10, 0, 0 )
-            itemBack.Paint = function( self2, w, h )
-                draw.RoundedBox( 8, 0, 0, w, h, BRICKS_SERVER.Func.GetTheme( 2 ) )
-
-                draw.RoundedBox( 8, 5+5, 5, displaySize, displaySize, BRICKS_SERVER.Func.GetTheme( 1 ) )
-
-                draw.SimpleText( keyTable.Name, "BRICKS_SERVER_Font20", 5+displaySize+20, h/2+2, BRICKS_SERVER.Func.GetTheme( 6 ), 0, TEXT_ALIGN_BOTTOM )
-                draw.SimpleText( (rarityInfo[1] or BRICKS_SERVER.Func.L( "none" )), "BRICKS_SERVER_Font17", 5+displaySize+20, h/2-2, BRICKS_SERVER.Func.GetRarityColor( rarityInfo ), 0, 0 )
-            end
-
-            local rarityBox = vgui.Create( "bricks_server_raritybox", itemBack )
-            rarityBox:SetSize( 5, itemBack:GetTall() )
-            rarityBox:SetPos( 0, 0 )
-            rarityBox:SetRarityName( rarityInfo[1], 1 )
-            rarityBox:SetCornerRadius( 8 )
-            rarityBox:SetRoundedBoxDimensions( false, false, 16, false )
-
-            local itemModel = vgui.Create( "bricks_server_unboxing_itemdisplay", itemBack )
-            itemModel:SetSize( displaySize, displaySize )
-            itemModel:SetPos( 10, 5 )
-            itemModel:SetItemData( "KEY", keyTable )
-            itemModel:SetIconSizeAdjust( 0.8 )
-
-            if( keysRequired:GetTall() == 40 ) then
-                keysRequired:SetTall( keysRequired:GetTall()+20+itemBack:GetTall() )
-            else
-                keysRequired:SetTall( keysRequired:GetTall()+10+itemBack:GetTall() )
-            end
+        local row = vgui.Create( "DPanel", statsPanel )
+        row:SetPos( 8, 32 + (i - 1) * entryH )
+        row:SetSize( statsPanel:GetWide() - 16, entryH )
+        row.Paint = function( self2, w, h )
+            -- Rarity dot
+            draw.RoundedBox( 3, 4, h/2 - 3, 6, 6, rarCol )
+            -- Rarity name
+            draw.SimpleText( rar, "SMGRP_Bold10", 16, h/2, rarCol, 0, TEXT_ALIGN_CENTER )
+            -- Percentage
+            draw.SimpleText( string.format("%.1f%%", pct), "SMGRP_Bold10", w - 4, h/2, BRICKS_SERVER.Func.GetTheme( 6, 140 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )
         end
+    end
+
+    -- Item count
+    local countPanel = vgui.Create( "DPanel", self.leftPanel )
+    countPanel:Dock( TOP )
+    countPanel:DockMargin( 12, 8, 12, 0 )
+    countPanel:SetTall( 36 )
+    local itemCount = table.Count( caseItems )
+    countPanel.Paint = function( self2, w, h )
+        draw.RoundedBox( 6, 0, 0, w, h, BRICKS_SERVER.Func.GetTheme( 2 ) )
+        draw.SimpleText( itemCount .. " POSSIBLE DROPS", "SMGRP_Bold11", w/2, h/2, BRICKS_SERVER.Func.GetTheme( 6, 100 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
     end
 
     local rarityInfo = BRICKS_SERVER.Func.GetRarityInfo( caseTable.Rarity )
