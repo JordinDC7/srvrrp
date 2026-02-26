@@ -86,6 +86,15 @@ hook.Add( "PlayerInitialSpawn", "BricksServerHooks_PlayerInitialSpawn_UnboxingLo
             marketSlotsTable[slotKey] = { tonumber(v.marketKey) }
         end
 
+        -- Auto-grant free slots (no Price, no Group) that are missing from DB
+        for k, v in pairs( BRICKS_SERVER.CONFIG.UNBOXING.Marketplace.Slots or {} ) do
+            if( not marketSlotsTable[k] and not v.Price and not v.Group ) then
+                marketSlotsTable[k] = {}
+                BRICKS_SERVER.UNBOXING.Func.InsertMarketplaceSlotsDB( ply:SteamID64(), k )
+                print( "[BRS Marketplace] Auto-granted free slot " .. k .. " to " .. ply:Nick() )
+            end
+        end
+
 		ply:SetUnboxingMarketplaceSlots( marketSlotsTable )
 	end )
 end )
