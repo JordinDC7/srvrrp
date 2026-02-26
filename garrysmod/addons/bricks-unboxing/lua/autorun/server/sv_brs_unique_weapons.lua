@@ -536,35 +536,39 @@ function BRS_UW.ApplyBoostsToWeapon(ply, wep)
 
         local applied = {}
 
-        -- DAMAGE boost (capped at +100% = double damage)
+        -- DAMAGE boost (scales with stat value, no cap for Ascended)
         if stats.dmg and stats.dmg > 0 and wep.Primary.Damage then
             local orig = wep.Primary.Damage
-            wep.Primary.Damage = math.Round(orig * (1 + math.min(stats.dmg, 100) / 100))
+            wep.Primary.Damage = math.Round(orig * (1 + stats.dmg / 100))
             table.insert(applied, "DMG:" .. orig .. "->" .. wep.Primary.Damage)
         end
 
-        -- ACCURACY boost (reduce spread - lower spread = more accurate, max 50% reduction)
+        -- ACCURACY boost (reduce spread - lower spread = more accurate)
         if stats.spd and stats.spd > 0 and wep.Primary.Spread then
             local orig = wep.Primary.Spread
-            wep.Primary.Spread = orig * (1 - math.min(stats.spd, 100) / 100 * 0.5)
+            wep.Primary.Spread = orig * (1 - stats.spd / 100 * 0.5)
             table.insert(applied, "SPD:" .. string.format("%.4f", orig) .. "->" .. string.format("%.4f", wep.Primary.Spread))
         end
 
-        -- RPM boost (capped at +100%)
+        -- RPM boost (no cap - visual fixes handle high RPM)
         if stats.rpm and stats.rpm > 0 and wep.Primary.RPM then
             local orig = wep.Primary.RPM
-            wep.Primary.RPM = math.Round(orig * (1 + math.min(stats.rpm, 100) / 100))
+            local rpmMultiplier = 1 + stats.rpm / 100
+            wep.Primary.RPM = math.Round(orig * rpmMultiplier)
             -- Update delay based on RPM (M9K uses Delay = 60/RPM)
             if wep.Primary.RPM > 0 then
                 wep.Primary.Delay = 60 / wep.Primary.RPM
             end
-            table.insert(applied, "RPM:" .. orig .. "->" .. wep.Primary.RPM)
+            -- Network multiplier for client-side animation/sound fix
+            wep:SetNW2Float("BRS_UW_RPMMultiplier", rpmMultiplier)
+            wep:SetNW2Float("BRS_UW_BaseDelay", 60 / orig)
+            table.insert(applied, "RPM:" .. orig .. "->" .. wep.Primary.RPM .. " (" .. string.format("%.1fx", rpmMultiplier) .. ")")
         end
 
-        -- MAGAZINE boost (clip size, capped at +100% = double mag)
+        -- MAGAZINE boost (clip size)
         if stats.mag and stats.mag > 0 and wep.Primary.ClipSize then
             local orig = wep.Primary.ClipSize
-            local newClip = math.Round(orig * (1 + math.min(stats.mag, 100) / 100))
+            local newClip = math.Round(orig * (1 + stats.mag / 100))
             wep.Primary.ClipSize = newClip
             -- Also update DefaultClip if it exists (M9K uses this)
             if wep.Primary.DefaultClip then
