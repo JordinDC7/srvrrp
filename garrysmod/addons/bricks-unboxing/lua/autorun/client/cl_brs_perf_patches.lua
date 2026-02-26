@@ -1,16 +1,17 @@
 -- ============================================================
 -- BRS Client Performance Patches
--- Targeted optimizations for heaviest per-frame operations
+-- ColorAlpha pool (handles remaining 3rd-party ColorAlpha calls)
+-- Visibility culling for scroll panels
 -- ============================================================
 
 -- ============================================================
--- 1. FAST ColorAlpha: Pool of 500 reusable Color objects
--- Eliminates ~2,900 Color allocations per frame from item slots
--- Pool must be large enough for all visible cards (40+ calls each)
+-- 1. FAST ColorAlpha: Pool of 200 reusable Color objects
+-- Most per-frame Color() allocs eliminated from our Paint
+-- funcs; this pool handles remaining ColorAlpha from framework
 -- ============================================================
 local colorPool = {}
 local colorPoolIdx = 0
-local POOL_SIZE = 500
+local POOL_SIZE = 200
 
 for i = 1, POOL_SIZE do
     colorPool[i] = Color(255, 255, 255, 255)

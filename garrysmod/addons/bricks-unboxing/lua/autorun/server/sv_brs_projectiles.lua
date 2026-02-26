@@ -85,9 +85,10 @@ hook.Add("EntityFireBullets", "BRS_UW_ProjectileSystem", function(ent, data)
                 + ang:Up() * math.Rand(-1, 1) * spread.y):GetNormalized()
         end
 
-        -- Pool limit
-        while #projectiles >= MAX_PROJECTILES do
-            table.remove(projectiles, 1)
+        -- Pool limit (swap-remove: O(1))
+        if #projectiles >= MAX_PROJECTILES then
+            projectiles[1] = projectiles[#projectiles]
+            projectiles[#projectiles] = nil
         end
 
         local vel = bulletDir * bulletSpeed

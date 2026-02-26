@@ -122,8 +122,11 @@ net.Receive("BRS_UW.ProjSpawn", function()
         end
     end
 
-    -- Pool limit
-    while #projectiles >= MAX_PROJ do table.remove(projectiles, 1) end
+    -- Pool limit (swap-remove: O(1) instead of table.remove O(n))
+    if #projectiles >= MAX_PROJ then
+        projectiles[1] = projectiles[#projectiles]
+        projectiles[#projectiles] = nil
+    end
 
     local dir = vel:GetNormalized()
     local ang = dir:Angle()
@@ -177,7 +180,10 @@ net.Receive("BRS_UW.ProjHit", function()
     end
 
     if tier.hasImpact then
-        while #impacts >= MAX_IMPACTS do table.remove(impacts, 1) end
+        while #impacts >= MAX_IMPACTS do
+            impacts[1] = impacts[#impacts]
+            impacts[#impacts] = nil
+        end
         impacts[#impacts + 1] = {
             pos = hitPos, normal = hitNormal,
             tier = tier, isAscended = isAsc,

@@ -55,6 +55,9 @@ function PANEL:FillPanel()
         { key = "keys",    label = "KEYS" },
     }
 
+    local _filterHover = Color(255, 255, 255, 0)
+    local _filterWhite = Color(255, 255, 255)
+
     for _, f in ipairs(filters) do
         local btn = vgui.Create( "DButton", filterPanel )
         btn:Dock( LEFT )
@@ -73,11 +76,12 @@ function PANEL:FillPanel()
 
             if isActive then
                 draw.RoundedBox( 4, 0, 0, w, h, C.accent_dim or Color(0,160,128) )
-                draw.SimpleText( f.label, "SMGRP_Bold11", w/2, h/2, Color(255,255,255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+                draw.SimpleText( f.label, "SMGRP_Bold11", w/2, h/2, _filterWhite, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
             else
                 draw.RoundedBox( 4, 0, 0, w, h, C.bg_light or Color(34,36,46) )
                 if self2.hoverAlpha > 0 then
-                    draw.RoundedBox( 4, 0, 0, w, h, Color(255,255,255, math.floor(self2.hoverAlpha * 0.08)) )
+                    _filterHover.a = math.floor(self2.hoverAlpha * 0.08)
+                    draw.RoundedBox( 4, 0, 0, w, h, _filterHover )
                 end
                 draw.SimpleText( f.label, "SMGRP_Bold11", w/2, h/2, C.text_secondary or Color(140,144,160), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
             end
@@ -104,11 +108,12 @@ function PANEL:FillPanel()
 
         if self.selectMode then
             draw.RoundedBox( 4, 0, 0, w, h, C.red or Color(220,60,60) )
-            draw.SimpleText( "CANCEL", "SMGRP_Bold11", w/2, h/2, Color(255,255,255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+            draw.SimpleText( "CANCEL", "SMGRP_Bold11", w/2, h/2, _filterWhite, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
         else
             draw.RoundedBox( 4, 0, 0, w, h, C.bg_light or Color(34,36,46) )
             if self2.hoverAlpha > 0 then
-                draw.RoundedBox( 4, 0, 0, w, h, Color(255,255,255, math.floor(self2.hoverAlpha * 0.08)) )
+                _filterHover.a = math.floor(self2.hoverAlpha * 0.08)
+                draw.RoundedBox( 4, 0, 0, w, h, _filterHover )
             end
             draw.SimpleText( "MANAGE", "SMGRP_Bold11", w/2, h/2, C.text_secondary or Color(140,144,160), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
         end
@@ -348,6 +353,9 @@ end
 function PANEL:FillInventory()
     self.grid:Clear()
 
+    -- Cancel any pending chunked loading
+    if self._chunkTimer then timer.Remove(self._chunkTimer) end
+
     local sortedItems = {}
     for k, v in pairs( LocalPlayer():GetUnboxingInventory() ) do
         local configItemTable, itemKey2, isItem, isCase, isKey = BRICKS_SERVER.UNBOXING.Func.GetItemFromGlobalKey( k )
@@ -411,112 +419,140 @@ function PANEL:FillInventory()
     self.grid:SetTall( (math.ceil(#sortedItems / self.slotsWide) * (self.slotSize * 1.2 + self.spacing)) - self.spacing )
     self.itemCount = #sortedItems
 
-    for k2, v in pairs( sortedItems ) do
-        local globalKey, itemAmount = v[2], v[3]
-        -- Use cached results from sort pass (indices 4-10)
-        local configItemTable, itemKey2, isItem, isCase, isKey = v[4], v[5], v[6], v[7], v[8]
-        local isUW = v[9]
+    -- ====== CHUNKED SLOT CREATION ======
+    -- Create slots in batches to prevent frame stutter
+    -- First batch is immediate (fills visible area), rest are deferred
+    local BATCH_SIZE = 12  -- ~2 rows at a time
+    local totalItems = #sortedItems
+    local cursor = 1
 
-        local actions
+    local function CreateBatch()
+        if not IsValid(self) or not IsValid(self.grid) then return end
+        local batchEnd = math.min(cursor + BATCH_SIZE - 1, totalItems)
 
-        -- In select mode, clicking toggles selection
-        if self.selectMode then
-            actions = function(ax, ay, aw, ah)
-                if self.selectedItems[globalKey] then
-                    self.selectedItems[globalKey] = nil
-                else
-                    self.selectedItems[globalKey] = true
+        for idx = cursor, batchEnd do
+            local v = sortedItems[idx]
+            local globalKey, itemAmount = v[2], v[3]
+            local configItemTable, itemKey2, isItem, isCase, isKey = v[4], v[5], v[6], v[7], v[8]
+            local isUW = v[9]
+
+            local actions
+
+            if self.selectMode then
+                actions = function(ax, ay, aw, ah)
+                    if self.selectedItems[globalKey] then
+                        self.selectedItems[globalKey] = nil
+                    else
+                        self.selectedItems[globalKey] = true
+                    end
                 end
-            end
-        elseif( isItem ) then
-            actions = {}
-            local devConfigItemTable = BRICKS_SERVER.DEVCONFIG.UnboxingItemTypes[configItemTable.Type] or {}
+            elseif( isItem ) then
+                actions = {}
+                local devConfigItemTable = BRICKS_SERVER.DEVCONFIG.UnboxingItemTypes[configItemTable.Type] or {}
 
-            if( devConfigItemTable.UseFunction ) then
-                local numKey = tonumber( string.Replace( string.match(globalKey, "^ITEM_%d+") or globalKey, "ITEM_", "" ) )
-                if numKey then
-                    table.insert( actions, { BRICKS_SERVER.Func.L( "unboxingUse" ), function()
-                        net.Start( "BRS.Net.UseUnboxingItem" )
-                            net.WriteUInt( numKey, 16 )
-                            net.WriteUInt( 1, 16 )
-                        net.SendToServer()
-                    end } )
-
-                    if( devConfigItemTable.UseMultiple ) then
-                        table.insert( actions, { BRICKS_SERVER.Func.L( "unboxingUseAll" ), function()
+                if( devConfigItemTable.UseFunction ) then
+                    local numKey = tonumber( string.Replace( string.match(globalKey, "^ITEM_%d+") or globalKey, "ITEM_", "" ) )
+                    if numKey then
+                        table.insert( actions, { BRICKS_SERVER.Func.L( "unboxingUse" ), function()
                             net.Start( "BRS.Net.UseUnboxingItem" )
                                 net.WriteUInt( numKey, 16 )
-                                net.WriteUInt( itemAmount, 16 )
+                                net.WriteUInt( 1, 16 )
                             net.SendToServer()
                         end } )
+
+                        if( devConfigItemTable.UseMultiple ) then
+                            table.insert( actions, { BRICKS_SERVER.Func.L( "unboxingUseAll" ), function()
+                                net.Start( "BRS.Net.UseUnboxingItem" )
+                                    net.WriteUInt( numKey, 16 )
+                                    net.WriteUInt( itemAmount, 16 )
+                                net.SendToServer()
+                            end } )
+                        end
                     end
                 end
-            end
 
-            if( devConfigItemTable.EquipFunction or devConfigItemTable.UnEquipFunction ) then
-                table.insert( actions, { function() 
-                    return LocalPlayer():UnboxingIsItemEquipped( globalKey ) and BRICKS_SERVER.Func.L( "unboxingUnEquip" ) or BRICKS_SERVER.Func.L( "unboxingEquip" )
-                end, function()
-                    net.Start( LocalPlayer():UnboxingIsItemEquipped( globalKey ) and "BRS.Net.UnEquipUnboxingItem" or "BRS.Net.EquipUnboxingItem" )
-                        net.WriteString( globalKey )
+                if( devConfigItemTable.EquipFunction or devConfigItemTable.UnEquipFunction ) then
+                    table.insert( actions, { function() 
+                        return LocalPlayer():UnboxingIsItemEquipped( globalKey ) and BRICKS_SERVER.Func.L( "unboxingUnEquip" ) or BRICKS_SERVER.Func.L( "unboxingEquip" )
+                    end, function()
+                        net.Start( LocalPlayer():UnboxingIsItemEquipped( globalKey ) and "BRS.Net.UnEquipUnboxingItem" or "BRS.Net.EquipUnboxingItem" )
+                            net.WriteString( globalKey )
+                        net.SendToServer()
+                    end } )
+                end
+
+                if isUW then
+                    table.insert( actions, 1, { "Inspect", function()
+                        local uwData2 = BRS_UW.GetWeaponData(globalKey)
+                        if uwData2 then
+                            BRS_UW.OpenInspectPopup(globalKey, uwData2)
+                        else
+                            net.Start("BRS_UW.RequestInspect")
+                                net.WriteString(globalKey)
+                            net.SendToServer()
+                        end
+                    end } )
+                end
+
+            elseif( isCase ) then
+                actions = {}
+                table.insert( actions, { BRICKS_SERVER.Func.L( "view" ), function()
+                    self.popoutPanel = vgui.Create( "bricks_server_unboxingmenu_caseview_popup", self )
+                    self.popoutPanel:SetPos( 0, 0 )
+                    self.popoutPanel:SetSize( self.panelWide, self.panelTall or self:GetTall() )
+                    self.popoutPanel:CreatePopout()
+                    self.popoutPanel:FillPanel( itemKey2, false, true )
+                end } )
+
+                if( configItemTable.Model and BRICKS_SERVER.DEVCONFIG.UnboxingCaseModels[configItemTable.Model] ) then
+                    table.insert( actions, { BRICKS_SERVER.Func.L( "unboxingPlace" ), function()
+                        BRICKS_SERVER.UNBOXING.Func.StartPlacingCase( itemKey2 )
+                    end } )
+                end
+
+                table.insert( actions, { BRICKS_SERVER.Func.L( "unboxingOpenAll" ), function()
+                    local caseKey = tonumber( string.Replace( globalKey, "CASE_", "" ) )
+                    if( not caseKey ) then return end
+                    net.Start( "BRS.Net.UnboxingOpenAll" )
+                        net.WriteUInt( caseKey, 16 )
                     net.SendToServer()
                 end } )
-            end
-
-            if isUW then
-                table.insert( actions, 1, { "Inspect", function()
-                    local uwData2 = BRS_UW.GetWeaponData(globalKey)
-                    if uwData2 then
-                        BRS_UW.OpenInspectPopup(globalKey, uwData2)
-                    else
-                        net.Start("BRS_UW.RequestInspect")
-                            net.WriteString(globalKey)
-                        net.SendToServer()
-                    end
+            elseif( isKey ) then
+                actions = {}
+                table.insert( actions, { BRICKS_SERVER.Func.L( "view" ), function()
+                    self.popoutPanel = vgui.Create( "bricks_server_unboxingmenu_keyview_popup", self )
+                    self.popoutPanel:SetPos( 0, 0 )
+                    self.popoutPanel:SetSize( self.panelWide, self.panelTall or self:GetTall() )
+                    self.popoutPanel:CreatePopout()
+                    self.popoutPanel:FillPanel( itemKey2, false, true )
                 end } )
             end
 
-        elseif( isCase ) then
-            actions = {}
-            table.insert( actions, { BRICKS_SERVER.Func.L( "view" ), function()
-                self.popoutPanel = vgui.Create( "bricks_server_unboxingmenu_caseview_popup", self )
-                self.popoutPanel:SetPos( 0, 0 )
-                self.popoutPanel:SetSize( self.panelWide, self.panelTall or self:GetTall() )
-                self.popoutPanel:CreatePopout()
-                self.popoutPanel:FillPanel( itemKey2, false, true )
-            end } )
-
-            if( configItemTable.Model and BRICKS_SERVER.DEVCONFIG.UnboxingCaseModels[configItemTable.Model] ) then
-                table.insert( actions, { BRICKS_SERVER.Func.L( "unboxingPlace" ), function()
-                    BRICKS_SERVER.UNBOXING.Func.StartPlacingCase( itemKey2 )
-                end } )
-            end
-
-            table.insert( actions, { BRICKS_SERVER.Func.L( "unboxingOpenAll" ), function()
-                local caseKey = tonumber( string.Replace( globalKey, "CASE_", "" ) )
-                if( not caseKey ) then return end
-                net.Start( "BRS.Net.UnboxingOpenAll" )
-                    net.WriteUInt( caseKey, 16 )
-                net.SendToServer()
-            end } )
-        elseif( isKey ) then
-            actions = {}
-            table.insert( actions, { BRICKS_SERVER.Func.L( "view" ), function()
-                self.popoutPanel = vgui.Create( "bricks_server_unboxingmenu_keyview_popup", self )
-                self.popoutPanel:SetPos( 0, 0 )
-                self.popoutPanel:SetSize( self.panelWide, self.panelTall or self:GetTall() )
-                self.popoutPanel:CreatePopout()
-                self.popoutPanel:FillPanel( itemKey2, false, true )
-            end } )
+            self:AddSlot( globalKey, (itemAmount or 1), actions )
         end
 
-        self:AddSlot( globalKey, (itemAmount or 1), actions )
+        cursor = batchEnd + 1
+
+        -- Schedule next batch if more items remain
+        if cursor <= totalItems then
+            self._chunkTimer = "BRS_InvChunk_" .. tostring(self)
+            timer.Create(self._chunkTimer, 0, 1, CreateBatch)
+        end
     end
+
+    -- Start first batch immediately
+    CreateBatch()
 end
 
+function PANEL:OnRemove()
+    if self._chunkTimer then timer.Remove(self._chunkTimer) end
+    if self._fillTimer then timer.Remove(self._fillTimer) end
+end
+
+local _invBg = Color(12, 12, 18)
+
 function PANEL:Paint( w, h )
-    local C = SMGRP and SMGRP.UI and SMGRP.UI.Colors or {}
-    draw.RoundedBox( 0, 0, 0, w, h, C.bg_darkest or Color(12,12,18) )
+    draw.RoundedBox( 0, 0, 0, w, h, SMGRP and SMGRP.UI and SMGRP.UI.Colors and SMGRP.UI.Colors.bg_darkest or _invBg )
 end
 
 vgui.Register( "bricks_server_unboxingmenu_inventory", PANEL, "DPanel" )
