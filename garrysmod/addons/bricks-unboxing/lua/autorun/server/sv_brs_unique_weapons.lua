@@ -586,6 +586,28 @@ function BRS_UW.ApplyBoostsToWeapon(ply, wep)
                 wep.Primary.KickHorizontal = wep.Primary.KickHorizontal * recoilScale
             end
 
+            -- Wrap EmitSound to rotate channels for rapid fire
+            -- Source only allows ONE sound per channel per entity.
+            -- M9K uses CHAN_WEAPON (1) for fire sounds. At high RPM,
+            -- Source silently drops new EmitSound calls on the same channel.
+            -- Fix: cycle through channels so each shot gets a fresh one.
+            if not wep.BRS_UW_OrigEmitSound then
+                wep.BRS_UW_OrigEmitSound = wep.EmitSound
+                local fireSoundChannels = {CHAN_WEAPON, CHAN_BODY, CHAN_VOICE, CHAN_VOICE2}
+                local chanIdx = 0
+
+                wep.EmitSound = function(self2, sndName, sndLevel, pitch, vol, channel, ...)
+                    -- Check if this is the weapon's fire sound
+                    local fireSound = self2.Primary and self2.Primary.Sound
+                    if fireSound and sndName == fireSound then
+                        chanIdx = chanIdx + 1
+                        if chanIdx > #fireSoundChannels then chanIdx = 1 end
+                        channel = fireSoundChannels[chanIdx]
+                    end
+                    return self2.BRS_UW_OrigEmitSound(self2, sndName, sndLevel, pitch, vol, channel, ...)
+                end
+            end
+
             table.insert(applied, "RPM:" .. orig .. "->" .. newRPM .. " (" .. string.format("%.1f", stats.rpm) .. "% boost, recoil:" .. string.format("%.0f", recoilScale * 100) .. "%)")
         end
 
@@ -846,6 +868,11 @@ concommand.Add("brs_uw_debug", function(ply)
         if wep.BRS_UW_OrigKickUp then wep.Primary.KickUp = wep.BRS_UW_OrigKickUp; wep.BRS_UW_OrigKickUp = nil end
         if wep.BRS_UW_OrigKickDown then wep.Primary.KickDown = wep.BRS_UW_OrigKickDown; wep.BRS_UW_OrigKickDown = nil end
         if wep.BRS_UW_OrigKickH then wep.Primary.KickHorizontal = wep.BRS_UW_OrigKickH; wep.BRS_UW_OrigKickH = nil end
+        -- Restore original EmitSound
+        if wep.BRS_UW_OrigEmitSound then
+            wep.EmitSound = wep.BRS_UW_OrigEmitSound
+            wep.BRS_UW_OrigEmitSound = nil
+        end
         wep.BRS_UW_Boosted = nil -- reset so it re-applies
         BRS_UW.ApplyBoostsToWeapon(ply, wep)
     end
