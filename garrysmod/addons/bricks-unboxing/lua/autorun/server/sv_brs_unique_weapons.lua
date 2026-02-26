@@ -546,7 +546,8 @@ function BRS_UW.ApplyBoostsToWeapon(ply, wep)
         -- ACCURACY boost (reduce spread - lower spread = more accurate)
         if stats.spd and stats.spd > 0 and wep.Primary.Spread then
             local orig = wep.Primary.Spread
-            wep.Primary.Spread = orig * (1 - stats.spd / 100 * 0.5)
+            local newSpread = orig * (1 - stats.spd / 100 * 0.5)
+            wep.Primary.Spread = math.max(newSpread, orig * 0.1) -- floor at 10% of original
             table.insert(applied, "SPD:" .. string.format("%.4f", orig) .. "->" .. string.format("%.4f", wep.Primary.Spread))
         end
 
@@ -560,28 +561,32 @@ function BRS_UW.ApplyBoostsToWeapon(ply, wep)
             wep.Primary.RPM = newRPM
             wep.Primary.Delay = newDelay
 
-            -- Network multiplier for client-side animation fix
+            -- Network multiplier for client-side fixes
             wep:SetNW2Float("BRS_UW_RPMMultiplier", rpmMultiplier)
             wep:SetNW2Float("BRS_UW_BaseDelay", 60 / orig)
 
-            -- Wrap PrimaryAttack to stop previous sound before M9K plays new one
-            -- This prevents sound stacking/buzzing at high RPM
-            if not wep.BRS_UW_OrigPrimaryAttack then
-                wep.BRS_UW_OrigPrimaryAttack = wep.PrimaryAttack
-
-                wep.PrimaryAttack = function(self2)
-                    -- Stop previous firing sound so it doesn't overlap
-                    if self2.Primary and self2.Primary.Sound then
-                        self2:StopSound(self2.Primary.Sound)
-                    end
-                    -- Call original M9K PrimaryAttack (handles bullets, ammo, anim, etc.)
-                    if self2.BRS_UW_OrigPrimaryAttack then
-                        self2:BRS_UW_OrigPrimaryAttack()
-                    end
-                end
+            -- Scale down recoil to compensate for faster fire rate
+            -- Without this, 2x RPM = 2x recoil per second = uncontrollable
+            -- We reduce per-shot recoil so total recoil-per-second stays similar
+            local recoilScale = 1 / math.sqrt(rpmMultiplier) -- sqrt so it still feels faster
+            if wep.Primary.Recoil then
+                wep.BRS_UW_OrigRecoil = wep.Primary.Recoil
+                wep.Primary.Recoil = wep.Primary.Recoil * recoilScale
+            end
+            if wep.Primary.KickUp then
+                wep.BRS_UW_OrigKickUp = wep.Primary.KickUp
+                wep.Primary.KickUp = wep.Primary.KickUp * recoilScale
+            end
+            if wep.Primary.KickDown then
+                wep.BRS_UW_OrigKickDown = wep.Primary.KickDown
+                wep.Primary.KickDown = wep.Primary.KickDown * recoilScale
+            end
+            if wep.Primary.KickHorizontal then
+                wep.BRS_UW_OrigKickH = wep.Primary.KickHorizontal
+                wep.Primary.KickHorizontal = wep.Primary.KickHorizontal * recoilScale
             end
 
-            table.insert(applied, "RPM:" .. orig .. "->" .. newRPM .. " (" .. string.format("%.1f", stats.rpm) .. "% boost, delay:" .. string.format("%.3f", newDelay) .. "s)")
+            table.insert(applied, "RPM:" .. orig .. "->" .. newRPM .. " (" .. string.format("%.1f", stats.rpm) .. "% boost, recoil:" .. string.format("%.0f", recoilScale * 100) .. "%)")
         end
 
         -- MAGAZINE boost (clip size)
@@ -836,11 +841,11 @@ concommand.Add("brs_uw_debug", function(ply)
                 wep.Primary.Delay = 60 / wep.Primary.RPM
             end
         end
-        -- Restore original PrimaryAttack before re-wrapping
-        if wep.BRS_UW_OrigPrimaryAttack then
-            wep.PrimaryAttack = wep.BRS_UW_OrigPrimaryAttack
-            wep.BRS_UW_OrigPrimaryAttack = nil
-        end
+        -- Restore recoil values
+        if wep.BRS_UW_OrigRecoil then wep.Primary.Recoil = wep.BRS_UW_OrigRecoil; wep.BRS_UW_OrigRecoil = nil end
+        if wep.BRS_UW_OrigKickUp then wep.Primary.KickUp = wep.BRS_UW_OrigKickUp; wep.BRS_UW_OrigKickUp = nil end
+        if wep.BRS_UW_OrigKickDown then wep.Primary.KickDown = wep.BRS_UW_OrigKickDown; wep.BRS_UW_OrigKickDown = nil end
+        if wep.BRS_UW_OrigKickH then wep.Primary.KickHorizontal = wep.BRS_UW_OrigKickH; wep.BRS_UW_OrigKickH = nil end
         wep.BRS_UW_Boosted = nil -- reset so it re-applies
         BRS_UW.ApplyBoostsToWeapon(ply, wep)
     end
