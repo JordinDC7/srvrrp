@@ -803,6 +803,16 @@ concommand.Add("brs_uw_debug", function(ply)
     -- Try forcing application now
     print("--- Forcing boost application ---")
     for _, wep in ipairs(ply:GetWeapons()) do
+        -- Restore original stats before re-applying to avoid stacking
+        if wep.BRS_UW_OriginalStats and wep.Primary then
+            for k, v in pairs(wep.BRS_UW_OriginalStats) do
+                wep.Primary[k] = v
+            end
+            -- Also restore RPM-derived delay
+            if wep.Primary.RPM and wep.Primary.RPM > 0 then
+                wep.Primary.Delay = 60 / wep.Primary.RPM
+            end
+        end
         wep.BRS_UW_Boosted = nil -- reset so it re-applies
         BRS_UW.ApplyBoostsToWeapon(ply, wep)
     end

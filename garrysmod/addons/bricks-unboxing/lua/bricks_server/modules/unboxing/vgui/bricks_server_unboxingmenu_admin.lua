@@ -96,6 +96,8 @@ end
 function PANEL:FillPanel()
     self.players = vgui.Create( "bricks_server_unboxingmenu_admin_players", self )
     self.players:SetSize( self.panelWide, self.panelTall-self.topBar:GetTall() )
+    self.players.panelWide = self.panelWide
+    self.players.panelTall = self.panelTall - self.topBar:GetTall()
     self:CreatePage( BRICKS_SERVER.Func.L( "unboxingPlayers" ), self.players, function() 
         if( not self.players.filled ) then
             self.players.filled = true
