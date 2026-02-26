@@ -1,11 +1,81 @@
 -- ============================================================
 -- SmG RP - Custom Item Slot Card
--- Dark tactical design with clean stat display
+-- Rarity-driven visuals with premium effects for rare+ items
 -- ============================================================
 local PANEL = {}
 
-function PANEL:Init()
+-- ============================================================
+-- PARTICLE SYSTEM for Glitched/Mythical cards
+-- ============================================================
+local cardParticles = {}
 
+local function SpawnParticle(panelID, w, h, rarity)
+    cardParticles[panelID] = cardParticles[panelID] or {}
+    local particles = cardParticles[panelID]
+    if #particles > 12 then return end
+
+    if rarity == "Glitched" then
+        table.insert(particles, {
+            x = math.Rand(4, w - 4),
+            y = math.Rand(4, h - 4),
+            size = math.Rand(1.5, 3.5),
+            life = 0,
+            maxLife = math.Rand(0.4, 1.0),
+            color = HSVToColor(math.random(0, 360), 0.6, 1),
+        })
+    elseif rarity == "Mythical" then
+        table.insert(particles, {
+            x = math.Rand(8, w - 8),
+            y = h - math.Rand(5, 15),
+            vx = math.Rand(-8, 8),
+            vy = math.Rand(-40, -80),
+            size = math.Rand(1.5, 3),
+            life = 0,
+            maxLife = math.Rand(0.6, 1.2),
+            color = Color(255, math.random(80, 200), 0),
+        })
+    end
+end
+
+local function UpdateAndDrawParticles(panelID, dt)
+    local particles = cardParticles[panelID]
+    if not particles then return end
+
+    for i = #particles, 1, -1 do
+        local p = particles[i]
+        p.life = p.life + dt
+
+        if p.life >= p.maxLife then
+            table.remove(particles, i)
+        else
+            local frac = p.life / p.maxLife
+            local a = frac < 0.3 and (frac / 0.3) or (1 - ((frac - 0.3) / 0.7))
+            a = math.Clamp(a, 0, 1) * 255
+
+            if p.vx then
+                p.x = p.x + p.vx * dt
+                p.y = p.y + p.vy * dt
+            end
+
+            local col = ColorAlpha(p.color, a)
+            local sz = p.size * (1 + frac * 0.3)
+
+            draw.RoundedBox(sz, p.x - sz/2, p.y - sz/2, sz, sz, col)
+            draw.RoundedBox(sz * 2, p.x - sz, p.y - sz, sz * 2, sz * 2, ColorAlpha(col, a * 0.3))
+        end
+    end
+end
+
+-- ============================================================
+-- PANEL METHODS
+-- ============================================================
+function PANEL:Init()
+end
+
+function PANEL:OnRemove()
+    if self._particleID then
+        cardParticles[self._particleID] = nil
+    end
 end
 
 function PANEL:AddTopInfo( textOrMat, color, textColor, left )
@@ -21,7 +91,6 @@ function PANEL:AddTopInfo( textOrMat, color, textColor, left )
     local font = "SMGRP_Bold10"
     surface.SetFont( font )
     local topX, topY = surface.GetTextSize( isfunction( text ) and text() or text )
-    
     local boxW, boxH = topX + 10, topY + 4
 
     self.topBar:SetTall( math.max( self.topBar:GetTall(), boxH ) )
@@ -34,7 +103,6 @@ function PANEL:AddTopInfo( textOrMat, color, textColor, left )
         local C = SMGRP and SMGRP.UI and SMGRP.UI.Colors
         local bgCol = (istable( color or "" ) and color) or (C and C.bg_darkest or Color(12,12,18))
         draw.RoundedBox( 3, 0, 0, w, h, ColorAlpha(bgCol, 200) )
-
         if( not isMaterial ) then
             if( not isfunction( text ) ) then
                 draw.SimpleText( text, font, w/2, h/2, textColor or (C and C.text_secondary or Color(140,144,160)), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
@@ -77,13 +145,14 @@ function PANEL:FillPanel( data, amount, actions )
     local x, y, w, h = 0, 0, self:GetSize()
     local alpha = 0
 
-    -- ====== UNIQUE WEAPON DETECTION ======
     local isUniqueWeapon = false
     local uwData = nil
     if globalKey and BRS_UW and BRS_UW.IsUniqueWeapon and BRS_UW.IsUniqueWeapon(globalKey) then
         isUniqueWeapon = true
         uwData = BRS_UW.GetWeaponData(globalKey)
     end
+
+    self._particleID = tostring(self) .. "_" .. tostring(globalKey or "")
 
     self.panelInfo = vgui.Create( "DPanel", self )
     self.panelInfo:Dock( FILL )
@@ -96,7 +165,6 @@ function PANEL:FillPanel( data, amount, actions )
 
         local rarityInfo = BRICKS_SERVER.Func.GetRarityInfo( displayRarity )
 
-        -- Font selection for weapon name
         local textFonts = { 
             { "SMGRP_Bold14", "SMGRP_Body12" }, 
             { "SMGRP_Bold13", "SMGRP_Body12" }, 
@@ -121,8 +189,17 @@ function PANEL:FillPanel( data, amount, actions )
         local infoH = (nameY + rarityY) - 4
         local statAreaH = isUniqueWeapon and 52 or 0
 
-        -- Get rarity color once
         local rarityColor = (SMGRP and SMGRP.UI and SMGRP.UI.GetRarityColor) and SMGRP.UI.GetRarityColor(displayRarity or "Common") or Color(160,165,175)
+
+        local isGlitched = displayRarity == "Glitched"
+        local isMythical = displayRarity == "Mythical"
+        local isLegendary = displayRarity == "Legendary"
+        local isEpic = displayRarity == "Epic"
+        local isHighTier = isGlitched or isMythical or isLegendary
+        local hasBorder = isUniqueWeapon and (isHighTier or isEpic or displayRarity == "Rare")
+
+        local shimmerPhase = math.Rand(0, 100)
+        local panelID = self._particleID
 
         self.panelInfo.Paint = function( self2, w, h )
             local C = SMGRP and SMGRP.UI and SMGRP.UI.Colors or {}
@@ -131,50 +208,137 @@ function PANEL:FillPanel( data, amount, actions )
                 x, y = toScreenX, toScreenY
             end
 
+            local dt = FrameTime()
+            local ct = CurTime()
+
+            local borderCol = rarityColor
+            if isUniqueWeapon and BRS_UW and BRS_UW.GetBorderColor then
+                borderCol = BRS_UW.GetBorderColor(displayRarity) or rarityColor
+            end
+
+            -- ====== OUTER GLOW (Legendary/Glitched/Mythical) ======
+            if isHighTier then
+                local pulse = math.sin(ct * 2.5) * 0.4 + 0.6
+                local glowA = isGlitched and (20 * pulse) or (isMythical and (25 * pulse) or (15 * pulse))
+                draw.RoundedBox(8, -2, -2, w + 4, h + 4, ColorAlpha(borderCol, glowA))
+                if isGlitched or isMythical then
+                    draw.RoundedBox(10, -4, -4, w + 8, h + 8, ColorAlpha(borderCol, glowA * 0.4))
+                end
+            end
+
             -- ====== CARD BACKGROUND ======
             draw.RoundedBox( 6, 0, 0, w, h, C.bg_mid or Color(26,27,35) )
 
-            -- Subtle 1px border
-            surface.SetDrawColor(C.border or Color(50,52,65))
-            surface.DrawOutlinedRect(0, 0, w, h, 1)
-
-            -- ====== RARITY BOTTOM STRIP ======
-            local stripH = 3
-            local stripCol = rarityColor
-
-            if isUniqueWeapon and uwData then
-                if uwData.rarity == "Glitched" and SMGRP.UI.GetGlitchedColor then
-                    stripCol = SMGRP.UI.GetGlitchedColor()
-                elseif uwData.rarity == "Mythical" and SMGRP.UI.GetMythicalColor then
-                    stripCol = SMGRP.UI.GetMythicalColor()
+            -- ====== RARITY TOP GRADIENT ======
+            if isUniqueWeapon then
+                local gradA = isHighTier and 18 or (isEpic and 12 or 8)
+                for i = 0, 40 do
+                    local a = math.max(0, gradA - i * (gradA / 40))
+                    surface.SetDrawColor(ColorAlpha(borderCol, a))
+                    surface.DrawRect(1, 1 + i, w - 2, 1)
                 end
             end
 
-            draw.RoundedBoxEx(4, 0, h - stripH, w, stripH, stripCol, false, false, true, true)
-
-            -- Left accent bar for unique weapons
-            if isUniqueWeapon then
-                surface.SetDrawColor(ColorAlpha(stripCol, 100))
-                surface.DrawRect(0, 8, 2, h - 16)
+            -- ====== ANIMATED BORDER ======
+            if hasBorder then
+                local bT = (isGlitched or isMythical) and 2 or 1
+                draw.RoundedBoxEx(6, 0, 0, w, bT, borderCol, true, true, false, false)
+                draw.RoundedBoxEx(6, 0, h - bT, w, bT, borderCol, false, false, true, true)
+                surface.SetDrawColor(borderCol)
+                surface.DrawRect(0, bT, bT, h - bT * 2)
+                surface.DrawRect(w - bT, bT, bT, h - bT * 2)
+            else
+                surface.SetDrawColor(C.border or Color(50,52,65))
+                surface.DrawOutlinedRect(0, 0, w, h, 1)
             end
 
-            -- ====== HOVER ======
+            -- ====== HOLOGRAPHIC SHIMMER (Glitched) ======
+            if isGlitched then
+                local shimmerW = w * 0.5
+                local shimmerX = ((ct * 1.2 + shimmerPhase) % 3.0) / 3.0
+                local sx = Lerp(shimmerX, -shimmerW, w + shimmerW)
+
+                local toSX, toSY = self2:LocalToScreen(0, 0)
+                render.SetScissorRect(toSX, toSY, toSX + w, toSY + h, true)
+
+                for i = 0, math.floor(shimmerW), 2 do
+                    local frac = i / shimmerW
+                    local intensity = math.exp(-((frac - 0.5) * 3) ^ 2)
+                    local hue = (ct * 80 + frac * 120) % 360
+                    local shimCol = HSVToColor(hue, 0.3, 1)
+                    surface.SetDrawColor(ColorAlpha(shimCol, intensity * 22))
+                    for row = 0, h - 1, 3 do
+                        local dx = sx + i + row * 0.4
+                        if dx >= 0 and dx < w then
+                            surface.DrawRect(dx, row, 2, 3)
+                        end
+                    end
+                end
+
+                render.SetScissorRect(0, 0, 0, 0, false)
+
+                if math.random() < 0.15 then
+                    SpawnParticle(panelID, w, h, "Glitched")
+                end
+            end
+
+            -- ====== FIRE RADIANCE (Mythical) ======
+            if isMythical then
+                for i = 0, 25 do
+                    local a = math.max(0, 20 - i * 0.8) * (math.sin(ct * 3 + i * 0.2) * 0.3 + 0.7)
+                    surface.SetDrawColor(255, 60 + i * 2, 0, a)
+                    surface.DrawRect(1, h - 1 - i, w - 2, 1)
+                end
+
+                local heatPulse = math.sin(ct * 4) * 0.3 + 0.7
+                surface.SetDrawColor(255, 80, 0, 8 * heatPulse)
+                surface.DrawRect(1, 1, w - 2, h - 2)
+
+                if math.random() < 0.12 then
+                    SpawnParticle(panelID, w, h, "Mythical")
+                end
+            end
+
+            -- ====== DRAW PARTICLES ======
+            if isGlitched or isMythical then
+                UpdateAndDrawParticles(panelID, dt)
+            end
+
+            -- ====== HOVER EFFECT (rarity-colored) ======
             if( IsValid( self.button ) ) then
-                if( not self.button:IsDown() and self.button:IsHovered() ) then
-                    alpha = math.Clamp( alpha + 12, 0, 45 )
+                local isHovered = not self.button:IsDown() and self.button:IsHovered()
+                if isHovered then
+                    alpha = math.Clamp( alpha + 12, 0, 60 )
                 else
-                    alpha = math.Clamp( alpha - 8, 0, 45 )
+                    alpha = math.Clamp( alpha - 8, 0, 60 )
                 end
                 if alpha > 0 then
-                    draw.RoundedBox( 6, 0, 0, w, h, Color(255, 255, 255, alpha) )
+                    if isUniqueWeapon then
+                        draw.RoundedBox( 6, 0, 0, w, h, ColorAlpha(borderCol, alpha * 0.7) )
+                        if alpha > 20 then
+                            local edgeA = (alpha / 60) * 40
+                            draw.RoundedBoxEx(6, 0, 0, w, 2, ColorAlpha(borderCol, edgeA), true, true, false, false)
+                            draw.RoundedBoxEx(6, 0, h - 2, w, 2, ColorAlpha(borderCol, edgeA), false, false, true, true)
+                        end
+                    else
+                        draw.RoundedBox( 6, 0, 0, w, h, Color(255, 255, 255, alpha * 0.5) )
+                    end
                 end
+            end
+
+            -- ====== RARITY BOTTOM STRIP ======
+            local stripH = isHighTier and 4 or 3
+            draw.RoundedBoxEx(4, 0, h - stripH, w, stripH, borderCol, false, false, true, true)
+
+            if isUniqueWeapon then
+                surface.SetDrawColor(ColorAlpha(borderCol, 100))
+                surface.DrawRect(0, 8, 2, h - 16)
             end
 
             -- ====== NAME + RARITY ======
             local textBaseY = h - 8 - statAreaH
-
             draw.SimpleText( configItemTable.Name or "NIL", nameFont, w/2, textBaseY - rarityY + 2, C.text_primary or Color(220,222,230), TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM )
-            draw.SimpleText( displayRarity or "", rarityFont, w/2, textBaseY - rarityY + 4, ColorAlpha(stripCol, 200), TEXT_ALIGN_CENTER, 0 )
+            draw.SimpleText( displayRarity or "", rarityFont, w/2, textBaseY - rarityY + 4, ColorAlpha(borderCol, 200), TEXT_ALIGN_CENTER, 0 )
 
             -- ====== UNIQUE WEAPON STATS ======
             if isUniqueWeapon and uwData and uwData.stats and BRS_UW and BRS_UW.Stats then
@@ -182,24 +346,20 @@ function PANEL:FillPanel( data, amount, actions )
                 local sX = 8
                 local sW = w - 16
 
-                -- Quality pill (bottom-left)
                 local qualityInfo = BRS_UW.GetQualityInfo and BRS_UW.GetQualityInfo(uwData.quality or "Junk")
                 if qualityInfo then
                     surface.SetFont("SMGRP_Bold10")
                     local qTW = surface.GetTextSize(uwData.quality or "Junk")
                     local pW, pH = qTW + 10, 14
                     local pY = bottomY - 38
-
                     draw.RoundedBox(3, sX, pY, pW, pH, ColorAlpha(qualityInfo.color, 140))
                     draw.SimpleText(uwData.quality or "Junk", "SMGRP_Bold10", sX + pW/2, pY + pH/2, Color(255,255,255,220), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
                 end
 
-                -- Avg boost (bottom-right)
                 local avg = uwData.avgBoost or 0
                 local avgCol = avg >= 50 and (C.green or Color(60,200,120)) or (avg >= 25 and (C.amber or Color(255,185,50)) or (C.text_muted or Color(90,94,110)))
                 draw.SimpleText("+" .. string.format("%.1f", avg) .. "%", "SMGRP_Bold10", w - 8, bottomY - 38 + 7, avgCol, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER)
 
-                -- 4 stat bars
                 local barY0 = bottomY - 22
                 local barH = 4
                 local barGap = 3
@@ -210,9 +370,7 @@ function PANEL:FillPanel( data, amount, actions )
                 for i, statDef in ipairs(BRS_UW.Stats) do
                     local val = uwData.stats[statDef.key] or 0
                     local bY = barY0 + (i - 1) * (barH + barGap)
-                    
                     draw.SimpleText(statDef.shortName, "SMGRP_Bold10", sX + lblW, bY + barH/2, statDef.color, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER)
-                    
                     if SMGRP and SMGRP.UI and SMGRP.UI.DrawStatBar then
                         SMGRP.UI.DrawStatBar(bX, bY, bW, barH, val / 100, statDef.color)
                     else
@@ -226,7 +384,6 @@ function PANEL:FillPanel( data, amount, actions )
             end
         end
         
-        -- Bricks rarity strip (hidden under our custom one, needed for case opening anim)
         local rarityBox = vgui.Create( "bricks_server_raritybox", self.panelInfo )
         rarityBox:SetSize( self:GetWide(), 3 )
         rarityBox:SetPos( 0, self:GetTall() - 3 )
@@ -234,7 +391,6 @@ function PANEL:FillPanel( data, amount, actions )
         rarityBox:SetCornerRadius( 6 )
         rarityBox:SetRoundedBoxDimensions( false, -10, false, 20 )
 
-        -- Item model display
         local displayH = self:GetTall() - infoH - 8 - statAreaH
         self.itemDisplay = vgui.Create( "bricks_server_unboxing_itemdisplay", self.panelInfo )
         self.itemDisplay:SetPos( 0, 0 )
@@ -242,18 +398,15 @@ function PANEL:FillPanel( data, amount, actions )
         self.itemDisplay:SetItemData( (isItem and "ITEM") or (isCase and "CASE") or (isKey and "KEY") or "", configItemTable )
         self.itemDisplay:SetIconSizeAdjust( 0.75 )
 
-        -- Top info bar
         self.topBar = vgui.Create( "DPanel", self.panelInfo )
         self.topBar:SetPos( 5, 5 )
         self.topBar:SetWide( self:GetWide() - 10 )
         self.topBar.Paint = function() end
 
-        -- Amount badge
         if( amount and amount > 1 ) then
             self:AddTopInfo( string.Comma( amount ) .. "x" )
         end
 
-        -- Permanent tag (non-unique only)
         if( isItem and not isUniqueWeapon ) then
             local devConfigTable = BRICKS_SERVER.DEVCONFIG.UnboxingItemTypes[configItemTable.Type]
             if( devConfigTable and devConfigTable.TagName ) then
@@ -261,13 +414,11 @@ function PANEL:FillPanel( data, amount, actions )
             end
         end
 
-        -- Rarity tag for unique weapons
         if isUniqueWeapon and uwData then
             local rCol = SMGRP.UI.GetRarityColor(uwData.rarity)
             self:AddTopInfo(uwData.rarity, ColorAlpha(rCol, 160), Color(255,255,255))
         end
     else
-        -- Missing/deleted item
         self.panelInfo.Paint = function( self2, w, h )
             local C = SMGRP and SMGRP.UI and SMGRP.UI.Colors or {}
             local toScreenX, toScreenY = self2:LocalToScreen( 0, 0 )
@@ -314,7 +465,6 @@ function PANEL:FillPanel( data, amount, actions )
 end
 
 function PANEL:Paint( w, h )
-
 end
 
 vgui.Register( "bricks_server_unboxingmenu_itemslot", PANEL, "DPanel" )
