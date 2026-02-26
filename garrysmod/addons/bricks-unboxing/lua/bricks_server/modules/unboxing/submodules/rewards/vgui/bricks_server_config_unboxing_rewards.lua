@@ -5,7 +5,7 @@ function PANEL:Init()
 end
 
 function PANEL:FillPanel()
-    if self.panelWide == nil or self.panelWide < 100 then self.panelWide = self:GetWide() end; if self.panelWide < 100 then self.panelWide = math.min(ScrW() * 0.72, 1280) - 220 end; if self.panelTall == nil or self.panelTall < 100 then self.panelTall = self:GetTall() end; if self.panelTall < 100 then self.panelTall = math.min(ScrH() * 0.75, 820) - 220 end
+    if self.panelWide == nil or self.panelWide < 100 then self.panelWide = self:GetWide() end; if self.panelWide < 100 then self.panelWide = math.min(ScrW() * 0.72, 1280) - 220 end; if self.panelTall == nil or self.panelTall < 100 then self.panelTall = self:GetTall() end; if self.panelTall < 100 then self.panelTall = math.min(ScrH() * 0.75, 820) - 90 end
 
     self.topHeaderH = 35
     self.spacing = 2
