@@ -80,7 +80,10 @@ hook.Add( "PlayerInitialSpawn", "BricksServerHooks_PlayerInitialSpawn_UnboxingLo
     BRICKS_SERVER.UNBOXING.Func.FetchMarketplaceSlotsDB( ply:SteamID64(), function( data )
         local marketSlotsTable = {}
         for k, v in ipairs( data ) do
-            marketSlotsTable[tonumber(v.slotKey)] = { tonumber(v.marketKey) }
+            local slotKey = tonumber(v.slotKey)
+            -- Dedup: only keep the first row per slotKey (skip duplicates from DB)
+            if( marketSlotsTable[slotKey] ) then continue end
+            marketSlotsTable[slotKey] = { tonumber(v.marketKey) }
         end
 
 		ply:SetUnboxingMarketplaceSlots( marketSlotsTable )
