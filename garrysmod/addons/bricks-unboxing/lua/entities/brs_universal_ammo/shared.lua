@@ -70,6 +70,15 @@ if SERVER then
             else
                 ply:ChatPrint("+" .. AMMO_PER_BUY .. " reserve rounds added!")
             end
+
+            -- Force HUD ammo display refresh
+            -- Re-setting ammo to current value triggers client HUD update
+            for ammoName, _ in pairs(givenTypes) do
+                local id = game.GetAmmoID(ammoName)
+                if id >= 0 then
+                    ply:SetAmmo(ply:GetAmmoCount(id), id)
+                end
+            end
         else
             ply:ChatPrint("No weapons to give ammo to!")
         end

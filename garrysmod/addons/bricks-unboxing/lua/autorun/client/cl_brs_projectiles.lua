@@ -457,21 +457,50 @@ end)
 
 -- ============================================================
 -- SUPPRESS DEFAULT TRACERS for boosted weapons
--- M9K runs FireBullets on both server AND client. The server hook
--- returns false (suppresses hitscan). But without a client hook,
--- the client-side FireBullets creates standard Source engine tracers
--- (those bright orange/white lines shooting from the gun).
--- This hook kills those default tracers on the client.
 -- ============================================================
+-- SUPPRESS DEFAULT TRACERS for boosted weapons
+-- Three layers of suppression:
+-- 1. Wrap weapon's FireBullets method on client (most reliable)
+-- 2. EntityFireBullets hook fallback
+-- 3. PreFireAnimationEvent for muzzle tracer events
+-- ============================================================
+
+-- Layer 1: Wrap active weapon's FireBullets on client
+-- M9K PrimaryAttack (shared) calls self.Owner:FireBullets(bullet)
+-- By wrapping FireBullets on the weapon ENTITY, we intercept it
+-- before Source creates any tracers.
+local _wrappedWeapons = {}
+hook.Add("Think", "BRS_UW_WrapClientFireBullets", function()
+    local ply = LocalPlayer()
+    if not IsValid(ply) then return end
+    local wep = ply:GetActiveWeapon()
+    if not IsValid(wep) then return end
+    if wep:GetNWBool("BRS_UW_Boosted", false) then
+        if not _wrappedWeapons[wep] then
+            _wrappedWeapons[wep] = true
+            -- Override FireBullets on the PLAYER entity when holding boosted weapon
+            -- M9K calls self.Owner:FireBullets(), Owner = player entity
+            if not ply._BRS_OrigFireBullets then
+                ply._BRS_OrigFireBullets = ply.FireBullets
+                ply.FireBullets = function(self2, bullet, ...)
+                    local w = self2:GetActiveWeapon()
+                    if IsValid(w) and w:GetNWBool("BRS_UW_Boosted", false) then
+                        return -- suppress client-side bullet entirely
+                    end
+                    return ply._BRS_OrigFireBullets(self2, bullet, ...)
+                end
+            end
+        end
+    end
+end)
+
+-- Layer 2: EntityFireBullets hook fallback
 hook.Add("EntityFireBullets", "BRS_UW_SuppressClientTracers", function(ent, data)
     if not IsValid(ent) or not ent:IsPlayer() then return end
     local wep = ent:GetActiveWeapon()
     if not IsValid(wep) then return end
     if wep:GetNWBool("BRS_UW_Boosted", false) then
-        -- Kill default tracers - our custom projectile system handles visuals
-        data.Tracer = 0
-        data.TracerName = ""
-        return true  -- return true = fire bullet with modified data (no tracers)
+        return false
     end
 end)
 
