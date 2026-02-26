@@ -48,6 +48,13 @@ hook.Add("EntityFireBullets", "BRS_UW_ProjectileSystem", function(ent, data)
     local category = uwData.category or "Rifle"
     local phys = BRS_UW.Projectiles.GetPhysics(category)
 
+    -- Apply VEL stat boost to bullet velocity
+    local velMult = 1
+    if uwData.stats and uwData.stats.vel and uwData.stats.vel > 0 then
+        velMult = 1 + uwData.stats.vel / 100
+    end
+    local bulletSpeed = phys.velocity * velMult
+
     -- Capture original bullet data
     local src = data.Src
     local dir = data.Dir
@@ -73,7 +80,7 @@ hook.Add("EntityFireBullets", "BRS_UW_ProjectileSystem", function(ent, data)
             table.remove(projectiles, 1)
         end
 
-        local vel = bulletDir * phys.velocity
+        local vel = bulletDir * bulletSpeed
 
         projectiles[#projectiles + 1] = {
             owner = ent,

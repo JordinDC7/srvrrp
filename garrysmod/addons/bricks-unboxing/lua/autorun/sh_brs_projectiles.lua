@@ -11,27 +11,28 @@ BRS_UW.Tracers = BRS_UW.Tracers or {}
 -- ============================================================
 -- BULLET PHYSICS - tuned for VISIBLE trajectory + bullet drop
 --
+-- GRAVITY REDUCED ~40% from initial values for better feel.
 -- Example: Rifle at 1000 units (25m)
 --   travel time = 0.167s = 10 frames
---   bullet drop  = 0.5 * 600 * 0.167² = 8.3 units (visible arc)
+--   bullet drop  = 0.5 * 350 * 0.167² = 4.9 units (visible arc)
 -- Example: Sniper at 3000 units (75m)
 --   travel time = 0.3s = 18 frames
---   bullet drop  = 0.5 * 400 * 0.3² = 18 units (clear arc)
+--   bullet drop  = 0.5 * 250 * 0.3² = 11.25 units (clear arc)
 -- ============================================================
 BRS_UW.Projectiles.Physics = {
-    Pistol  = { velocity = 3000,  gravity = 800  },
-    SMG     = { velocity = 4000,  gravity = 700  },
-    Rifle   = { velocity = 6000,  gravity = 600  },
-    Shotgun = { velocity = 2500,  gravity = 1000 },
-    Sniper  = { velocity = 10000, gravity = 400  },
-    Heavy   = { velocity = 5000,  gravity = 700  },
+    Pistol  = { velocity = 3000,  gravity = 500  },
+    SMG     = { velocity = 4000,  gravity = 420  },
+    Rifle   = { velocity = 6000,  gravity = 350  },
+    Shotgun = { velocity = 2500,  gravity = 600  },
+    Sniper  = { velocity = 10000, gravity = 250  },
+    Heavy   = { velocity = 5000,  gravity = 420  },
 }
 
 BRS_UW.Projectiles.MAX_LIFETIME = 3.0
 BRS_UW.Projectiles.MAX_DISTANCE = 25000
 
 function BRS_UW.Projectiles.GetPhysics(category)
-    return BRS_UW.Projectiles.Physics[category] or { velocity = 5000, gravity = 700 }
+    return BRS_UW.Projectiles.Physics[category] or { velocity = 5000, gravity = 420 }
 end
 
 -- ============================================================

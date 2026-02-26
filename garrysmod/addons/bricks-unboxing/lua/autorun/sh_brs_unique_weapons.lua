@@ -123,13 +123,14 @@ for i, wep in ipairs(BRS_UW.Weapons) do
 end
 
 -- ============================================================
--- 4 STAT TYPES (matches actual M9K weapon properties)
+-- 5 STAT TYPES (4 M9K weapon properties + bullet velocity)
 -- ============================================================
 BRS_UW.Stats = {
     { key = "dmg",  name = "DAMAGE",   shortName = "DMG",  color = Color(255, 80, 80),   applyKey = "Damage" },
     { key = "spd",  name = "ACCURACY", shortName = "ACC",  color = Color(80, 200, 255),  applyKey = "Spread", inverted = true },
     { key = "rpm",  name = "RPM",      shortName = "RPM",  color = Color(80, 255, 120),  applyKey = "RPM" },
     { key = "mag",  name = "MAGAZINE", shortName = "MAG",  color = Color(220, 80, 255),  applyKey = "ClipSize" },
+    { key = "vel",  name = "VELOCITY", shortName = "VEL",  color = Color(255, 200, 60),  applyKey = "Velocity" },
 }
 
 BRS_UW.StatByKey = {}

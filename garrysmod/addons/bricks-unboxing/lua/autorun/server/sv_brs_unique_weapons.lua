@@ -20,6 +20,24 @@ function BRS_UW.MigrateStats(stats)
         stats.acc = nil
     end
     stats.ctrl = nil -- M9K has no modifiable recoil
+
+    -- Migrate: add VEL stat for weapons that don't have it
+    -- Derived from average of existing stats with ±15% variance
+    if not stats.vel then
+        local sum, cnt = 0, 0
+        for _, k in ipairs({"dmg", "spd", "rpm", "mag"}) do
+            if stats[k] and stats[k] > 0 then
+                sum = sum + stats[k]
+                cnt = cnt + 1
+            end
+        end
+        if cnt > 0 then
+            stats.vel = math.Round(math.Clamp(sum / cnt * math.Rand(0.85, 1.15), 1, 125), 1)
+        else
+            stats.vel = 0
+        end
+    end
+
     return stats
 end
 

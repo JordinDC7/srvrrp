@@ -292,7 +292,14 @@ function PANEL:FillPanel()
     self:FillInventory()
 
     hook.Add( "BRS.Hooks.FillUnboxingInventory", self, function()
-        self:FillInventory()
+        -- Debounce: only rebuild once per 0.15s (prevents lag on equip/unequip/mass ops)
+        if self._fillTimer then timer.Remove(self._fillTimer) end
+        self._fillTimer = "BRS_InvFill_" .. tostring(self)
+        timer.Create(self._fillTimer, 0.15, 1, function()
+            if IsValid(self) then
+                self:FillInventory()
+            end
+        end)
     end )
 end
 
@@ -391,7 +398,7 @@ function PANEL:FillInventory()
             end
         end
 
-        table.insert( sortedItems, { sortVal, k, v } )
+        table.insert( sortedItems, { sortVal, k, v, configItemTable, itemKey2, isItem, isCase, isKey, isUW, uwData } )
     end
 
     -- Sort direction: low sorts ascending, everything else descending
@@ -406,10 +413,11 @@ function PANEL:FillInventory()
 
     for k2, v in pairs( sortedItems ) do
         local globalKey, itemAmount = v[2], v[3]
-        local configItemTable, itemKey2, isItem, isCase, isKey = BRICKS_SERVER.UNBOXING.Func.GetItemFromGlobalKey( globalKey )
+        -- Use cached results from sort pass (indices 4-10)
+        local configItemTable, itemKey2, isItem, isCase, isKey = v[4], v[5], v[6], v[7], v[8]
+        local isUW = v[9]
 
         local actions
-        local isUW = BRS_UW and BRS_UW.IsUniqueWeapon and BRS_UW.IsUniqueWeapon(globalKey)
 
         -- In select mode, clicking toggles selection
         if self.selectMode then
