@@ -241,40 +241,42 @@ hook.Add("Think", "BRS_UW_ProjThink", function()
         -- Trim expired trail points
         RingTrimBefore(p.trail, ct - (p.tier.lifetime or 0.2))
 
-        -- Particles (distance culled)
+        -- Particles (distance culled, slower spawn)
         if p.alive and p.tier.hasParticles then
             local dSq = p.pos:DistToSqr(eyePos)
-            if dSq < LOD_PARTICLE and ct - p.lastPart > 0.035 then
+            if dSq < LOD_PARTICLE and ct - p.lastPart > 0.06 then
                 p.lastPart = ct
                 local em = GetEmitter(p.pos)
                 if em then
                     local tier = p.tier
-                    local behindPos = p.pos - p.dir * Rand(2, 6) + VectorRand() * 2
+                    local behindPos = p.pos - p.dir * Rand(2, 6) + VectorRand() * 1.5
                     local pt = em:Add("sprites/light_glow02_add", behindPos)
                     if pt then
-                        pt:SetStartAlpha(200) pt:SetEndAlpha(0)
+                        pt:SetStartAlpha(160) pt:SetEndAlpha(0)
                         local pType = tier.particleType or "sparks"
                         if pType == "glitch" then
-                            pt:SetColor(random() > 0.5 and 255 or 0, random() > 0.5 and 255 or 0, random() > 0.5 and 220 or 200)
-                            pt:SetDieTime(Rand(0.05, 0.12)) pt:SetStartSize(Rand(1, 2)) pt:SetEndSize(0)
-                            pt:SetVelocity(VectorRand() * 70)
+                            -- Matrix green with slight variation
+                            local g = 180 + random(0, 75)
+                            pt:SetColor(0, g, random(20, 50))
+                            pt:SetDieTime(Rand(0.04, 0.10)) pt:SetStartSize(Rand(0.8, 1.5)) pt:SetEndSize(0)
+                            pt:SetVelocity(VectorRand() * 40)
                         elseif pType == "void" then
-                            pt:SetColor(40 + random(0, 160), 0, 0)
-                            pt:SetDieTime(Rand(0.3, 0.5)) pt:SetStartSize(Rand(3, 5)) pt:SetEndSize(1)
-                            pt:SetVelocity(-p.dir * 25 + VectorRand() * 12) pt:SetGravity(Vector(0, 0, 20))
+                            pt:SetColor(80 + random(0, 120), 0, 0)
+                            pt:SetDieTime(Rand(0.15, 0.3)) pt:SetStartSize(Rand(1.5, 3)) pt:SetEndSize(0)
+                            pt:SetVelocity(-p.dir * 20 + VectorRand() * 8) pt:SetGravity(Vector(0, 0, 20))
                         elseif pType == "comet" then
                             pt:SetColor(255, 140 + random(0, 80), random(20, 60))
-                            pt:SetDieTime(Rand(0.2, 0.4)) pt:SetStartSize(Rand(2, 4)) pt:SetEndSize(0)
-                            pt:SetVelocity(-p.dir * 60 + VectorRand() * 25) pt:SetGravity(Vector(0, 0, -120))
+                            pt:SetDieTime(Rand(0.15, 0.3)) pt:SetStartSize(Rand(1.5, 3)) pt:SetEndSize(0)
+                            pt:SetVelocity(-p.dir * 40 + VectorRand() * 15) pt:SetGravity(Vector(0, 0, -120))
                         elseif pType == "energy" then
                             pt:SetColor(200, 120, 255)
-                            pt:SetDieTime(Rand(0.15, 0.3)) pt:SetStartSize(Rand(2, 3)) pt:SetEndSize(1)
-                            pt:SetVelocity(VectorRand() * 20) pt:SetGravity(Vector(0, 0, 50))
+                            pt:SetDieTime(Rand(0.1, 0.2)) pt:SetStartSize(Rand(1, 2)) pt:SetEndSize(0)
+                            pt:SetVelocity(VectorRand() * 15) pt:SetGravity(Vector(0, 0, 50))
                         else
                             local pc = tier.particleColor or tier.color
                             pt:SetColor(pc.r, pc.g, pc.b)
-                            pt:SetDieTime(Rand(0.1, 0.25)) pt:SetStartSize(Rand(1, 2)) pt:SetEndSize(0)
-                            pt:SetVelocity(VectorRand() * 40) pt:SetGravity(Vector(0, 0, -200))
+                            pt:SetDieTime(Rand(0.08, 0.2)) pt:SetStartSize(Rand(0.8, 1.5)) pt:SetEndSize(0)
+                            pt:SetVelocity(VectorRand() * 30) pt:SetGravity(Vector(0, 0, -200))
                         end
                     end
                 end
@@ -345,7 +347,7 @@ hook.Add("PostDrawTranslucentRenderables", "BRS_UW_ProjRender", function(_, bSky
         if trailN > 1 then
             local fadeTime = tier.lifetime or 0.2
 
-            -- Core beam only (NO separate glow beam for high tiers)
+            -- Core beam only
             render.SetMaterial(matBeam)
             for j = 2, trailN do
                 local p1 = RingGet(proj.trail, j - 1)
@@ -355,8 +357,8 @@ hook.Add("PostDrawTranslucentRenderables", "BRS_UW_ProjRender", function(_, bSky
                 if age < 0.02 then continue end
                 -- Core trail
                 render.DrawBeam(p1.pos, p2.pos, tier.trailWidth, 0, 1, C(br, bg, bb, ba * age))
-                -- Soft outer glow (subtle, not blinding)
-                render.DrawBeam(p1.pos, p2.pos, tier.glowWidth, 0, 1, C(gr, gg, gb, ga * age * 0.3))
+                -- Soft outer glow (very subtle)
+                render.DrawBeam(p1.pos, p2.pos, tier.glowWidth, 0, 1, C(gr, gg, gb, ga * age * 0.2))
             end
 
             -- DETAIL EFFECTS (close only, one effect per tier max)
@@ -384,23 +386,23 @@ hook.Add("PostDrawTranslucentRenderables", "BRS_UW_ProjRender", function(_, bSky
         -- PROJECTILE HEAD (simplified)
         -- =====================
         if proj.alive then
-            -- Single small head glow
+            -- Small head glow (toned down)
             render.SetMaterial(matGlow)
-            render.DrawSprite(curPos, tier.trailWidth * 2.5, tier.trailWidth * 2.5, C(br, bg, bb, 220))
+            render.DrawSprite(curPos, tier.trailWidth * 1.8, tier.trailWidth * 1.8, C(br, bg, bb, 180))
 
-            -- Void dark core (Mythical only) - just a small dark center
+            -- Void dark core (Mythical only) - tiny dark center
             if tier.voidCore then
-                render.DrawSprite(curPos, tier.trailWidth * 2, tier.trailWidth * 2, C(0, 0, 0, 160))
+                render.DrawSprite(curPos, tier.trailWidth * 1.2, tier.trailWidth * 1.2, C(0, 0, 0, 120))
             end
 
             -- Spiral flares (Legendary only, close)
             if tier.hasSpiral and isClose then
                 render.SetMaterial(matFlare)
-                local sR = tier.spiralRadius or 3
+                local sR = tier.spiralRadius or 2
                 for s = 0, 1 do
-                    local a = elapsed * (tier.spiralSpeed or 6) * 6.283 + s * 3.14
+                    local a = elapsed * (tier.spiralSpeed or 5) * 6.283 + s * 3.14
                     local off = proj.right * cos(a) * sR + proj.up * sin(a) * sR
-                    render.DrawSprite(curPos + off, tier.trailWidth, tier.trailWidth, C(br, bg, bb, 140))
+                    render.DrawSprite(curPos + off, tier.trailWidth * 0.8, tier.trailWidth * 0.8, C(br, bg, bb, 100))
                 end
             end
 
@@ -408,7 +410,7 @@ hook.Add("PostDrawTranslucentRenderables", "BRS_UW_ProjRender", function(_, bSky
     end
 
     -- =====================
-    -- IMPACT EFFECTS (single sprite each)
+    -- IMPACT EFFECTS (single sprite, brief)
     -- =====================
     for _, imp in ipairs(impacts) do
         local age = ct - imp.spawn
@@ -416,16 +418,16 @@ hook.Add("PostDrawTranslucentRenderables", "BRS_UW_ProjRender", function(_, bSky
         local fade = 1 - frac
         local tier = imp.tier
         local ic = tier.impactColor or tier.color
-        local ringSize = imp.size * (0.3 + frac * 1.5)
+        local ringSize = imp.size * (0.2 + frac * 1.0)
 
         render.SetMaterial(matSoft)
-        render.DrawSprite(imp.pos + imp.normal, ringSize, ringSize, C(ic.r, ic.g, ic.b, fade * 180))
+        render.DrawSprite(imp.pos + imp.normal, ringSize, ringSize, C(ic.r, ic.g, ic.b, fade * 140))
 
-        -- Brief white flash at start
-        if frac < 0.2 then
-            local ff = 1 - frac / 0.2
+        -- Brief flash at start (subtle)
+        if frac < 0.15 then
+            local ff = 1 - frac / 0.15
             render.SetMaterial(matGlow)
-            render.DrawSprite(imp.pos + imp.normal, imp.size * ff, imp.size * ff, C(255, 255, 255, 150 * ff))
+            render.DrawSprite(imp.pos + imp.normal, imp.size * 0.6 * ff, imp.size * 0.6 * ff, C(255, 255, 255, 100 * ff))
         end
 
     end
