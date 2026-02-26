@@ -1,15 +1,101 @@
 -- ============================================================
 -- BRS Unique Weapons - High RPM Smoothing (Client)
 --
--- Fixes for boosted RPM weapons:
---   1. Viewmodel: speed up FIRE animations only
---   2. ViewPunch: scale down per-shot recoil
---   3. Shells: throttle ejection effects
---   4. Sound: rotate ALL weapon sounds across channels
+-- ROOT CAUSE FIX: The server changes wep.Primary.Delay and
+-- wep.Primary.RPM, but these are Lua table values that do NOT
+-- network to the client. GMod weapons are PREDICTED - 
+-- PrimaryAttack() runs on both client and server. The client
+-- still has the ORIGINAL delay, so it only predicts shots at
+-- the original fire rate. Sound/animation only play when the
+-- CLIENT thinks a shot happened.
+--
+-- FIX: Apply the same RPM/Delay changes on the client weapon
+-- when we detect the networked RPM multiplier.
 -- ============================================================
 
 -- ============================================================
--- 1. VIEWMODEL ANIMATION - FIRE SEQUENCES ONLY
+-- CORE FIX: Sync RPM/Delay to client weapon's Primary table
+-- This is the #1 fix. Without this, nothing else matters.
+-- ============================================================
+hook.Add("Think", "BRS_UW_RPMClientSync", function()
+    local ply = LocalPlayer()
+    if not IsValid(ply) then return end
+
+    for _, wep in ipairs(ply:GetWeapons()) do
+        if not IsValid(wep) then continue end
+
+        local mult = wep:GetNW2Float("BRS_UW_RPMMultiplier", 0)
+        if mult <= 1.0 then
+            -- Clean up if weapon was un-boosted
+            if wep.BRS_UW_ClientPatched then
+                if wep.BRS_UW_ClientOrigDelay then
+                    wep.Primary.Delay = wep.BRS_UW_ClientOrigDelay
+                end
+                if wep.BRS_UW_ClientOrigRPM then
+                    wep.Primary.RPM = wep.BRS_UW_ClientOrigRPM
+                end
+                if wep.BRS_UW_ClientOrigRecoil then
+                    wep.Primary.Recoil = wep.BRS_UW_ClientOrigRecoil
+                end
+                if wep.BRS_UW_ClientOrigKickUp then
+                    wep.Primary.KickUp = wep.BRS_UW_ClientOrigKickUp
+                end
+                if wep.BRS_UW_ClientOrigKickDown then
+                    wep.Primary.KickDown = wep.BRS_UW_ClientOrigKickDown
+                end
+                if wep.BRS_UW_ClientOrigKickH then
+                    wep.Primary.KickHorizontal = wep.BRS_UW_ClientOrigKickH
+                end
+                wep.BRS_UW_ClientPatched = nil
+            end
+            continue
+        end
+
+        -- Already patched this weapon
+        if wep.BRS_UW_ClientPatched then continue end
+        if not wep.Primary then continue end
+
+        -- Save originals
+        wep.BRS_UW_ClientOrigDelay = wep.Primary.Delay
+        wep.BRS_UW_ClientOrigRPM = wep.Primary.RPM
+
+        -- Apply boosted RPM and Delay to CLIENT's Primary table
+        if wep.Primary.RPM then
+            wep.Primary.RPM = math.Round(wep.Primary.RPM * mult)
+        end
+        if wep.Primary.Delay then
+            wep.Primary.Delay = wep.Primary.Delay / mult
+        elseif wep.Primary.RPM and wep.Primary.RPM > 0 then
+            wep.Primary.Delay = 60 / wep.Primary.RPM
+        end
+
+        -- Scale down recoil on client too (same sqrt curve as server)
+        local recoilScale = 1 / math.sqrt(mult)
+        if wep.Primary.Recoil then
+            wep.BRS_UW_ClientOrigRecoil = wep.Primary.Recoil
+            wep.Primary.Recoil = wep.Primary.Recoil * recoilScale
+        end
+        if wep.Primary.KickUp then
+            wep.BRS_UW_ClientOrigKickUp = wep.Primary.KickUp
+            wep.Primary.KickUp = wep.Primary.KickUp * recoilScale
+        end
+        if wep.Primary.KickDown then
+            wep.BRS_UW_ClientOrigKickDown = wep.Primary.KickDown
+            wep.Primary.KickDown = wep.Primary.KickDown * recoilScale
+        end
+        if wep.Primary.KickHorizontal then
+            wep.BRS_UW_ClientOrigKickH = wep.Primary.KickHorizontal
+            wep.Primary.KickHorizontal = wep.Primary.KickHorizontal * recoilScale
+        end
+
+        wep.BRS_UW_ClientPatched = true
+        -- print("[BRS UW Client] Patched " .. wep:GetClass() .. " RPM mult=" .. mult .. " delay=" .. (wep.Primary.Delay or "nil"))
+    end
+end)
+
+-- ============================================================
+-- VIEWMODEL ANIMATION - FIRE SEQUENCES ONLY
+-- Speed up fire animations so they complete before next shot
 -- ============================================================
 local fireActivities = {
     [ACT_VM_PRIMARYATTACK] = true,
@@ -29,19 +115,16 @@ hook.Add("PostDrawViewModel", "BRS_UW_RPMAnimFix", function(vm, ply, wep)
     local mult = wep:GetNW2Float("BRS_UW_RPMMultiplier", 0)
     if mult <= 1.0 then return end
 
-    -- Use GetSequenceActivity (GetActivity doesn't exist on viewmodels)
     local seq = vm:GetSequence()
     if not seq or seq < 0 then return end
 
     local isFiring = false
 
-    -- Check activity
     local act = vm:GetSequenceActivity(seq)
     if act and fireActivities[act] then
         isFiring = true
     end
 
-    -- Also check sequence name as fallback
     if not isFiring then
         local seqName = vm:GetSequenceName(seq)
         if seqName then
@@ -57,7 +140,7 @@ hook.Add("PostDrawViewModel", "BRS_UW_RPMAnimFix", function(vm, ply, wep)
 end)
 
 -- ============================================================
--- 2. VIEWPUNCH REDUCTION
+-- VIEWPUNCH REDUCTION
 -- ============================================================
 local playerMeta = FindMetaTable("Player")
 if playerMeta and playerMeta.ViewPunch then
@@ -86,7 +169,7 @@ if playerMeta and playerMeta.ViewPunch then
 end
 
 -- ============================================================
--- 3. SHELL EJECTION THROTTLE
+-- SHELL EJECTION THROTTLE
 -- ============================================================
 local lastShellTime = 0
 
@@ -121,22 +204,18 @@ if util and util.Effect then
 end
 
 -- ============================================================
--- 4. SOUND CHANNEL ROTATION (catch-all)
--- Source only allows ONE sound per channel per entity.
--- M9K weapons emit fire sounds in many different ways:
---   self:EmitSound(), self.Weapon:EmitSound(), sound.Play(), etc.
--- EntityEmitSound catches ALL of them regardless of how they
--- were triggered. We rotate channels on ANY sound coming from
--- a boosted weapon entity to ensure nothing gets dropped.
+-- SOUND CHANNEL ROTATION
+-- Even with correct client-side fire rate, Source can still
+-- drop sounds if they play too fast on the same channel.
+-- Rotate fire sounds across channels as safety net.
 -- ============================================================
 local channels = {CHAN_WEAPON, CHAN_WEAPON2, CHAN_BODY, CHAN_VOICE}
-local chanState = {} -- [entIndex] = { idx = N, lastTime = T }
+local chanState = {}
 
 hook.Add("EntityEmitSound", "BRS_UW_RPMSoundFix", function(data)
     local ent = data.Entity
     if not IsValid(ent) then return end
 
-    -- Find the weapon - sound can come from weapon entity or the player
     local wep
     if ent:IsWeapon() then
         wep = ent
@@ -148,12 +227,10 @@ hook.Add("EntityEmitSound", "BRS_UW_RPMSoundFix", function(data)
     local mult = wep:GetNW2Float("BRS_UW_RPMMultiplier", 0)
     if mult <= 1.0 then return end
 
-    -- Skip clearly non-weapon sounds (footsteps, physics, UI)
+    -- Skip non-weapon sounds
     local snd = data.SoundName
     if not snd then return end
     local sndLower = string.lower(snd)
-
-    -- Skip sounds that are definitely not weapon fire
     if string.find(sndLower, "step") or
        string.find(sndLower, "foot") or
        string.find(sndLower, "phys") or
@@ -165,7 +242,6 @@ hook.Add("EntityEmitSound", "BRS_UW_RPMSoundFix", function(data)
         return
     end
 
-    -- For everything else from this weapon entity, rotate channels
     local idx = ent:EntIndex()
     local state = chanState[idx]
     if not state then
@@ -173,10 +249,9 @@ hook.Add("EntityEmitSound", "BRS_UW_RPMSoundFix", function(data)
         chanState[idx] = state
     end
 
-    local now = CurTime()
     state.idx = state.idx + 1
     if state.idx > #channels then state.idx = 1 end
-    state.lastTime = now
+    state.lastTime = CurTime()
 
     data.Channel = channels[state.idx]
     return true
@@ -192,4 +267,4 @@ timer.Create("BRS_UW_ChanCleanup", 5, 0, function()
     end
 end)
 
-print("[BRS UW] RPM smoothing loaded (anim + recoil + shells + sound channels)")
+print("[BRS UW] RPM client fix loaded (Primary.Delay sync + anim + recoil + shells + sound)")
