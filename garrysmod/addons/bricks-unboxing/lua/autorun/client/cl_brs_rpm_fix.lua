@@ -195,10 +195,7 @@ hook.Add("PostDrawViewModel", "BRS_UW_RPMAnimFix", function(vm, ply, wep)
     end
 
     if isFiring then
-        -- Soft cap: animation speed scales up to 1.6x then tapers
-        -- Past 1.6x, let the animation get interrupted by next shot naturally
-        local animMult = mult <= 1.6 and mult or (1.6 + (mult - 1.6) * 0.3)
-        vm:SetPlaybackRate(animMult)
+        vm:SetPlaybackRate(mult)
     else
         vm:SetPlaybackRate(1.0)
     end
@@ -255,13 +252,15 @@ hook.Add("CalcView", "BRS_UW_CameraSmooth", function(ply, pos, ang, fov)
     else
         -- Fade out smoothly
         smoothShake = LerpAngle(FrameTime() * 8, smoothShake, Angle(0, 0, 0))
-        if smoothShake:Length() < 0.01 then
+        local mag = math.abs(smoothShake.p) + math.abs(smoothShake.y) + math.abs(smoothShake.r)
+        if mag < 0.01 then
             smoothShake = Angle(0, 0, 0)
             return
         end
     end
 
-    if smoothShake:Length() > 0.01 then
+    local mag = math.abs(smoothShake.p) + math.abs(smoothShake.y) + math.abs(smoothShake.r)
+    if mag > 0.01 then
         return {
             origin = pos,
             angles = ang + smoothShake,
