@@ -6,6 +6,8 @@ end
 
 function PANEL:FillPanel()
     self.panelTall = self.panelTall or (ScrH()*0.75-90)
+    if( self.panelWide == nil or self.panelWide < 100 ) then self.panelWide = self:GetWide() end
+    if( self.panelWide < 100 ) then self.panelWide = ScrW() * 0.72 + 200 - 220 end
 
     self.topBar = vgui.Create( "DPanel", self )
     self.topBar:Dock( TOP )
@@ -18,7 +20,7 @@ function PANEL:FillPanel()
     self.searchBar = vgui.Create( "bricks_server_searchbar", self.topBar )
     self.searchBar:Dock( LEFT )
     self.searchBar:DockMargin( 25, 10, 10, 10 )
-    self.searchBar:SetWide( ScrW()*0.2 )
+    self.searchBar:SetWide( math.min( ScrW()*0.2, (self.panelWide or ScrW()*0.5) * 0.4 ) )
     self.searchBar:SetBackColor( BRICKS_SERVER.Func.GetTheme( 1 ) )
     self.searchBar:SetHighlightColor( BRICKS_SERVER.Func.GetTheme( 0 ) )
 
@@ -467,9 +469,14 @@ end
 function PANEL:RefreshMyAuctions()
     self.myAuctions.grid:Clear()
 
+    local seenMarketKeys = {}
     for k, v in pairs( BRICKS_SERVER.CONFIG.UNBOXING.Marketplace.Slots ) do
         local marketSlotTable = LocalPlayer():GetUnboxingMarketplaceSlots()[k]
         if( marketSlotTable and marketSlotTable[1] ) then
+            -- Dedup: skip if we already showed this marketKey
+            if( seenMarketKeys[marketSlotTable[1]] ) then continue end
+            seenMarketKeys[marketSlotTable[1]] = true
+
             local marketItemTable = BRICKS_SERVER.TEMP.UnboxingMarketplace[marketSlotTable[1]]
 
             if( not marketItemTable ) then continue end

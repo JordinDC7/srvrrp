@@ -190,14 +190,30 @@ if( not sql.TableExists( "bricks_server_unboxing_marketplaceslots" ) ) then
 	sql.Query( [[ CREATE TABLE bricks_server_unboxing_marketplaceslots ( 
 		steamID64 varchar(20),
 		slotKey int NOT NULL,
-		marketKey int
+		marketKey int,
+		UNIQUE(steamID64, slotKey)
 	); ]] )
+end
+
+-- Clean up duplicate rows from missing UNIQUE constraint
+do
+	local dupeCheck = sql.Query( "SELECT steamID64, slotKey, COUNT(*) as cnt FROM bricks_server_unboxing_marketplaceslots GROUP BY steamID64, slotKey HAVING cnt > 1;" )
+	if( dupeCheck and #dupeCheck > 0 ) then
+		print( "[BricksUnboxing SQLLite] Found " .. #dupeCheck .. " duplicate marketplace slot entries, cleaning up..." )
+		for _, row in ipairs( dupeCheck ) do
+			-- Keep only the row with the highest marketKey (most recent auction), delete the rest
+			sql.Query( "DELETE FROM bricks_server_unboxing_marketplaceslots WHERE steamID64 = '" .. row.steamID64 .. "' AND slotKey = " .. row.slotKey .. " AND rowid NOT IN (SELECT rowid FROM bricks_server_unboxing_marketplaceslots WHERE steamID64 = '" .. row.steamID64 .. "' AND slotKey = " .. row.slotKey .. " ORDER BY marketKey DESC LIMIT 1);" )
+		end
+		print( "[BricksUnboxing SQLLite] Duplicate cleanup complete." )
+	end
+	-- Add unique index if table already existed without one
+	sql.Query( "CREATE UNIQUE INDEX IF NOT EXISTS idx_marketplaceslots_unique ON bricks_server_unboxing_marketplaceslots(steamID64, slotKey);" )
 end
 
 print( "[BricksUnboxing SQLLite] bricks_server_unboxing_marketplaceslots table validated!" )
 
 function BRICKS_SERVER.UNBOXING.Func.InsertMarketplaceSlotsDB( steamID64, slotKey )
-	local query = sql.Query( "INSERT INTO bricks_server_unboxing_marketplaceslots( steamID64, slotKey ) VALUES('" .. steamID64 .. "', " .. slotKey .. ");" )
+	local query = sql.Query( "INSERT OR REPLACE INTO bricks_server_unboxing_marketplaceslots( steamID64, slotKey ) VALUES('" .. steamID64 .. "', " .. slotKey .. ");" )
 	
 	if( query == false ) then
 		print( "[BricksUnboxing SQLLite] ERROR", sql.LastError() )

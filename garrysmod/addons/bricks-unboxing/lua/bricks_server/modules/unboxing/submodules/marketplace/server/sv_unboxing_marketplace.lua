@@ -463,3 +463,38 @@ net.Receive( "BRS.Net.RequestUnboxingBidMarketData", function( len, ply )
         BRICKS_SERVER.TEMP.UnboxingMarketplacePlys[ply][v] = true
     end
 end )
+-- Debug command to inspect marketplace slot state
+concommand.Add( "brs_market_debug", function( ply )
+    if( not IsValid( ply ) or not ply:IsSuperAdmin() ) then return end
+
+    print( "===== MARKETPLACE SLOT DEBUG for " .. ply:Nick() .. " (" .. ply:SteamID64() .. ") =====" )
+
+    -- In-memory slots
+    local slots = ply:GetUnboxingMarketplaceSlots() or {}
+    print( "  In-memory slots:" )
+    for k, v in pairs( slots ) do
+        print( "    Slot " .. k .. " = marketKey: " .. tostring(v[1]) )
+    end
+
+    -- DB slots
+    BRICKS_SERVER.UNBOXING.Func.FetchMarketplaceSlotsDB( ply:SteamID64(), function( data )
+        print( "  DB rows (" .. #data .. " total):" )
+        for k, v in ipairs( data ) do
+            print( "    Row " .. k .. ": slotKey=" .. tostring(v.slotKey) .. " marketKey=" .. tostring(v.marketKey) )
+        end
+    end )
+
+    -- Config slots
+    print( "  Config slots: " .. table.Count( BRICKS_SERVER.CONFIG.UNBOXING.Marketplace.Slots ) )
+
+    -- Active marketplace entries for this player
+    local count = 0
+    for k, v in pairs( BRICKS_SERVER.TEMP.UnboxingMarketplace ) do
+        if( v.OwnerSteamID64 == ply:SteamID64() ) then
+            count = count + 1
+            print( "  Active auction #" .. k .. ": " .. tostring(v.ItemGlobalKey) .. " x" .. tostring(v.ItemAmount) .. " bid=" .. tostring(v.CurrentBid) )
+        end
+    end
+    print( "  Total active auctions: " .. count )
+    print( "===== END MARKETPLACE DEBUG =====" )
+end )
