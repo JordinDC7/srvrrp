@@ -1,16 +1,14 @@
 -- ============================================================
--- DarkRP Custom Shipments / Ammo
--- separate = false → appears in Ammo tab
+-- DarkRP Custom Ammo Types
+-- DarkRP.createAmmoType → appears in the AMMO tab
+-- DarkRP.createShipment separate=false → Shipments tab (WRONG)
 -- ============================================================
 
-DarkRP.createShipment("Universal Ammo (100 rounds)", {
+DarkRP.createAmmoType("universal_ammo", {
+    name = "Universal Ammo (100 rounds)",
     model = "models/items/ammocrate_smg1.mdl",
-    entity = "brs_universal_ammo",
     price = 100,
-    amount = 1,
-    separate = false,
-    noShip = true,
     ammoType = "pistol",
-    amtGiven = 1,
+    amountGiven = 1,
     category = "Other",
 })

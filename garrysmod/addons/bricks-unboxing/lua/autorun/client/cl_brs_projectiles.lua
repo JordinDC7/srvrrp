@@ -60,7 +60,7 @@ end
 local function ChromaticRGB(t)
     return sin(t * 6) * 127 + 128, sin(t * 6 + 2.094) * 127 + 128, sin(t * 6 + 4.189) * 127 + 128
 end
-local function GlitchIsCyan(t)
+local function GlitchIsBright(t)
     return (sin(t * 40) + sin(t * 67) + sin(t * 97)) <= 0.5
 end
 
@@ -429,8 +429,8 @@ hook.Add("PostDrawTranslucentRenderables", "BRS_UW_ProjRender", function(_, bSky
                         local segHash = j + floor(elapsed * 30)
                         if segHash % 3 == 0 then
                             local off = sin(segHash * 137.5 + elapsed * 50) * 8
-                            local isCyan = GlitchIsCyan(elapsed + j * 0.1)
-                            local fc = isCyan and tier.color or (tier.color2 or tier.color)
+                            local isBright = GlitchIsBright(elapsed + j * 0.1)
+                            local fc = isBright and tier.color or (tier.color2 or tier.color)
                             render.DrawBeam(p1.pos + right * off + up * off * 0.5, p2.pos + right * off + up * off * 0.5, tier.trailWidth * 0.8, 0, 1, C(fc.r, fc.g, fc.b, 200 * age))
                         end
                     end

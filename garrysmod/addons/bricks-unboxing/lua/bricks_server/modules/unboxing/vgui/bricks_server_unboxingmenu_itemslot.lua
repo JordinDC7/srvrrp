@@ -23,7 +23,7 @@ local _pcolGold = {}
 local _pcolGlitch = {}
 local _pcolMyth = {}
 for i = 1, 5 do _pcolGold[i] = Color(255, 190 + i * 12, 60 + i * 15) end
-for i = 0, 11 do _pcolGlitch[i + 1] = HSVToColor(i * 30, 0.6, 1) end
+for i = 0, 11 do _pcolGlitch[i + 1] = Color(0, 120 + i * 11, 0) end
 for i = 1, 5 do _pcolMyth[i] = Color(255, 80 + i * 24, 0) end
 
 local function SpawnParticle(panelID, w, h, rarity, isAscended)
@@ -250,25 +250,54 @@ function PANEL:FillPanel( data, amount, actions )
                 surface.DrawOutlinedRect(0, 0, w, h, 1)
             end
 
-            -- ====== HOLOGRAPHIC SHIMMER (Glitched) - 8 columns ======
+            -- ====== MATRIX DIGITAL RAIN (Glitched) ======
             if isGlitched then
-                local shimmerX = ((ct * 1.2 + shimmerPhase) % 3.0) / 3.0
-                local sx = Lerp(shimmerX, -w * 0.3, w * 1.3)
                 local toSX, toSY = self2:LocalToScreen(0, 0)
                 render.SetScissorRect(toSX, toSY, toSX + w, toSY + h, true)
-                local colW = w * 0.08
-                for i = 0, 7 do
-                    local frac = i / 8
-                    local intensity = math.exp(-((frac - 0.5) * 3) ^ 2)
-                    local col = _pcolGlitch[math.floor((ct * 80 + frac * 120) / 30) % 12 + 1]
-                    local dx = sx + i * colW * 1.5
-                    if dx > -colW and dx < w + colW then
-                        _dc.r, _dc.g, _dc.b, _dc.a = col.r, col.g, col.b, intensity * 18
+
+                -- Dark overlay to make green pop
+                _dc.r, _dc.g, _dc.b, _dc.a = 0, 0, 0, 8
+                surface.SetDrawColor(_dc)
+                surface.DrawRect(1, 1, w - 2, h - 2)
+
+                -- Falling green "characters" in 8 columns
+                local cols = 8
+                local charW = 3
+                local charH = 6
+                local spacing = (w - 8) / cols
+                for col = 0, cols - 1 do
+                    local seed = shimmerPhase + col * 7.3
+                    local speed = 30 + math.sin(seed) * 15
+                    local colX = 4 + col * spacing + math.sin(seed * 0.5) * 3
+
+                    -- 5 chars per column at staggered heights
+                    for ch = 0, 4 do
+                        local baseY = ((ct * speed + ch * (h / 4) + seed * 20) % (h + 30)) - 15
+                        local brightness = 0.3 + 0.7 * ((ch == 0) and 1 or (0.4 + math.sin(ct * 4 + col + ch) * 0.3))
+                        local g = math.floor(180 * brightness + 40)
+                        local a = math.floor(20 * brightness)
+                        -- Bright leading char, dimmer trail
+                        if ch == 0 then a = 30 end
+                        _dc.r, _dc.g, _dc.b, _dc.a = 0, g, 0, a
                         surface.SetDrawColor(_dc)
-                        surface.DrawRect(dx, 0, colW, h)
+                        surface.DrawRect(colX, baseY, charW, charH)
+                        -- Dim trail behind
+                        if ch == 0 then
+                            _dc.a = 12
+                            surface.SetDrawColor(_dc)
+                            surface.DrawRect(colX, baseY + charH, charW, charH * 3)
+                        end
                     end
                 end
+
+                -- Subtle green scanline sweep
+                local scanY = ((ct * 40 + shimmerPhase * 10) % (h + 20)) - 10
+                _dc.r, _dc.g, _dc.b, _dc.a = 0, 255, 0, 6
+                surface.SetDrawColor(_dc)
+                surface.DrawRect(1, scanY, w - 2, 3)
+
                 render.SetScissorRect(0, 0, 0, 0, false)
+
                 if math.random() < 0.1 then SpawnParticle(panelID, w, h, "Glitched") end
             end
 
@@ -357,7 +386,7 @@ function PANEL:FillPanel( data, amount, actions )
             -- ====== NAME + RARITY ======
             local textBaseY = h - 8 - statAreaH
             draw.SimpleText( configItemTable.Name or "NIL", nameFont, w/2, textBaseY - rarityY + 2, C.text_primary or Color(220,222,230), TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM )
-            draw.SimpleText( displayRarity or "", rarityFont, w/2, textBaseY - rarityY + 4, ColorAlpha(borderCol, 200), TEXT_ALIGN_CENTER, 0 )
+            draw.SimpleText( displayRarity or "", rarityFont, w/2, textBaseY - rarityY + 4, rarityColor, TEXT_ALIGN_CENTER, 0 )
 
             -- ====== UNIQUE WEAPON STATS ======
             if isUniqueWeapon and uwData and uwData.stats and BRS_UW and BRS_UW.Stats then

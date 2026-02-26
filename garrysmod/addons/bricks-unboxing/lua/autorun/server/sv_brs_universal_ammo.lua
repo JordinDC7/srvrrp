@@ -76,24 +76,44 @@ hook.Add("playerBuyAmmo", "BRS_UniversalAmmoBuy", function(ply, ammoTable, ammoT
     end
 end)
 
--- Fallback: Also intercept via DarkRP.hookStub if available
+-- Fallback: Verify our ammo entry registered
 hook.Add("InitPostEntity", "BRS_UniversalAmmoHookFallback", function()
     timer.Simple(3, function()
-        -- Find our ammo entry ID in CustomShipments
-        if not CustomShipments then return end
+        -- Check both possible ammo registration tables
+        local found = false
 
-        local ourID = nil
-        for id, tbl in pairs(CustomShipments) do
-            if istable(tbl) and tbl.name == UNIVERSAL_AMMO_NAME then
-                ourID = id
-                break
+        if CustomAmmoTypes then
+            for id, tbl in pairs(CustomAmmoTypes) do
+                if istable(tbl) and tbl.name == UNIVERSAL_AMMO_NAME then
+                    found = true
+                    print("[BRS] Universal Ammo registered in ammo tab (CustomAmmoTypes) as ID " .. id)
+                    break
+                end
             end
         end
 
-        if ourID then
-            print("[BRS] Universal Ammo registered in ammo tab as ID " .. ourID)
-        else
-            print("[BRS] WARNING: Universal Ammo not found in CustomShipments!")
+        if not found and GAMEMODE and GAMEMODE.AmmoTypes then
+            for id, tbl in pairs(GAMEMODE.AmmoTypes) do
+                if istable(tbl) and tbl.name == UNIVERSAL_AMMO_NAME then
+                    found = true
+                    print("[BRS] Universal Ammo registered in ammo tab (GAMEMODE.AmmoTypes) as ID " .. id)
+                    break
+                end
+            end
+        end
+
+        if not found and CustomShipments then
+            for id, tbl in pairs(CustomShipments) do
+                if istable(tbl) and tbl.name == UNIVERSAL_AMMO_NAME then
+                    found = true
+                    print("[BRS] Universal Ammo found in CustomShipments as ID " .. id)
+                    break
+                end
+            end
+        end
+
+        if not found then
+            print("[BRS] WARNING: Universal Ammo not found in any ammo table!")
         end
     end)
 end)

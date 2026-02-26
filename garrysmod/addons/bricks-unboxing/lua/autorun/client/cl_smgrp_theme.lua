@@ -47,7 +47,7 @@ SMGRP.UI.Colors = {
     rarity_rare      = Color(50, 140, 230),
     rarity_epic      = Color(155, 70, 255),
     rarity_legendary = Color(255, 170, 20),
-    rarity_glitched  = Color(0, 255, 210),
+    rarity_glitched  = Color(32, 255, 32),
     rarity_mythical  = Color(255, 50, 50),
 }
 
@@ -175,12 +175,12 @@ function SMGRP.UI.GetGlowAlpha()
 end
 
 -- Reuses pre-allocated color objects
-local _glitchCol = Color(128, 128, 128, 255)
+local _glitchCol = Color(32, 255, 32, 255)
 function SMGRP.UI.GetGlitchedColor()
-    local t = CurTime() * 0.8
-    _glitchCol.r = 128 + math.sin(t) * 127
-    _glitchCol.g = 128 + math.sin(t + 2.094) * 127
-    _glitchCol.b = 128 + math.sin(t + 4.189) * 127
+    local t = CurTime() * 1.5
+    _glitchCol.r = 20 + math.abs(math.sin(t * 0.7)) * 20
+    _glitchCol.g = 200 + math.sin(t) * 55
+    _glitchCol.b = 20 + math.abs(math.sin(t * 0.5)) * 20
     return _glitchCol
 end
 

@@ -574,21 +574,16 @@ function BRS_UW.OpenInspectPopup(globalKey, data)
             local gColor = tracerTier.glowColor
 
             if tracerTier.chromatic then
-                -- GLITCHED: rapid cyan<->magenta flicker
+                -- chromatic rainbow (currently unused - kept for future tiers)
                 local flicker = math.sin(elapsed * 40) + math.sin(elapsed * 67)
                 if flicker > 0.5 then
-                    tColor = tracerTier.color2 or Color(255, 0, 200, 255)
+                    tColor = tracerTier.color2 or tracerTier.color
                 else
                     tColor = tracerTier.color
                 end
-                gColor = Color(
-                    math.sin(elapsed * 6) * 127 + 128,
-                    math.sin(elapsed * 6 + 2.1) * 127 + 128,
-                    math.sin(elapsed * 6 + 4.2) * 127 + 128,
-                    120
-                )
+                gColor = tracerTier.glowColor
             elseif tracerTier.color2 then
-                -- MYTHICAL: dark red <-> void purple pulse
+                -- Two-color pulse (Glitched: green/dark, Mythical: red/void)
                 local pulse = math.sin(elapsed * 2) * 0.5 + 0.5
                 tColor = Color(
                     Lerp(pulse, tracerTier.color.r, tracerTier.color2.r),
