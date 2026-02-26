@@ -1,39 +1,49 @@
 -- ============================================================
 -- BRS Inventory Optimization (Client)
--- Receives delta inventory updates and compressed full syncs
--- Debounces UI refresh to prevent rapid rebuilds
+-- Receives delta and compressed inventory updates
+-- Also hooks the framework's original channel as fallback
 -- ============================================================
 
 -- ============================================================
--- DELTA INVENTORY UPDATE: Apply only changed keys
--- Much faster than receiving entire inventory
+-- DELTA INVENTORY UPDATE
 -- ============================================================
 net.Receive("BRS_UW.InvDelta", function()
     local count = net.ReadUInt(8)
+    if not count or count < 1 then return end
 
+    BRS_UNBOXING_INVENTORY = BRS_UNBOXING_INVENTORY or {}
+
+    local changed = 0
     for i = 1, count do
         local key = net.ReadString()
         local amount = net.ReadInt(32)
 
         if amount <= 0 then
-            BRS_UNBOXING_INVENTORY[key] = nil
+            if BRS_UNBOXING_INVENTORY[key] then
+                BRS_UNBOXING_INVENTORY[key] = nil
+                changed = changed + 1
+            end
         else
-            BRS_UNBOXING_INVENTORY[key] = amount
+            if BRS_UNBOXING_INVENTORY[key] ~= amount then
+                BRS_UNBOXING_INVENTORY[key] = amount
+                changed = changed + 1
+            end
         end
     end
 
-    -- Debounced UI refresh (prevents rapid rebuilds during mass operations)
-    BRS_UW_DebouncedRefresh()
+    if changed > 0 then
+        BRS_UW_DebouncedRefresh()
+    end
 end)
 
 -- ============================================================
--- COMPRESSED FULL INVENTORY: JSON + compress
--- Replaces net.ReadTable() which is very slow for large tables
+-- COMPRESSED FULL INVENTORY
 -- ============================================================
 net.Receive("BRS_UW.InvFull", function()
     local len = net.ReadUInt(32)
-    local compressed = net.ReadData(len)
+    if not len or len < 1 then return end
 
+    local compressed = net.ReadData(len)
     if not compressed then return end
 
     local json = util.Decompress(compressed)
@@ -44,19 +54,18 @@ net.Receive("BRS_UW.InvFull", function()
 
     BRS_UNBOXING_INVENTORY = inv
 
-    BRS_UW_DebouncedRefresh()
+    -- Immediate refresh for full sync (initial load)
+    hook.Run("BRS.Hooks.FillUnboxingInventory")
 end)
 
 -- ============================================================
 -- DEBOUNCED UI REFRESH
--- Waits 0.1s after last change before rebuilding inventory UI
--- Prevents 50 rebuilds when opening 50 cases
+-- Waits 0.15s after last delta before rebuilding inventory UI
 -- ============================================================
 local refreshTimer = "BRS_UW_InvRefresh"
 
 function BRS_UW_DebouncedRefresh()
-    -- Reset the timer on each call
-    timer.Create(refreshTimer, 0.1, 1, function()
+    timer.Create(refreshTimer, 0.15, 1, function()
         hook.Run("BRS.Hooks.FillUnboxingInventory")
     end)
 end

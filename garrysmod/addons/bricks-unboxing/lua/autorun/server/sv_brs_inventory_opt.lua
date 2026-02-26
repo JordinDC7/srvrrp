@@ -1,18 +1,42 @@
 -- ============================================================
 -- BRS Inventory Optimization (Server)
--- Replaces net.WriteTable(entireInventory) with delta updates
--- Adds operation batching for mass open cases
--- Deferred to load AFTER Bricks framework
+-- 
+-- BUG FIX: The Bricks framework modifies the inventory table
+-- IN-PLACE then passes the same reference to SetUnboxingInventory.
+-- Comparing inventoryTable to self.BRS_UNBOXING_INVENTORY yields
+-- zero delta because they're the SAME Lua table.
+--
+-- SOLUTION: Maintain a separate SNAPSHOT (shallow copy) of the
+-- last-synced state. Compare against the snapshot, not the live
+-- reference. This correctly detects all changes.
 -- ============================================================
 
 util.AddNetworkString("BRS_UW.InvDelta")
 util.AddNetworkString("BRS_UW.InvFull")
 
 -- ============================================================
--- BATCH SYSTEM: Collect changes, flush once
+-- SNAPSHOT STORAGE: Separate from framework's live table
+-- Key = SteamID64, Value = shallow copy of inventory
 -- ============================================================
-local batchMode = {}       -- [steamid] = true
-local batchChanges = {}    -- [steamid] = { [key] = newAmount }
+local invSnapshots = {}
+
+local function TakeSnapshot(sid, inv)
+    local snap = {}
+    for k, v in pairs(inv) do
+        snap[k] = v
+    end
+    invSnapshots[sid] = snap
+end
+
+local function GetSnapshot(sid)
+    return invSnapshots[sid]
+end
+
+-- ============================================================
+-- BATCH SYSTEM
+-- ============================================================
+local batchMode = {}
+local batchChanges = {}
 
 local function StartBatch(ply)
     local sid = ply:SteamID64()
@@ -30,12 +54,12 @@ local function FlushBatch(ply)
 
     if not changes or not next(changes) then return end
 
-    -- Send one delta message
     SendInventoryDelta(ply, changes)
 
-    -- Save to DB once
+    -- Take snapshot of current state
     local inv = ply.BRS_UNBOXING_INVENTORY
     if inv then
+        TakeSnapshot(sid, inv)
         BRICKS_SERVER.UNBOXING.Func.UpdateInventoryDB(sid, inv)
     end
 end
@@ -49,7 +73,6 @@ function SendInventoryDelta(ply, changes)
     local count = 0
     for _ in pairs(changes) do count = count + 1 end
 
-    -- Fallback to full sync if too many changes
     if count > 80 then
         SendFullInventory(ply)
         return
@@ -77,7 +100,7 @@ function SendFullInventory(ply)
             net.WriteData(compressed, #compressed)
         net.Send(ply)
     else
-        -- Fallback to framework method for huge inventories
+        -- Fallback
         net.Start("BRS.Net.SetUnboxingInventory")
             net.WriteTable(inv)
         net.Send(ply)
@@ -85,34 +108,32 @@ function SendFullInventory(ply)
 end
 
 -- ============================================================
--- DEFERRED OVERRIDES: Apply after Bricks framework loads
+-- DEFERRED OVERRIDES
 -- ============================================================
 hook.Add("Initialize", "BRS_UW_InvOptInit", function()
     timer.Simple(0, function()
         local playerMeta = FindMetaTable("Player")
         if not playerMeta or not playerMeta.SetUnboxingInventory then
-            print("[BRS UW InvOpt] WARNING: Could not find SetUnboxingInventory, skipping optimization")
+            print("[BRS UW InvOpt] WARNING: Could not find SetUnboxingInventory, skipping")
             return
         end
 
-        -- Store original
         playerMeta._OrigSetUnboxingInventory = playerMeta._OrigSetUnboxingInventory or playerMeta.SetUnboxingInventory
 
         -- ========================================
         -- OVERRIDE: SetUnboxingInventory
-        -- Uses delta sync instead of full table
+        -- Compares against SNAPSHOT, not live table
         -- ========================================
         playerMeta.SetUnboxingInventory = function(self, inventoryTable, nosave)
             if not inventoryTable then return end
 
             local sid = self:SteamID64()
-            local oldInv = self.BRS_UNBOXING_INVENTORY
+            local snapshot = GetSnapshot(sid)
 
-            -- First time: use compressed full sync (no delta possible)
-            if not oldInv then
+            -- First time: no snapshot exists, send full
+            if not snapshot then
                 self.BRS_UNBOXING_INVENTORY = inventoryTable
-
-                -- Send compressed instead of net.WriteTable
+                TakeSnapshot(sid, inventoryTable)
                 SendFullInventory(self)
 
                 if not nosave then
@@ -121,25 +142,29 @@ hook.Add("Initialize", "BRS_UW_InvOptInit", function()
                 return
             end
 
-            -- Compute delta
+            -- Update framework's live reference
+            self.BRS_UNBOXING_INVENTORY = inventoryTable
+
+            -- Compute delta against SNAPSHOT (not live table)
             local changes = {}
             local hasChanges = false
 
+            -- New or changed keys
             for k, v in pairs(inventoryTable) do
-                if oldInv[k] ~= v then
+                if snapshot[k] ~= v then
                     changes[k] = v
                     hasChanges = true
                 end
             end
-            for k in pairs(oldInv) do
+            -- Removed keys (in snapshot but not in new table)
+            for k in pairs(snapshot) do
                 if not inventoryTable[k] or inventoryTable[k] == 0 then
-                    changes[k] = 0
-                    hasChanges = true
+                    if snapshot[k] and snapshot[k] > 0 then
+                        changes[k] = 0
+                        hasChanges = true
+                    end
                 end
             end
-
-            -- Update server memory
-            self.BRS_UNBOXING_INVENTORY = inventoryTable
 
             if not hasChanges then return end
 
@@ -150,8 +175,9 @@ hook.Add("Initialize", "BRS_UW_InvOptInit", function()
                 return
             end
 
-            -- Send delta
+            -- Send delta and take new snapshot
             SendInventoryDelta(self, changes)
+            TakeSnapshot(sid, inventoryTable)
 
             -- Save to DB
             if not nosave then
@@ -173,7 +199,6 @@ hook.Add("Initialize", "BRS_UW_InvOptInit", function()
 
             local openAmount = inventoryTable[globalKey]
 
-            -- BATCH: prevents per-item full syncs
             StartBatch(ply)
 
             ply:RemoveUnboxingInventoryItem(globalKey, openAmount)
@@ -204,7 +229,6 @@ hook.Add("Initialize", "BRS_UW_InvOptInit", function()
 
             ply:AddUnboxingInventoryItem(unpack(formattedItems))
 
-            -- FLUSH: one delta message + one DB write
             FlushBatch(ply)
 
             BRICKS_SERVER.Func.SendNotification(ply, 1, 5, BRICKS_SERVER.Func.L("unboxingCasesUnboxed", openAmount))
@@ -217,8 +241,16 @@ hook.Add("Initialize", "BRS_UW_InvOptInit", function()
         BRS_UW.StartBatch = StartBatch
         BRS_UW.FlushBatch = FlushBatch
 
-        print("[BRS UW] Inventory optimization applied - delta sync + batching active")
+        print("[BRS UW] Inventory optimization applied (snapshot-based delta)")
     end)
+end)
+
+-- Cleanup on disconnect
+hook.Add("PlayerDisconnected", "BRS_UW_InvOptCleanup", function(ply)
+    local sid = ply:SteamID64()
+    invSnapshots[sid] = nil
+    batchMode[sid] = nil
+    batchChanges[sid] = nil
 end)
 
 print("[BRS UW] Inventory optimization (server) loaded")
