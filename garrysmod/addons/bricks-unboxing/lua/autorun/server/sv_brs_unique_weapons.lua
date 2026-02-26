@@ -904,6 +904,165 @@ net.Receive("BRS_UW.AdminDeleteItems", function(len, ply)
 end)
 
 -- ============================================================
+-- UNEQUIP ALL WEAPONS
+-- ============================================================
+util.AddNetworkString("BRS_UW.UnequipAll")
+net.Receive("BRS_UW.UnequipAll", function(len, ply)
+    if not IsValid(ply) then return end
+
+    -- Rate limit: 1 per second
+    if ply._BRS_UnequipAllCD and CurTime() - ply._BRS_UnequipAllCD < 1 then return end
+    ply._BRS_UnequipAllCD = CurTime()
+
+    local invData = ply:GetUnboxingInventoryData()
+    local inv = ply:GetUnboxingInventory()
+    if not invData or not inv then return end
+
+    local count = 0
+    for globalKey, data in pairs(invData) do
+        if data.Equipped == true and inv[globalKey] then
+            -- Look up config to call UnEquipFunction
+            local itemKey
+            if BRS_UW.ParseUniqueKey then
+                itemKey = BRS_UW.ParseUniqueKey(globalKey) or tonumber(string.Replace(globalKey, "ITEM_", ""))
+            else
+                itemKey = tonumber(string.Replace(globalKey, "ITEM_", ""))
+            end
+            local configItemTable = itemKey and BRICKS_SERVER.CONFIG.UNBOXING.Items[itemKey]
+            if configItemTable then
+                local devConfigTable = BRICKS_SERVER.DEVCONFIG.UnboxingItemTypes[configItemTable.Type] or {}
+                if devConfigTable.UnEquipFunction then
+                    devConfigTable.UnEquipFunction(ply, configItemTable.ReqInfo)
+                end
+            end
+
+            data.Equipped = false
+            count = count + 1
+        end
+    end
+
+    if count > 0 then
+        ply:SetUnboxingInventoryData(invData)
+        BRICKS_SERVER.Func.SendNotification(ply, 1, 3, count .. " weapon(s) unequipped")
+    else
+        BRICKS_SERVER.Func.SendNotification(ply, 1, 3, "No weapons equipped")
+    end
+end)
+
+-- ============================================================
+-- EQUIP BEST WEAPON (by stat or avg boost)
+-- ============================================================
+util.AddNetworkString("BRS_UW.EquipBest")
+net.Receive("BRS_UW.EquipBest", function(len, ply)
+    if not IsValid(ply) then return end
+
+    -- Rate limit: 1 per second
+    if ply._BRS_EquipBestCD and CurTime() - ply._BRS_EquipBestCD < 1 then return end
+    ply._BRS_EquipBestCD = CurTime()
+
+    local criteria = net.ReadString()
+    if not criteria or criteria == "" then criteria = "avg" end
+
+    -- Validate criteria
+    local validCriteria = { avg = true }
+    for _, sd in ipairs(BRS_UW.Stats) do validCriteria[sd.key] = true end
+    if not validCriteria[criteria] then criteria = "avg" end
+
+    local steamid64 = ply:SteamID64()
+    local cache = BRS_UW.ServerCache[steamid64]
+    local inv = ply:GetUnboxingInventory()
+    local invData = ply:GetUnboxingInventoryData()
+    if not cache or not inv or not invData then
+        BRICKS_SERVER.Func.SendNotification(ply, 1, 3, "No weapons found")
+        return
+    end
+
+    -- Find best weapon by criteria
+    local bestKey, bestScore = nil, -1
+    for globalKey, uwData in pairs(cache) do
+        if not inv[globalKey] then continue end -- not in inventory
+
+        local score
+        if criteria == "avg" then
+            score = uwData.avgBoost or BRS_UW.CalcAvgBoost(uwData.stats)
+        else
+            score = uwData.stats and uwData.stats[criteria] or 0
+        end
+
+        if score > bestScore then
+            bestScore = score
+            bestKey = globalKey
+        end
+    end
+
+    if not bestKey then
+        BRICKS_SERVER.Func.SendNotification(ply, 1, 3, "No unique weapons in inventory")
+        return
+    end
+
+    -- Check if already equipped
+    if invData[bestKey] and invData[bestKey].Equipped == true then
+        local uwData = cache[bestKey]
+        local label = criteria == "avg" and "AVG" or string.upper(criteria)
+        BRICKS_SERVER.Func.SendNotification(ply, 1, 3, "Best " .. label .. " weapon already equipped (" .. string.format("%.1f", bestScore) .. "%)")
+        return
+    end
+
+    -- Resolve config for best weapon
+    local bestUW = cache[bestKey]
+    local bestItemKey
+    if BRS_UW.ParseUniqueKey then
+        bestItemKey = BRS_UW.ParseUniqueKey(bestKey) or tonumber(string.Replace(bestKey, "ITEM_", ""))
+    else
+        bestItemKey = tonumber(string.Replace(bestKey, "ITEM_", ""))
+    end
+    local bestConfig = bestItemKey and BRICKS_SERVER.CONFIG.UNBOXING.Items[bestItemKey]
+    if not bestConfig then
+        BRICKS_SERVER.Func.SendNotification(ply, 1, 3, "Weapon config not found")
+        return
+    end
+
+    local devConfigTable = BRICKS_SERVER.DEVCONFIG.UnboxingItemTypes[bestConfig.Type] or {}
+    if not devConfigTable.EquipFunction then return end
+
+    local bestClass = bestConfig.ReqInfo and bestConfig.ReqInfo[1] or ""
+
+    -- Unequip any currently equipped weapon of the same class
+    for globalKey, data in pairs(invData) do
+        if data.Equipped == true and globalKey ~= bestKey and inv[globalKey] then
+            local itemKey2
+            if BRS_UW.ParseUniqueKey then
+                itemKey2 = BRS_UW.ParseUniqueKey(globalKey) or tonumber(string.Replace(globalKey, "ITEM_", ""))
+            else
+                itemKey2 = tonumber(string.Replace(globalKey, "ITEM_", ""))
+            end
+            local cfg2 = itemKey2 and BRICKS_SERVER.CONFIG.UNBOXING.Items[itemKey2]
+            if cfg2 then
+                local otherClass = cfg2.ReqInfo and cfg2.ReqInfo[1] or ""
+                if otherClass == bestClass then
+                    local dev2 = BRICKS_SERVER.DEVCONFIG.UnboxingItemTypes[cfg2.Type] or {}
+                    if dev2.UnEquipFunction then
+                        dev2.UnEquipFunction(ply, cfg2.ReqInfo)
+                    end
+                    data.Equipped = false
+                end
+            end
+        end
+    end
+
+    -- Equip the best weapon
+    invData[bestKey] = invData[bestKey] or {}
+    invData[bestKey].Equipped = true
+    ply:SetUnboxingInventoryData(invData)
+    devConfigTable.EquipFunction(ply, bestConfig.ReqInfo)
+
+    local uwData = cache[bestKey]
+    local label = criteria == "avg" and "AVG" or string.upper(criteria)
+    local name = bestConfig.Name or "Unknown"
+    BRICKS_SERVER.Func.SendNotification(ply, 1, 4, "Equipped best " .. label .. ": " .. name .. " (" .. (uwData.rarity or "") .. " " .. (uwData.quality or "") .. " +" .. string.format("%.1f", bestScore) .. "%)")
+end)
+
+-- ============================================================
 -- CLEANUP ON DISCONNECT
 -- ============================================================
 hook.Add("PlayerDisconnected", "BRS_UW_Cleanup", function(ply)

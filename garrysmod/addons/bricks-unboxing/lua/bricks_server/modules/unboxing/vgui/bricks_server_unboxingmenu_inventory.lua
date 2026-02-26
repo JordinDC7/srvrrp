@@ -125,6 +125,98 @@ function PANEL:FillPanel()
         self:FillInventory()
     end
 
+    -- ====== UNEQUIP ALL BUTTON ======
+    local _unequipRed = Color(180, 50, 50)
+    local _unequipRedHover = Color(220, 60, 60)
+    local unequipBtn = vgui.Create("DButton", self.topBar)
+    unequipBtn:Dock(RIGHT)
+    unequipBtn:DockMargin(2, 8, 4, 8)
+    unequipBtn:SetWide(90)
+    unequipBtn:SetText("")
+    unequipBtn.hoverAlpha = 0
+    unequipBtn.Paint = function(self2, w, h)
+        local hovered = self2:IsHovered()
+        self2.hoverAlpha = math.Clamp(self2.hoverAlpha + (hovered and 8 or -8), 0, 255)
+        draw.RoundedBox(4, 0, 0, w, h, hovered and _unequipRedHover or _unequipRed)
+        draw.SimpleText("UNEQUIP ALL", "SMGRP_Bold10", w/2, h/2, _filterWhite, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+    end
+    unequipBtn.DoClick = function()
+        net.Start("BRS_UW.UnequipAll")
+        net.SendToServer()
+        timer.Simple(0.3, function()
+            if IsValid(self) then self:FillInventory() end
+        end)
+    end
+
+    -- ====== EQUIP BEST BUTTON + CRITERIA DROPDOWN ======
+    local _equipGreen = Color(40, 150, 80)
+    local _equipGreenHover = Color(50, 180, 100)
+    self.equipBestCriteria = "avg"
+
+    local equipBestPanel = vgui.Create("DPanel", self.topBar)
+    equipBestPanel:Dock(RIGHT)
+    equipBestPanel:DockMargin(2, 8, 2, 8)
+    equipBestPanel:SetWide(156)
+    equipBestPanel.Paint = function() end
+
+    local equipBtn = vgui.Create("DButton", equipBestPanel)
+    equipBtn:Dock(LEFT)
+    equipBtn:SetWide(96)
+    equipBtn:SetText("")
+    equipBtn.Paint = function(self2, w, h)
+        local hovered = self2:IsHovered()
+        draw.RoundedBoxEx(4, 0, 0, w, h, hovered and _equipGreenHover or _equipGreen, true, false, true, false)
+        draw.SimpleText("EQUIP BEST", "SMGRP_Bold10", w/2, h/2, _filterWhite, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+    end
+    equipBtn.DoClick = function()
+        net.Start("BRS_UW.EquipBest")
+            net.WriteString(self.equipBestCriteria or "avg")
+        net.SendToServer()
+        timer.Simple(0.3, function()
+            if IsValid(self) then self:FillInventory() end
+        end)
+    end
+
+    -- Criteria mini-dropdown
+    local criteriaLabels = {
+        { "AVG",  "avg" },
+        { "DMG",  "dmg" },
+        { "SPD",  "spd" },
+        { "RPM",  "rpm" },
+        { "MAG",  "mag" },
+        { "VEL",  "vel" },
+        { "DROP", "drp" },
+    }
+    local _critBg = Color(30, 120, 65)
+    local _critBgHover = Color(35, 140, 75)
+    local _critActive = Color(0, 212, 170)
+
+    local criteriaBtn = vgui.Create("DButton", equipBestPanel)
+    criteriaBtn:Dock(FILL)
+    criteriaBtn:DockMargin(1, 0, 0, 0)
+    criteriaBtn:SetText("")
+    criteriaBtn.Paint = function(self2, w, h)
+        local hovered = self2:IsHovered()
+        draw.RoundedBoxEx(4, 0, 0, w, h, hovered and _critBgHover or _critBg, false, true, false, true)
+        local label = "AVG"
+        for _, cl in ipairs(criteriaLabels) do
+            if cl[2] == self.equipBestCriteria then label = cl[1] break end
+        end
+        draw.SimpleText(label .. " ▾", "SMGRP_Bold10", w/2, h/2, _filterWhite, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+    end
+    criteriaBtn.DoClick = function(self2)
+        local dmenu = DermaMenu()
+        for _, cl in ipairs(criteriaLabels) do
+            local opt = dmenu:AddOption(cl[1], function()
+                self.equipBestCriteria = cl[2]
+            end)
+            if cl[2] == self.equipBestCriteria then
+                opt:SetIcon("icon16/tick.png")
+            end
+        end
+        dmenu:Open()
+    end
+
     -- ====== SORT DROPDOWN ======
     self.sortChoice = "rarity_high_to_low"
     self.sortBy = vgui.Create( "bricks_server_combo", self.topBar )
