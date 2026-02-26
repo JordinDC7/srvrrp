@@ -256,14 +256,14 @@ hook.Add("Think", "BRS_UW_ProjThink", function()
                         pt:SetStartAlpha(180) pt:SetEndAlpha(0)
                         local pType = tier.particleType or "sparks"
                         if pType == "glitch" then
-                            -- Matrix green
-                            local g = 180 + random(0, 75)
-                            pt:SetColor(0, g, random(20, 50))
+                            -- Cyber teal
+                            local g = 200 + random(0, 55)
+                            pt:SetColor(0, g, math.floor(g * 0.75 + random(0, 20)))
                             pt:SetDieTime(Rand(0.05, 0.12)) pt:SetStartSize(Rand(1, 2)) pt:SetEndSize(0)
                             pt:SetVelocity(VectorRand() * 45)
                         elseif pType == "divine" then
-                            -- Divine: golden light motes drifting upward
-                            pt:SetColor(255, 210 + random(0, 30), 100 + random(0, 60))
+                            -- Heavenly: icy blue motes drifting upward
+                            pt:SetColor(160 + random(0, 40), 210 + random(0, 25), 255)
                             pt:SetDieTime(Rand(0.25, 0.45)) pt:SetStartSize(Rand(2.5, 4)) pt:SetEndSize(0.5)
                             pt:SetVelocity(-p.dir * 15 + VectorRand() * 8 + Vector(0, 0, 30))
                             pt:SetGravity(Vector(0, 0, 40))
@@ -380,7 +380,7 @@ hook.Add("PostDrawTranslucentRenderables", "BRS_UW_ProjRender", function(_, bSky
                         local segHash = j + floor(elapsed * 15)
                         if segHash % 4 == 0 then
                             local off = sin(segHash * 97.3) * 4
-                            render.DrawBeam(p1.pos + right * off, p2.pos + right * off, 1, 0, 1, C(0, 220, 40, 120 * age))
+                            render.DrawBeam(p1.pos + right * off, p2.pos + right * off, 1, 0, 1, C(0, 220, 180, 120 * age))
                         end
                     end
                 end
@@ -395,11 +395,11 @@ hook.Add("PostDrawTranslucentRenderables", "BRS_UW_ProjRender", function(_, bSky
             render.SetMaterial(matGlow)
             render.DrawSprite(curPos, tier.trailWidth * 2.2, tier.trailWidth * 2.2, C(br, bg, bb, 200))
 
-            -- Divine aura (Mythical) - golden halo
+            -- Divine aura (Mythical) - ethereal icy halo
             if tier.divineTrail then
                 render.SetMaterial(matSoft)
                 local pulse = 0.7 + sin(elapsed * 2.5) * 0.2
-                render.DrawSprite(curPos, tier.trailWidth * 4.5, tier.trailWidth * 4.5, C(255, 215, 120, 50 * pulse))
+                render.DrawSprite(curPos, tier.trailWidth * 4.5, tier.trailWidth * 4.5, C(160, 210, 255, 50 * pulse))
             end
 
             -- Spiral flares (Legendary only, close)
@@ -430,10 +430,10 @@ hook.Add("PostDrawTranslucentRenderables", "BRS_UW_ProjRender", function(_, bSky
         -- Main impact ring
         render.SetMaterial(matSoft)
         if tier.divineTrail then
-            -- Divine: golden expanding burst
-            render.DrawSprite(imp.pos + imp.normal, ringSize * 1.3, ringSize * 1.3, C(255, 215, 120, fade * 200))
+            -- Heavenly: icy blue expanding burst
+            render.DrawSprite(imp.pos + imp.normal, ringSize * 1.3, ringSize * 1.3, C(160, 210, 255, fade * 200))
             -- Inner bright core
-            render.DrawSprite(imp.pos + imp.normal, ringSize * 0.5, ringSize * 0.5, C(255, 240, 200, fade * 240))
+            render.DrawSprite(imp.pos + imp.normal, ringSize * 0.5, ringSize * 0.5, C(210, 235, 255, fade * 240))
         else
             render.DrawSprite(imp.pos + imp.normal, ringSize, ringSize, C(ic.r, ic.g, ic.b, fade * 180))
         end

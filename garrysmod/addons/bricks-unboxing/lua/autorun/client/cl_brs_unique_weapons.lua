@@ -64,13 +64,13 @@ local rarityBorderColors = {
     Rare      = { Color(30,120,210,220) },
     Epic      = { Color(140,50,240,230) },
     Legendary = { Color(255,150,0,240) },
-    Glitched  = { -- Matrix green cycle
-        Color(0,200,40), Color(0,255,65), Color(0,180,30),
-        Color(0,230,50), Color(0,150,25),
+    Glitched  = { -- Cyber teal cycle
+        Color(0,220,180), Color(0,255,200), Color(0,200,160),
+        Color(0,240,190), Color(0,180,150),
     },
-    Mythical  = { -- Celestial gold cycle
-        Color(255,220,130), Color(255,210,100), Color(255,230,160),
-        Color(240,215,140), Color(255,225,120),
+    Mythical  = { -- Ethereal icy blue cycle
+        Color(170,215,255), Color(190,230,255), Color(150,200,255),
+        Color(200,235,255), Color(160,210,255),
     },
 }
 
@@ -619,17 +619,17 @@ function BRS_UW.OpenInspectPopup(globalKey, data)
                     local segHash = seg + math.floor(elapsed * 30)
                     if segHash % 2 == 0 then
                         local offsetY = math.sin(segHash * 137.5 + elapsed * 50) * 6
-                        local g = 160 + math.sin(segHash * 97.3) * 60
-                        surface.SetDrawColor(0, g, 20, 160)
+                        local g = 200 + math.sin(segHash * 97.3) * 55
+                        surface.SetDrawColor(0, g, math.floor(g * 0.75), 160)
                         surface.DrawRect(segX - 4, cy + offsetY - 1, 8, 2)
                     end
                 end
-                -- Matrix scan lines
+                -- Cyber scan lines
                 for s = 0, 2 do
                     local scanX = startX + ((elapsed * 200 + s * 80) % trackW)
                     if scanX > startX and scanX < projX then
-                        local g = 160 + math.sin(elapsed * 8 + s) * 60
-                        surface.SetDrawColor(0, g, 20, 60)
+                        local g = 200 + math.sin(elapsed * 8 + s) * 55
+                        surface.SetDrawColor(0, g, math.floor(g * 0.75), 60)
                         surface.DrawRect(scanX, cy - 8, 1, 16)
                     end
                 end
@@ -645,7 +645,7 @@ function BRS_UW.OpenInspectPopup(globalKey, data)
                         local t = i / trailLen
                         local waveY = math.sin(elapsed * 2 + t * 6 + phase) * (3 + t * 2)
                         local fade = (1 - t) * 0.7
-                        surface.SetDrawColor(255, 215, 120, 60 * fade)
+                        surface.SetDrawColor(160, 210, 255, 60 * fade)
                         surface.DrawRect(x, cy + waveY - 0.5, 2, 1)
                     end
                 end
@@ -663,7 +663,7 @@ function BRS_UW.OpenInspectPopup(globalKey, data)
                 local haloSize = outerSize * 1.4
                 local haloAlpha = 50 + math.sin(elapsed * 3) * 20
                 draw.RoundedBox(haloSize/2, projX - haloSize/2, cy - haloSize/2, haloSize, haloSize,
-                    Color(255, 215, 120, haloAlpha))
+                    Color(170, 215, 255, haloAlpha))
             end
 
             -- Spiral (Legendary comet)
@@ -690,12 +690,12 @@ function BRS_UW.OpenInspectPopup(globalKey, data)
                     local pAlpha = (math.sin(seed * 5) * 0.5 + 0.5) * 180
                     local dotCol = pCol
 
-                    -- Glitch: matrix green dots
+                    -- Glitch: cyan teal dots
                     if pType == "glitch" then
-                        dotCol = (p % 2 == 0) and Color(0, 255, 65) or Color(0, 180, 40)
-                    -- Divine: golden motes
+                        dotCol = (p % 2 == 0) and Color(0, 255, 200) or Color(0, 200, 160)
+                    -- Divine: icy blue motes
                     elseif pType == "divine" then
-                        dotCol = (p % 2 == 0) and Color(255, 220, 120) or Color(255, 200, 90)
+                        dotCol = (p % 2 == 0) and Color(180, 220, 255) or Color(150, 200, 255)
                     -- Comet: warm orange/yellow
                     elseif pType == "comet" then
                         dotCol = Color(255, math.random(140, 220), math.random(20, 60), 200)
@@ -714,15 +714,15 @@ function BRS_UW.OpenInspectPopup(globalKey, data)
                 -- Divine impact: golden radiance burst
                 if tracerTier.divineTrail then
                     draw.RoundedBox(impSize, endX - impSize, cy - impSize, impSize * 2, impSize * 2,
-                        Color(255, 215, 120, 180 * impFade))
+                        Color(170, 215, 255, 180 * impFade))
                     draw.RoundedBox(impSize * 0.6, endX - impSize * 0.6, cy - impSize * 0.6, impSize * 1.2, impSize * 1.2,
-                        Color(255, 240, 180, 220 * impFade))
+                        Color(210, 235, 255, 220 * impFade))
                 elseif tracerTier.glitchTrail then
-                    -- Glitch impact: matrix green offset copies
+                    -- Glitch impact: cyan teal offset copies
                     for g = 0, 2 do
                         local gx = endX + math.sin(elapsed * 40 + g * 2.5) * 6 * impFade
                         local gy = cy + math.cos(elapsed * 35 + g * 3.7) * 4 * impFade
-                        local gCol = (g % 2 == 0) and Color(0, 255, 65) or Color(0, 180, 40)
+                        local gCol = (g % 2 == 0) and Color(0, 255, 200) or Color(0, 200, 160)
                         draw.RoundedBox(impSize * 0.4, gx - impSize * 0.4, gy - impSize * 0.4,
                             impSize * 0.8, impSize * 0.8, ColorAlpha(gCol, 160 * impFade))
                     end

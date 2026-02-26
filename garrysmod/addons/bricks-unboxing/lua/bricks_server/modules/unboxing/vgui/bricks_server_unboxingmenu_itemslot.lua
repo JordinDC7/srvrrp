@@ -24,12 +24,12 @@ local _ascInnerLine = Color(255, 215, 60, 40)    -- faint inner line
 local cardParticles = {}
 local MAX_PARTICLES = 6
 
--- Glitched: matrix green falling chars
+-- Glitched: cyber teal falling chars
 local _pcolGlitch = {}
-for i = 1, 6 do _pcolGlitch[i] = Color(0, 140 + i * 18, 0) end
--- Mythical: divine golden light motes
+for i = 1, 6 do _pcolGlitch[i] = Color(0, 160 + i * 16, 130 + i * 12) end
+-- Mythical: ethereal icy blue light motes
 local _pcolMyth = {}
-for i = 1, 5 do _pcolMyth[i] = Color(255, 200 + i * 6, 100 + i * 12) end
+for i = 1, 5 do _pcolMyth[i] = Color(150 + i * 10, 200 + i * 6, 255) end
 
 local function SpawnParticle(panelID, w, h, rarity)
     cardParticles[panelID] = cardParticles[panelID] or {}
@@ -249,7 +249,7 @@ function PANEL:FillPanel( data, amount, actions )
                 surface.DrawOutlinedRect(0, 0, w, h, 1)
             end
 
-            -- ====== MATRIX DIGITAL RAIN (Glitched) - toned down ======
+            -- ====== CYBER DIGITAL RAIN (Glitched) ======
             if isGlitched then
                 local toSX, toSY = self2:LocalToScreen(0, 0)
                 render.SetScissorRect(toSX, toSY, toSX + w, toSY + h, true)
@@ -263,7 +263,9 @@ function PANEL:FillPanel( data, amount, actions )
                     for ch = 0, 3 do
                         local baseY = ((ct * speed + ch * (h / 3) + seed * 20) % (h + 20)) - 10
                         local brightness = (ch == 0) and 1 or (0.3 + math.sin(ct * 3 + col + ch) * 0.2)
-                        _dc.r, _dc.g, _dc.b, _dc.a = 0, math.floor(160 * brightness + 40), 0, (ch == 0) and 18 or 10
+                        local g = math.floor(200 * brightness + 55)
+                        local b = math.floor(g * 0.75)
+                        _dc.r, _dc.g, _dc.b, _dc.a = 0, g, b, (ch == 0) and 18 or 10
                         surface.SetDrawColor(_dc)
                         surface.DrawRect(colX, baseY, 2, charH)
                     end
@@ -272,25 +274,24 @@ function PANEL:FillPanel( data, amount, actions )
                 if math.random() < 0.06 then SpawnParticle(panelID, w, h, "Glitched") end
             end
 
-            -- ====== DIVINE RADIANCE (Mythical) - golden light from top ======
+            -- ====== HEAVENLY RADIANCE (Mythical) - icy blue light from top ======
             if isMythical then
-                -- Warm golden light descending from top
                 local lightH = h * 0.55
                 local bandH = lightH / 6
                 for i = 0, 5 do
                     local frac = i / 6
                     local baseA = (1 - frac) * 25
                     local breathe = math.sin(ct * 1.5 + i * 0.5) * 0.2 + 0.8
-                    _dc.r, _dc.g, _dc.b, _dc.a = 255, 215, 120, baseA * breathe
+                    _dc.r, _dc.g, _dc.b, _dc.a = 160, 210, 255, baseA * breathe
                     surface.SetDrawColor(_dc)
                     surface.DrawRect(1, 1 + i * bandH, w - 2, bandH)
                 end
 
-                -- Center light pillar (visible but not overwhelming)
+                -- Center light pillar
                 local colW = w * 0.35
                 local colX = (w - colW) / 2
                 local colA = 10 + math.sin(ct * 2) * 5
-                _dc.r, _dc.g, _dc.b, _dc.a = 255, 225, 140, colA
+                _dc.r, _dc.g, _dc.b, _dc.a = 180, 225, 255, colA
                 surface.SetDrawColor(_dc)
                 surface.DrawRect(colX, 1, colW, h - 2)
 
@@ -352,14 +353,15 @@ function PANEL:FillPanel( data, amount, actions )
 
             -- Glitched rarity label: matrix flicker effect
             if isGlitched then
-                local flkG = 160 + math.sin(ct * 12) * 60 + math.sin(ct * 31) * 35
+                local flkG = 200 + math.sin(ct * 12) * 55 + math.sin(ct * 31) * 30
+                local flkB = flkG * 0.75
                 local flkA = 180 + math.sin(ct * 7) * 40
-                _dc.r, _dc.g, _dc.b, _dc.a = 0, math.floor(math.Clamp(flkG, 100, 255)), 0, math.floor(math.Clamp(flkA, 140, 255))
+                _dc.r, _dc.g, _dc.b, _dc.a = 0, math.floor(math.Clamp(flkG, 140, 255)), math.floor(math.Clamp(flkB, 100, 200)), math.floor(math.Clamp(flkA, 140, 255))
                 draw.SimpleText( displayRarity or "", rarityFont, w/2, textBaseY - rarityY + 4, _dc, TEXT_ALIGN_CENTER, 0 )
             elseif isMythical then
-                -- Divine: pale gold text with gentle breathing
+                -- Ethereal: icy blue text with gentle breathing
                 local mythA = 210 + math.sin(ct * 1.8) * 40
-                _dc.r, _dc.g, _dc.b, _dc.a = 255, 218, 130, math.floor(mythA)
+                _dc.r, _dc.g, _dc.b, _dc.a = 175, 215, 255, math.floor(mythA)
                 draw.SimpleText( displayRarity or "", rarityFont, w/2, textBaseY - rarityY + 4, _dc, TEXT_ALIGN_CENTER, 0 )
             else
                 draw.SimpleText( displayRarity or "", rarityFont, w/2, textBaseY - rarityY + 4, rarityColor, TEXT_ALIGN_CENTER, 0 )
@@ -467,10 +469,10 @@ function PANEL:FillPanel( data, amount, actions )
             local rCol = SMGRP.UI.GetRarityColor(uwData.rarity)
             if isGlitched then
                 -- Matrix-style: dark pill with green text
-                self:AddTopInfo(uwData.rarity, Color(5, 20, 5, 200), Color(0, 255, 65))
+                self:AddTopInfo(uwData.rarity, Color(5, 20, 18, 200), Color(0, 255, 200))
             elseif isMythical then
-                -- Divine: gold pill with dark text
-                self:AddTopInfo(uwData.rarity, Color(255, 215, 110, 210), Color(60, 40, 10))
+                -- Heavenly: icy blue pill with dark text
+                self:AddTopInfo(uwData.rarity, Color(170, 215, 255, 210), Color(20, 40, 70))
             else
                 self:AddTopInfo(uwData.rarity, Color(rCol.r, rCol.g, rCol.b, 160), Color(255,255,255))
             end
