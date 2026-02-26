@@ -620,6 +620,12 @@ function PANEL:SetItemTable( itemKey, oldItemTable, closeFunc, removeFunc, dupli
 
     function itemsPage.selectedItems.RefreshItems()
         itemsPage.selectedItems.grid:Clear()
+
+        -- Calculate total weight for percentage display
+        local totalWeight = 0
+        for gk, gv in pairs( itemTable.Items ) do
+            totalWeight = totalWeight + (gv[1] or 0)
+        end
     
         local sortedItems = {}
         for k, v in pairs( BS_ConfigCopyTable.UNBOXING.Items ) do
@@ -654,7 +660,7 @@ function PANEL:SetItemTable( itemKey, oldItemTable, closeFunc, removeFunc, dupli
 
             local actions = {
                 { "Edit Chance", function()
-                    BRICKS_SERVER.Func.StringRequest( "Admin", "What should the chance to unbox this item be?", itemTable.Items[globalKey][1], function( text ) 
+                    BRICKS_SERVER.Func.StringRequest( "Admin", "What should the chance to unbox this item be? (weight value, not percentage)", itemTable.Items[globalKey][1], function( text ) 
                         local chance = tonumber( text )
     
                         if( chance > 0 ) then
@@ -674,11 +680,15 @@ function PANEL:SetItemTable( itemKey, oldItemTable, closeFunc, removeFunc, dupli
                     itemsPage.selectedItems.RefreshItems()
                 end }
             }
+
+            local rawWeight = itemTable.Items[globalKey][1] or 0
+            local pct = totalWeight > 0 and (rawWeight / totalWeight * 100) or 0
+            local pctStr = string.format("%.1f%%", pct)
     
             local slotBack = itemsPage.selectedItems.grid:Add( "bricks_server_unboxingmenu_itemslot" )
             slotBack:SetSize( slotSize, slotSize*1.2 )
             slotBack:FillPanel( { globalKey, configItemTable }, 1, actions )
-            slotBack:AddTopInfo( itemTable.Items[globalKey][1] .. "%" )
+            slotBack:AddTopInfo( pctStr )
             slotBack.themeNum = 1
 
             if( itemTable.Items[globalKey][2] ) then
