@@ -389,6 +389,19 @@ function BRS_UW.SyncAllWeaponsToClient(ply)
         net.Send(ply)
 
         print("[BRS UW] Synced " .. table.Count(allData) .. " unique weapons to " .. ply:Nick())
+
+        -- RE-APPLY BOOSTS: Cache is now populated, apply to all current weapons
+        -- This ensures VEL/DROP and all stats work after reload/rejoin
+        timer.Simple(0.5, function()
+            if not IsValid(ply) then return end
+            for _, wep in ipairs(ply:GetWeapons()) do
+                if IsValid(wep) then
+                    wep.BRS_UW_Boosted = nil -- reset so boost re-applies
+                    wep.BRS_UW_Data = nil
+                    BRS_UW.ApplyBoostsToWeapon(ply, wep)
+                end
+            end
+        end)
     end)
 end
 
@@ -492,37 +505,53 @@ end)
 
 -- ============================================================
 -- APPLY STAT BOOSTS WHEN WEAPON IS EQUIPPED
+-- Uses per-weapon debounce to coalesce rapid Give+SelectWeapon calls
 -- ============================================================
-hook.Add("WeaponEquip", "BRS_UW_ApplyStatBoosts", function(wep, ply)
-    if not IsValid(wep) or not IsValid(ply) then return end
+local _pendingBoosts = {} -- [wep entity index] = timer name
 
-    -- Delay slightly to let weapon initialize
-    timer.Simple(0.1, function()
+local function ScheduleBoost(ply, wep, delay)
+    if not IsValid(wep) or not IsValid(ply) then return end
+    if wep.BRS_UW_Boosted then return end -- already boosted
+
+    local idx = wep:EntIndex()
+    local timerName = "BRS_UW_Boost_" .. idx
+
+    -- Cancel any pending boost for this weapon (debounce)
+    if _pendingBoosts[idx] then
+        timer.Remove(_pendingBoosts[idx])
+    end
+    _pendingBoosts[idx] = timerName
+
+    timer.Create(timerName, delay, 1, function()
+        _pendingBoosts[idx] = nil
         if not IsValid(wep) or not IsValid(ply) then return end
         BRS_UW.ApplyBoostsToWeapon(ply, wep)
     end)
+end
+
+hook.Add("WeaponEquip", "BRS_UW_ApplyStatBoosts", function(wep, ply)
+    if not IsValid(wep) or not IsValid(ply) then return end
+    ScheduleBoost(ply, wep, 0.15)
 end)
 
--- Also apply on PlayerLoadout (for permanent weapons)
+-- Also apply on PlayerLoadout (for permanent weapons after spawn)
 hook.Add("PlayerLoadout", "BRS_UW_ApplyOnLoadout", function(ply)
-    -- Apply boosts with staggered attempts to catch late-loading weapons
-    for _, delay in ipairs({0.5, 1.5, 3.0}) do
-        timer.Simple(delay, function()
-            if not IsValid(ply) then return end
-            for _, wep in ipairs(ply:GetWeapons()) do
+    -- Single delayed pass after loadout completes (DB sync also re-applies)
+    timer.Create("BRS_UW_Loadout_" .. ply:EntIndex(), 1.0, 1, function()
+        if not IsValid(ply) then return end
+        for _, wep in ipairs(ply:GetWeapons()) do
+            if IsValid(wep) and not wep.BRS_UW_Boosted then
                 BRS_UW.ApplyBoostsToWeapon(ply, wep)
             end
-        end)
-    end
+        end
+    end)
 end)
 
--- Also catch weapon switching / re-equipping
+-- Also catch weapon switching
 hook.Add("PlayerSwitchWeapon", "BRS_UW_ApplyOnSwitch", function(ply, oldWep, newWep)
     if not IsValid(newWep) or not IsValid(ply) then return end
-    timer.Simple(0.05, function()
-        if not IsValid(newWep) or not IsValid(ply) then return end
-        BRS_UW.ApplyBoostsToWeapon(ply, newWep)
-    end)
+    if newWep.BRS_UW_Boosted then return end -- fast path: already done
+    ScheduleBoost(ply, newWep, 0.1)
 end)
 
 function BRS_UW.ApplyBoostsToWeapon(ply, wep)

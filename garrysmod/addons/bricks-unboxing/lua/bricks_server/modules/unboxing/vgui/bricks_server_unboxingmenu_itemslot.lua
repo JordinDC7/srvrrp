@@ -481,10 +481,11 @@ function PANEL:FillPanel( data, amount, actions )
                     -- Golden overflow glow for stats above 100%
                     if val > 100 and isAscended then
                         local overflowPulse = math.sin(ct * 3 + i) * 0.3 + 0.7
-                        draw.RoundedBox(2, bX, bY, bW, barH, ColorAlpha(Color(255, 215, 60), 40 * overflowPulse))
-                        draw.RoundedBox(2, bX, bY - 1, bW, barH + 2, ColorAlpha(Color(255, 215, 60), 15 * overflowPulse))
-                        -- Show actual value past the bar
-                        draw.SimpleText(string.format("%.0f%%", val), "SMGRP_Bold10", bX + bW + 2, bY + barH/2, Color(255, 220, 80, 200 * overflowPulse), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
+                        draw.RoundedBox(2, bX, bY, bW, barH, Color(255, 215, 60, 40 * overflowPulse))
+                        draw.RoundedBox(2, bX, bY - 1, bW, barH + 2, Color(255, 215, 60, 15 * overflowPulse))
+                        -- Show actual value past the bar (negative prefix for SPD/DROP)
+                        local prefix = statDef.negative and "-" or "+"
+                        draw.SimpleText(prefix .. string.format("%.0f%%", val), "SMGRP_Bold10", bX + bW + 2, bY + barH/2, Color(255, 220, 80, 200 * overflowPulse), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
                     end
                 end
 
