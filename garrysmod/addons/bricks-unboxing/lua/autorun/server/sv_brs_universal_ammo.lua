@@ -1,14 +1,12 @@
 -- ============================================================
 -- BRS Universal Ammo System
 -- - Sets ammo capacity to essentially unlimited (99999)
--- - F4 ammo tab entry: gives +100 rounds to all weapons on buy
--- - No chat commands
+-- - F4 entities tab: spawns brs_universal_ammo entity
+-- - Entity Use() gives +100 rounds to all weapons (see entities/brs_universal_ammo)
 -- ============================================================
 if not SERVER then return end
 
 local AMMO_MAX = 99999
-local AMMO_PER_BUY = 100
-local UNIVERSAL_AMMO_NAME = "Universal Ammo (100 rounds)"
 
 -- ============================================================
 -- SET ALL AMMO TYPES TO UNLIMITED CAPACITY
@@ -42,80 +40,4 @@ hook.Add("WeaponEquip", "BRS_EnsureAmmoMax", function(wep, ply)
     end)
 end)
 
--- ============================================================
--- HOOK: When player buys our universal ammo from F4 ammo tab,
--- give +100 rounds to ALL weapons instead of just one type
--- ============================================================
-hook.Add("playerBuyAmmo", "BRS_UniversalAmmoBuy", function(ply, ammoTable, ammoType)
-    if not IsValid(ply) then return end
-    if not ammoTable or ammoTable.name ~= UNIVERSAL_AMMO_NAME then return end
-
-    -- Give 100 rounds to every weapon the player has
-    for _, wep in ipairs(ply:GetWeapons()) do
-        if not IsValid(wep) then continue end
-
-        local clipMax = wep:GetMaxClip1()
-        if clipMax > 0 then
-            wep:SetClip1(clipMax)
-        end
-
-        local at = wep:GetPrimaryAmmoType()
-        if at >= 0 then
-            ply:GiveAmmo(AMMO_PER_BUY, at, true)
-        end
-
-        local clipMax2 = wep:GetMaxClip2()
-        if clipMax2 > 0 then
-            wep:SetClip2(clipMax2)
-        end
-
-        local at2 = wep:GetSecondaryAmmoType()
-        if at2 >= 0 then
-            ply:GiveAmmo(AMMO_PER_BUY, at2, true)
-        end
-    end
-end)
-
--- Fallback: Verify our ammo entry registered
-hook.Add("InitPostEntity", "BRS_UniversalAmmoHookFallback", function()
-    timer.Simple(3, function()
-        -- Check both possible ammo registration tables
-        local found = false
-
-        if CustomAmmoTypes then
-            for id, tbl in pairs(CustomAmmoTypes) do
-                if istable(tbl) and tbl.name == UNIVERSAL_AMMO_NAME then
-                    found = true
-                    print("[BRS] Universal Ammo registered in ammo tab (CustomAmmoTypes) as ID " .. id)
-                    break
-                end
-            end
-        end
-
-        if not found and GAMEMODE and GAMEMODE.AmmoTypes then
-            for id, tbl in pairs(GAMEMODE.AmmoTypes) do
-                if istable(tbl) and tbl.name == UNIVERSAL_AMMO_NAME then
-                    found = true
-                    print("[BRS] Universal Ammo registered in ammo tab (GAMEMODE.AmmoTypes) as ID " .. id)
-                    break
-                end
-            end
-        end
-
-        if not found and CustomShipments then
-            for id, tbl in pairs(CustomShipments) do
-                if istable(tbl) and tbl.name == UNIVERSAL_AMMO_NAME then
-                    found = true
-                    print("[BRS] Universal Ammo found in CustomShipments as ID " .. id)
-                    break
-                end
-            end
-        end
-
-        if not found then
-            print("[BRS] WARNING: Universal Ammo not found in any ammo table!")
-        end
-    end)
-end)
-
-print("[BRS] Universal Ammo System loaded - F4 ammo tab, capacity " .. AMMO_MAX)
+print("[BRS] Universal Ammo System loaded - F4 entities tab, capacity " .. AMMO_MAX)

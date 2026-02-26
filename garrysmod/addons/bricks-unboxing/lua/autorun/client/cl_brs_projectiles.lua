@@ -277,16 +277,6 @@ hook.Add("Think", "BRS_UW_ProjThink", function()
                             pt:SetVelocity(VectorRand() * 40) pt:SetGravity(Vector(0, 0, -200))
                         end
                     end
-
-                    -- Ascended golden sparks
-                    if p.isAscended and random() < 0.3 then
-                        local gp = em:Add("sprites/light_glow02_add", p.pos + VectorRand() * 3)
-                        if gp then
-                            gp:SetDieTime(Rand(0.15, 0.3)) gp:SetStartAlpha(200) gp:SetEndAlpha(0)
-                            gp:SetColor(255, 220, 80) gp:SetStartSize(Rand(1, 2.5)) gp:SetEndSize(0)
-                            gp:SetVelocity(VectorRand() * 30 + Vector(0, 0, 25)) gp:SetGravity(Vector(0, 0, -140))
-                        end
-                    end
                 end
             end
         end
@@ -311,7 +301,6 @@ hook.Add("PostDrawTranslucentRenderables", "BRS_UW_ProjRender", function(_, bSky
 
     local ct = CurTime()
     local eyePos = EyePos()
-    local ascOvr = BRS_UW.Tracers and BRS_UW.Tracers.AscendedOverlay
 
     for _, proj in ipairs(projectiles) do
         local tier = proj.tier
@@ -356,7 +345,7 @@ hook.Add("PostDrawTranslucentRenderables", "BRS_UW_ProjRender", function(_, bSky
         if trailN > 1 then
             local fadeTime = tier.lifetime or 0.2
 
-            -- Core + glow beams
+            -- Core beam only (NO separate glow beam for high tiers)
             render.SetMaterial(matBeam)
             for j = 2, trailN do
                 local p1 = RingGet(proj.trail, j - 1)
@@ -364,112 +353,27 @@ hook.Add("PostDrawTranslucentRenderables", "BRS_UW_ProjRender", function(_, bSky
                 if not p1 or not p2 then continue end
                 local age = 1 - Clamp((ct - p1.time) / fadeTime, 0, 1)
                 if age < 0.02 then continue end
+                -- Core trail
                 render.DrawBeam(p1.pos, p2.pos, tier.trailWidth, 0, 1, C(br, bg, bb, ba * age))
-                render.DrawBeam(p1.pos, p2.pos, tier.glowWidth, 0, 1, C(gr, gg, gb, ga * age * 0.6))
+                -- Soft outer glow (subtle, not blinding)
+                render.DrawBeam(p1.pos, p2.pos, tier.glowWidth, 0, 1, C(gr, gg, gb, ga * age * 0.3))
             end
 
-            -- Afterimage (Legendary/Mythical)
-            if tier.hasAfterimage then
-                local aic = tier.afterimageColor
-                if aic then
-                    for j = 2, trailN do
-                        local p1 = RingGet(proj.trail, j - 1)
-                        local p2 = RingGet(proj.trail, j)
-                        if not p1 or not p2 then continue end
-                        local age = 1 - Clamp((ct - p1.time) / (fadeTime * 2), 0, 1)
-                        if age < 0.03 then continue end
-                        render.DrawBeam(p1.pos, p2.pos, tier.glowWidth * 1.5, 0, 1, C(aic.r, aic.g, aic.b, aic.a * age))
-                    end
-                end
-            end
-
-            -- ASCENDED: Wide golden outer trail glow (the "pop" - visible at distance)
-            if proj.isAscended then
-                local pulse = 0.7 + sin(elapsed * 4) * 0.3
-                for j = 2, trailN do
-                    local p1 = RingGet(proj.trail, j - 1)
-                    local p2 = RingGet(proj.trail, j)
-                    if not p1 or not p2 then continue end
-                    local age = 1 - Clamp((ct - p1.time) / fadeTime, 0, 1)
-                    if age < 0.02 then continue end
-                    render.DrawBeam(p1.pos, p2.pos, tier.glowWidth * 2.5, 0, 1, C(255, 215, 60, 45 * age * pulse))
-                end
-            end
-
-            -- DETAIL EFFECTS (close only)
+            -- DETAIL EFFECTS (close only, one effect per tier max)
             if isClose then
-                -- Void tendrils (Mythical)
-                if tier.voidTrail then
-                    local right, up = proj.right, proj.up
-                    local c2 = tier.color2 or tier.color
-                    for tendril = 0, 1 do
-                        local phase = tendril * 3.14
-                        for j = 2, trailN, 2 do
-                            local p1 = RingGet(proj.trail, j - 1)
-                            local p2 = RingGet(proj.trail, j)
-                            if not p1 or not p2 then continue end
-                            local age = 1 - Clamp((ct - p1.time) / fadeTime, 0, 1)
-                            if age < 0.05 then continue end
-                            local segT = j / trailN
-                            local w1 = sin(elapsed * 4 + segT * 8 + phase) * (5 + segT * 3)
-                            local w2 = cos(elapsed * 3 + segT * 6 + phase) * (3 + segT * 2)
-                            render.DrawBeam(p1.pos + right * w1 + up * w2, p2.pos + right * w1 + up * w2, 1.5, 0, 1, C(c2.r, c2.g, c2.b, 130 * age))
-                        end
-                    end
-                end
-
-                -- Matrix data stream trail (Glitched)
+                -- Glitched: sparse offset fragments only
                 if tier.glitchTrail then
-                    local right, up = proj.right, proj.up
-                    -- Digital fragment segments - appear/disappear like corrupted data
-                    for j = 2, trailN, 2 do
+                    local right = proj.right
+                    for j = 3, trailN, 3 do
                         local p1 = RingGet(proj.trail, j - 1)
                         local p2 = RingGet(proj.trail, j)
                         if not p1 or not p2 then continue end
                         local age = 1 - Clamp((ct - p1.time) / fadeTime, 0, 1)
-                        local segHash = j + floor(elapsed * 20)
-                        -- Only 40% of segments visible at any time (digital corruption)
-                        if (segHash * 137 + floor(elapsed * 15)) % 5 < 2 then
-                            local off = sin(segHash * 97.3) * 6
-                            local g = 180 + sin(elapsed * 8 + j) * 75
-                            render.DrawBeam(p1.pos + right * off, p2.pos + right * off, tier.trailWidth * 0.6, 0, 1, C(0, Clamp(g, 100, 255), 0, 200 * age))
-                        end
-                    end
-
-                    -- Vertical "falling code" drops perpendicular to trail
-                    if tier.matrixTrail then
-                        for j = 3, trailN, 3 do
-                            local pt = RingGet(proj.trail, j)
-                            if not pt then continue end
-                            local age = 1 - Clamp((ct - pt.time) / fadeTime, 0, 1)
-                            if age < 0.1 then continue end
-                            local dropHash = j * 31 + floor(elapsed * 12)
-                            if dropHash % 4 == 0 then
-                                local dropLen = 8 + sin(dropHash * 0.7) * 4
-                                local dropOff = sin(dropHash * 2.3) * 5
-                                local dropPos = pt.pos + right * dropOff
-                                local dropEnd = dropPos - up * dropLen
-                                render.DrawBeam(dropPos, dropEnd, 0.8, 0, 1, C(0, 255, 50, 120 * age))
-                            end
-                        end
-                    end
-                end
-
-                -- Ascended lightning arcs
-                if proj.isAscended and ascOvr and ascOvr.hasLightning then
-                    local right, up = proj.right, proj.up
-                    local lc = ascOvr.lightningColor
-                    for arc = 1, 2 do
-                        local seed = arc * 47.3 + proj.seed
-                        for j = 2, trailN, 2 do
-                            local p1 = RingGet(proj.trail, j - 1)
-                            local p2 = RingGet(proj.trail, j)
-                            if not p1 or not p2 then continue end
-                            local age = 1 - Clamp((ct - p1.time) / fadeTime, 0, 1)
-                            if age < 0.05 then continue end
-                            local jag = sin((j + floor(elapsed * 60)) * seed) * ascOvr.lightningRange
-                            local jag2 = cos((j + floor(elapsed * 60)) * seed * 0.7) * ascOvr.lightningRange * 0.6
-                            render.DrawBeam(p1.pos + right * jag + up * jag2, p2.pos + right * jag + up * jag2, 1, 0, 1, C(lc.r, lc.g, lc.b, lc.a * age))
+                        if age < 0.1 then continue end
+                        local segHash = j + floor(elapsed * 15)
+                        if segHash % 4 == 0 then
+                            local off = sin(segHash * 97.3) * 4
+                            render.DrawBeam(p1.pos + right * off, p2.pos + right * off, 1, 0, 1, C(0, 220, 40, 120 * age))
                         end
                     end
                 end
@@ -477,46 +381,34 @@ hook.Add("PostDrawTranslucentRenderables", "BRS_UW_ProjRender", function(_, bSky
         end
 
         -- =====================
-        -- PROJECTILE HEAD
+        -- PROJECTILE HEAD (simplified)
         -- =====================
         if proj.alive then
+            -- Single small head glow
             render.SetMaterial(matGlow)
-            render.DrawSprite(curPos, tier.trailWidth * 3, tier.trailWidth * 3, C(br, bg, bb, 255))
-            render.SetMaterial(matSoft)
-            render.DrawSprite(curPos, tier.glowWidth * 2, tier.glowWidth * 2, C(gr, gg, gb, 100))
+            render.DrawSprite(curPos, tier.trailWidth * 2.5, tier.trailWidth * 2.5, C(br, bg, bb, 220))
 
-            -- Void dark core (Mythical)
+            -- Void dark core (Mythical only) - just a small dark center
             if tier.voidCore then
-                render.SetMaterial(matGlow)
-                render.DrawSprite(curPos, tier.trailWidth * 4.5, tier.trailWidth * 4.5, C(0, 0, 0, 200))
-                render.SetMaterial(matSoft)
-                local aura = tier.glowWidth * 2 * (2.5 + sin(elapsed * 3) * 0.5)
-                render.DrawSprite(curPos, aura, aura, C(60, 0, 0, 40))
+                render.DrawSprite(curPos, tier.trailWidth * 2, tier.trailWidth * 2, C(0, 0, 0, 160))
             end
 
-            -- Spiral flares (Legendary)
+            -- Spiral flares (Legendary only, close)
             if tier.hasSpiral and isClose then
                 render.SetMaterial(matFlare)
                 local sR = tier.spiralRadius or 3
-                for s = 0, 2 do
-                    local a = elapsed * (tier.spiralSpeed or 6) * 6.283 + s * 2.094
+                for s = 0, 1 do
+                    local a = elapsed * (tier.spiralSpeed or 6) * 6.283 + s * 3.14
                     local off = proj.right * cos(a) * sR + proj.up * sin(a) * sR
-                    render.DrawSprite(curPos + off, tier.trailWidth * 1.5, tier.trailWidth * 1.5, C(br, bg, bb, 180))
+                    render.DrawSprite(curPos + off, tier.trailWidth, tier.trailWidth, C(br, bg, bb, 140))
                 end
             end
 
-            -- Ascended head effects: clean golden aura (no clutter)
-            if proj.isAscended and isClose then
-                -- Subtle golden breathing core - NOT a ball of sparkles
-                local pulse = 0.6 + sin(elapsed * 3) * 0.25
-                render.SetMaterial(matSoft)
-                render.DrawSprite(curPos, tier.trailWidth * 5, tier.trailWidth * 5, C(255, 215, 60, 35 * pulse))
-            end
         end
     end
 
     -- =====================
-    -- IMPACT EFFECTS
+    -- IMPACT EFFECTS (single sprite each)
     -- =====================
     for _, imp in ipairs(impacts) do
         local age = ct - imp.spawn
@@ -524,40 +416,18 @@ hook.Add("PostDrawTranslucentRenderables", "BRS_UW_ProjRender", function(_, bSky
         local fade = 1 - frac
         local tier = imp.tier
         local ic = tier.impactColor or tier.color
-        local ringSize = imp.size * (0.3 + frac * 2)
+        local ringSize = imp.size * (0.3 + frac * 1.5)
 
         render.SetMaterial(matSoft)
-        if tier.chromatic then
-            local cr, cg, cb = ChromaticRGB(age)
-            render.DrawSprite(imp.pos + imp.normal, ringSize, ringSize, C(cr, cg, cb, fade * 200))
-        elseif tier.voidTrail then
+        render.DrawSprite(imp.pos + imp.normal, ringSize, ringSize, C(ic.r, ic.g, ic.b, fade * 180))
+
+        -- Brief white flash at start
+        if frac < 0.2 then
+            local ff = 1 - frac / 0.2
             render.SetMaterial(matGlow)
-            render.DrawSprite(imp.pos + imp.normal * 0.5, ringSize, ringSize, C(0, 0, 0, fade * 180))
-            render.DrawSprite(imp.pos + imp.normal * 0.5, ringSize * 1.3, ringSize * 1.3, C(200, 0, 0, fade * 120))
-        elseif tier.glitchTrail then
-            -- Matrix impact: bright green core + scattered data fragments
-            render.DrawSprite(imp.pos + imp.normal, ringSize, ringSize, C(0, 255, 50, fade * 220))
-            render.SetMaterial(matGlow)
-            render.DrawSprite(imp.pos + imp.normal, ringSize * 0.5, ringSize * 0.5, C(200, 255, 200, fade * 255))
-        else
-            render.DrawSprite(imp.pos + imp.normal, ringSize, ringSize, C(ic.r, ic.g, ic.b, fade * 200))
+            render.DrawSprite(imp.pos + imp.normal, imp.size * ff, imp.size * ff, C(255, 255, 255, 150 * ff))
         end
 
-        -- Initial flash
-        if frac < 0.3 then
-            local ff = 1 - frac / 0.3
-            render.SetMaterial(matGlow)
-            render.DrawSprite(imp.pos + imp.normal * 2, imp.size * 1.5 * ff, imp.size * 1.5 * ff, C(255, 255, 255, 200 * ff))
-        end
-
-        -- Ascended pillar
-        if imp.isAscended and ascOvr and ascOvr.impactPillar then
-            local pf = fade * fade
-            local pc = ascOvr.pillarColor
-            render.SetMaterial(matBeam)
-            render.DrawBeam(imp.pos, imp.pos + Vector(0, 0, ascOvr.pillarHeight * pf), 6 * pf, 0, 1, C(pc.r, pc.g, pc.b, pc.a * pf))
-            render.DrawBeam(imp.pos, imp.pos + Vector(0, 0, ascOvr.pillarHeight * 0.9 * pf), 2 * pf, 0, 1, C(255, 255, 230, 180 * pf))
-        end
     end
 end)
 

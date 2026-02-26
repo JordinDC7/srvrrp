@@ -5,8 +5,8 @@ ENT.Base = "base_gmodentity"
 ENT.PrintName = "Universal Ammo (100 rounds)"
 ENT.Category = "SmG RP"
 ENT.Author = "SmG RP"
-ENT.Spawnable = false
-ENT.AdminSpawnable = false
+ENT.Spawnable = true
+ENT.AdminSpawnable = true
 
 function ENT:SetupDataTables()
 end
@@ -20,6 +20,7 @@ if SERVER then
         self:SetMoveType(MOVETYPE_VPHYSICS)
         self:SetSolid(SOLID_VPHYSICS)
         self:SetUseType(SIMPLE_USE)
+        self:SetTrigger(true) -- enable Touch()
 
         local phys = self:GetPhysicsObject()
         if IsValid(phys) then
@@ -27,46 +28,61 @@ if SERVER then
         end
     end
 
-    function ENT:Use(activator, caller)
-        if not IsValid(activator) or not activator:IsPlayer() then return end
+    function ENT:GiveAmmoTo(ply)
+        if not IsValid(ply) or not ply:IsPlayer() then return end
+        if self._used then return end
+        self._used = true
 
-        local weapons = activator:GetWeapons()
+        local weapons = ply:GetWeapons()
         local count = 0
 
         for _, wep in ipairs(weapons) do
             if not IsValid(wep) then continue end
 
-            -- Fill clip
             local clipMax = wep:GetMaxClip1()
             if clipMax > 0 then
                 wep:SetClip1(clipMax)
             end
 
-            -- Add 100 reserve rounds
             local ammoType = wep:GetPrimaryAmmoType()
             if ammoType >= 0 then
-                activator:GiveAmmo(AMMO_PER_BUY, ammoType, true)
+                ply:GiveAmmo(AMMO_PER_BUY, ammoType, true)
                 count = count + 1
             end
 
-            -- Secondary
             local clipMax2 = wep:GetMaxClip2()
             if clipMax2 > 0 then
                 wep:SetClip2(clipMax2)
             end
             local ammoType2 = wep:GetSecondaryAmmoType()
             if ammoType2 >= 0 then
-                activator:GiveAmmo(AMMO_PER_BUY, ammoType2, true)
+                ply:GiveAmmo(AMMO_PER_BUY, ammoType2, true)
             end
         end
 
         if BRICKS_SERVER and BRICKS_SERVER.Func and BRICKS_SERVER.Func.SendNotification then
-            BRICKS_SERVER.Func.SendNotification(activator, 1, 4, "+" .. AMMO_PER_BUY .. " rounds added to " .. count .. " weapons!")
+            BRICKS_SERVER.Func.SendNotification(ply, 1, 4, "+" .. AMMO_PER_BUY .. " rounds added to " .. count .. " weapons!")
         else
-            activator:ChatPrint("+" .. AMMO_PER_BUY .. " rounds added to " .. count .. " weapons!")
+            ply:ChatPrint("+" .. AMMO_PER_BUY .. " rounds added to " .. count .. " weapons!")
         end
 
         self:Remove()
+    end
+
+    function ENT:Use(activator, caller)
+        self:GiveAmmoTo(activator)
+    end
+
+    function ENT:Touch(ent)
+        if IsValid(ent) and ent:IsPlayer() then
+            self:GiveAmmoTo(ent)
+        end
+    end
+
+    function ENT:StartTouch(ent)
+        if IsValid(ent) and ent:IsPlayer() then
+            self:GiveAmmoTo(ent)
+        end
     end
 end
 
