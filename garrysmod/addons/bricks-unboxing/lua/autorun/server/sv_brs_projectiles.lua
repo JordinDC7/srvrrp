@@ -65,8 +65,10 @@ hook.Add("EntityFireBullets", "BRS_UW_ProjectileSystem", function(ent, data)
     end
     local bulletGravity = phys.gravity * gravMult
 
-    -- Capture original bullet data
-    local src = data.Src
+    -- Use player's actual shoot position, NOT data.Src
+    -- M9K weapons can set data.Src to world model attachment positions
+    -- that are offset from the eye, causing trail streaks on clients
+    local src = ent:GetShootPos()
     local dir = data.Dir
     local spread = data.Spread or Vector(0, 0, 0)
     local damage = data.Damage or 10

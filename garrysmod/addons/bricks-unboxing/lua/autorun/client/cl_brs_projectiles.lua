@@ -127,6 +127,8 @@ net.Receive("BRS_UW.ProjSpawn", function()
     local dir = vel:GetNormalized()
     local ang = dir:Angle()
 
+    local isLocal = IsValid(shooter) and shooter == LocalPlayer()
+
     projectiles[#projectiles + 1] = {
         pos = Vector(src.x, src.y, src.z),
         vel = Vector(vel.x, vel.y, vel.z),
@@ -135,6 +137,7 @@ net.Receive("BRS_UW.ProjSpawn", function()
         tier = tier,
         rarityKey = rarityKey,
         isAscended = isAscended,
+        isLocal = isLocal,
         dir = dir,
         right = ang:Right(),
         up = ang:Up(),
@@ -384,31 +387,33 @@ hook.Add("PostDrawTranslucentRenderables", "BRS_UW_ProjRender", function(_, bSky
         end
 
         -- =====================
-        -- PROJECTILE HEAD (simplified)
+        -- PROJECTILE HEAD
         -- =====================
         if proj.alive then
-            -- Head glow
-            render.SetMaterial(matGlow)
-            render.DrawSprite(curPos, tier.trailWidth * 2.2, tier.trailWidth * 2.2, C(br, bg, bb, 200))
+            -- Skip rendering own bullets for first 40ms (inside player's face)
+            if not proj.isLocal or elapsed > 0.04 then
+                -- Head glow
+                render.SetMaterial(matGlow)
+                render.DrawSprite(curPos, tier.trailWidth * 2.2, tier.trailWidth * 2.2, C(br, bg, bb, 200))
 
-            -- Divine aura (Mythical) - ethereal icy halo
-            if tier.divineTrail then
-                render.SetMaterial(matSoft)
-                local pulse = 0.7 + sin(elapsed * 2.5) * 0.2
-                render.DrawSprite(curPos, tier.trailWidth * 4.5, tier.trailWidth * 4.5, C(160, 210, 255, 50 * pulse))
-            end
+                -- Divine aura (Mythical) - ethereal icy halo
+                if tier.divineTrail then
+                    render.SetMaterial(matSoft)
+                    local pulse = 0.7 + sin(elapsed * 2.5) * 0.2
+                    render.DrawSprite(curPos, tier.trailWidth * 4.5, tier.trailWidth * 4.5, C(160, 210, 255, 50 * pulse))
+                end
 
-            -- Spiral flares (Legendary only, close)
-            if tier.hasSpiral and isClose then
-                render.SetMaterial(matFlare)
-                local sR = tier.spiralRadius or 2.5
-                for s = 0, 1 do
-                    local a = elapsed * (tier.spiralSpeed or 5) * 6.283 + s * 3.14
-                    local off = proj.right * cos(a) * sR + proj.up * sin(a) * sR
-                    render.DrawSprite(curPos + off, tier.trailWidth, tier.trailWidth, C(br, bg, bb, 120))
+                -- Spiral flares (Legendary only, close)
+                if tier.hasSpiral and isClose then
+                    render.SetMaterial(matFlare)
+                    local sR = tier.spiralRadius or 2.5
+                    for s = 0, 1 do
+                        local a = elapsed * (tier.spiralSpeed or 5) * 6.283 + s * 3.14
+                        local off = proj.right * cos(a) * sR + proj.up * sin(a) * sR
+                        render.DrawSprite(curPos + off, tier.trailWidth, tier.trailWidth, C(br, bg, bb, 120))
+                    end
                 end
             end
-
         end
     end
 
