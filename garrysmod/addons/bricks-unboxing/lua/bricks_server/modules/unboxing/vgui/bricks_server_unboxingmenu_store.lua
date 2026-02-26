@@ -227,58 +227,42 @@ function PANEL:FillPanel()
                     self:RefreshShoppingCart()
                 end
 
-                -- Quantity controls
+                -- Quantity controls - editable text entry
                 local amountH = 28
                 local cartEntryAmount = vgui.Create( "DPanel", cartEntry )
                 cartEntryAmount:Dock( RIGHT )
-                cartEntryAmount:SetWide( 90 )
+                cartEntryAmount:SetWide( 70 )
                 cartEntryAmount.Paint = function( self2, w, h )
                     draw.RoundedBox( 4, 0, (h/2)-(amountH/2), w, amountH, C.bg_darkest or Color(12,12,18) )
-                    draw.SimpleText( v, "SMGRP_Bold12", w/2, h/2, C.text_primary or Color(220,222,230), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+                    surface.SetDrawColor(C.border or Color(50,52,65))
+                    surface.DrawOutlinedRect( 0, (h/2)-(amountH/2), w, amountH, 1 )
                 end
 
-                -- Click quantity to type custom amount
-                local cartEntryAmountBtn = vgui.Create( "DButton", cartEntryAmount )
-                cartEntryAmountBtn:Dock( FILL )
-                cartEntryAmountBtn:DockMargin( amountH, 0, amountH, 0 )
-                cartEntryAmountBtn:SetText( "" )
-                cartEntryAmountBtn.Paint = function() end
-                cartEntryAmountBtn.DoClick = function()
-                    BRICKS_SERVER.Func.StringRequest( "Quantity", "Enter amount:", v, function( text )
-                        local num = tonumber(text)
-                        if num and num >= 1 then
-                            BRS_UNBOXING_CART[k] = math.floor(num)
-                            self:RefreshShoppingCart()
-                        end
-                    end, function() end, "Set", "Cancel", true )
-                end
-
-                -- + button
-                local addBtn = vgui.Create( "DButton", cartEntryAmount )
-                addBtn:Dock( RIGHT )
-                addBtn:SetWide( amountH )
-                addBtn:SetText( "" )
-                addBtn.Paint = function( self2, w, h )
-                    local col = self2:IsHovered() and (C.accent or Color(0,212,170)) or (C.text_muted or Color(90,94,110))
-                    draw.SimpleText( "+", "SMGRP_Bold14", w/2, h/2, col, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
-                end
-                addBtn.DoClick = function()
-                    BRS_UNBOXING_CART[k] = BRS_UNBOXING_CART[k]+1
+                local qtyEntry = vgui.Create( "DTextEntry", cartEntryAmount )
+                qtyEntry:Dock( FILL )
+                qtyEntry:DockMargin( 4, (cartSlotTall - amountH) / 2, 4, (cartSlotTall - amountH) / 2 )
+                qtyEntry:SetText( tostring(v) )
+                qtyEntry:SetFont( "SMGRP_Bold12" )
+                qtyEntry:SetNumeric( true )
+                qtyEntry:SetDrawBackground( false )
+                qtyEntry:SetTextColor( C.text_primary or Color(220,222,230) )
+                qtyEntry:SetContentAlignment( 5 ) -- center text
+                qtyEntry.OnEnter = function( self2 )
+                    local num = tonumber(self2:GetValue())
+                    if num and num >= 1 then
+                        BRS_UNBOXING_CART[k] = math.floor(num)
+                    else
+                        BRS_UNBOXING_CART[k] = nil
+                    end
                     self:RefreshShoppingCart()
                 end
-
-                -- - button
-                local minusBtn = vgui.Create( "DButton", cartEntryAmount )
-                minusBtn:Dock( LEFT )
-                minusBtn:SetWide( amountH )
-                minusBtn:SetText( "" )
-                minusBtn.Paint = function( self2, w, h )
-                    local col = self2:IsHovered() and (C.red or Color(220,60,60)) or (C.text_muted or Color(90,94,110))
-                    draw.SimpleText( "-", "SMGRP_Bold14", w/2, h/2, col, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
-                end
-                minusBtn.DoClick = function()
-                    BRS_UNBOXING_CART[k] = BRS_UNBOXING_CART[k]-1
-                    if( BRS_UNBOXING_CART[k] <= 0 ) then BRS_UNBOXING_CART[k] = nil end
+                qtyEntry.OnLoseFocus = function( self2 )
+                    local num = tonumber(self2:GetValue())
+                    if num and num >= 1 then
+                        BRS_UNBOXING_CART[k] = math.floor(num)
+                    else
+                        BRS_UNBOXING_CART[k] = nil
+                    end
                     self:RefreshShoppingCart()
                 end
             end
@@ -335,49 +319,8 @@ function PANEL:AddStoreItem( storeTable, itemKey, grid, itemWidth, itemHeight )
     local slotBack = grid:Add( "bricks_server_unboxingmenu_itemslot" )
     slotBack:SetSize( itemWidth, itemHeight )
     slotBack:FillPanel( storeTable.GlobalKey, 1, function( ax, ay, aw, ah )
-        local isCase, isKey = string.StartWith( storeTable.GlobalKey, "CASE_" ), string.StartWith( storeTable.GlobalKey, "KEY_" )
-        if( not isCase and not isKey ) then
-            local menu = DermaMenu()
-            menu:AddOption( "Add 1 to Cart", function() addToCart(1) end )
-            menu:AddOption( "Add 5 to Cart", function() addToCart(5) end )
-            menu:AddOption( "Add 10 to Cart", function() addToCart(10) end )
-            menu:AddOption( "Add 25 to Cart", function() addToCart(25) end )
-            menu:AddSpacer()
-            menu:AddOption( "Custom Amount...", function()
-                BRICKS_SERVER.Func.StringRequest( "Quantity", "How many to add to cart?", "1", function( text )
-                    local num = tonumber(text)
-                    if num and num >= 1 then addToCart(math.floor(num)) end
-                end, function() end, "Add", "Cancel", true )
-            end )
-            menu:Open()
-        else
-            local menu = DermaMenu()
-            menu:AddOption( "View Contents", function()
-                local itmKey = tonumber( string.Replace( storeTable.GlobalKey, (isCase and "CASE_") or "KEY_", "" ) )
-                self.popoutPanel = vgui.Create( (isCase and "bricks_server_unboxingmenu_caseview_popup") or "bricks_server_unboxingmenu_keyview_popup", self )
-                self.popoutPanel:SetPos( 0, 0 )
-                self.popoutPanel:SetSize( self.panelWide, self.panelTall )
-                self.popoutPanel:CreatePopout()
-                self.popoutPanel:FillPanel( itmKey, function()
-                    addToCart(1)
-                    if( not IsValid( self.popoutPanel.popoutPanel ) ) then return end
-                    self.popoutPanel.popoutPanel.ClosePopout()
-                end )
-            end )
-            menu:AddSpacer()
-            menu:AddOption( "Add 1 to Cart", function() addToCart(1) end )
-            menu:AddOption( "Add 5 to Cart", function() addToCart(5) end )
-            menu:AddOption( "Add 10 to Cart", function() addToCart(10) end )
-            menu:AddOption( "Add 25 to Cart", function() addToCart(25) end )
-            menu:AddSpacer()
-            menu:AddOption( "Custom Amount...", function()
-                BRICKS_SERVER.Func.StringRequest( "Quantity", "How many to add to cart?", "1", function( text )
-                    local num = tonumber(text)
-                    if num and num >= 1 then addToCart(math.floor(num)) end
-                end, function() end, "Add", "Cancel", true )
-            end )
-            menu:Open()
-        end
+        -- Single click = add 1 to cart
+        addToCart(1)
     end )
 
     local C = SMGRP and SMGRP.UI and SMGRP.UI.Colors or {}
@@ -475,6 +418,8 @@ function PANEL:RefreshStore()
         if( not itemTable or (self.searchBar:GetValue() != "" and not string.find( string.lower( itemTable.Name ), string.lower( self.searchBar:GetValue() ) )) ) then
             continue
         end
+        -- Skip key items - keys are not required to open cases
+        if( string.StartWith( v.GlobalKey or "", "KEY_" ) ) then continue end
         sortedStoreItems[k] = table.Copy( v )
         sortedStoreItems[k].Key = k
     end

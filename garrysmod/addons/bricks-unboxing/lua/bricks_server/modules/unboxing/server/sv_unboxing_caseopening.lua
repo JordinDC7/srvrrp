@@ -15,23 +15,7 @@ local function caseOpen( ply, caseKey )
 	end
 
 	local keyUsed
-	if( configItemTable.Keys and table.Count( configItemTable.Keys ) > 0 ) then
-		local keyRemovedSuccess = false
-		for k, v in pairs( configItemTable.Keys ) do
-			if( (inventoryTable["KEY_" .. k] or 0) >= 1 ) then
-				local removedKey = ply:RemoveUnboxingInventoryItem( "KEY_" .. k, 1 )
-
-				if( removedKey ) then
-					keyRemovedSuccess, keyUsed = true, k
-					break
-				end
-			end
-		end
-
-		if( not keyRemovedSuccess ) then
-			BRICKS_SERVER.Func.SendNotification( ply, 1, 5, BRICKS_SERVER.Func.L( "unboxingNoKeyFound" ) )
-		end
-	end
+	-- Keys are not required to open cases
 
 	local removedItem = ply:RemoveUnboxingInventoryItem( globalKey, 1 )
 
@@ -112,34 +96,7 @@ net.Receive( "BRS.Net.UnboxingOpenAll", function( len, ply )
 
 	local openAmount = inventoryTable[globalKey]
 
-	if( configItemTable.Keys and table.Count( configItemTable.Keys ) > 0 ) then
-		local remainingAmount = openAmount
-		local keysToTake = {}
-
-		for k, v in pairs( configItemTable.Keys ) do
-			local amount = inventoryTable["KEY_" .. k] or 0
-			if( amount < 1 ) then continue end
-
-			local toRemove = math.min( remainingAmount, amount )
-			remainingAmount = remainingAmount - toRemove
-
-			table.insert( keysToTake, "KEY_" .. k )
-			table.insert( keysToTake, toRemove )
-
-			if( remainingAmount <= 0 ) then break end
-		end
-
-		if( table.Count( keysToTake ) > 0 ) then
-			ply:RemoveUnboxingInventoryItem( unpack( keysToTake ) )
-		end
-
-		openAmount = openAmount-remainingAmount
-	end
-
-	if( openAmount <= 0 ) then
-		BRICKS_SERVER.Func.SendTopNotification( ply, BRICKS_SERVER.Func.L( "unboxingNeedKey" ), 3, BRICKS_SERVER.DEVCONFIG.BaseThemes.Red )
-		return
-	end
+	-- Keys are not required to open cases
 
 	ply:RemoveUnboxingInventoryItem( globalKey, openAmount )
 
