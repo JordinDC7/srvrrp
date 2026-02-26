@@ -112,6 +112,17 @@ function PANEL:CreatePopout()
         elseif( sortChoice == "rarity_low_to_high" ) then
             table.SortByMember( sortedItems, 1, true )
         end
+
+        if( #sortedItems == 0 ) then
+            local emptyLabel = grid:Add( "DPanel" )
+            emptyLabel:SetSize( gridWide, 100 )
+            emptyLabel.Paint = function( self2, w, h )
+                draw.SimpleText( "Your inventory is empty.", "BRICKS_SERVER_Font23", w/2, h/2 - 10, BRICKS_SERVER.Func.GetTheme( 6, 100 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+                draw.SimpleText( "Open cases in the Store to get items!", "BRICKS_SERVER_Font20", w/2, h/2 + 15, BRICKS_SERVER.Func.GetTheme( 6, 60 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+            end
+            grid:SetTall( 100 )
+            return
+        end
     
         grid:SetTall( (math.ceil(#sortedItems/slotsWide)*(slotSize+spacing))-spacing )
     
