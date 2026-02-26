@@ -139,6 +139,9 @@ function PANEL:FillPanel()
     featScroll:SetSize(featW - 16, bottomH - 50)
     featScroll:SetBarBackColor(C.bg_darkest or Color(12, 12, 18))
 
+    local featGridW = featW - 16 - 10
+    local featSlotW = math.min(featGridW, 200)
+
     local featuredAmount = BRICKS_SERVER.DEVCONFIG and BRICKS_SERVER.DEVCONFIG.UnboxingFeaturedAmount or 0
     for i = 1, featuredAmount do
         local storeItems = BRICKS_SERVER.CONFIG and BRICKS_SERVER.CONFIG.UNBOXING and BRICKS_SERVER.CONFIG.UNBOXING.Store and BRICKS_SERVER.CONFIG.UNBOXING.Store.Items
@@ -148,10 +151,25 @@ function PANEL:FillPanel()
         local storeItem = storeItems[storeFeatured[i] or 0]
         if not storeItem then continue end
 
-        local slot = vgui.Create("bricks_server_unboxingmenu_itemslot", featScroll)
-        slot:Dock(TOP)
-        slot:DockMargin(0, 0, 4, 6)
-        slot:SetTall(160)
+        -- Center wrapper
+        local wrapper = vgui.Create("DPanel", featScroll)
+        wrapper:Dock(TOP)
+        wrapper:DockMargin(0, 0, 0, 6)
+        wrapper:SetTall(featSlotW * 0.85)
+        wrapper.Paint = function() end
+
+        local slot = vgui.Create("bricks_server_unboxingmenu_itemslot", wrapper)
+        slot:SetSize(featSlotW, featSlotW * 0.85)
+        slot.Paint = function() end
+
+        -- Center the slot within the wrapper
+        local centerSlot = function()
+            local ww = wrapper:GetWide()
+            slot:SetPos(math.floor((ww - featSlotW) / 2), 0)
+        end
+        centerSlot()
+        wrapper.PerformLayout = function() centerSlot() end
+
         slot:FillPanel(storeItem.GlobalKey, 1)
         slot:AddTopInfo(BRICKS_SERVER.UNBOXING.Func.FormatCurrency(storeItem.Price or 0, storeItem.Currency), C.accent_dim or Color(0, 160, 128), Color(255, 255, 255))
 
