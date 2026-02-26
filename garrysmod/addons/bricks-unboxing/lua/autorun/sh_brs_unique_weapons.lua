@@ -172,7 +172,7 @@ BRS_UW.Qualities = {
     { key = "Standard", order = 3, weight = 30, color = Color(80,160,220) },
     { key = "Forged",   order = 4, weight = 22, color = Color(180,120,255) },
     { key = "Refined",  order = 5, weight = 12, color = Color(255,180,40) },
-    { key = "Ascended", order = 6, weight = 6,  color = Color(255,60,60) },
+    { key = "Ascended", order = 6, weight = 10, color = Color(255,60,60) },
 }
 
 BRS_UW.QualityByKey = {}

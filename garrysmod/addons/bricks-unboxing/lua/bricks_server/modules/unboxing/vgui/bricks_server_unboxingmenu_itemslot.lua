@@ -9,10 +9,28 @@ local PANEL = {}
 -- ============================================================
 local cardParticles = {}
 
-local function SpawnParticle(panelID, w, h, rarity)
+local function SpawnParticle(panelID, w, h, rarity, isAscended)
     cardParticles[panelID] = cardParticles[panelID] or {}
     local particles = cardParticles[panelID]
-    if #particles > 12 then return end
+    if #particles > 16 then return end
+
+    if isAscended then
+        -- Golden rising star particles
+        local startX = math.Rand(4, w - 4)
+        table.insert(particles, {
+            x = startX,
+            y = h - math.Rand(0, 10),
+            vx = math.Rand(-6, 6),
+            vy = math.Rand(-50, -90),
+            size = math.Rand(1.5, 3),
+            life = 0,
+            maxLife = math.Rand(0.8, 1.6),
+            color = Color(255, math.random(200, 255), math.random(60, 140)),
+            ascended = true,
+            spin = math.Rand(-4, 4),
+        })
+        return
+    end
 
     if rarity == "Glitched" then
         table.insert(particles, {
@@ -58,10 +76,26 @@ local function UpdateAndDrawParticles(panelID, dt)
             end
 
             local col = ColorAlpha(p.color, a)
-            local sz = p.size * (1 + frac * 0.3)
 
-            draw.RoundedBox(sz, p.x - sz/2, p.y - sz/2, sz, sz, col)
-            draw.RoundedBox(sz * 2, p.x - sz, p.y - sz, sz * 2, sz * 2, ColorAlpha(col, a * 0.3))
+            if p.ascended then
+                -- Draw 4-point star cross
+                local sz = p.size * (1 + frac * 0.5)
+                local armLen = sz * 2.5
+                local armW = sz * 0.6
+                -- Vertical arm
+                draw.RoundedBox(0, p.x - armW/2, p.y - armLen, armW, armLen * 2, col)
+                -- Horizontal arm
+                draw.RoundedBox(0, p.x - armLen, p.y - armW/2, armLen * 2, armW, col)
+                -- Bright center
+                draw.RoundedBox(sz, p.x - sz, p.y - sz, sz * 2, sz * 2, ColorAlpha(Color(255,255,220), a * 0.9))
+                -- Outer glow
+                local glowSz = sz * 3
+                draw.RoundedBox(glowSz, p.x - glowSz, p.y - glowSz, glowSz * 2, glowSz * 2, ColorAlpha(p.color, a * 0.15))
+            else
+                local sz = p.size * (1 + frac * 0.3)
+                draw.RoundedBox(sz, p.x - sz/2, p.y - sz/2, sz, sz, col)
+                draw.RoundedBox(sz * 2, p.x - sz, p.y - sz, sz * 2, sz * 2, ColorAlpha(col, a * 0.3))
+            end
         end
     end
 end
@@ -197,6 +231,7 @@ function PANEL:FillPanel( data, amount, actions )
         local isEpic = displayRarity == "Epic"
         local isHighTier = isGlitched or isMythical or isLegendary
         local hasBorder = isUniqueWeapon and (isHighTier or isEpic or displayRarity == "Rare")
+        local isAscended = isUniqueWeapon and uwData and uwData.quality == "Ascended"
 
         local shimmerPhase = math.Rand(0, 100)
         local panelID = self._particleID
@@ -300,8 +335,79 @@ function PANEL:FillPanel( data, amount, actions )
             end
 
             -- ====== DRAW PARTICLES ======
-            if isGlitched or isMythical then
+            if isGlitched or isMythical or isAscended then
                 UpdateAndDrawParticles(panelID, dt)
+            end
+
+            -- ====== ASCENDED QUALITY EFFECTS (golden divine aura) ======
+            if isAscended then
+                local ascT = ct * 1.8
+                local breathe = math.sin(ascT) * 0.3 + 0.7
+
+                -- Outer divine golden glow (double layer)
+                local goldCol = Color(255, 215, 60)
+                local outerA = 30 * breathe
+                draw.RoundedBox(12, -6, -6, w + 12, h + 12, ColorAlpha(goldCol, outerA * 0.3))
+                draw.RoundedBox(10, -4, -4, w + 8, h + 8, ColorAlpha(goldCol, outerA * 0.5))
+                draw.RoundedBox(8, -2, -2, w + 4, h + 4, ColorAlpha(goldCol, outerA))
+
+                -- Golden border overlay (thicker, pulsing)
+                local bA = 120 + 80 * breathe
+                local gold = ColorAlpha(goldCol, bA)
+                draw.RoundedBoxEx(6, 0, 0, w, 2, gold, true, true, false, false)
+                draw.RoundedBoxEx(6, 0, h - 2, w, 2, gold, false, false, true, true)
+                surface.SetDrawColor(gold)
+                surface.DrawRect(0, 2, 2, h - 4)
+                surface.DrawRect(w - 2, 2, 2, h - 4)
+
+                -- Corner light rays (4 corners, rotating)
+                local toSX, toSY = self2:LocalToScreen(0, 0)
+                render.SetScissorRect(toSX, toSY, toSX + w, toSY + h, true)
+
+                local corners = {{2, 2}, {w - 2, 2}, {2, h - 2}, {w - 2, h - 2}}
+                for ci, corner in ipairs(corners) do
+                    local cx, cy = corner[1], corner[2]
+                    local rayLen = 25 + 8 * math.sin(ascT * 1.5 + ci * 1.57)
+                    local rayA = (40 + 25 * breathe)
+                    for r = 0, 3 do
+                        local angle = ascT * 0.8 + ci * 1.57 + r * 1.57
+                        local ex = cx + math.cos(angle) * rayLen
+                        local ey = cy + math.sin(angle) * rayLen
+                        -- Draw ray as series of dots fading outward
+                        for step = 0, 1, 0.08 do
+                            local px = Lerp(step, cx, ex)
+                            local py = Lerp(step, cy, ey)
+                            local stepA = rayA * (1 - step)
+                            surface.SetDrawColor(255, 220, 80, stepA)
+                            surface.DrawRect(px - 1, py - 1, 2, 2)
+                        end
+                    end
+                end
+
+                -- Sweeping golden shimmer (slow diagonal)
+                local shimmerW = w * 0.6
+                local shimmerCycle = ((ascT * 0.4) % 4.0) / 4.0
+                local sx = Lerp(shimmerCycle, -shimmerW, w + shimmerW)
+
+                for i = 0, math.floor(shimmerW), 2 do
+                    local frac = i / shimmerW
+                    local intensity = math.exp(-((frac - 0.5) * 3) ^ 2)
+                    local shimA = intensity * 18 * breathe
+                    surface.SetDrawColor(255, 230, 120, shimA)
+                    for row = 0, h - 1, 3 do
+                        local dx = sx + i + row * 0.5
+                        if dx >= 0 and dx < w then
+                            surface.DrawRect(dx, row, 2, 3)
+                        end
+                    end
+                end
+
+                render.SetScissorRect(0, 0, 0, 0, false)
+
+                -- Spawn golden star particles
+                if math.random() < 0.18 then
+                    SpawnParticle(panelID, w, h, nil, true)
+                end
             end
 
             -- ====== HOVER EFFECT (rarity-colored) ======
@@ -360,13 +466,21 @@ function PANEL:FillPanel( data, amount, actions )
                     local bY = barY0 + (i - 1) * (barH + barGap)
                     draw.SimpleText(statDef.shortName, "SMGRP_Bold10", sX + lblW, bY + barH/2, statDef.color, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER)
                     if SMGRP and SMGRP.UI and SMGRP.UI.DrawStatBar then
-                        SMGRP.UI.DrawStatBar(bX, bY, bW, barH, val / 100, statDef.color)
+                        SMGRP.UI.DrawStatBar(bX, bY, bW, barH, math.min(val / 100, 1), statDef.color)
                     else
                         draw.RoundedBox(2, bX, bY, bW, barH, Color(10,10,15,200))
                         local fillW = math.Clamp(val / 100, 0, 1) * bW
                         if fillW > 1 then
                             draw.RoundedBox(2, bX, bY, fillW, barH, ColorAlpha(statDef.color, 200))
                         end
+                    end
+                    -- Golden overflow glow for stats above 100%
+                    if val > 100 and isAscended then
+                        local overflowPulse = math.sin(ct * 3 + i) * 0.3 + 0.7
+                        draw.RoundedBox(2, bX, bY, bW, barH, ColorAlpha(Color(255, 215, 60), 40 * overflowPulse))
+                        draw.RoundedBox(2, bX, bY - 1, bW, barH + 2, ColorAlpha(Color(255, 215, 60), 15 * overflowPulse))
+                        -- Show actual value past the bar
+                        draw.SimpleText(string.format("%.0f%%", val), "SMGRP_Bold10", bX + bW + 2, bY + barH/2, Color(255, 220, 80, 200 * overflowPulse), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
                     end
                 end
 
@@ -377,12 +491,32 @@ function PANEL:FillPanel( data, amount, actions )
                     surface.SetFont("SMGRP_Bold10")
                     local qTW = surface.GetTextSize(uwData.quality or "Junk")
                     local pW, pH = qTW + 12, 16
-                    draw.RoundedBox(3, sX, qualityRowY, pW, pH, ColorAlpha(qualityInfo.color, 140))
-                    draw.SimpleText(uwData.quality or "Junk", "SMGRP_Bold10", sX + pW/2, qualityRowY + pH/2, Color(255,255,255,220), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+
+                    if isAscended then
+                        -- Ascended badge: golden pulsing with glow
+                        local badgePulse = math.sin(ct * 2.5) * 0.3 + 0.7
+                        draw.RoundedBox(3, sX - 1, qualityRowY - 1, pW + 2, pH + 2, ColorAlpha(Color(255, 215, 60), 60 * badgePulse))
+                        draw.RoundedBox(3, sX, qualityRowY, pW, pH, Color(180, 140, 20, 220))
+                        draw.SimpleText(uwData.quality, "SMGRP_Bold10", sX + pW/2, qualityRowY + pH/2, Color(255, 245, 200, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+                    else
+                        draw.RoundedBox(3, sX, qualityRowY, pW, pH, ColorAlpha(qualityInfo.color, 140))
+                        draw.SimpleText(uwData.quality or "Junk", "SMGRP_Bold10", sX + pW/2, qualityRowY + pH/2, Color(255,255,255,220), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+                    end
                 end
 
                 local avg = uwData.avgBoost or 0
-                local avgCol = avg >= 50 and (C.green or Color(60,200,120)) or (avg >= 25 and (C.amber or Color(255,185,50)) or (C.text_muted or Color(90,94,110)))
+                local avgCol
+                if avg >= 100 then
+                    -- Golden pulsing for 100%+
+                    local gp = math.sin(ct * 3) * 0.2 + 0.8
+                    avgCol = ColorAlpha(Color(255, 220, 60), 255 * gp)
+                elseif avg >= 50 then
+                    avgCol = C.green or Color(60,200,120)
+                elseif avg >= 25 then
+                    avgCol = C.amber or Color(255,185,50)
+                else
+                    avgCol = C.text_muted or Color(90,94,110)
+                end
                 draw.SimpleText("+" .. string.format("%.1f", avg) .. "%", "SMGRP_Bold10", w - 8, qualityRowY + 8, avgCol, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER)
             end
         end
