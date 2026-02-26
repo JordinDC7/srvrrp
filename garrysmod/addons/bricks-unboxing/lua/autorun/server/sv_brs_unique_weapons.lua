@@ -550,19 +550,29 @@ function BRS_UW.ApplyBoostsToWeapon(ply, wep)
             table.insert(applied, "SPD:" .. string.format("%.4f", orig) .. "->" .. string.format("%.4f", wep.Primary.Spread))
         end
 
-        -- RPM boost (no cap - visual fixes handle high RPM)
+        -- RPM boost (with minimum delay floor for engine stability)
         if stats.rpm and stats.rpm > 0 and wep.Primary.RPM then
             local orig = wep.Primary.RPM
             local rpmMultiplier = 1 + stats.rpm / 100
-            wep.Primary.RPM = math.Round(orig * rpmMultiplier)
-            -- Update delay based on RPM (M9K uses Delay = 60/RPM)
-            if wep.Primary.RPM > 0 then
-                wep.Primary.Delay = 60 / wep.Primary.RPM
+            local newRPM = math.Round(orig * rpmMultiplier)
+            local newDelay = 60 / newRPM
+
+            -- Engine minimum: Source at 66 tick = 0.015s per tick
+            -- Need at least 3 ticks per shot for reliable firing (0.045s)
+            -- This caps effective RPM at ~1333 regardless of boost
+            local MIN_DELAY = 0.045
+            if newDelay < MIN_DELAY then
+                newRPM = math.floor(60 / MIN_DELAY)
+                newDelay = MIN_DELAY
+                rpmMultiplier = newRPM / orig
             end
-            -- Network multiplier for client-side animation/sound fix
+
+            wep.Primary.RPM = newRPM
+            wep.Primary.Delay = newDelay
+            -- Network multiplier for client-side animation fix
             wep:SetNW2Float("BRS_UW_RPMMultiplier", rpmMultiplier)
             wep:SetNW2Float("BRS_UW_BaseDelay", 60 / orig)
-            table.insert(applied, "RPM:" .. orig .. "->" .. wep.Primary.RPM .. " (" .. string.format("%.1fx", rpmMultiplier) .. ")")
+            table.insert(applied, "RPM:" .. orig .. "->" .. newRPM .. " (delay:" .. string.format("%.3f", newDelay) .. "s)")
         end
 
         -- MAGAZINE boost (clip size)
