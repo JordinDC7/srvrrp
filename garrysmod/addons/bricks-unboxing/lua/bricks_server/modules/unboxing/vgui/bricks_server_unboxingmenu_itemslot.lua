@@ -219,7 +219,7 @@ function PANEL:FillPanel( data, amount, actions )
             -- ====== OUTER GLOW (high tier, skip for Ascended) ======
             if isHighTier and not isAscended then
                 local pulse = math.sin(ct * 2) * 0.3 + 0.7
-                local glowA = isMythical and (22 * pulse) or (isGlitched and (10 * pulse) or (8 * pulse))
+                local glowA = isMythical and (16 * pulse) or (isGlitched and (10 * pulse) or (8 * pulse))
                 draw.RoundedBox(8, -2, -2, w + 4, h + 4, ColorAlpha(borderCol, glowA))
             end
 
@@ -228,7 +228,7 @@ function PANEL:FillPanel( data, amount, actions )
 
             -- ====== RARITY TOP GRADIENT ======
             if isUniqueWeapon then
-                local gradA = isMythical and 18 or (isHighTier and 12 or (isEpic and 8 or 5))
+                local gradA = isMythical and 10 or (isHighTier and 12 or (isEpic and 8 or 5))
                 for i = 0, 4 do
                     _dc.r, _dc.g, _dc.b, _dc.a = borderCol.r, borderCol.g, borderCol.b, gradA * (1 - i/5)
                     surface.SetDrawColor(_dc)
@@ -274,26 +274,37 @@ function PANEL:FillPanel( data, amount, actions )
                 if math.random() < 0.06 then SpawnParticle(panelID, w, h, "Glitched") end
             end
 
-            -- ====== HEAVENLY RADIANCE (Mythical) - icy blue light from top ======
+            -- ====== MYTHICAL SHIMMER (clean diagonal light sweep) ======
             if isMythical then
-                local lightH = h * 0.55
-                local bandH = lightH / 6
-                for i = 0, 5 do
-                    local frac = i / 6
-                    local baseA = (1 - frac) * 25
-                    local breathe = math.sin(ct * 1.5 + i * 0.5) * 0.2 + 0.8
-                    _dc.r, _dc.g, _dc.b, _dc.a = 160, 210, 255, baseA * breathe
+                local toSX, toSY = self2:LocalToScreen(0, 0)
+                render.SetScissorRect(toSX + 1, toSY + 1, toSX + w - 1, toSY + h - 1, true)
+
+                -- Slow diagonal shimmer line sweeping across card
+                local shimmerSpeed = 3  -- seconds per sweep
+                local shimmerPos = ((ct / shimmerSpeed) % 1.6) - 0.3  -- -0.3 to 1.3
+                local shimmerW = w * 0.2
+                local sX = shimmerPos * (w + shimmerW) - shimmerW
+
+                -- Shimmer bands with falloff
+                for i = 0, 3 do
+                    local bandX = sX + i * (shimmerW / 4)
+                    local dist = math.abs(i - 1.5) / 1.5
+                    local bandA = (1 - dist) * 20
+                    _dc.r, _dc.g, _dc.b, _dc.a = 180, 225, 255, bandA
                     surface.SetDrawColor(_dc)
-                    surface.DrawRect(1, 1 + i * bandH, w - 2, bandH)
+                    surface.DrawRect(bandX, 1, shimmerW / 4, h - 2)
                 end
 
-                -- Center light pillar
-                local colW = w * 0.35
-                local colX = (w - colW) / 2
-                local colA = 10 + math.sin(ct * 2) * 5
-                _dc.r, _dc.g, _dc.b, _dc.a = 180, 225, 255, colA
+                render.SetScissorRect(0, 0, 0, 0, false)
+
+                -- Frosted inner edge (thin icy glow along inside of border)
+                local frostA = 12 + math.sin(ct * 1.8) * 5
+                _dc.r, _dc.g, _dc.b, _dc.a = 170, 215, 255, frostA
                 surface.SetDrawColor(_dc)
-                surface.DrawRect(colX, 1, colW, h - 2)
+                surface.DrawRect(3, 3, w - 6, 2)
+                surface.DrawRect(3, h - 5, w - 6, 2)
+                surface.DrawRect(3, 5, 2, h - 10)
+                surface.DrawRect(w - 5, 5, 2, h - 10)
 
                 if math.random() < 0.07 then SpawnParticle(panelID, w, h, "Mythical") end
             end
