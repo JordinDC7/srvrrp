@@ -113,14 +113,10 @@ net.Receive("BRS_UW.ProjSpawn", function()
     local tier = BRS_UW.Tracers and BRS_UW.Tracers.GetTier(rarityKey)
     if not tier then return end
 
-    -- Adjust start pos to viewmodel muzzle for local player
-    if IsValid(shooter) and shooter == LocalPlayer() then
-        local vm = shooter:GetViewModel()
-        if IsValid(vm) then
-            local att = vm:GetAttachment(vm:LookupAttachment("muzzle") or 1)
-            if att then src = att.Pos end
-        end
-    end
+    -- NOTE: Do NOT adjust src to viewmodel muzzle. The viewmodel muzzle
+    -- attachment is in viewmodel render space, NOT world space. Using it
+    -- causes the first trail segment to stretch sideways from the gun.
+    -- The server src (player eye pos) is the correct world-space origin.
 
     -- Pool limit (swap-remove: O(1) instead of table.remove O(n))
     if #projectiles >= MAX_PROJ then
@@ -143,8 +139,8 @@ net.Receive("BRS_UW.ProjSpawn", function()
         right = ang:Right(),
         up = ang:Up(),
         trail = RingNew(),
-        lastTrail = CurTime(),  -- delay first trail point (prevents muzzle streak)
-        lastPart = 0,
+        lastTrail = CurTime() + 0.03,  -- 30ms grace before first trail point
+        lastPart = CurTime(),
         seed = random(1000),
         alive = true,
         hitTime = 0,
@@ -356,8 +352,8 @@ hook.Add("PostDrawTranslucentRenderables", "BRS_UW_ProjRender", function(_, bSky
                 local p1 = RingGet(proj.trail, j - 1)
                 local p2 = RingGet(proj.trail, j)
                 if not p1 or not p2 then continue end
-                -- Skip overly long segments (muzzle flash prevention)
-                if p1.pos:DistToSqr(p2.pos) > 40000 then continue end
+                -- Skip overly long segments (streak prevention, 180 units max)
+                if p1.pos:DistToSqr(p2.pos) > 32400 then continue end
                 local age = 1 - Clamp((ct - p1.time) / fadeTime, 0, 1)
                 if age < 0.02 then continue end
                 -- Core trail
