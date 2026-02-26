@@ -319,14 +319,20 @@ function PANEL:FillPanel( data, amount, actions )
 
             -- ====== FIRE RADIANCE (Mythical) ======
             if isMythical then
-                for i = 0, 25 do
-                    local a = math.max(0, 20 - i * 0.8) * (math.sin(ct * 3 + i * 0.2) * 0.3 + 0.7)
-                    surface.SetDrawColor(255, 60 + i * 2, 0, a)
+                local fireHeight = math.floor(h * 0.6)
+                for i = 0, fireHeight do
+                    local frac = i / fireHeight
+                    local baseA = (1 - frac) * 22
+                    local flicker = math.sin(ct * 3 + i * 0.15) * 0.3 + 0.7
+                    local waveA = math.sin(ct * 5 + i * 0.3) * 0.15 + 0.85
+                    local a = math.max(0, baseA * flicker * waveA)
+                    local g = math.floor(60 + frac * 140)
+                    surface.SetDrawColor(255, g, 0, a)
                     surface.DrawRect(1, h - 1 - i, w - 2, 1)
                 end
 
                 local heatPulse = math.sin(ct * 4) * 0.3 + 0.7
-                surface.SetDrawColor(255, 80, 0, 8 * heatPulse)
+                surface.SetDrawColor(255, 80, 0, 6 * heatPulse)
                 surface.DrawRect(1, 1, w - 2, h - 2)
 
                 if math.random() < 0.12 then
@@ -339,26 +345,25 @@ function PANEL:FillPanel( data, amount, actions )
                 UpdateAndDrawParticles(panelID, dt)
             end
 
-            -- ====== ASCENDED QUALITY EFFECTS (golden divine aura) ======
+            -- ====== ASCENDED QUALITY EFFECTS (subtle golden aura) ======
             if isAscended then
                 local ascT = ct * 1.8
                 local breathe = math.sin(ascT) * 0.3 + 0.7
 
-                -- Outer divine golden glow (double layer)
+                -- Outer golden glow (subtle)
                 local goldCol = Color(255, 215, 60)
-                local outerA = 30 * breathe
-                draw.RoundedBox(12, -6, -6, w + 12, h + 12, ColorAlpha(goldCol, outerA * 0.3))
-                draw.RoundedBox(10, -4, -4, w + 8, h + 8, ColorAlpha(goldCol, outerA * 0.5))
+                local outerA = 14 * breathe
+                draw.RoundedBox(10, -4, -4, w + 8, h + 8, ColorAlpha(goldCol, outerA * 0.3))
                 draw.RoundedBox(8, -2, -2, w + 4, h + 4, ColorAlpha(goldCol, outerA))
 
-                -- Golden border overlay (thicker, pulsing)
-                local bA = 120 + 80 * breathe
+                -- Golden border overlay (thin, pulsing)
+                local bA = 80 + 50 * breathe
                 local gold = ColorAlpha(goldCol, bA)
                 draw.RoundedBoxEx(6, 0, 0, w, 2, gold, true, true, false, false)
                 draw.RoundedBoxEx(6, 0, h - 2, w, 2, gold, false, false, true, true)
                 surface.SetDrawColor(gold)
-                surface.DrawRect(0, 2, 2, h - 4)
-                surface.DrawRect(w - 2, 2, 2, h - 4)
+                surface.DrawRect(0, 2, 1, h - 4)
+                surface.DrawRect(w - 1, 2, 1, h - 4)
 
                 -- Corner light rays (4 corners, rotating)
                 local toSX, toSY = self2:LocalToScreen(0, 0)
@@ -367,14 +372,13 @@ function PANEL:FillPanel( data, amount, actions )
                 local corners = {{2, 2}, {w - 2, 2}, {2, h - 2}, {w - 2, h - 2}}
                 for ci, corner in ipairs(corners) do
                     local cx, cy = corner[1], corner[2]
-                    local rayLen = 25 + 8 * math.sin(ascT * 1.5 + ci * 1.57)
-                    local rayA = (40 + 25 * breathe)
+                    local rayLen = 20 + 6 * math.sin(ascT * 1.5 + ci * 1.57)
+                    local rayA = (25 + 15 * breathe)
                     for r = 0, 3 do
                         local angle = ascT * 0.8 + ci * 1.57 + r * 1.57
                         local ex = cx + math.cos(angle) * rayLen
                         local ey = cy + math.sin(angle) * rayLen
-                        -- Draw ray as series of dots fading outward
-                        for step = 0, 1, 0.08 do
+                        for step = 0, 1, 0.1 do
                             local px = Lerp(step, cx, ex)
                             local py = Lerp(step, cy, ey)
                             local stepA = rayA * (1 - step)
@@ -385,14 +389,14 @@ function PANEL:FillPanel( data, amount, actions )
                 end
 
                 -- Sweeping golden shimmer (slow diagonal)
-                local shimmerW = w * 0.6
-                local shimmerCycle = ((ascT * 0.4) % 4.0) / 4.0
+                local shimmerW = w * 0.5
+                local shimmerCycle = ((ascT * 0.35) % 4.0) / 4.0
                 local sx = Lerp(shimmerCycle, -shimmerW, w + shimmerW)
 
                 for i = 0, math.floor(shimmerW), 2 do
                     local frac = i / shimmerW
                     local intensity = math.exp(-((frac - 0.5) * 3) ^ 2)
-                    local shimA = intensity * 18 * breathe
+                    local shimA = intensity * 12 * breathe
                     surface.SetDrawColor(255, 230, 120, shimA)
                     for row = 0, h - 1, 3 do
                         local dx = sx + i + row * 0.5
@@ -405,7 +409,7 @@ function PANEL:FillPanel( data, amount, actions )
                 render.SetScissorRect(0, 0, 0, 0, false)
 
                 -- Spawn golden star particles
-                if math.random() < 0.18 then
+                if math.random() < 0.14 then
                     SpawnParticle(panelID, w, h, nil, true)
                 end
             end
