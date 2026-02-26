@@ -2,27 +2,25 @@
 -- BRS Unique Weapons - High RPM Smoothing (Client)
 --
 -- Fixes for boosted RPM weapons:
---   1. Viewmodel: speed up FIRE animations only (not idle/reload)
---   2. ViewPunch: scale down per-shot recoil (sqrt curve)
---   3. Shells: throttle ejection effects to base rate
---   4. Sound: rotate channels to prevent Source dropping sounds
+--   1. Viewmodel: speed up FIRE animations only
+--   2. ViewPunch: scale down per-shot recoil
+--   3. Shells: throttle ejection effects
+--   4. Sound: rotate ALL weapon sounds across channels
 -- ============================================================
 
 -- ============================================================
 -- 1. VIEWMODEL ANIMATION - FIRE SEQUENCES ONLY
--- Only speed up fire/shoot activities, leave idle/reload/draw
--- at normal speed. This prevents weird fast-idle jitter.
 -- ============================================================
 local fireActivities = {
     [ACT_VM_PRIMARYATTACK] = true,
     [ACT_VM_SECONDARYATTACK] = true,
     [ACT_SHOTGUN_PUMP] = true,
 }
--- Some M9K weapons use raw sequence names, so also check by name
-local fireSequenceNames = {
-    ["fire"] = true, ["shoot"] = true, ["shoot1"] = true, ["shoot2"] = true,
-    ["shoot3"] = true, ["fire1"] = true, ["fire2"] = true, ["fire3"] = true,
-    ["primaryattack"] = true,
+
+local fireSeqNames = {
+    fire = true, fire1 = true, fire2 = true, fire3 = true, fire4 = true,
+    shoot = true, shoot1 = true, shoot2 = true, shoot3 = true,
+    primaryattack = true, attack = true, attack1 = true,
 }
 
 hook.Add("PostDrawViewModel", "BRS_UW_RPMAnimFix", function(vm, ply, wep)
@@ -31,18 +29,23 @@ hook.Add("PostDrawViewModel", "BRS_UW_RPMAnimFix", function(vm, ply, wep)
     local mult = wep:GetNW2Float("BRS_UW_RPMMultiplier", 0)
     if mult <= 1.0 then return end
 
-    -- Check if current activity is a fire animation
-    local act = vm:GetActivity()
-    local isFiring = fireActivities[act]
+    -- Use GetSequenceActivity (GetActivity doesn't exist on viewmodels)
+    local seq = vm:GetSequence()
+    if not seq or seq < 0 then return end
 
+    local isFiring = false
+
+    -- Check activity
+    local act = vm:GetSequenceActivity(seq)
+    if act and fireActivities[act] then
+        isFiring = true
+    end
+
+    -- Also check sequence name as fallback
     if not isFiring then
-        -- Also check sequence name as fallback
-        local seq = vm:GetSequence()
-        if seq and seq >= 0 then
-            local seqName = vm:GetSequenceName(seq)
-            if seqName then
-                isFiring = fireSequenceNames[string.lower(seqName)]
-            end
+        local seqName = vm:GetSequenceName(seq)
+        if seqName then
+            isFiring = fireSeqNames[string.lower(seqName)] or false
         end
     end
 
@@ -54,10 +57,7 @@ hook.Add("PostDrawViewModel", "BRS_UW_RPMAnimFix", function(vm, ply, wep)
 end)
 
 -- ============================================================
--- 2. VIEWPUNCH REDUCTION (per-shot recoil)
--- Scale each kick down using sqrt so total recoil/sec is:
---   1.5x RPM -> 82% per-shot (1.22x total/sec)
---   2.0x RPM -> 71% per-shot (1.41x total/sec)
+-- 2. VIEWPUNCH REDUCTION
 -- ============================================================
 local playerMeta = FindMetaTable("Player")
 if playerMeta and playerMeta.ViewPunch then
@@ -87,7 +87,6 @@ end
 
 -- ============================================================
 -- 3. SHELL EJECTION THROTTLE
--- Cap shell spawns at base weapon rate to prevent entity flood
 -- ============================================================
 local lastShellTime = 0
 
@@ -122,20 +121,22 @@ if util and util.Effect then
 end
 
 -- ============================================================
--- 4. CLIENT-SIDE SOUND CHANNEL ROTATION
--- Source engine only allows ONE sound per channel per entity.
--- M9K fires on CHAN_WEAPON. At high RPM, Source silently drops
--- repeat EmitSound calls on a busy channel.
--- Fix: hook EntityEmitSound to rotate fire sounds across channels.
+-- 4. SOUND CHANNEL ROTATION (catch-all)
+-- Source only allows ONE sound per channel per entity.
+-- M9K weapons emit fire sounds in many different ways:
+--   self:EmitSound(), self.Weapon:EmitSound(), sound.Play(), etc.
+-- EntityEmitSound catches ALL of them regardless of how they
+-- were triggered. We rotate channels on ANY sound coming from
+-- a boosted weapon entity to ensure nothing gets dropped.
 -- ============================================================
-local fireSoundChannels = {CHAN_WEAPON, CHAN_BODY, CHAN_VOICE, CHAN_VOICE2}
-local clientChanIdx = 0
-local trackedFireSounds = {} -- [entIndex] = fire sound name
+local channels = {CHAN_WEAPON, CHAN_WEAPON2, CHAN_BODY, CHAN_VOICE}
+local chanState = {} -- [entIndex] = { idx = N, lastTime = T }
 
-hook.Add("EntityEmitSound", "BRS_UW_RPMSoundChannelFix", function(data)
+hook.Add("EntityEmitSound", "BRS_UW_RPMSoundFix", function(data)
     local ent = data.Entity
     if not IsValid(ent) then return end
 
+    -- Find the weapon - sound can come from weapon entity or the player
     local wep
     if ent:IsWeapon() then
         wep = ent
@@ -147,16 +148,47 @@ hook.Add("EntityEmitSound", "BRS_UW_RPMSoundChannelFix", function(data)
     local mult = wep:GetNW2Float("BRS_UW_RPMMultiplier", 0)
     if mult <= 1.0 then return end
 
-    -- Detect if this is the weapon's fire sound
-    local fireSound = wep.Primary and wep.Primary.Sound
-    if not fireSound then return end
+    -- Skip clearly non-weapon sounds (footsteps, physics, UI)
+    local snd = data.SoundName
+    if not snd then return end
+    local sndLower = string.lower(snd)
 
-    -- Match by sound name (M9K fire sounds)
-    if data.SoundName == fireSound then
-        clientChanIdx = clientChanIdx + 1
-        if clientChanIdx > #fireSoundChannels then clientChanIdx = 1 end
-        data.Channel = fireSoundChannels[clientChanIdx]
-        return true
+    -- Skip sounds that are definitely not weapon fire
+    if string.find(sndLower, "step") or
+       string.find(sndLower, "foot") or
+       string.find(sndLower, "phys") or
+       string.find(sndLower, "button") or
+       string.find(sndLower, "door") or
+       string.find(sndLower, "ui/") or
+       string.find(sndLower, "ambient") or
+       string.find(sndLower, "player/") then
+        return
+    end
+
+    -- For everything else from this weapon entity, rotate channels
+    local idx = ent:EntIndex()
+    local state = chanState[idx]
+    if not state then
+        state = { idx = 0, lastTime = 0 }
+        chanState[idx] = state
+    end
+
+    local now = CurTime()
+    state.idx = state.idx + 1
+    if state.idx > #channels then state.idx = 1 end
+    state.lastTime = now
+
+    data.Channel = channels[state.idx]
+    return true
+end)
+
+-- Cleanup stale channel state
+timer.Create("BRS_UW_ChanCleanup", 5, 0, function()
+    local now = CurTime()
+    for idx, state in pairs(chanState) do
+        if now - state.lastTime > 3 then
+            chanState[idx] = nil
+        end
     end
 end)
 
