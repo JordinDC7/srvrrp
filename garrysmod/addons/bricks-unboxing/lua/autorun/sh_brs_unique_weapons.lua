@@ -166,12 +166,12 @@ end
 -- A Mythical can roll Junk if unlucky, Ascended if lucky
 -- ============================================================
 BRS_UW.Qualities = {
-    { key = "Junk",     minAvg = 0,  maxAvg = 8,  color = Color(120,120,120) },
-    { key = "Raw",      minAvg = 8,  maxAvg = 18, color = Color(140,180,100) },
-    { key = "Standard", minAvg = 18, maxAvg = 32, color = Color(80,160,220) },
-    { key = "Forged",   minAvg = 32, maxAvg = 50, color = Color(180,120,255) },
-    { key = "Refined",  minAvg = 50, maxAvg = 72, color = Color(255,180,40) },
-    { key = "Ascended", minAvg = 72, maxAvg = 101, color = Color(255,60,60) },
+    { key = "Junk",     minAvg = 0,  maxAvg = 4,   color = Color(120,120,120) },
+    { key = "Raw",      minAvg = 4,  maxAvg = 10,  color = Color(140,180,100) },
+    { key = "Standard", minAvg = 10, maxAvg = 20,  color = Color(80,160,220) },
+    { key = "Forged",   minAvg = 20, maxAvg = 38,  color = Color(180,120,255) },
+    { key = "Refined",  minAvg = 38, maxAvg = 60,  color = Color(255,180,40) },
+    { key = "Ascended", minAvg = 60, maxAvg = 101, color = Color(255,60,60) },
 }
 
 BRS_UW.QualityByKey = {}
