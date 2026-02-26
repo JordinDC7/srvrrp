@@ -4,8 +4,8 @@
 -- config doesn't load or gets overridden
 -- ============================================================
 
-local WALK_SPEED = 250
-local RUN_SPEED = 500
+local WALK_SPEED = 200
+local RUN_SPEED = 400
 
 hook.Add("PlayerSpawn", "BRS_EnforceMovementSpeed", function(ply)
     timer.Simple(0.1, function()
