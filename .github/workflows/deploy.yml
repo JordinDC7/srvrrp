@@ -35,6 +35,9 @@ jobs:
 
           BEFORE="${{ github.event.before }}"
 
+          # Files that should NEVER be deployed or deleted (managed via Physgun)
+          PROTECTED_FILES="cfg/server.cfg"
+
           if [ "$BEFORE" = "0000000000000000000000000000000000000000" ]; then
             echo "=== Initial deploy - uploading all tracked files ==="
             CHANGED=$(find garrysmod/ -type f)
@@ -49,6 +52,31 @@ jobs:
             echo "No files changed in garrysmod/, nothing to deploy."
             exit 0
           fi
+
+          # Filter out protected files
+          filter_protected() {
+            local input="$1"
+            local filtered=""
+            while IFS= read -r file; do
+              [ -z "$file" ] && continue
+              local rel="${file#garrysmod/}"
+              local skip=false
+              for pf in $PROTECTED_FILES; do
+                if [ "$rel" = "$pf" ]; then
+                  echo "PROTECTED (skipping): $file" >&2
+                  skip=true
+                  break
+                fi
+              done
+              if [ "$skip" = "false" ]; then
+                filtered="$filtered$file"$'\n'
+              fi
+            done <<< "$input"
+            echo "$filtered"
+          }
+
+          CHANGED=$(filter_protected "$CHANGED")
+          DELETED=$(filter_protected "$DELETED")
 
           # Build lftp script file (avoids quoting issues)
           SCRIPT_FILE=$(mktemp /tmp/lftp_script.XXXXXX)
