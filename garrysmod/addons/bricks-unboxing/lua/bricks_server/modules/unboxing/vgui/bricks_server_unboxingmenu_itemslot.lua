@@ -459,7 +459,8 @@ function PANEL:FillPanel( data, amount, actions )
 
         if isUniqueWeapon and uwData then
             local rCol = SMGRP.UI.GetRarityColor(uwData.rarity)
-            self:AddTopInfo(uwData.rarity, ColorAlpha(rCol, 160), Color(255,255,255))
+            -- Use direct Color() not ColorAlpha() — pool colors get overwritten before Paint runs
+            self:AddTopInfo(uwData.rarity, Color(rCol.r, rCol.g, rCol.b, 160), Color(255,255,255))
         end
     else
         self.panelInfo.Paint = function( self2, w, h )
