@@ -190,39 +190,38 @@ BRS_UW.AscendedRarities = {
 
 -- ============================================================
 -- STAT RANGE MATRIX: StatRanges[rarity][quality] = {min, max}
--- Both rarity and quality push stats higher
--- Common-Legendary: Refined is the best quality (capped at 100%)
--- Glitched Ascended: up to 115%
--- Mythical Ascended: up to 125%
+-- RARITY IS KING: Higher rarity Junk always beats lower rarity Refined
+-- Quality adds meaningful gains within each rarity band
+-- Ascended only on Glitched (cap 115%) and Mythical (cap 125%)
 -- ============================================================
 BRS_UW.StatRanges = {
     Common = {
-        Junk = {1, 5},       Raw = {2, 8},       Standard = {3, 14},
-        Forged = {6, 22},    Refined = {10, 32},
+        Junk = {1, 3},       Raw = {2, 5},       Standard = {4, 8},
+        Forged = {6, 10},    Refined = {9, 12},
     },
     Uncommon = {
-        Junk = {2, 10},      Raw = {5, 16},      Standard = {8, 24},
-        Forged = {12, 34},   Refined = {18, 46},
+        Junk = {8, 11},      Raw = {9, 14},      Standard = {12, 16},
+        Forged = {14, 19},   Refined = {18, 22},
     },
     Rare = {
-        Junk = {4, 16},      Raw = {8, 24},      Standard = {14, 36},
-        Forged = {20, 50},   Refined = {28, 64},
+        Junk = {16, 20},     Raw = {18, 25},     Standard = {22, 29},
+        Forged = {26, 34},   Refined = {31, 38},
     },
     Epic = {
-        Junk = {6, 22},      Raw = {12, 34},     Standard = {20, 48},
-        Forged = {30, 64},   Refined = {40, 78},
+        Junk = {28, 33},     Raw = {31, 39},     Standard = {35, 44},
+        Forged = {40, 50},   Refined = {47, 55},
     },
     Legendary = {
-        Junk = {10, 30},     Raw = {18, 44},     Standard = {28, 58},
-        Forged = {38, 74},   Refined = {50, 92},
+        Junk = {40, 47},     Raw = {44, 54},     Standard = {49, 61},
+        Forged = {56, 68},   Refined = {64, 75},
     },
     Glitched = {
-        Junk = {14, 38},     Raw = {24, 52},     Standard = {34, 68},
-        Forged = {46, 82},   Refined = {58, 96},  Ascended = {72, 115},
+        Junk = {52, 61},     Raw = {56, 69},     Standard = {63, 78},
+        Forged = {71, 86},   Refined = {82, 95},  Ascended = {89, 115},
     },
     Mythical = {
-        Junk = {20, 46},     Raw = {30, 62},     Standard = {42, 78},
-        Forged = {56, 92},   Refined = {68, 100}, Ascended = {82, 125},
+        Junk = {60, 68},     Raw = {64, 76},     Standard = {70, 84},
+        Forged = {78, 92},   Refined = {88, 100}, Ascended = {94, 125},
     },
 }
 
