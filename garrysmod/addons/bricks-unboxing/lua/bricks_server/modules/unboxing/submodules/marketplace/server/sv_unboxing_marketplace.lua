@@ -83,7 +83,14 @@ hook.Add( "PlayerInitialSpawn", "BricksServerHooks_PlayerInitialSpawn_UnboxingLo
             local slotKey = tonumber(v.slotKey)
             -- Dedup: only keep the first row per slotKey (skip duplicates from DB)
             if( marketSlotsTable[slotKey] ) then continue end
-            marketSlotsTable[slotKey] = { tonumber(v.marketKey) }
+            local mKey = tonumber(v.marketKey)
+            -- Clean stale marketKeys: if auction no longer exists, clear the slot
+            if( mKey and not BRICKS_SERVER.TEMP.UnboxingMarketplace[mKey] ) then
+                marketSlotsTable[slotKey] = {}
+                BRICKS_SERVER.UNBOXING.Func.UpdateMarketplaceSlotsDB( ply:SteamID64(), slotKey )
+            else
+                marketSlotsTable[slotKey] = { mKey }
+            end
         end
 
         -- Auto-grant free slots (no Price, no Group) that are missing from DB

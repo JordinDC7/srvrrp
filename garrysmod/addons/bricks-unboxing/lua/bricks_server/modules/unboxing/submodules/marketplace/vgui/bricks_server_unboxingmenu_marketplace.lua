@@ -472,17 +472,20 @@ function PANEL:RefreshMyAuctions()
     local seenMarketKeys = {}
     for k, v in pairs( BRICKS_SERVER.CONFIG.UNBOXING.Marketplace.Slots ) do
         local marketSlotTable = LocalPlayer():GetUnboxingMarketplaceSlots()[k]
-        if( marketSlotTable and marketSlotTable[1] ) then
-            -- Dedup: skip if we already showed this marketKey
-            if( seenMarketKeys[marketSlotTable[1]] ) then continue end
-            seenMarketKeys[marketSlotTable[1]] = true
+        local hasActiveAuction = false
 
+        if( marketSlotTable and marketSlotTable[1] ) then
             local marketItemTable = BRICKS_SERVER.TEMP.UnboxingMarketplace[marketSlotTable[1]]
 
-            if( not marketItemTable ) then continue end
+            if( marketItemTable and not seenMarketKeys[marketSlotTable[1]] ) then
+                seenMarketKeys[marketSlotTable[1]] = true
+                hasActiveAuction = true
+                self:CreateAuctionSlot( self.myAuctions.grid, self.myAuctions.slotWide, self.myAuctions.slotWide*1.2, marketSlotTable[1], marketItemTable )
+            end
+        end
 
-            self:CreateAuctionSlot( self.myAuctions.grid, self.myAuctions.slotWide, self.myAuctions.slotWide*1.2, marketSlotTable[1], marketItemTable )
-        else
+        -- Show empty/locked slot if no active auction in this slot
+        if( not hasActiveAuction ) then
             local iconMat = Material( "bricks_server/unboxing_lock.png" )
             if( marketSlotTable ) then
                 iconMat = Material( "bricks_server/unboxing_add.png" )
