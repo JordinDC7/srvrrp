@@ -516,8 +516,14 @@ function BRS_UW.OpenInspectPopup(globalKey, data)
 
     -- Add tracer info
     local tracerTier = BRS_UW.Tracers and BRS_UW.Tracers.GetTier(data.rarity)
+    local isAscended = (data.quality == "Ascended")
     if tracerTier then
-        table.insert(infoPairs, 5, { "Tracer", tracerTier.description or "Standard", rarityCol })
+        local tracerDesc = tracerTier.description or "Standard"
+        if isAscended then
+            local ascOverlay = BRS_UW.Tracers.AscendedOverlay
+            tracerDesc = tracerDesc .. " + " .. (ascOverlay and ascOverlay.description or "Divine")
+        end
+        table.insert(infoPairs, 5, { "Tracer", tracerDesc, rarityCol })
     end
 
     for _, pair in ipairs(infoPairs) do
@@ -543,109 +549,249 @@ function BRS_UW.OpenInspectPopup(globalKey, data)
             surface.SetDrawColor(C.border or Color(50, 52, 65))
             surface.DrawOutlinedRect(0, 0, w, h, 1)
 
-            draw.SimpleText("TRACER", "SMGRP_Bold12", 14, 10, C.text_muted or Color(90, 94, 110), 0, TEXT_ALIGN_CENTER)
+            local label = "TRACER"
+            if isAscended then label = "TRACER · ASCENDED" end
+            draw.SimpleText(label, "SMGRP_Bold12", 14, 10,
+                isAscended and Color(255, 215, 0) or (C.text_muted or Color(90, 94, 110)), 0, TEXT_ALIGN_CENTER)
 
-            -- Animated tracer preview
             local ct = CurTime()
             local elapsed = ct - self2.startTime
-            local px = 14 -- start x
-            local ex = w - 14 -- end x
-            local cy = 42 -- y center
-            local trackW = ex - px
+            local startX = 14
+            local endX = w - 14
+            local cy = 42
+            local trackW = endX - startX
 
-            -- Projectile position loops
-            local speed = 0.8 -- seconds per full traverse
+            local speed = 0.8
             local progress = (elapsed / speed) % 1.0
-            local projX = px + trackW * progress
+            local projX = startX + trackW * progress
 
-            -- Trail behind projectile
             local trailLen = trackW * (tracerTier.lifetime or 0.2) / speed
-            local trailStart = math.max(px, projX - trailLen)
 
+            -- Resolve color per tier
             local tColor = tracerTier.color
             local gColor = tracerTier.glowColor
+
             if tracerTier.chromatic then
+                -- GLITCHED: rapid cyan<->magenta flicker
+                local flicker = math.sin(elapsed * 40) + math.sin(elapsed * 67)
+                if flicker > 0.5 then
+                    tColor = tracerTier.color2 or Color(255, 0, 200, 255)
+                else
+                    tColor = tracerTier.color
+                end
+                gColor = Color(
+                    math.sin(elapsed * 6) * 127 + 128,
+                    math.sin(elapsed * 6 + 2.1) * 127 + 128,
+                    math.sin(elapsed * 6 + 4.2) * 127 + 128,
+                    120
+                )
+            elseif tracerTier.color2 then
+                -- MYTHICAL: dark red <-> void purple pulse
+                local pulse = math.sin(elapsed * 2) * 0.5 + 0.5
                 tColor = Color(
-                    math.sin(elapsed * 3) * 127 + 128,
-                    math.sin(elapsed * 3 + 2.1) * 127 + 128,
-                    math.sin(elapsed * 3 + 4.2) * 127 + 128,
+                    Lerp(pulse, tracerTier.color.r, tracerTier.color2.r),
+                    Lerp(pulse, tracerTier.color.g, tracerTier.color2.g),
+                    Lerp(pulse, tracerTier.color.b, tracerTier.color2.b),
                     255
                 )
-                gColor = ColorAlpha(tColor, 120)
             end
 
-            -- Glow trail (gradient fade)
-            for i = 0, math.floor(projX - trailStart) do
+            -- Draw trail
+            for i = 0, math.floor(projX - math.max(startX, projX - trailLen)) do
                 local x = projX - i
-                if x < px then break end
+                if x < startX then break end
                 local fade = 1 - (i / math.max(trailLen, 1))
-                fade = fade * fade -- quadratic falloff
+                fade = fade * fade
 
                 -- Outer glow
                 local glowH = (tracerTier.glowWidth or 8) * 0.6
-                surface.SetDrawColor(ColorAlpha(gColor, gColor.a * fade * 0.5))
+                surface.SetDrawColor(ColorAlpha(gColor, (gColor.a or 120) * fade * 0.5))
                 surface.DrawRect(x, cy - glowH/2, 1, glowH)
 
                 -- Core beam
                 local coreH = (tracerTier.trailWidth or 2) * 0.8
-                surface.SetDrawColor(ColorAlpha(tColor, tColor.a * fade))
+                surface.SetDrawColor(ColorAlpha(tColor, (tColor.a or 255) * fade))
                 surface.DrawRect(x, cy - coreH/2, 1, coreH)
             end
 
-            -- Projectile head glow
+            -- GLITCH TRAIL: offset flickering segments
+            if tracerTier.glitchTrail then
+                for seg = 0, 5 do
+                    local segX = projX - seg * (trailLen / 6)
+                    if segX < startX then break end
+                    local segHash = seg + math.floor(elapsed * 30)
+                    if segHash % 2 == 0 then
+                        local offsetY = math.sin(segHash * 137.5 + elapsed * 50) * 6
+                        local flickCol = (segHash % 4 < 2) and (tracerTier.color2 or Color(255, 0, 200)) or tracerTier.color
+                        surface.SetDrawColor(ColorAlpha(flickCol, 180))
+                        surface.DrawRect(segX - 4, cy + offsetY - 1, 8, 2)
+                    end
+                end
+                -- Scan lines
+                for s = 0, 2 do
+                    local scanX = startX + ((elapsed * 200 + s * 80) % trackW)
+                    if scanX > startX and scanX < projX then
+                        surface.SetDrawColor(Color(
+                            math.sin(elapsed * 6 + s) * 127 + 128,
+                            math.sin(elapsed * 6 + s + 2.1) * 127 + 128,
+                            math.sin(elapsed * 6 + s + 4.2) * 127 + 128,
+                            80
+                        ))
+                        surface.DrawRect(scanX, cy - 8, 1, 16)
+                    end
+                end
+            end
+
+            -- VOID TRAIL: dark tendrils
+            if tracerTier.voidTrail then
+                for tendril = 0, 2 do
+                    local phase = tendril * 2.094
+                    for i = 0, math.floor(trailLen), 3 do
+                        local x = projX - i
+                        if x < startX then break end
+                        local t = i / trailLen
+                        local waveY = math.sin(elapsed * 4 + t * 8 + phase) * (4 + t * 3)
+                        local fade = 1 - t
+                        surface.SetDrawColor(ColorAlpha(tracerTier.color2 or Color(40, 0, 40), 120 * fade))
+                        surface.DrawRect(x, cy + waveY - 0.5, 2, 1)
+                    end
+                end
+            end
+
+            -- AFTERIMAGE (Legendary/Mythical)
+            if tracerTier.hasAfterimage then
+                local aiColor = tracerTier.afterimageColor or Color(255, 100, 0, 50)
+                local aiLen = trailLen * 1.5
+                for i = 0, math.floor(aiLen) do
+                    local x = projX - i
+                    if x < startX then break end
+                    local fade = 1 - (i / aiLen)
+                    local aiH = (tracerTier.glowWidth or 8) * 0.8
+                    surface.SetDrawColor(ColorAlpha(aiColor, aiColor.a * fade * fade))
+                    surface.DrawRect(x, cy - aiH/2, 1, aiH)
+                end
+            end
+
+            -- Projectile head
             local headSize = (tracerTier.trailWidth or 2) * 2.5
             draw.RoundedBox(headSize/2, projX - headSize/2, cy - headSize/2, headSize, headSize, tColor)
-
-            -- Outer head glow
             local outerSize = (tracerTier.glowWidth or 8) * 1.2
             draw.RoundedBox(outerSize/2, projX - outerSize/2, cy - outerSize/2, outerSize, outerSize,
                 ColorAlpha(gColor, 60))
 
-            -- Spiral indicators (dots orbiting for Legendary+)
+            -- VOID CORE: dark center
+            if tracerTier.voidCore then
+                local darkSize = headSize * 1.2
+                draw.RoundedBox(darkSize/2, projX - darkSize/2, cy - darkSize/2, darkSize, darkSize,
+                    Color(0, 0, 0, 200))
+                -- Red corona
+                local coronaSize = outerSize * 1.5
+                local coronaAlpha = 60 + math.sin(elapsed * 8) * 30
+                draw.RoundedBox(coronaSize/2, projX - coronaSize/2, cy - coronaSize/2, coronaSize, coronaSize,
+                    Color(200, 0, 0, coronaAlpha))
+            end
+
+            -- Spiral (Legendary comet)
             if tracerTier.hasSpiral then
-                local spiralR = 6
                 for s = 0, 2 do
-                    local angle = elapsed * (tracerTier.spiralSpeed or 8) + s * (math.pi * 2 / 3)
-                    local sy = cy + math.sin(angle) * spiralR
+                    local angle = elapsed * (tracerTier.spiralSpeed or 6) + s * (math.pi * 2 / 3)
+                    local sy = cy + math.sin(angle) * 6
                     local sx = projX + math.cos(angle) * 3
-                    local sCol = tracerTier.chromatic and Color(
-                        math.sin(elapsed * 3 + s) * 127 + 128,
-                        math.sin(elapsed * 3 + s + 2.1) * 127 + 128,
-                        math.sin(elapsed * 3 + s + 4.2) * 127 + 128,
-                        180
-                    ) or ColorAlpha(tColor, 180)
-                    draw.RoundedBox(2, sx - 2, sy - 2, 4, 4, sCol)
+                    draw.RoundedBox(2, sx - 2, sy - 2, 4, 4, ColorAlpha(tColor, 180))
                 end
             end
 
-            -- Particle dots (random sparkle behind for Rare+)
+            -- Particle dots
             if tracerTier.hasParticles then
                 local pCol = tracerTier.particleColor or tColor
-                if tracerTier.chromatic then
-                    pCol = Color(
-                        math.sin(elapsed * 5) * 127 + 128,
-                        math.sin(elapsed * 5 + 2.1) * 127 + 128,
-                        math.sin(elapsed * 5 + 4.2) * 127 + 128,
-                        200
-                    )
-                end
-                for p = 1, 4 do
+                local pType = tracerTier.particleType or "sparks"
+
+                for p = 1, 5 do
                     local seed = elapsed * 3 + p * 137.5
                     local px2 = projX - math.abs(math.sin(seed)) * trailLen * 0.8
                     local py2 = cy + math.sin(seed * 2.7) * 8
+                    if px2 < startX then continue end
+
                     local pAlpha = (math.sin(seed * 5) * 0.5 + 0.5) * 180
-                    draw.RoundedBox(1, px2 - 1, py2 - 1, 3, 3, ColorAlpha(pCol, pAlpha))
+                    local dotCol = pCol
+
+                    -- Glitch: alternate cyan/magenta
+                    if pType == "glitch" then
+                        dotCol = (p % 2 == 0) and Color(255, 0, 200) or Color(0, 255, 220)
+                    -- Void: dark red dots
+                    elseif pType == "void" then
+                        dotCol = (p % 2 == 0) and Color(200, 0, 0) or Color(40, 0, 20)
+                    -- Comet: warm orange/yellow
+                    elseif pType == "comet" then
+                        dotCol = Color(255, math.random(140, 220), math.random(20, 60), 200)
+                    end
+
+                    draw.RoundedBox(1, px2 - 1, py2 - 1, 3, 3, ColorAlpha(dotCol, pAlpha))
                 end
             end
 
-            -- Impact flash at end
-            if progress > 0.95 then
+            -- Impact flash
+            if progress > 0.95 and tracerTier.hasImpact then
                 local impFade = (1 - progress) / 0.05
-                if tracerTier.hasImpact then
-                    local impCol = tracerTier.impactColor or tColor
-                    local impSize = (tracerTier.impactSize or 1) * 12 * impFade
-                    draw.RoundedBox(impSize/2, ex - impSize/2, cy - impSize/2, impSize, impSize,
+                local impCol = tracerTier.impactColor or tColor
+                local impSize = (tracerTier.impactSize or 1) * 12 * impFade
+
+                -- Void impact: dark flash
+                if tracerTier.voidTrail then
+                    draw.RoundedBox(impSize, endX - impSize, cy - impSize, impSize * 2, impSize * 2,
+                        Color(0, 0, 0, 180 * impFade))
+                    draw.RoundedBox(impSize * 0.7, endX - impSize * 0.7, cy - impSize * 0.7, impSize * 1.4, impSize * 1.4,
+                        Color(200, 0, 0, 150 * impFade))
+                elseif tracerTier.glitchTrail then
+                    -- Glitch impact: multiple offset copies
+                    for g = 0, 2 do
+                        local gx = endX + math.sin(elapsed * 40 + g * 2.5) * 6 * impFade
+                        local gy = cy + math.cos(elapsed * 35 + g * 3.7) * 4 * impFade
+                        local gCol = (g % 2 == 0) and Color(0, 255, 220) or Color(255, 0, 200)
+                        draw.RoundedBox(impSize * 0.4, gx - impSize * 0.4, gy - impSize * 0.4,
+                            impSize * 0.8, impSize * 0.8, ColorAlpha(gCol, 160 * impFade))
+                    end
+                else
+                    draw.RoundedBox(impSize/2, endX - impSize/2, cy - impSize/2, impSize, impSize,
                         ColorAlpha(impCol, 200 * impFade))
+                end
+            end
+
+            -- ========================================
+            -- ASCENDED OVERLAY: golden divine effects
+            -- ========================================
+            if isAscended then
+                -- Golden halo ring dots
+                for p = 0, 7 do
+                    local angle = (p / 8) * math.pi * 2 + elapsed * 4
+                    local hx = projX + math.cos(angle) * 2
+                    local hy = cy + math.sin(angle) * 8
+                    draw.RoundedBox(1, hx - 1.5, hy - 1.5, 3, 3, Color(255, 215, 0, 180))
+                end
+
+                -- Divine rays (lines radiating out)
+                for r = 0, 5 do
+                    local angle = (r / 6) * math.pi * 2 + elapsed * 2
+                    local rayLen = 10 + math.sin(elapsed * 5 + r) * 3
+                    local rx = projX + math.cos(angle) * rayLen
+                    local ry = cy + math.sin(angle) * rayLen
+                    local rayAlpha = 80 + math.sin(elapsed * 8 + r) * 40
+                    surface.SetDrawColor(Color(255, 240, 150, rayAlpha))
+                    surface.DrawLine(projX, cy, rx, ry)
+                end
+
+                -- Golden core overlay
+                local divSize = headSize * 2.5
+                draw.RoundedBox(divSize/2, projX - divSize/2, cy - divSize/2, divSize, divSize,
+                    Color(255, 230, 100, 40 + math.sin(elapsed * 6) * 20))
+
+                -- Impact pillar preview
+                if progress > 0.95 then
+                    local pillarFade = (1 - progress) / 0.05
+                    surface.SetDrawColor(Color(255, 230, 100, 150 * pillarFade))
+                    surface.DrawRect(endX - 2, cy - 20 * pillarFade, 4, 40 * pillarFade)
+                    surface.SetDrawColor(Color(255, 255, 230, 200 * pillarFade))
+                    surface.DrawRect(endX - 0.5, cy - 18 * pillarFade, 1, 36 * pillarFade)
                 end
             end
         end

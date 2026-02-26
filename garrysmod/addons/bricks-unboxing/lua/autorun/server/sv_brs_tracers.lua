@@ -21,6 +21,8 @@ hook.Add("EntityFireBullets", "BRS_UW_TracerCapture", function(ent, data)
     if not uwData then return end
 
     local rarity = uwData.rarity or "Common"
+    local quality = uwData.quality or "Junk"
+    local isAscended = (quality == "Ascended")
     local tier = BRS_UW.Tracers and BRS_UW.Tracers.GetTier(rarity)
     if not tier then return end
 
@@ -47,6 +49,7 @@ hook.Add("EntityFireBullets", "BRS_UW_TracerCapture", function(ent, data)
             net.WriteUInt(rarityIdx, 4)
             net.WriteEntity(ent)
             net.WriteBool(tr.Hit and not tr.HitSky)
+            net.WriteBool(isAscended)
         net.SendPVS(src)
     end
 
