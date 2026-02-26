@@ -40,20 +40,7 @@ function playerMeta:UnboxingCanOpenCase( caseKey )
 
 	if( not configItemTable ) then return false, BRICKS_SERVER.Func.L( "unboxingCaseNotExists" ) end
 
-	local keysTable = configItemTable.Keys
-	if( keysTable ) then
-		local inventoryTable = self:GetUnboxingInventory()
-		local hasKey = false
-		for k, v in pairs( keysTable ) do
-			if( (inventoryTable["KEY_" .. k] or 0) >= 1 ) then
-				hasKey = true
-				break
-			end
-		end
-
-		if( not hasKey ) then return false, BRICKS_SERVER.Func.L( "unboxingNeedKey" ) end
-	end
-
+	-- Keys not required to open cases
 	return true
 end
 
