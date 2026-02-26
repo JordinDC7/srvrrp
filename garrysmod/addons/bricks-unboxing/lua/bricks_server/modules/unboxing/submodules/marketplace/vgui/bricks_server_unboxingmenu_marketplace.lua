@@ -7,7 +7,7 @@ end
 function PANEL:FillPanel()
     self.panelTall = self.panelTall or (ScrH()*0.75-90)
     if( self.panelWide == nil or self.panelWide < 100 ) then self.panelWide = self:GetWide() end
-    if( self.panelWide < 100 ) then self.panelWide = ScrW() * 0.72 + 200 - 220 end
+    if( self.panelWide < 100 ) then self.panelWide = math.min(ScrW() * 0.72, 1280) - 220 end
 
     self.topBar = vgui.Create( "DPanel", self )
     self.topBar:Dock( TOP )
