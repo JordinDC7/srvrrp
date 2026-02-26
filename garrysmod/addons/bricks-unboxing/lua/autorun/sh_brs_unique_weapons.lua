@@ -174,6 +174,13 @@ BRS_UW.Qualities = {
     { key = "Ascended", minAvg = 72, maxAvg = 101, color = Color(255,60,60) },
 }
 
+BRS_UW.QualityByKey = {}
+BRS_UW.QualityOrder = {}
+for i, q in ipairs(BRS_UW.Qualities) do
+    BRS_UW.QualityByKey[q.key] = q
+    BRS_UW.QualityOrder[q.key] = i
+end
+
 -- ============================================================
 -- HELPER FUNCTIONS
 -- ============================================================

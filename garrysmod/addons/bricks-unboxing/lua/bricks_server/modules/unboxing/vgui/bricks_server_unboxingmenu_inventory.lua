@@ -125,12 +125,18 @@ function PANEL:FillPanel()
     self.sortBy = vgui.Create( "bricks_server_combo", self.topBar )
     self.sortBy:Dock( RIGHT )
     self.sortBy:DockMargin( 4, 8, 4, 8 )
-    self.sortBy:SetWide( 130 )
+    self.sortBy:SetWide( 160 )
     self.sortBy:SetBackColor( C.bg_input or Color(22,23,30) )
     self.sortBy:SetHighlightColor( C.accent_dim or Color(0,160,128) )
     self.sortBy:SetValue( BRICKS_SERVER.Func.L( "unboxingHighestRarity" ) )
     self.sortBy:AddChoice( BRICKS_SERVER.Func.L( "unboxingHighestRarity" ), "rarity_high_to_low" )
     self.sortBy:AddChoice( BRICKS_SERVER.Func.L( "unboxingLowestRarity" ), "rarity_low_to_high" )
+    self.sortBy:AddChoice( "Highest Quality", "quality_high" )
+    self.sortBy:AddChoice( "Highest Avg Boost", "avg_boost_high" )
+    self.sortBy:AddChoice( "Highest DMG", "stat_dmg" )
+    self.sortBy:AddChoice( "Highest SPD", "stat_spd" )
+    self.sortBy:AddChoice( "Highest RPM", "stat_rpm" )
+    self.sortBy:AddChoice( "Highest MAG", "stat_mag" )
     self.sortBy.OnSelect = function( self2, index, value, data )
         self.sortChoice = data
         self:FillInventory()
@@ -354,21 +360,44 @@ function PANEL:FillInventory()
             continue
         end
         
-        local sortRarity = configItemTable.Rarity or ""
-        if uwData and uwData.rarity then sortRarity = uwData.rarity end
-        local rarityInfo, rarityKey = BRICKS_SERVER.Func.GetRarityInfo( sortRarity )
-        
-        if uwData and BRS_UW.RarityOrder and BRS_UW.RarityOrder[uwData.rarity] then
-            rarityKey = BRS_UW.RarityOrder[uwData.rarity]
+        -- Compute sort value based on current sort mode
+        local sortVal = 0
+        local sortMode = self.sortChoice
+
+        if sortMode == "rarity_high_to_low" or sortMode == "rarity_low_to_high" then
+            local sortRarity = configItemTable.Rarity or ""
+            if uwData and uwData.rarity then sortRarity = uwData.rarity end
+            local rarityInfo, rarityKey = BRICKS_SERVER.Func.GetRarityInfo( sortRarity )
+            if uwData and BRS_UW.RarityOrder and BRS_UW.RarityOrder[uwData.rarity] then
+                rarityKey = BRS_UW.RarityOrder[uwData.rarity]
+            end
+            sortVal = rarityKey or 0
+
+        elseif sortMode == "quality_high" then
+            if uwData and uwData.quality and BRS_UW.QualityOrder then
+                sortVal = BRS_UW.QualityOrder[uwData.quality] or 0
+            end
+
+        elseif sortMode == "avg_boost_high" then
+            if uwData then
+                sortVal = uwData.avgBoost or (uwData.stats and BRS_UW.CalcAvgBoost(uwData.stats)) or 0
+            end
+
+        elseif string.StartWith(sortMode, "stat_") then
+            local statKey = string.sub(sortMode, 6) -- e.g. "dmg", "spd", "rpm", "mag"
+            if uwData and uwData.stats and uwData.stats[statKey] then
+                sortVal = uwData.stats[statKey]
+            end
         end
 
-        table.insert( sortedItems, { rarityKey, k, v } )
+        table.insert( sortedItems, { sortVal, k, v } )
     end
 
-    if( self.sortChoice == "rarity_high_to_low" ) then
-        table.SortByMember( sortedItems, 1, false )
-    elseif( self.sortChoice == "rarity_low_to_high" ) then
-        table.SortByMember( sortedItems, 1, true )
+    -- Sort direction: low_to_high sorts ascending, everything else descending
+    if self.sortChoice == "rarity_low_to_high" then
+        table.sort( sortedItems, function(a, b) return a[1] < b[1] end )
+    else
+        table.sort( sortedItems, function(a, b) return a[1] > b[1] end )
     end
 
     self.grid:SetTall( (math.ceil(#sortedItems / self.slotsWide) * (self.slotSize * 1.2 + self.spacing)) - self.spacing )
