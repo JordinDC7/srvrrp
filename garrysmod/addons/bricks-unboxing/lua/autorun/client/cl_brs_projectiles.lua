@@ -241,10 +241,10 @@ hook.Add("Think", "BRS_UW_ProjThink", function()
         -- Trim expired trail points
         RingTrimBefore(p.trail, ct - (p.tier.lifetime or 0.2))
 
-        -- Particles (distance culled, slower spawn)
+        -- Particles (distance culled)
         if p.alive and p.tier.hasParticles then
             local dSq = p.pos:DistToSqr(eyePos)
-            if dSq < LOD_PARTICLE and ct - p.lastPart > 0.06 then
+            if dSq < LOD_PARTICLE and ct - p.lastPart > 0.05 then
                 p.lastPart = ct
                 local em = GetEmitter(p.pos)
                 if em then
@@ -252,31 +252,33 @@ hook.Add("Think", "BRS_UW_ProjThink", function()
                     local behindPos = p.pos - p.dir * Rand(2, 6) + VectorRand() * 1.5
                     local pt = em:Add("sprites/light_glow02_add", behindPos)
                     if pt then
-                        pt:SetStartAlpha(160) pt:SetEndAlpha(0)
+                        pt:SetStartAlpha(180) pt:SetEndAlpha(0)
                         local pType = tier.particleType or "sparks"
                         if pType == "glitch" then
-                            -- Matrix green with slight variation
+                            -- Matrix green
                             local g = 180 + random(0, 75)
                             pt:SetColor(0, g, random(20, 50))
-                            pt:SetDieTime(Rand(0.04, 0.10)) pt:SetStartSize(Rand(0.8, 1.5)) pt:SetEndSize(0)
-                            pt:SetVelocity(VectorRand() * 40)
-                        elseif pType == "void" then
-                            pt:SetColor(80 + random(0, 120), 0, 0)
-                            pt:SetDieTime(Rand(0.15, 0.3)) pt:SetStartSize(Rand(1.5, 3)) pt:SetEndSize(0)
-                            pt:SetVelocity(-p.dir * 20 + VectorRand() * 8) pt:SetGravity(Vector(0, 0, 20))
+                            pt:SetDieTime(Rand(0.05, 0.12)) pt:SetStartSize(Rand(1, 2)) pt:SetEndSize(0)
+                            pt:SetVelocity(VectorRand() * 45)
+                        elseif pType == "divine" then
+                            -- Angelic: warm white/gold motes drifting upward
+                            pt:SetColor(255, 240 + random(0, 15), 200 + random(0, 40))
+                            pt:SetDieTime(Rand(0.25, 0.45)) pt:SetStartSize(Rand(2, 3.5)) pt:SetEndSize(0.5)
+                            pt:SetVelocity(-p.dir * 15 + VectorRand() * 8 + Vector(0, 0, 30))
+                            pt:SetGravity(Vector(0, 0, 40))
                         elseif pType == "comet" then
                             pt:SetColor(255, 140 + random(0, 80), random(20, 60))
                             pt:SetDieTime(Rand(0.15, 0.3)) pt:SetStartSize(Rand(1.5, 3)) pt:SetEndSize(0)
-                            pt:SetVelocity(-p.dir * 40 + VectorRand() * 15) pt:SetGravity(Vector(0, 0, -120))
+                            pt:SetVelocity(-p.dir * 45 + VectorRand() * 18) pt:SetGravity(Vector(0, 0, -120))
                         elseif pType == "energy" then
                             pt:SetColor(200, 120, 255)
-                            pt:SetDieTime(Rand(0.1, 0.2)) pt:SetStartSize(Rand(1, 2)) pt:SetEndSize(0)
-                            pt:SetVelocity(VectorRand() * 15) pt:SetGravity(Vector(0, 0, 50))
+                            pt:SetDieTime(Rand(0.12, 0.25)) pt:SetStartSize(Rand(1.5, 2.5)) pt:SetEndSize(0.5)
+                            pt:SetVelocity(VectorRand() * 18) pt:SetGravity(Vector(0, 0, 50))
                         else
                             local pc = tier.particleColor or tier.color
                             pt:SetColor(pc.r, pc.g, pc.b)
-                            pt:SetDieTime(Rand(0.08, 0.2)) pt:SetStartSize(Rand(0.8, 1.5)) pt:SetEndSize(0)
-                            pt:SetVelocity(VectorRand() * 30) pt:SetGravity(Vector(0, 0, -200))
+                            pt:SetDieTime(Rand(0.1, 0.22)) pt:SetStartSize(Rand(1, 2)) pt:SetEndSize(0)
+                            pt:SetVelocity(VectorRand() * 35) pt:SetGravity(Vector(0, 0, -200))
                         end
                     end
                 end
@@ -357,8 +359,8 @@ hook.Add("PostDrawTranslucentRenderables", "BRS_UW_ProjRender", function(_, bSky
                 if age < 0.02 then continue end
                 -- Core trail
                 render.DrawBeam(p1.pos, p2.pos, tier.trailWidth, 0, 1, C(br, bg, bb, ba * age))
-                -- Soft outer glow (very subtle)
-                render.DrawBeam(p1.pos, p2.pos, tier.glowWidth, 0, 1, C(gr, gg, gb, ga * age * 0.2))
+                -- Outer glow
+                render.DrawBeam(p1.pos, p2.pos, tier.glowWidth, 0, 1, C(gr, gg, gb, ga * age * 0.35))
             end
 
             -- DETAIL EFFECTS (close only, one effect per tier max)
@@ -386,23 +388,25 @@ hook.Add("PostDrawTranslucentRenderables", "BRS_UW_ProjRender", function(_, bSky
         -- PROJECTILE HEAD (simplified)
         -- =====================
         if proj.alive then
-            -- Small head glow (toned down)
+            -- Head glow
             render.SetMaterial(matGlow)
-            render.DrawSprite(curPos, tier.trailWidth * 1.8, tier.trailWidth * 1.8, C(br, bg, bb, 180))
+            render.DrawSprite(curPos, tier.trailWidth * 2.2, tier.trailWidth * 2.2, C(br, bg, bb, 200))
 
-            -- Void dark core (Mythical only) - tiny dark center
-            if tier.voidCore then
-                render.DrawSprite(curPos, tier.trailWidth * 1.2, tier.trailWidth * 1.2, C(0, 0, 0, 120))
+            -- Divine aura (Mythical) - soft warm white halo
+            if tier.divineTrail then
+                render.SetMaterial(matSoft)
+                local pulse = 0.7 + sin(elapsed * 2.5) * 0.2
+                render.DrawSprite(curPos, tier.trailWidth * 4, tier.trailWidth * 4, C(255, 248, 230, 40 * pulse))
             end
 
             -- Spiral flares (Legendary only, close)
             if tier.hasSpiral and isClose then
                 render.SetMaterial(matFlare)
-                local sR = tier.spiralRadius or 2
+                local sR = tier.spiralRadius or 2.5
                 for s = 0, 1 do
                     local a = elapsed * (tier.spiralSpeed or 5) * 6.283 + s * 3.14
                     local off = proj.right * cos(a) * sR + proj.up * sin(a) * sR
-                    render.DrawSprite(curPos + off, tier.trailWidth * 0.8, tier.trailWidth * 0.8, C(br, bg, bb, 100))
+                    render.DrawSprite(curPos + off, tier.trailWidth, tier.trailWidth, C(br, bg, bb, 120))
                 end
             end
 
@@ -410,7 +414,7 @@ hook.Add("PostDrawTranslucentRenderables", "BRS_UW_ProjRender", function(_, bSky
     end
 
     -- =====================
-    -- IMPACT EFFECTS (single sprite, brief)
+    -- IMPACT EFFECTS
     -- =====================
     for _, imp in ipairs(impacts) do
         local age = ct - imp.spawn
@@ -418,16 +422,21 @@ hook.Add("PostDrawTranslucentRenderables", "BRS_UW_ProjRender", function(_, bSky
         local fade = 1 - frac
         local tier = imp.tier
         local ic = tier.impactColor or tier.color
-        local ringSize = imp.size * (0.2 + frac * 1.0)
+        local ringSize = imp.size * (0.3 + frac * 1.2)
 
         render.SetMaterial(matSoft)
-        render.DrawSprite(imp.pos + imp.normal, ringSize, ringSize, C(ic.r, ic.g, ic.b, fade * 140))
+        if tier.divineTrail then
+            -- Angelic impact: warm white expanding ring
+            render.DrawSprite(imp.pos + imp.normal, ringSize * 1.2, ringSize * 1.2, C(255, 248, 230, fade * 180))
+        else
+            render.DrawSprite(imp.pos + imp.normal, ringSize, ringSize, C(ic.r, ic.g, ic.b, fade * 160))
+        end
 
-        -- Brief flash at start (subtle)
-        if frac < 0.15 then
-            local ff = 1 - frac / 0.15
+        -- Brief flash at start
+        if frac < 0.18 then
+            local ff = 1 - frac / 0.18
             render.SetMaterial(matGlow)
-            render.DrawSprite(imp.pos + imp.normal, imp.size * 0.6 * ff, imp.size * 0.6 * ff, C(255, 255, 255, 100 * ff))
+            render.DrawSprite(imp.pos + imp.normal, imp.size * 0.7 * ff, imp.size * 0.7 * ff, C(255, 255, 255, 120 * ff))
         end
 
     end

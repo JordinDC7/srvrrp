@@ -48,7 +48,7 @@ SMGRP.UI.Colors = {
     rarity_epic      = Color(155, 70, 255),
     rarity_legendary = Color(255, 170, 20),
     rarity_glitched  = Color(0, 255, 65),
-    rarity_mythical  = Color(255, 50, 50),
+    rarity_mythical  = Color(255, 240, 210),
 }
 
 local C = SMGRP.UI.Colors
@@ -184,11 +184,12 @@ function SMGRP.UI.GetGlitchedColor()
     return _glitchCol
 end
 
-local _mythCol = Color(200, 30, 30, 255)
+local _mythCol = Color(255, 240, 210, 255)
 function SMGRP.UI.GetMythicalColor()
     local t = CurTime() * 1.2
-    _mythCol.r = 200 + math.sin(t) * 55
-    _mythCol.g = 30 + math.abs(math.sin(t * 0.7)) * 50
+    _mythCol.r = 255
+    _mythCol.g = 230 + math.sin(t) * 20
+    _mythCol.b = 190 + math.sin(t * 0.7) * 30
     return _mythCol
 end
 

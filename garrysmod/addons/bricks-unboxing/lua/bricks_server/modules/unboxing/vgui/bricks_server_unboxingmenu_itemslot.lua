@@ -27,9 +27,9 @@ local MAX_PARTICLES = 6
 -- Glitched: matrix green falling chars
 local _pcolGlitch = {}
 for i = 1, 6 do _pcolGlitch[i] = Color(0, 140 + i * 18, 0) end
--- Mythical: dimmer fire embers
+-- Mythical: angelic light motes (warm white/gold)
 local _pcolMyth = {}
-for i = 1, 5 do _pcolMyth[i] = Color(255, 80 + i * 24, 0) end
+for i = 1, 5 do _pcolMyth[i] = Color(255, 230 + i * 4, 180 + i * 12) end
 
 local function SpawnParticle(panelID, w, h, rarity)
     cardParticles[panelID] = cardParticles[panelID] or {}
@@ -39,7 +39,8 @@ local function SpawnParticle(panelID, w, h, rarity)
         -- Matrix: characters fall from top
         ps[#ps + 1] = { x = math.Rand(6,w-6), y = -math.Rand(2,10), vy = math.Rand(30,70), size = math.Rand(2,4), life = 0, maxLife = math.Rand(0.6,1.4), color = _pcolGlitch[math.random(6)] }
     elseif rarity == "Mythical" then
-        ps[#ps + 1] = { x = math.Rand(8,w-8), y = h - math.Rand(5,15), vx = math.Rand(-4,4), vy = math.Rand(-25,-50), size = math.Rand(1,2.5), life = 0, maxLife = math.Rand(0.5,1.0), color = _pcolMyth[math.random(5)] }
+        -- Angelic: light motes drift upward from bottom
+        ps[#ps + 1] = { x = math.Rand(6,w-6), y = h - math.Rand(0,8), vx = math.Rand(-3,3), vy = math.Rand(-30,-60), size = math.Rand(1.5,3), life = 0, maxLife = math.Rand(0.8,1.5), color = _pcolMyth[math.random(5)] }
     end
 end
 
@@ -218,7 +219,7 @@ function PANEL:FillPanel( data, amount, actions )
             -- ====== OUTER GLOW (high tier - subtle, skip for Ascended) ======
             if isHighTier and not isAscended then
                 local pulse = math.sin(ct * 2) * 0.3 + 0.7
-                local glowA = isMythical and (12 * pulse) or (isGlitched and (10 * pulse) or (8 * pulse))
+                local glowA = isMythical and (16 * pulse) or (isGlitched and (10 * pulse) or (8 * pulse))
                 draw.RoundedBox(8, -2, -2, w + 4, h + 4, ColorAlpha(borderCol, glowA))
             end
 
@@ -271,19 +272,29 @@ function PANEL:FillPanel( data, amount, actions )
                 if math.random() < 0.06 then SpawnParticle(panelID, w, h, "Glitched") end
             end
 
-            -- ====== FIRE RADIANCE (Mythical) - reduced height + opacity ======
+            -- ====== ANGELIC RADIANCE (Mythical) - soft light from top ======
             if isMythical then
-                local fireH = h * 0.4
-                local bandH = fireH / 6
+                -- Warm white light descending from top
+                local lightH = h * 0.5
+                local bandH = lightH / 6
                 for i = 0, 5 do
                     local frac = i / 6
-                    local baseA = (1 - frac) * 12
-                    local flicker = math.sin(ct * 2.5 + i * 0.8) * 0.3 + 0.7
-                    _dc.r, _dc.g, _dc.b, _dc.a = 255, math.floor(60 + frac * 140), 0, baseA * flicker
+                    local baseA = (1 - frac) * 16
+                    local breathe = math.sin(ct * 1.5 + i * 0.5) * 0.25 + 0.75
+                    _dc.r, _dc.g, _dc.b, _dc.a = 255, 245, 220, baseA * breathe
                     surface.SetDrawColor(_dc)
-                    surface.DrawRect(1, h - 1 - (i+1)*bandH, w - 2, bandH)
+                    surface.DrawRect(1, 1 + i * bandH, w - 2, bandH)
                 end
-                if math.random() < 0.05 then SpawnParticle(panelID, w, h, "Mythical") end
+
+                -- Subtle center column highlight
+                local colW = w * 0.4
+                local colX = (w - colW) / 2
+                local colA = 6 + math.sin(ct * 2) * 3
+                _dc.r, _dc.g, _dc.b, _dc.a = 255, 250, 235, colA
+                surface.SetDrawColor(_dc)
+                surface.DrawRect(colX, 1, colW, h - 2)
+
+                if math.random() < 0.07 then SpawnParticle(panelID, w, h, "Mythical") end
             end
 
             -- ====== DRAW PARTICLES (Glitched + Mythical only) ======
@@ -344,6 +355,11 @@ function PANEL:FillPanel( data, amount, actions )
                 local flkG = 160 + math.sin(ct * 12) * 60 + math.sin(ct * 31) * 35
                 local flkA = 180 + math.sin(ct * 7) * 40
                 _dc.r, _dc.g, _dc.b, _dc.a = 0, math.floor(math.Clamp(flkG, 100, 255)), 0, math.floor(math.Clamp(flkA, 140, 255))
+                draw.SimpleText( displayRarity or "", rarityFont, w/2, textBaseY - rarityY + 4, _dc, TEXT_ALIGN_CENTER, 0 )
+            elseif isMythical then
+                -- Angelic: warm white text with gentle breathing
+                local mythA = 200 + math.sin(ct * 1.8) * 40
+                _dc.r, _dc.g, _dc.b, _dc.a = 255, 245, 215, math.floor(mythA)
                 draw.SimpleText( displayRarity or "", rarityFont, w/2, textBaseY - rarityY + 4, _dc, TEXT_ALIGN_CENTER, 0 )
             else
                 draw.SimpleText( displayRarity or "", rarityFont, w/2, textBaseY - rarityY + 4, rarityColor, TEXT_ALIGN_CENTER, 0 )
@@ -452,6 +468,9 @@ function PANEL:FillPanel( data, amount, actions )
             if isGlitched then
                 -- Matrix-style: dark pill with green text
                 self:AddTopInfo(uwData.rarity, Color(5, 20, 5, 200), Color(0, 255, 65))
+            elseif isMythical then
+                -- Angelic: warm cream pill with dark gold text
+                self:AddTopInfo(uwData.rarity, Color(255, 245, 220, 200), Color(120, 90, 30))
             else
                 self:AddTopInfo(uwData.rarity, Color(rCol.r, rCol.g, rCol.b, 160), Color(255,255,255))
             end

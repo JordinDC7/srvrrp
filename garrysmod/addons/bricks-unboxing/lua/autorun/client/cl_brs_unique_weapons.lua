@@ -68,9 +68,9 @@ local rarityBorderColors = {
         Color(0,200,40), Color(0,255,65), Color(0,180,30),
         Color(0,230,50), Color(0,150,25),
     },
-    Mythical  = { -- Hot cycle
-        Color(255,0,50), Color(255,50,0), Color(255,200,0),
-        Color(255,100,50), Color(255,0,100)
+    Mythical  = { -- Angelic celestial cycle
+        Color(255,245,220), Color(255,230,180), Color(230,240,255),
+        Color(255,250,240), Color(200,220,255),
     },
 }
 
@@ -583,7 +583,7 @@ function BRS_UW.OpenInspectPopup(globalKey, data)
                 end
                 gColor = tracerTier.glowColor
             elseif tracerTier.color2 then
-                -- Two-color pulse (Glitched: green/dark, Mythical: red/void)
+                -- Two-color pulse (Glitched: green/dark, Mythical: white/blue)
                 local pulse = math.sin(elapsed * 2) * 0.5 + 0.5
                 tColor = Color(
                     Lerp(pulse, tracerTier.color.r, tracerTier.color2.r),
@@ -619,53 +619,35 @@ function BRS_UW.OpenInspectPopup(globalKey, data)
                     local segHash = seg + math.floor(elapsed * 30)
                     if segHash % 2 == 0 then
                         local offsetY = math.sin(segHash * 137.5 + elapsed * 50) * 6
-                        local flickCol = (segHash % 4 < 2) and (tracerTier.color2 or Color(255, 0, 200)) or tracerTier.color
-                        surface.SetDrawColor(ColorAlpha(flickCol, 180))
+                        local g = 160 + math.sin(segHash * 97.3) * 60
+                        surface.SetDrawColor(0, g, 20, 160)
                         surface.DrawRect(segX - 4, cy + offsetY - 1, 8, 2)
                     end
                 end
-                -- Scan lines
+                -- Matrix scan lines
                 for s = 0, 2 do
                     local scanX = startX + ((elapsed * 200 + s * 80) % trackW)
                     if scanX > startX and scanX < projX then
-                        surface.SetDrawColor(Color(
-                            math.sin(elapsed * 6 + s) * 127 + 128,
-                            math.sin(elapsed * 6 + s + 2.1) * 127 + 128,
-                            math.sin(elapsed * 6 + s + 4.2) * 127 + 128,
-                            80
-                        ))
+                        local g = 160 + math.sin(elapsed * 8 + s) * 60
+                        surface.SetDrawColor(0, g, 20, 60)
                         surface.DrawRect(scanX, cy - 8, 1, 16)
                     end
                 end
             end
 
-            -- VOID TRAIL: dark tendrils
-            if tracerTier.voidTrail then
-                for tendril = 0, 2 do
-                    local phase = tendril * 2.094
+            -- DIVINE TRAIL: soft light tendrils (Mythical angelic)
+            if tracerTier.divineTrail then
+                for tendril = 0, 1 do
+                    local phase = tendril * 3.14
                     for i = 0, math.floor(trailLen), 3 do
                         local x = projX - i
                         if x < startX then break end
                         local t = i / trailLen
-                        local waveY = math.sin(elapsed * 4 + t * 8 + phase) * (4 + t * 3)
-                        local fade = 1 - t
-                        surface.SetDrawColor(ColorAlpha(tracerTier.color2 or Color(40, 0, 40), 120 * fade))
+                        local waveY = math.sin(elapsed * 2 + t * 6 + phase) * (3 + t * 2)
+                        local fade = (1 - t) * 0.7
+                        surface.SetDrawColor(255, 248, 230, 50 * fade)
                         surface.DrawRect(x, cy + waveY - 0.5, 2, 1)
                     end
-                end
-            end
-
-            -- AFTERIMAGE (Legendary/Mythical)
-            if tracerTier.hasAfterimage then
-                local aiColor = tracerTier.afterimageColor or Color(255, 100, 0, 50)
-                local aiLen = trailLen * 1.5
-                for i = 0, math.floor(aiLen) do
-                    local x = projX - i
-                    if x < startX then break end
-                    local fade = 1 - (i / aiLen)
-                    local aiH = (tracerTier.glowWidth or 8) * 0.8
-                    surface.SetDrawColor(ColorAlpha(aiColor, aiColor.a * fade * fade))
-                    surface.DrawRect(x, cy - aiH/2, 1, aiH)
                 end
             end
 
@@ -676,16 +658,12 @@ function BRS_UW.OpenInspectPopup(globalKey, data)
             draw.RoundedBox(outerSize/2, projX - outerSize/2, cy - outerSize/2, outerSize, outerSize,
                 ColorAlpha(gColor, 60))
 
-            -- VOID CORE: dark center
-            if tracerTier.voidCore then
-                local darkSize = headSize * 1.2
-                draw.RoundedBox(darkSize/2, projX - darkSize/2, cy - darkSize/2, darkSize, darkSize,
-                    Color(0, 0, 0, 200))
-                -- Red corona
-                local coronaSize = outerSize * 1.5
-                local coronaAlpha = 60 + math.sin(elapsed * 8) * 30
-                draw.RoundedBox(coronaSize/2, projX - coronaSize/2, cy - coronaSize/2, coronaSize, coronaSize,
-                    Color(200, 0, 0, coronaAlpha))
+            -- DIVINE HALO: warm white glow (Mythical angelic)
+            if tracerTier.divineTrail then
+                local haloSize = outerSize * 1.4
+                local haloAlpha = 40 + math.sin(elapsed * 3) * 15
+                draw.RoundedBox(haloSize/2, projX - haloSize/2, cy - haloSize/2, haloSize, haloSize,
+                    Color(255, 248, 230, haloAlpha))
             end
 
             -- Spiral (Legendary comet)
@@ -712,12 +690,12 @@ function BRS_UW.OpenInspectPopup(globalKey, data)
                     local pAlpha = (math.sin(seed * 5) * 0.5 + 0.5) * 180
                     local dotCol = pCol
 
-                    -- Glitch: alternate cyan/magenta
+                    -- Glitch: matrix green dots
                     if pType == "glitch" then
-                        dotCol = (p % 2 == 0) and Color(255, 0, 200) or Color(0, 255, 220)
-                    -- Void: dark red dots
-                    elseif pType == "void" then
-                        dotCol = (p % 2 == 0) and Color(200, 0, 0) or Color(40, 0, 20)
+                        dotCol = (p % 2 == 0) and Color(0, 255, 65) or Color(0, 180, 40)
+                    -- Divine: warm white/gold motes
+                    elseif pType == "divine" then
+                        dotCol = (p % 2 == 0) and Color(255, 245, 210) or Color(255, 230, 180)
                     -- Comet: warm orange/yellow
                     elseif pType == "comet" then
                         dotCol = Color(255, math.random(140, 220), math.random(20, 60), 200)
@@ -733,18 +711,18 @@ function BRS_UW.OpenInspectPopup(globalKey, data)
                 local impCol = tracerTier.impactColor or tColor
                 local impSize = (tracerTier.impactSize or 1) * 12 * impFade
 
-                -- Void impact: dark flash
-                if tracerTier.voidTrail then
+                -- Divine impact: warm white radiance
+                if tracerTier.divineTrail then
                     draw.RoundedBox(impSize, endX - impSize, cy - impSize, impSize * 2, impSize * 2,
-                        Color(0, 0, 0, 180 * impFade))
-                    draw.RoundedBox(impSize * 0.7, endX - impSize * 0.7, cy - impSize * 0.7, impSize * 1.4, impSize * 1.4,
-                        Color(200, 0, 0, 150 * impFade))
+                        Color(255, 248, 230, 160 * impFade))
+                    draw.RoundedBox(impSize * 0.6, endX - impSize * 0.6, cy - impSize * 0.6, impSize * 1.2, impSize * 1.2,
+                        Color(255, 255, 245, 200 * impFade))
                 elseif tracerTier.glitchTrail then
-                    -- Glitch impact: multiple offset copies
+                    -- Glitch impact: matrix green offset copies
                     for g = 0, 2 do
                         local gx = endX + math.sin(elapsed * 40 + g * 2.5) * 6 * impFade
                         local gy = cy + math.cos(elapsed * 35 + g * 3.7) * 4 * impFade
-                        local gCol = (g % 2 == 0) and Color(0, 255, 220) or Color(255, 0, 200)
+                        local gCol = (g % 2 == 0) and Color(0, 255, 65) or Color(0, 180, 40)
                         draw.RoundedBox(impSize * 0.4, gx - impSize * 0.4, gy - impSize * 0.4,
                             impSize * 0.8, impSize * 0.8, ColorAlpha(gCol, 160 * impFade))
                     end
