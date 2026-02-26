@@ -30,9 +30,12 @@ local function ApplyF4Theme()
             Sidebar = Color(18, 18, 26),
             Background = Color(14, 15, 20),
         }
-
-        -- Make categories use our darker backgrounds
         F4Menu.Config.CategoriesBackgroundFullyColored = false
+
+        -- Ensure title is correct
+        if F4Menu.Config.Title ~= "SmG RP" then
+            F4Menu.Config.Title = "SmG RP"
+        end
     end
 
     print("[SmG RP] F4 Menu theme override applied")

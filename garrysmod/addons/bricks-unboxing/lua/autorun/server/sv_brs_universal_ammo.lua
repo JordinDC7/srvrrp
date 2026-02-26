@@ -1,12 +1,14 @@
 -- ============================================================
 -- BRS Universal Ammo System
 -- - Sets ammo capacity to essentially unlimited (99999)
--- - F4 entity spawns crate, player presses E for +100 rounds
--- - No chat commands — purchase from F4 menu only
+-- - F4 ammo tab entry: gives +100 rounds to all weapons on buy
+-- - No chat commands
 -- ============================================================
 if not SERVER then return end
 
 local AMMO_MAX = 99999
+local AMMO_PER_BUY = 100
+local UNIVERSAL_AMMO_NAME = "Universal Ammo (100 rounds)"
 
 -- ============================================================
 -- SET ALL AMMO TYPES TO UNLIMITED CAPACITY
@@ -40,4 +42,60 @@ hook.Add("WeaponEquip", "BRS_EnsureAmmoMax", function(wep, ply)
     end)
 end)
 
-print("[BRS] Universal Ammo System loaded - F4 entity only, capacity " .. AMMO_MAX)
+-- ============================================================
+-- HOOK: When player buys our universal ammo from F4 ammo tab,
+-- give +100 rounds to ALL weapons instead of just one type
+-- ============================================================
+hook.Add("playerBuyAmmo", "BRS_UniversalAmmoBuy", function(ply, ammoTable, ammoType)
+    if not IsValid(ply) then return end
+    if not ammoTable or ammoTable.name ~= UNIVERSAL_AMMO_NAME then return end
+
+    -- Give 100 rounds to every weapon the player has
+    for _, wep in ipairs(ply:GetWeapons()) do
+        if not IsValid(wep) then continue end
+
+        local clipMax = wep:GetMaxClip1()
+        if clipMax > 0 then
+            wep:SetClip1(clipMax)
+        end
+
+        local at = wep:GetPrimaryAmmoType()
+        if at >= 0 then
+            ply:GiveAmmo(AMMO_PER_BUY, at, true)
+        end
+
+        local clipMax2 = wep:GetMaxClip2()
+        if clipMax2 > 0 then
+            wep:SetClip2(clipMax2)
+        end
+
+        local at2 = wep:GetSecondaryAmmoType()
+        if at2 >= 0 then
+            ply:GiveAmmo(AMMO_PER_BUY, at2, true)
+        end
+    end
+end)
+
+-- Fallback: Also intercept via DarkRP.hookStub if available
+hook.Add("InitPostEntity", "BRS_UniversalAmmoHookFallback", function()
+    timer.Simple(3, function()
+        -- Find our ammo entry ID in CustomShipments
+        if not CustomShipments then return end
+
+        local ourID = nil
+        for id, tbl in pairs(CustomShipments) do
+            if istable(tbl) and tbl.name == UNIVERSAL_AMMO_NAME then
+                ourID = id
+                break
+            end
+        end
+
+        if ourID then
+            print("[BRS] Universal Ammo registered in ammo tab as ID " .. ourID)
+        else
+            print("[BRS] WARNING: Universal Ammo not found in CustomShipments!")
+        end
+    end)
+end)
+
+print("[BRS] Universal Ammo System loaded - F4 ammo tab, capacity " .. AMMO_MAX)

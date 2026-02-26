@@ -33,7 +33,7 @@ cfg:SetLanguage("english")
 -- Or it can be a function
 -- e.g. function() return "Xenin F4 - " .. LocalPlayer():getDarkRPVar("money") end
 -- A function will refresh every 10 seconds, so you can have things that change
-cfg:SetTitle("Xenin F4")
+cfg:SetTitle("SmG RP")
 
 -- Lets set the amount of columns per row for jobs & items
 cfg:SetColumnsPerRow(1)
