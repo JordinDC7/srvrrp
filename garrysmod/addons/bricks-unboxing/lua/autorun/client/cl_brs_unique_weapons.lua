@@ -170,7 +170,7 @@ function BRS_UW.OpenInspectPopup(globalKey, data)
     end
 
     -- ====== MAIN PANEL ======
-    local fw, fh = 580, 520
+    local fw, fh = 580, 610
     local frame = vgui.Create("DPanel", overlay)
     frame:SetSize(fw, fh)
     frame:Center()
@@ -514,6 +514,12 @@ function BRS_UW.OpenInspectPopup(globalKey, data)
         { "UID", data.uid or "N/A" },
     }
 
+    -- Add tracer info
+    local tracerTier = BRS_UW.Tracers and BRS_UW.Tracers.GetTier(data.rarity)
+    if tracerTier then
+        table.insert(infoPairs, 5, { "Tracer", tracerTier.description or "Standard", rarityCol })
+    end
+
     for _, pair in ipairs(infoPairs) do
         local row = vgui.Create("DPanel", infoInner)
         row:Dock(TOP)
@@ -522,6 +528,126 @@ function BRS_UW.OpenInspectPopup(globalKey, data)
         row.Paint = function(self2, w, h)
             draw.SimpleText(pair[1], "SMGRP_Body12", 0, h/2, C.text_muted or Color(90, 94, 110), 0, TEXT_ALIGN_CENTER)
             draw.SimpleText(pair[2], "SMGRP_Bold12", w, h/2, pair[3] or (C.text_primary or Color(220, 222, 230)), TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER)
+        end
+    end
+
+    -- ====== TRACER PREVIEW PANEL ======
+    if tracerTier then
+        local tracerPanel = vgui.Create("DPanel", rightCol)
+        tracerPanel:Dock(BOTTOM)
+        tracerPanel:SetTall(68)
+        tracerPanel:DockMargin(0, 8, 0, 0)
+        tracerPanel.startTime = frame.startTime
+        tracerPanel.Paint = function(self2, w, h)
+            draw.RoundedBox(6, 0, 0, w, h, C.bg_mid or Color(26, 27, 35))
+            surface.SetDrawColor(C.border or Color(50, 52, 65))
+            surface.DrawOutlinedRect(0, 0, w, h, 1)
+
+            draw.SimpleText("TRACER", "SMGRP_Bold12", 14, 10, C.text_muted or Color(90, 94, 110), 0, TEXT_ALIGN_CENTER)
+
+            -- Animated tracer preview
+            local ct = CurTime()
+            local elapsed = ct - self2.startTime
+            local px = 14 -- start x
+            local ex = w - 14 -- end x
+            local cy = 42 -- y center
+            local trackW = ex - px
+
+            -- Projectile position loops
+            local speed = 0.8 -- seconds per full traverse
+            local progress = (elapsed / speed) % 1.0
+            local projX = px + trackW * progress
+
+            -- Trail behind projectile
+            local trailLen = trackW * (tracerTier.lifetime or 0.2) / speed
+            local trailStart = math.max(px, projX - trailLen)
+
+            local tColor = tracerTier.color
+            local gColor = tracerTier.glowColor
+            if tracerTier.chromatic then
+                tColor = Color(
+                    math.sin(elapsed * 3) * 127 + 128,
+                    math.sin(elapsed * 3 + 2.1) * 127 + 128,
+                    math.sin(elapsed * 3 + 4.2) * 127 + 128,
+                    255
+                )
+                gColor = ColorAlpha(tColor, 120)
+            end
+
+            -- Glow trail (gradient fade)
+            for i = 0, math.floor(projX - trailStart) do
+                local x = projX - i
+                if x < px then break end
+                local fade = 1 - (i / math.max(trailLen, 1))
+                fade = fade * fade -- quadratic falloff
+
+                -- Outer glow
+                local glowH = (tracerTier.glowWidth or 8) * 0.6
+                surface.SetDrawColor(ColorAlpha(gColor, gColor.a * fade * 0.5))
+                surface.DrawRect(x, cy - glowH/2, 1, glowH)
+
+                -- Core beam
+                local coreH = (tracerTier.trailWidth or 2) * 0.8
+                surface.SetDrawColor(ColorAlpha(tColor, tColor.a * fade))
+                surface.DrawRect(x, cy - coreH/2, 1, coreH)
+            end
+
+            -- Projectile head glow
+            local headSize = (tracerTier.trailWidth or 2) * 2.5
+            draw.RoundedBox(headSize/2, projX - headSize/2, cy - headSize/2, headSize, headSize, tColor)
+
+            -- Outer head glow
+            local outerSize = (tracerTier.glowWidth or 8) * 1.2
+            draw.RoundedBox(outerSize/2, projX - outerSize/2, cy - outerSize/2, outerSize, outerSize,
+                ColorAlpha(gColor, 60))
+
+            -- Spiral indicators (dots orbiting for Legendary+)
+            if tracerTier.hasSpiral then
+                local spiralR = 6
+                for s = 0, 2 do
+                    local angle = elapsed * (tracerTier.spiralSpeed or 8) + s * (math.pi * 2 / 3)
+                    local sy = cy + math.sin(angle) * spiralR
+                    local sx = projX + math.cos(angle) * 3
+                    local sCol = tracerTier.chromatic and Color(
+                        math.sin(elapsed * 3 + s) * 127 + 128,
+                        math.sin(elapsed * 3 + s + 2.1) * 127 + 128,
+                        math.sin(elapsed * 3 + s + 4.2) * 127 + 128,
+                        180
+                    ) or ColorAlpha(tColor, 180)
+                    draw.RoundedBox(2, sx - 2, sy - 2, 4, 4, sCol)
+                end
+            end
+
+            -- Particle dots (random sparkle behind for Rare+)
+            if tracerTier.hasParticles then
+                local pCol = tracerTier.particleColor or tColor
+                if tracerTier.chromatic then
+                    pCol = Color(
+                        math.sin(elapsed * 5) * 127 + 128,
+                        math.sin(elapsed * 5 + 2.1) * 127 + 128,
+                        math.sin(elapsed * 5 + 4.2) * 127 + 128,
+                        200
+                    )
+                end
+                for p = 1, 4 do
+                    local seed = elapsed * 3 + p * 137.5
+                    local px2 = projX - math.abs(math.sin(seed)) * trailLen * 0.8
+                    local py2 = cy + math.sin(seed * 2.7) * 8
+                    local pAlpha = (math.sin(seed * 5) * 0.5 + 0.5) * 180
+                    draw.RoundedBox(1, px2 - 1, py2 - 1, 3, 3, ColorAlpha(pCol, pAlpha))
+                end
+            end
+
+            -- Impact flash at end
+            if progress > 0.95 then
+                local impFade = (1 - progress) / 0.05
+                if tracerTier.hasImpact then
+                    local impCol = tracerTier.impactColor or tColor
+                    local impSize = (tracerTier.impactSize or 1) * 12 * impFade
+                    draw.RoundedBox(impSize/2, ex - impSize/2, cy - impSize/2, impSize, impSize,
+                        ColorAlpha(impCol, 200 * impFade))
+                end
+            end
         end
     end
 end
