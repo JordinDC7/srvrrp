@@ -144,3 +144,38 @@ hook.Add("InitPostEntity", "SMGRP_F4RowOverride", function()
         print("[SmG RP] F4 row paint overrides applied")
     end)
 end)
+
+-- ============================================================
+-- F4 TITLE: Match unboxing menu style - "SmG" (teal) + " RP" (white)
+-- Override the title DLabel's Paint to draw two-color text
+-- ============================================================
+local _titlePatched = false
+hook.Add("Think", "SMGRP_F4TitleOverride", function()
+    if _titlePatched then return end
+    if not F4Menu or not F4Menu.Frame then return end
+    local frame = F4Menu.Frame
+    if not IsValid(frame) or not IsValid(frame.title) then return end
+
+    _titlePatched = true
+    hook.Remove("Think", "SMGRP_F4TitleOverride")
+    local titleLabel = frame.title
+
+    -- Hide default text rendering
+    titleLabel:SetText("")
+    titleLabel:SetWide(120)
+
+    -- Pre-allocate colors
+    local _tealCol = Color(0, 212, 170)
+    local _whiteCol = Color(220, 222, 230)
+
+    titleLabel.Paint = function(self2, w, h)
+        -- Draw "SmG" in teal
+        surface.SetFont("XeninUI.Frame.Title")
+        local smgW = surface.GetTextSize("SmG")
+        draw.SimpleText("SmG", "XeninUI.Frame.Title", 0, h / 2, _tealCol, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
+        -- Draw " RP" in white
+        draw.SimpleText(" RP", "XeninUI.Frame.Title", smgW, h / 2, _whiteCol, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
+    end
+
+    print("[SmG RP] F4 title styled: SmG (teal) + RP (white)")
+end)

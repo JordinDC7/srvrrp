@@ -22,7 +22,8 @@ local _ascInnerLine = Color(255, 215, 60, 40)    -- faint inner line
 -- PARTICLE SYSTEM (swap-remove, pre-alloc colors, capped)
 -- ============================================================
 local cardParticles = {}
-local MAX_PARTICLES = 6
+local MAX_PARTICLES_GLITCH = 6
+local MAX_PARTICLES_MYTH = 14
 
 -- Glitched: cyber teal falling chars
 local _pcolGlitch = {}
@@ -34,13 +35,14 @@ for i = 1, 5 do _pcolMyth[i] = Color(150 + i * 10, 200 + i * 6, 255) end
 local function SpawnParticle(panelID, w, h, rarity)
     cardParticles[panelID] = cardParticles[panelID] or {}
     local ps = cardParticles[panelID]
-    if #ps >= MAX_PARTICLES then return end
+    local maxP = rarity == "Mythical" and MAX_PARTICLES_MYTH or MAX_PARTICLES_GLITCH
+    if #ps >= maxP then return end
     if rarity == "Glitched" then
         -- Matrix: characters fall from top
         ps[#ps + 1] = { x = math.Rand(6,w-6), y = -math.Rand(2,10), vy = math.Rand(30,70), size = math.Rand(2,4), life = 0, maxLife = math.Rand(0.6,1.4), color = _pcolGlitch[math.random(6)] }
     elseif rarity == "Mythical" then
-        -- Angelic: light motes drift upward from bottom
-        ps[#ps + 1] = { x = math.Rand(6,w-6), y = h - math.Rand(0,8), vx = math.Rand(-3,3), vy = math.Rand(-30,-60), size = math.Rand(1.5,3), life = 0, maxLife = math.Rand(0.8,1.5), color = _pcolMyth[math.random(5)] }
+        -- Heavenly: sparks rise high from bottom, travel full card height
+        ps[#ps + 1] = { x = math.Rand(4,w-4), y = h - math.Rand(0,6), vx = math.Rand(-5,5), vy = math.Rand(-70,-140), size = math.Rand(1.5,3.5), life = 0, maxLife = math.Rand(1.2,2.5), color = _pcolMyth[math.random(5)] }
     end
 end
 
@@ -274,31 +276,10 @@ function PANEL:FillPanel( data, amount, actions )
                 if math.random() < 0.06 then SpawnParticle(panelID, w, h, "Glitched") end
             end
 
-            -- ====== MYTHICAL SHIMMER (clean diagonal light sweep) ======
+            -- ====== MYTHICAL EFFECT (frosted edge + dense rising sparks) ======
             if isMythical then
-                local toSX, toSY = self2:LocalToScreen(0, 0)
-                render.SetScissorRect(toSX + 1, toSY + 1, toSX + w - 1, toSY + h - 1, true)
-
-                -- Slow diagonal shimmer line sweeping across card
-                local shimmerSpeed = 3  -- seconds per sweep
-                local shimmerPos = ((ct / shimmerSpeed) % 1.6) - 0.3  -- -0.3 to 1.3
-                local shimmerW = w * 0.2
-                local sX = shimmerPos * (w + shimmerW) - shimmerW
-
-                -- Shimmer bands with falloff
-                for i = 0, 3 do
-                    local bandX = sX + i * (shimmerW / 4)
-                    local dist = math.abs(i - 1.5) / 1.5
-                    local bandA = (1 - dist) * 20
-                    _dc.r, _dc.g, _dc.b, _dc.a = 180, 225, 255, bandA
-                    surface.SetDrawColor(_dc)
-                    surface.DrawRect(bandX, 1, shimmerW / 4, h - 2)
-                end
-
-                render.SetScissorRect(0, 0, 0, 0, false)
-
                 -- Frosted inner edge (thin icy glow along inside of border)
-                local frostA = 12 + math.sin(ct * 1.8) * 5
+                local frostA = 14 + math.sin(ct * 1.8) * 6
                 _dc.r, _dc.g, _dc.b, _dc.a = 170, 215, 255, frostA
                 surface.SetDrawColor(_dc)
                 surface.DrawRect(3, 3, w - 6, 2)
@@ -306,7 +287,8 @@ function PANEL:FillPanel( data, amount, actions )
                 surface.DrawRect(3, 5, 2, h - 10)
                 surface.DrawRect(w - 5, 5, 2, h - 10)
 
-                if math.random() < 0.07 then SpawnParticle(panelID, w, h, "Mythical") end
+                -- Dense particle spawning (3x chance)
+                if math.random() < 0.20 then SpawnParticle(panelID, w, h, "Mythical") end
             end
 
             -- ====== DRAW PARTICLES (Glitched + Mythical only) ======
@@ -314,21 +296,44 @@ function PANEL:FillPanel( data, amount, actions )
                 UpdateAndDrawParticles(panelID, dt)
             end
 
-            -- ====== ASCENDED IDENTITY (clean premium - no particles/glow) ======
+            -- ====== ASCENDED IDENTITY (premium gold accents) ======
             if isAscended then
-                -- Thin gold inner border (1px, subtle breathing)
-                local ascA = 45 + math.sin(ct * 1.5) * 12
+                local ascPulse = math.sin(ct * 2) * 0.15 + 0.85
+                local ascA = math.floor(55 * ascPulse)
+
+                -- Gold L-shaped corner brackets (premium framing)
+                local bracketLen = 10
+                local bracketT = 2
+                local bInset = 3
                 _dc.r, _dc.g, _dc.b, _dc.a = 255, 215, 60, ascA
                 surface.SetDrawColor(_dc)
-                surface.DrawOutlinedRect(2, 2, w - 4, h - 4, 1)
+                -- Top-left
+                surface.DrawRect(bInset, bInset, bracketLen, bracketT)
+                surface.DrawRect(bInset, bInset, bracketT, bracketLen)
+                -- Top-right
+                surface.DrawRect(w - bInset - bracketLen, bInset, bracketLen, bracketT)
+                surface.DrawRect(w - bInset - bracketT, bInset, bracketT, bracketLen)
+                -- Bottom-left
+                surface.DrawRect(bInset, h - bInset - bracketT, bracketLen, bracketT)
+                surface.DrawRect(bInset, h - bInset - bracketLen, bracketT, bracketLen)
+                -- Bottom-right
+                surface.DrawRect(w - bInset - bracketLen, h - bInset - bracketT, bracketLen, bracketT)
+                surface.DrawRect(w - bInset - bracketT, h - bInset - bracketLen, bracketT, bracketLen)
 
-                -- Small diamond markers in 4 corners
-                _dc.a = 130
+                -- Subtle gold bottom gradient (warm premium glow)
+                for i = 0, 3 do
+                    local gA = (4 - i) * 5 * ascPulse
+                    _dc.r, _dc.g, _dc.b, _dc.a = 255, 200, 40, gA
+                    surface.SetDrawColor(_dc)
+                    surface.DrawRect(3, h - 4 - i * 6, w - 6, 6)
+                end
+
+                -- Small centered star/diamond at top
+                local starX = w / 2
+                _dc.r, _dc.g, _dc.b, _dc.a = 255, 220, 80, math.floor(100 * ascPulse)
                 surface.SetDrawColor(_dc)
-                surface.DrawRect(4, 4, 3, 3)
-                surface.DrawRect(w - 7, 4, 3, 3)
-                surface.DrawRect(4, h - 7, 3, 3)
-                surface.DrawRect(w - 7, h - 7, 3, 3)
+                surface.DrawRect(starX - 1, 5, 3, 3)
+                surface.DrawRect(starX - 2, 6, 5, 1)
             end
 
             -- ====== HOVER EFFECT ======
