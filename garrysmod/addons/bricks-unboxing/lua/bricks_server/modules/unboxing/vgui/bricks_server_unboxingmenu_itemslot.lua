@@ -298,14 +298,14 @@ function PANEL:FillPanel( data, amount, actions )
 
             -- ====== ASCENDED IDENTITY (premium gold accents) ======
             if isAscended then
-                local ascPulse = math.sin(ct * 2) * 0.15 + 0.85
-                local ascA = math.floor(55 * ascPulse)
+                local ascPulse = math.sin(ct * 2) * 0.12 + 0.88
+                local ascA = math.floor(180 * ascPulse)
 
                 -- Gold L-shaped corner brackets (premium framing)
-                local bracketLen = 10
-                local bracketT = 2
+                local bracketLen = 16
+                local bracketT = 3
                 local bInset = 3
-                _dc.r, _dc.g, _dc.b, _dc.a = 255, 215, 60, ascA
+                _dc.r, _dc.g, _dc.b, _dc.a = 255, 210, 50, ascA
                 surface.SetDrawColor(_dc)
                 -- Top-left
                 surface.DrawRect(bInset, bInset, bracketLen, bracketT)
@@ -322,7 +322,7 @@ function PANEL:FillPanel( data, amount, actions )
 
                 -- Subtle gold bottom gradient (warm premium glow)
                 for i = 0, 3 do
-                    local gA = (4 - i) * 5 * ascPulse
+                    local gA = (4 - i) * 8 * ascPulse
                     _dc.r, _dc.g, _dc.b, _dc.a = 255, 200, 40, gA
                     surface.SetDrawColor(_dc)
                     surface.DrawRect(3, h - 4 - i * 6, w - 6, 6)
@@ -330,10 +330,10 @@ function PANEL:FillPanel( data, amount, actions )
 
                 -- Small centered star/diamond at top
                 local starX = w / 2
-                _dc.r, _dc.g, _dc.b, _dc.a = 255, 220, 80, math.floor(100 * ascPulse)
+                _dc.r, _dc.g, _dc.b, _dc.a = 255, 220, 80, math.floor(160 * ascPulse)
                 surface.SetDrawColor(_dc)
-                surface.DrawRect(starX - 1, 5, 3, 3)
-                surface.DrawRect(starX - 2, 6, 5, 1)
+                surface.DrawRect(starX - 2, 5, 5, 5)
+                surface.DrawRect(starX - 3, 6, 7, 3)
             end
 
             -- ====== HOVER EFFECT ======

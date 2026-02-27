@@ -457,50 +457,50 @@ end)
 
 -- ============================================================
 -- SUPPRESS DEFAULT TRACERS for boosted weapons
--- ============================================================
--- SUPPRESS DEFAULT TRACERS for boosted weapons
--- Three layers of suppression:
--- 1. Wrap weapon's FireBullets method on client (most reliable)
--- 2. EntityFireBullets hook fallback
--- 3. PreFireAnimationEvent for muzzle tracer events
+-- M9K creates tracers via util.Effect() in shared PrimaryAttack.
+-- We intercept util.Effect on client and block tracer-related
+-- effects when the local player holds a boosted weapon.
 -- ============================================================
 
--- Layer 1: Wrap active weapon's FireBullets on client
--- M9K PrimaryAttack (shared) calls self.Owner:FireBullets(bullet)
--- By wrapping FireBullets on the weapon ENTITY, we intercept it
--- before Source creates any tracers.
-local _wrappedWeapons = {}
-hook.Add("Think", "BRS_UW_WrapClientFireBullets", function()
+-- Tracer effect names that M9K and Source engine use
+local _tracerEffects = {
+    ["Tracer"] = true,
+    ["tracer"] = true,
+    ["m9k_tracer"] = true,
+    ["AR2Tracer"] = true,
+    ["AirboatGunHeavyTracer"] = true,
+    ["GunshipTracer"] = true,
+    ["HelicopterTracer"] = true,
+    ["ToolTracer"] = true,
+    ["HunterTracer"] = true,
+    ["Spark"] = false,  -- don't block sparks
+}
+
+-- Wrap util.Effect to suppress tracer effects from boosted weapons
+local _origEffect = _origEffect or util.Effect
+util.Effect = function(name, data, ...)
+    -- Only intercept for local player's boosted weapons
     local ply = LocalPlayer()
-    if not IsValid(ply) then return end
-    local wep = ply:GetActiveWeapon()
-    if not IsValid(wep) then return end
-    if wep:GetNWBool("BRS_UW_Boosted", false) then
-        if not _wrappedWeapons[wep] then
-            _wrappedWeapons[wep] = true
-            -- Override FireBullets on the PLAYER entity when holding boosted weapon
-            -- M9K calls self.Owner:FireBullets(), Owner = player entity
-            if not ply._BRS_OrigFireBullets then
-                ply._BRS_OrigFireBullets = ply.FireBullets
-                ply.FireBullets = function(self2, bullet, ...)
-                    local w = self2:GetActiveWeapon()
-                    if IsValid(w) and w:GetNWBool("BRS_UW_Boosted", false) then
-                        return -- suppress client-side bullet entirely
-                    end
-                    return ply._BRS_OrigFireBullets(self2, bullet, ...)
-                end
+    if IsValid(ply) then
+        local wep = ply:GetActiveWeapon()
+        if IsValid(wep) and wep:GetNWBool("BRS_UW_Boosted", false) then
+            if _tracerEffects[name] then
+                return -- suppress the tracer effect entirely
             end
         end
     end
-end)
+    return _origEffect(name, data, ...)
+end
 
--- Layer 2: EntityFireBullets hook fallback
+-- Also suppress via EntityFireBullets (belt and suspenders)
 hook.Add("EntityFireBullets", "BRS_UW_SuppressClientTracers", function(ent, data)
     if not IsValid(ent) or not ent:IsPlayer() then return end
     local wep = ent:GetActiveWeapon()
     if not IsValid(wep) then return end
     if wep:GetNWBool("BRS_UW_Boosted", false) then
-        return false
+        data.Tracer = 0
+        data.TracerName = ""
+        return true  -- fire modified bullet (no tracer) so animations still work
     end
 end)
 
