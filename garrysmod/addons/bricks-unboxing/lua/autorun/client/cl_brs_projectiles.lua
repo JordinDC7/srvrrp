@@ -13,6 +13,9 @@
 local projectiles = {}
 local impacts = {}
 local MAX_PROJ = 32
+
+-- Client-side tracking of which weapon classes are boosted (for muzzle flash suppression)
+local _boostedClasses = {}
 local MAX_IMPACTS = 16
 local MAX_TRAIL = 40
 local TRAIL_DT = 0.014  -- ~71 points/sec
@@ -117,11 +120,15 @@ net.Receive("BRS_UW.ProjSpawn", function()
     -- net.ReadEntity can fail on unreliable messages, so distance is backup
     local lp = LocalPlayer()
     local isLocal = (IsValid(shooter) and shooter == lp)
-        or (IsValid(lp) and src:DistToSqr(lp:EyePos()) < 6400)
+        or (IsValid(lp) and src:DistToSqr(lp:EyePos()) < 50000)  -- 223 units (covers 200u offset)
 
-    -- For own bullets, snap to client EyePos to prevent any server/client
-    -- position mismatch that creates sideways flash streaks
+    -- Track weapon class as boosted (for muzzle flash suppression)
     if isLocal and IsValid(lp) then
+        local wep = lp:GetActiveWeapon()
+        if IsValid(wep) then
+            _boostedClasses[wep:GetClass()] = true
+        end
+        -- Snap to client EyePos to prevent position mismatch
         src = lp:EyePos()
     end
 
@@ -456,51 +463,98 @@ hook.Add("PostDrawTranslucentRenderables", "BRS_UW_ProjRender", function(_, bSky
 end)
 
 -- ============================================================
--- SUPPRESS DEFAULT TRACERS for boosted weapons
--- M9K creates tracers via util.Effect() in shared PrimaryAttack.
--- We intercept util.Effect on client and block tracer-related
--- effects when the local player holds a boosted weapon.
+-- SUPPRESS DEFAULT TRACERS + MUZZLE FLASH for boosted weapons
+--
+-- M9K PrimaryAttack (shared, runs on client) does three things:
+--   1. self.Owner:FireBullets(bullet) → creates hitscan + tracer
+--   2. self.Owner:MuzzleFlash()       → creates flash at world model muzzle
+--   3. util.Effect("Tracer", ...)     → creates tracer particle effect
+--
+-- We must block ALL THREE on client for boosted weapons.
+-- Do NOT rely on NWBool (unreliable replication).
+-- Track boosted weapons via net messages we already receive.
 -- ============================================================
 
--- Tracer effect names that M9K and Source engine use
-local _tracerEffects = {
-    ["Tracer"] = true,
-    ["tracer"] = true,
-    ["m9k_tracer"] = true,
-    ["AR2Tracer"] = true,
-    ["AirboatGunHeavyTracer"] = true,
-    ["GunshipTracer"] = true,
-    ["HelicopterTracer"] = true,
-    ["ToolTracer"] = true,
-    ["HunterTracer"] = true,
-    ["Spark"] = false,  -- don't block sparks
-}
+-- Client-side tracking: mark weapon classes as boosted via Think + net messages
+-- (_boostedClasses is declared at top of file)
 
--- Wrap util.Effect to suppress tracer effects from boosted weapons
+-- When we receive a projectile spawn for local player, mark weapon class
+hook.Add("Think", "BRS_UW_TrackBoostedWeapon", function()
+    local ply = LocalPlayer()
+    if not IsValid(ply) then return end
+    local wep = ply:GetActiveWeapon()
+    if not IsValid(wep) then return end
+    -- Use NWBool as ONE signal, but also check if we've received projectiles
+    if wep:GetNWBool("BRS_UW_Boosted", false) then
+        _boostedClasses[wep:GetClass()] = true
+    end
+end)
+
+-- Helper: is local player's current weapon boosted?
+local function IsLocalWeaponBoosted()
+    local ply = LocalPlayer()
+    if not IsValid(ply) then return false end
+    local wep = ply:GetActiveWeapon()
+    if not IsValid(wep) then return false end
+    return _boostedClasses[wep:GetClass()] or wep:GetNWBool("BRS_UW_Boosted", false)
+end
+
+-- === LAYER 1: Override ply.FireBullets and ply.MuzzleFlash ===
+-- These are C++ methods on the entity. By setting them on the entity
+-- table in Lua, our function is found FIRST before the C++ metatable.
+local _muzzlePatched = false
+hook.Add("Think", "BRS_UW_PatchPlayerMethods", function()
+    local ply = LocalPlayer()
+    if not IsValid(ply) then return end
+    if _muzzlePatched then return end
+    _muzzlePatched = true
+
+    -- Save originals (from the C++ metatable)
+    local meta = FindMetaTable("Entity")
+    local origFireBullets = meta.FireBullets
+    local origMuzzleFlash = meta.MuzzleFlash
+
+    -- Override FireBullets on this specific player entity
+    ply.FireBullets = function(self2, bullet, ...)
+        if self2 == ply and IsLocalWeaponBoosted() then
+            return -- suppress client-side bullet entirely
+        end
+        return origFireBullets(self2, bullet, ...)
+    end
+
+    -- Override MuzzleFlash on this specific player entity
+    ply.MuzzleFlash = function(self2)
+        if self2 == ply and IsLocalWeaponBoosted() then
+            return -- suppress muzzle flash at world model position
+        end
+        return origMuzzleFlash(self2)
+    end
+
+    hook.Remove("Think", "BRS_UW_PatchPlayerMethods")
+    print("[BRS UW] Patched ply.FireBullets + ply.MuzzleFlash")
+end)
+
+-- === LAYER 2: Wrap util.Effect for tracer effects ===
+local _tracerEffects = {
+    ["Tracer"] = true, ["tracer"] = true,
+    ["m9k_tracer"] = true, ["AR2Tracer"] = true,
+    ["AirboatGunHeavyTracer"] = true, ["GunshipTracer"] = true,
+    ["HelicopterTracer"] = true, ["ToolTracer"] = true,
+    ["HunterTracer"] = true, ["MuzzleEffect"] = true,
+}
 local _origEffect = _origEffect or util.Effect
 util.Effect = function(name, data, ...)
-    -- Only intercept for local player's boosted weapons
-    local ply = LocalPlayer()
-    if IsValid(ply) then
-        local wep = ply:GetActiveWeapon()
-        if IsValid(wep) and wep:GetNWBool("BRS_UW_Boosted", false) then
-            if _tracerEffects[name] then
-                return -- suppress the tracer effect entirely
-            end
-        end
+    if _tracerEffects[name] and IsLocalWeaponBoosted() then
+        return
     end
     return _origEffect(name, data, ...)
 end
 
--- Also suppress via EntityFireBullets (belt and suspenders)
+-- === LAYER 3: EntityFireBullets hook (catch anything that slips through) ===
 hook.Add("EntityFireBullets", "BRS_UW_SuppressClientTracers", function(ent, data)
-    if not IsValid(ent) or not ent:IsPlayer() then return end
-    local wep = ent:GetActiveWeapon()
-    if not IsValid(wep) then return end
-    if wep:GetNWBool("BRS_UW_Boosted", false) then
-        data.Tracer = 0
-        data.TracerName = ""
-        return true  -- fire modified bullet (no tracer) so animations still work
+    if ent ~= LocalPlayer() then return end
+    if IsLocalWeaponBoosted() then
+        return false  -- completely suppress
     end
 end)
 
